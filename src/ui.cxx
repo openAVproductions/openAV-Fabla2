@@ -42,6 +42,9 @@ static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descript
   //write_function, controller,
   TestUI* t = new TestUI( parentXwindow );
   
+  t->write_function = write_function;
+  t->controller     = controller;
+  
   *widget = (void*)t->getNativeHandle();
   
   printf("init() - returning\n");
