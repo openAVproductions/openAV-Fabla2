@@ -43,4 +43,17 @@
       lv2:symbol "out_r" ;
       lv2:name "Output Right" ;
   ]
+  
+  ,
+  
+  [
+      a lv2:ControlPort ;
+      a lv2:InputPort ;
+      lv2:index 4 ;
+      lv2:symbol "master_vol" ;
+      lv2:name "Master Volume" ;
+      lv2:default 0.5;
+      lv2:minimum 0.0;
+      lv2:maximum 1.0;
+  ]
 .

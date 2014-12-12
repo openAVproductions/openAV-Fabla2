@@ -41,12 +41,12 @@ void Voice::play()
 
 void Voice::process()
 {
-  float* outL = dsp->outL;
-  float* outR = dsp->outR;
+  float* outL = dsp->controlPorts[OUTPUT_L];
+  float* outR = dsp->controlPorts[OUTPUT_R];
   
   for( int i = 0; i < dsp->nframes; i++ )
   {
-    const float freq = 110;
+    float freq = 40 + 400 * *dsp->controlPorts[MASTER_VOL];
     const float sampsPerCycle = sr / freq;
     const float phaseInc = (1.f / sampsPerCycle);
     

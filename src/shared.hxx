@@ -49,9 +49,6 @@ class FablaLV2
     static void run(LV2_Handle instance, uint32_t n_samples);
     static void cleanup(LV2_Handle instance);
     static const void* extension_data(const char* uri);
-    
-    /// control values
-    float* controlPorts[Fabla2::PORT_COUNT];
   
   private:
     Fabla2::Fabla2DSP* dsp;

@@ -40,8 +40,6 @@ LV2_Handle FablaLV2::instantiate( const LV2_Descriptor* descriptor,
 
 FablaLV2::FablaLV2(int rate)
 {
-  memset( controlPorts, 0, sizeof(float*) * Fabla2::PORT_COUNT );
-  
   dsp = new Fabla2::Fabla2DSP( rate );
   if( !dsp )
   {
@@ -76,7 +74,7 @@ void FablaLV2::connect_port(LV2_Handle instance, uint32_t port, void *data)
       //    break;
     
       default:
-          self->controlPorts[port]     = (float*)data;
+          self->dsp->controlPorts[port]     = (float*)data;
           break;
   }
 }
@@ -84,12 +82,6 @@ void FablaLV2::connect_port(LV2_Handle instance, uint32_t port, void *data)
 void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
 {
   FablaLV2* self = (FablaLV2*) instance;
-  
-  /// set parameters to the DSP class
-  self->dsp->inL  = self->controlPorts[INPUT_L];
-  self->dsp->inR  = self->controlPorts[INPUT_R];
-  self->dsp->outL = self->controlPorts[OUTPUT_L];
-  self->dsp->outR = self->controlPorts[OUTPUT_R];
   
   self->dsp->process( nframes );
 }

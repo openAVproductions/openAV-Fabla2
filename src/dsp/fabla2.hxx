@@ -53,10 +53,8 @@ class Fabla2DSP
     /// public read / write, plugin format wrapper writes audio port pointers
     /// while each voice can access incoming audio
     int nframes;
-    float* inL;
-    float* inR;
-    float* outL;
-    float* outR;
+    /// control values
+    float* controlPorts[PORT_COUNT];
     
     /// main process callback
     void process( int nframes );

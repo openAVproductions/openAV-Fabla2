@@ -32,14 +32,16 @@ Fabla2DSP::Fabla2DSP( int rate )
 {
   voices.push_back( new Voice( this, rate ) );
   voices.back()->play();
+  
+  memset( controlPorts, 0, sizeof(float*) * PORT_COUNT );
 }
 
 void Fabla2DSP::process( int nf )
 {
   nframes = nf;
   
-  memset( outL, 0, sizeof(float) * nframes );
-  memset( outR, 0, sizeof(float) * nframes );
+  memset( controlPorts[OUTPUT_L], 0, sizeof(float) * nframes );
+  memset( controlPorts[OUTPUT_R], 0, sizeof(float) * nframes );
   
   for( int i = 0; i < voices.size(); i++ )
   {
