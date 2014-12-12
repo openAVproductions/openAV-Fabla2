@@ -1,0 +1,58 @@
+
+cmake_minimum_required (VERSION 2.6)
+
+project (FABLA2)
+
+set(FABLA2_VERSION_MAJOR "2")
+set(FABLA2_VERSION_MINOR "0")
+set(FABLA2_VERSION_PATCH "0")
+
+set(FABLA2_VERSION "${FABLA2_VERSION_MAJOR}.${FABLA2_VERSION_MINOR}.${FABLA2_VERSION_PATCH}")
+
+option(FABLA2_RELEASE_BUILD   "Build for releasing"         OFF )
+option(FABLA2_DEBUG_PRINTS    "Build with debugging prints" ON )
+
+
+################################################################################
+### Code compilation starts here
+################################################################################
+
+ADD_DEFINITIONS( "-DFABLA2_VERSION_STRING=\"v ${FABLA2_VERSION}\"" )
+
+include_directories ("${PROJECT_SOURCE_DIR}/fabla2/")
+
+find_package(PkgConfig)
+
+pkg_check_modules(SNDFILE sndfile REQUIRED)
+include_directories( ${SNDFILE_INCLUDE_DIRS})
+link_directories   ( ${SNDFILE_LIBRARY_DIRS})
+
+ADD_DEFINITIONS( "-DPUGL_HAVE_CAIRO" )
+pkg_check_modules(CAIRO cairo REQUIRED)
+include_directories( ${CAIRO_INCLUDE_DIRS})
+link_directories   ( ${CAIRO_LIBRARY_DIRS})
+
+pkg_check_modules(X11 x11 REQUIRED)
+include_directories( ${X11_INCLUDE_DIRS} )
+link_directories   ( ${X11_LIBRARY_DIRS} )
+
+SET(CMAKE_CXX_FLAGS "-trigraphs -Wl,-z,nodelete  -Wl,--no-undefined -fPIC -shared ")
+
+FILE(GLOB src src/*.cxx src/dsp/*.cxx )
+
+ADD_LIBRARY( fabla2 SHARED ${src} )
+set_target_properties(fabla2 PROPERTIES PREFIX "")
+
+target_link_libraries( fabla2 ${CAIRO_LIBRARIES}  )
+target_link_libraries( fabla2 ${X11_LIBRARIES}    )
+target_link_libraries( fabla2 ${SNDFILE_LIBRARIES})
+
+
+# install CMake compiled files
+install (TARGETS fabla2 DESTINATION lib/lv2/fabla2.lv2/)
+
+# install LV2 .ttl files
+FILE(GLOB ttls "src/*.ttl")
+install(FILES ${ttls}   DESTINATION lib/lv2/fabla2.lv2/)
+
+

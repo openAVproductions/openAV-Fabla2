@@ -1,0 +1,46 @@
+@prefix doap:  <http://usefulinc.com/ns/doap#> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
+@prefix epp:   <http://lv2plug.in/ns/ext/port-props#> .
+@prefix atom:  <http://lv2plug.in/ns/ext/atom#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix units: <http://lv2plug.in/ns/extensions/units#> .
+@prefix ui: <http://lv2plug.in/ns/extensions/ui#>.
+
+<http://www.openavproductions.com/fabla2>
+  a lv2:Plugin,
+    lv2:InstrumentPlugin ;
+  doap:name "Fabla 2.0" ;
+  lv2:binary <fabla2.so> ;
+  lv2:optionalFeature epp:supportsStrictBounds ;
+  lv2:optionalFeature lv2:hardRtCapable ;
+  
+  #ui:ui <http://www.openavproductions.com/fabla2#gui>;
+  
+  lv2:port [
+      a lv2:AudioPort ;
+      a lv2:InputPort ;
+      lv2:index 0 ;
+      lv2:symbol "in_l" ;
+      lv2:name "Input Left" ;
+  ] , [
+      a lv2:AudioPort ;
+      a lv2:InputPort ;
+      lv2:index 1 ;
+      lv2:symbol "in_r" ;
+      lv2:name "Input Right" ;
+  ] , [
+      a lv2:AudioPort ;
+      a lv2:OutputPort ;
+      lv2:index 2 ;
+      lv2:symbol "out_l" ;
+      lv2:name "Output Left" ;
+  ] , [
+      a lv2:AudioPort ;
+      a lv2:OutputPort ;
+      lv2:index 3 ;
+      lv2:symbol "out_r" ;
+      lv2:name "Output Right" ;
+  ]
+.
