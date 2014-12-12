@@ -26,8 +26,12 @@ namespace Fabla2
 
 typedef enum
 {
+  // Atom
+  ATOM_IN = 0,
+  ATOM_OUT,
+  
   // Audio
-  INPUT_L = 0,
+  INPUT_L,
   INPUT_R,
   OUTPUT_L,
   OUTPUT_R,

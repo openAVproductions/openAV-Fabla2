@@ -35,7 +35,24 @@ LV2_Handle FablaLV2::instantiate( const LV2_Descriptor* descriptor,
                                   const char* bundle_path,
                                   const LV2_Feature* const* features)
 {
-  return (LV2_Handle) new FablaLV2( samplerate );
+  
+  LV2_URID_Map* map = NULL;
+  for (int i = 0; features[i]; ++i)
+  {
+    if (!strcmp(features[i]->URI, LV2_URID__map))
+    {
+      map = (LV2_URID_Map*)features[i]->data;
+      break;
+    }
+  }
+  if (!map)
+    return 0;
+  
+  FablaLV2* tmp = new FablaLV2( samplerate );
+  tmp->map = map;
+  tmp->uris.midi_MidiEvent = map->map(map->handle, LV2_MIDI__MidiEvent);
+  
+  return (LV2_Handle)tmp;
 }
 
 FablaLV2::FablaLV2(int rate)
@@ -67,11 +84,13 @@ void FablaLV2::connect_port(LV2_Handle instance, uint32_t port, void *data)
   switch (port)
   {
     // handle Atom ports gracefully here
-      //case ATOM_IN:
-      //    break;
+      case ATOM_IN:
+          self->control = (const LV2_Atom_Sequence*)data;
+          break;
       
-      //case ATOM_OUT:
-      //    break;
+      case ATOM_OUT:
+          self->notify  = (const LV2_Atom_Sequence*)data;
+          break;
     
       default:
           self->dsp->controlPorts[port]     = (float*)data;
@@ -82,6 +101,36 @@ void FablaLV2::connect_port(LV2_Handle instance, uint32_t port, void *data)
 void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
 {
   FablaLV2* self = (FablaLV2*) instance;
+  
+  // handle incoming MIDI
+  LV2_ATOM_SEQUENCE_FOREACH(self->control, ev)
+  {
+    if (ev->body.type == self->uris.midi_MidiEvent)
+    {
+      const uint8_t* const msg = (const uint8_t*)(ev + 1);
+      
+      printf("MIDI: %i, %i, %i\n", (int)msg[0], (int)msg[1], (int)msg[2] );
+      
+      switch( lv2_midi_message_type(msg) )
+      {
+          case LV2_MIDI_MSG_NOTE_ON:
+                  //++self->n_active_notes;
+                  break;
+          case LV2_MIDI_MSG_NOTE_OFF:
+                  //--self->n_active_notes;
+                  break;
+          case LV2_MIDI_MSG_PGM_CHANGE:
+                  if (msg[1] == 0 || msg[1] == 1) {
+                          //self->program = msg[1];
+                  }
+                  break;
+          default: break;
+      }
+    }
+
+    //write_output(self, offset, ev->time.frames - offset);
+    //offset = (uint32_t)ev->time.frames;
+  }
   
   self->dsp->process( nframes );
 }

@@ -26,6 +26,11 @@
 
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/ext/atom/util.h"
+#include "lv2/lv2plug.in/ns/ext/midi/midi.h"
+#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+
 #define FABLA2_URI    "http://www.openavproductions.com/fabla2"
 #define FABLA2_UI_URI "http://www.openavproductions.com/fabla2#gui"
 
@@ -52,6 +57,19 @@ class FablaLV2
   
   private:
     Fabla2::Fabla2DSP* dsp;
+    
+    // LV2 Atom Ports
+    const LV2_Atom_Sequence* control;
+    const LV2_Atom_Sequence* notify;
+    
+    // Features
+    LV2_URID_Map* map;
+    
+    struct {
+            LV2_URID midi_MidiEvent;
+    } uris;
+    
+    
 };
 
 #endif // OPENAV_FABLA_LV2_HXX
