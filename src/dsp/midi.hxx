@@ -18,52 +18,29 @@
  * MA 02110-1301, USA.
  */
 
-#include "fabla2.hxx"
+#ifndef OPENAV_FABLA2_MIDI_HXX
+#define OPENAV_FABLA2_MIDI_HXX
 
-#include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 
-#include "voice.hxx"
-#include "library.hxx"
-
-namespace Fabla2
+class MidiMessage
 {
-
-Fabla2DSP::Fabla2DSP( int rate )
-{
-  voices.push_back( new Voice( this, rate ) );
-  voices.back()->play();
-  
-  memset( controlPorts, 0, sizeof(float*) * PORT_COUNT );
-  
-  midiMessages.resize( 1024 );
-}
-
-void Fabla2DSP::process( int nf )
-{
-  nframes = nf;
-  
-  memset( controlPorts[OUTPUT_L], 0, sizeof(float) * nframes );
-  memset( controlPorts[OUTPUT_R], 0, sizeof(float) * nframes );
-  
-  for( int i = 0; i < voices.size(); i++ )
-  {
-    Voice* v = voices.at(i);
-    if( v->active() )
+  public:
+    MidiMessage() :
+      frame( -1 )
     {
-      v->process();
+      memset( msg, 0, sizeof(uint8_t)*3 );
     }
-  }
-}
+    
+    MidiMessage( int frame_, uint8_t* msg_ ) :
+      frame ( frame_ )
+    {
+      memcpy( msg, msg_, sizeof(uint8_t)*3 );
+    }
+    
+    int frame;
+    uint8_t msg[3];
+};
 
-void Fabla2DSP::midi( int f, const uint8_t* msg )
-{
-  printf("MIDI: %i, %i, %i\n", (int)msg[0], (int)msg[1], (int)msg[2] );
-}
-
-Fabla2DSP::~Fabla2DSP()
-{
-}
-
-}; // Fabla2
-
+#endif // OPENAV_FABLA2_MIDI_HXX

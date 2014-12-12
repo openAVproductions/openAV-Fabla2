@@ -23,7 +23,9 @@
 
 #include "ports.hxx"
 
+#include "midi.hxx"
 #include "yasper.hxx"
+
 #include <vector>
 
 namespace Fabla2
@@ -31,7 +33,6 @@ namespace Fabla2
 
 class Voice;
 class Library;
-
 
 /** Fabla2DSP
  * This class contains the main DSP functionality of Fabla2. It handles incoming
@@ -59,6 +60,9 @@ class Fabla2DSP
     /// main process callback
     void process( int nframes );
     
+    /// plugin format wrapper calls this for each MIDI event that arrives
+    void midi( int frame, const uint8_t* );
+    
   private:
     /// voices store all the voices available for use
     std::vector< yasper::ptr<Voice> > voices;
@@ -66,6 +70,7 @@ class Fabla2DSP
     /// Library stores all data
     yasper::ptr<Library> library;
     
+    std::vector< MidiMessage > midiMessages;
 };
 
 }; // Fabla2

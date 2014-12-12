@@ -108,28 +108,8 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
     if (ev->body.type == self->uris.midi_MidiEvent)
     {
       const uint8_t* const msg = (const uint8_t*)(ev + 1);
-      
-      printf("MIDI: %i, %i, %i\n", (int)msg[0], (int)msg[1], (int)msg[2] );
-      
-      switch( lv2_midi_message_type(msg) )
-      {
-          case LV2_MIDI_MSG_NOTE_ON:
-                  //++self->n_active_notes;
-                  break;
-          case LV2_MIDI_MSG_NOTE_OFF:
-                  //--self->n_active_notes;
-                  break;
-          case LV2_MIDI_MSG_PGM_CHANGE:
-                  if (msg[1] == 0 || msg[1] == 1) {
-                          //self->program = msg[1];
-                  }
-                  break;
-          default: break;
-      }
+      self->dsp->midi( ev->time.frames, msg );
     }
-
-    //write_output(self, offset, ev->time.frames - offset);
-    //offset = (uint32_t)ev->time.frames;
   }
   
   self->dsp->process( nframes );
