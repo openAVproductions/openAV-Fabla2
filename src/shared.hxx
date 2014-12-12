@@ -27,7 +27,7 @@
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
 #define FABLA2_URI    "http://www.openavproductions.com/fabla2"
-#define FABLA2_UI_URI "http://www.openavproductions.com/fabla2/gui"
+#define FABLA2_UI_URI "http://www.openavproductions.com/fabla2#gui"
 
 namespace Fabla2
 {

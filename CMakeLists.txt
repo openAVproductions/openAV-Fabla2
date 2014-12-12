@@ -19,7 +19,7 @@ option(FABLA2_DEBUG_PRINTS    "Build with debugging prints" ON )
 
 ADD_DEFINITIONS( "-DFABLA2_VERSION_STRING=\"v ${FABLA2_VERSION}\"" )
 
-include_directories ("${PROJECT_SOURCE_DIR}/fabla2/")
+include_directories ("${PROJECT_SOURCE_DIR}/src/ui/avtk")
 
 find_package(PkgConfig)
 
@@ -38,18 +38,25 @@ link_directories   ( ${X11_LIBRARY_DIRS} )
 
 SET(CMAKE_CXX_FLAGS "-trigraphs -Wl,-z,nodelete  -Wl,--no-undefined -fPIC -shared ")
 
-FILE(GLOB src src/*.cxx src/dsp/*.cxx )
+FILE(GLOB srcDSP src/dsp.cxx src/dsp/*.cxx )
 
-ADD_LIBRARY( fabla2 SHARED ${src} )
-set_target_properties(fabla2 PROPERTIES PREFIX "")
+FILE(GLOB srcUI  src/ui.cxx  src/ui/*.cxx src/ui/avtk/*.cxx src/ui/avtk/pugl/pugl_x11.c )
 
-target_link_libraries( fabla2 ${CAIRO_LIBRARIES}  )
-target_link_libraries( fabla2 ${X11_LIBRARIES}    )
+ADD_LIBRARY( fabla2   SHARED ${srcDSP} )
+ADD_LIBRARY( fabla2ui SHARED ${srcUI}  )
+set_target_properties(fabla2   PROPERTIES PREFIX "")
+set_target_properties(fabla2ui PROPERTIES PREFIX "")
+
 target_link_libraries( fabla2 ${SNDFILE_LIBRARIES})
+
+target_link_libraries( fabla2ui ${CAIRO_LIBRARIES}  )
+target_link_libraries( fabla2ui ${X11_LIBRARIES}    )
+target_link_libraries( fabla2ui ${SNDFILE_LIBRARIES})
 
 
 # install CMake compiled files
-install (TARGETS fabla2 DESTINATION lib/lv2/fabla2.lv2/)
+install (TARGETS fabla2   DESTINATION lib/lv2/fabla2.lv2/)
+install (TARGETS fabla2ui DESTINATION lib/lv2/fabla2.lv2/)
 
 # install LV2 .ttl files
 FILE(GLOB ttls "src/*.ttl")

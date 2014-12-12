@@ -8,6 +8,15 @@
 @prefix units: <http://lv2plug.in/ns/extensions/units#> .
 @prefix ui: <http://lv2plug.in/ns/extensions/ui#>.
 
+
+<http://www.openavproductions.com/fabla2#gui>
+  a ui:X11UI;
+  ui:binary <fabla2ui.so>;
+  ui:requiredFeature ui:makeResident ;
+  lv2:requiredFeature ui:idleInterface ;
+  lv2:extensionData ui:idleInterface .
+
+
 <http://www.openavproductions.com/fabla2>
   a lv2:Plugin,
     lv2:InstrumentPlugin ;
@@ -16,7 +25,7 @@
   lv2:optionalFeature epp:supportsStrictBounds ;
   lv2:optionalFeature lv2:hardRtCapable ;
   
-  #ui:ui <http://www.openavproductions.com/fabla2#gui>;
+  ui:ui <http://www.openavproductions.com/fabla2#gui>;
   
   lv2:port [
       a lv2:AudioPort ;
