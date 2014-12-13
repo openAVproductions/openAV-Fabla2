@@ -45,7 +45,7 @@ class Sampler
     void play( Pad*, int velocity );
     
     /// process function, passing in the voice buffers for FX
-    void process(int nframes, float* L, float* R);
+    int process(int nframes, float* L, float* R);
     
   
   private:

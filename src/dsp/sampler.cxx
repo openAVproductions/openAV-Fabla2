@@ -58,9 +58,44 @@ void Sampler::play( Pad* p, int velocity )
   playIndex = 0;
 }
 
-void Sampler::process(int nframes, float* L, float* R)
+int Sampler::process(int nframes, float* L, float* R)
 {
+  const int    chans = sample->getChannels();
+  const int    size  = sample->getFrames();
+  const float* audio = sample->getAudio();
   
+  // return immidiatly if we are finished playing the sample
+  if( playIndex > size )
+    return 1;
+  
+  if( chans == 1 )
+  {
+    for(int i = 0; i < nframes; i++ )
+    {
+      *L++ = audio[playIndex  ];
+      *R++ = audio[playIndex++];
+      if( playIndex > size )
+        return 1;
+    }
+  }
+  else if( chans == 2 )
+  {
+    for(int i = 0; i < nframes; i++ )
+    {
+      *L++ = audio[playIndex++];
+      *R++ = audio[playIndex++];
+      if( playIndex > size )
+        return 1;
+    }
+  }
+  else
+  {
+    // return if we don't know how to deal with this channel count
+    return 1;
+  }
+  
+  // normal return path: not done, keep calling this
+  return 0;
 }
 
 Sampler::~Sampler()

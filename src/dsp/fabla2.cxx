@@ -45,7 +45,9 @@ Fabla2DSP::Fabla2DSP( int rate )
     {
       // TODO: Fixme to use Library & RT-safe loading
       // hack code load sample for now
-      Sample* tmp = new Sample( this, rate, "SampleName#1", "/root/openav/fabla2/src/dsp/tests/test.wav");
+      Sample* tmp = new Sample( this, rate, "SampleName#1", "/usr/local/lib/lv2/fabla2.lv2/test.wav");
+      tmpPad->add( tmp );
+      tmp = new Sample( this, rate, "SampleName#2", "/usr/local/lib/lv2/fabla2.lv2/test.wav");
       tmpPad->add( tmp );
     }
     
@@ -66,6 +68,7 @@ void Fabla2DSP::process( int nf )
     Voice* v = voices.at(i);
     if( v->active() )
     {
+      //printf("voice %i playing\n", i);
       v->process();
     }
   }
@@ -80,17 +83,14 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
     /// Logic for incoming MIDI -> Pad mapping
     for (std::map< int, yasper::ptr<Pad> >::iterator it= midiToPad.begin(); it != midiToPad.end(); ++it)
     {
+      
       if( it->first == msg[1] )
       {
+        /// Logic for fetch-pad-data from Library
         voices.at(0)->play( it->second, msg[2] );
       }
     }
-    
   }
-  
-  /// Logic for fetch-pad-data from Library
-  
-  /// Logic for set-pad-data to available Voice
   
 }
 

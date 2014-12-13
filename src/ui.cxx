@@ -18,8 +18,6 @@ static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descript
                               LV2UI_Widget * widget,
                               const LV2_Feature * const * features)
 {
-  printf("init()\n");
-  
   if (strcmp(plugin_uri, FABLA2_URI) != 0)
   {
     fprintf(stderr, "FABLA2_UI_URI error: this GUI does not support plugin with URI %s\n", plugin_uri);
@@ -30,10 +28,10 @@ static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descript
   PuglNativeWindow parentXwindow = 0;
   for (int i = 0; features[i]; ++i)
   {
-    printf("Feature %s\n", features[i]->URI );
+    //printf("Feature %s\n", features[i]->URI );
     if (!strcmp(features[i]->URI, LV2_UI__parent)) {
       parentXwindow = (PuglNativeWindow)features[i]->data;
-      printf("\tParent X11 ID %i\n", parentXwindow );
+      //printf("\tParent X11 ID %i\n", parentXwindow );
     } else if (!strcmp(features[i]->URI, LV2_UI__resize)) {
       resize = (LV2UI_Resize*)features[i]->data;
     }
@@ -47,7 +45,7 @@ static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descript
   
   *widget = (void*)t->getNativeHandle();
   
-  printf("init() - returning\n");
+  //printf("init() - returning\n");
   
   if (resize) {
     resize->ui_resize(resize->handle, 610, 430 );
@@ -58,7 +56,6 @@ static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descript
 
 static void fabla2_cleanup(LV2UI_Handle ui)
 {
-  printf("cleanup()\n");
   delete (TestUI*)ui;
 }
 
@@ -69,7 +66,6 @@ static void fabla2_port_event(LV2UI_Handle handle,
                const void * buffer)
 {
   TestUI* ui = (TestUI*)handle;
-  printf("port()\n");
   ui->redraw();
 }
 

@@ -21,6 +21,7 @@
 #include "voice.hxx"
 
 #include <math.h>
+#include <stdio.h>
 
 #include "fabla2.hxx"
 #include "sampler.hxx"
@@ -55,7 +56,8 @@ void Voice::play( Pad* pad, int velocity )
   adsr->gate( true );
   
   sampler->play( pad , velocity );
-  
+
+#ifdef FABLA2_COMPONENT_TEST
   if( true )
   {
     std::vector<float> tmp(44100 * 5);
@@ -72,11 +74,9 @@ void Voice::play( Pad* pad, int velocity )
       tmp.at(i) = adsr->process();
     }
 
-#ifdef FABLA2_COMPONENT_TEST
     Plotter::plot( "adsr.dat", 44100 * 5, &tmp[0] );
-#endif 
   }
-  
+#endif
 }
 
 /*
@@ -91,21 +91,30 @@ void Voice::process()
   float* outL = dsp->controlPorts[OUTPUT_L];
   float* outR = dsp->controlPorts[OUTPUT_R];
   
+  int done = sampler->process( dsp->nframes, outL, outR );
+  
+  if( done )
+  {
+    printf("Voice done\n");
+    active_ = false;
+  }
+  /*
   for( int i = 0; i < dsp->nframes; i++ )
   {
     float adsrValue = adsr->process();
     float freq = 40 + 400.f * *dsp->controlPorts[MASTER_VOL];
     
-    const float sampsPerCycle = sr / 110;
+    const float sampsPerCycle = sr / freq;
     const float phaseInc = (1.f / sampsPerCycle);
     
-    const float tmp = sin( phase * 2 * 3.1415 ) * 0.2 * adsrValue;
+    const float tmp = sin( phase * 2 * 3.1415 ) * 0.2;
     
     *outL++ += tmp;
     *outR++ += tmp;
     
     phase += phaseInc;
   }
+  */
 }
 
 Voice::~Voice()

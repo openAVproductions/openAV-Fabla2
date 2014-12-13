@@ -39,10 +39,11 @@ class Sample
     Sample( Fabla2DSP* dsp, int rate, std::string name, std::string filePathToLoad );
     ~Sample();
     
-    /// the process function: explicitly passed in voice buffers for FX later
-    void process(int nframes, int& playhead, const float& resample, float* L, float* R);
-    
-    const char* getName(){return name.c_str();}
+    /// data get functions
+    const int getChannels(){return channels   ;}
+    const long getFrames(){return audio.size();}
+    const float* getAudio(){return &audio[0]  ;}
+    const char* getName(){return name.c_str() ;}
   
   private:
     Fabla2DSP* dsp;
@@ -50,7 +51,8 @@ class Sample
     
     std::string name;
     
-    bool isMono_;
+    int channels;
+    long frames;
     std::vector<float> audio;
     
 };

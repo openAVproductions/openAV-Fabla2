@@ -36,7 +36,8 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
   dsp( d ),
   sr(rate),
   name( n ),
-  isMono_( true )
+  channels( 0 ),
+  frames( 0 )
 {
   SF_INFO info;
   SNDFILE* const sndfile = sf_open( path.c_str(), SFM_READ, &info);
@@ -46,9 +47,13 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
     return;
   }
   
-  if( info.channels != 1 )
+  
+  channels = info.channels;
+  frames   = info.frames;
+  
+  if( info.channels > 2 )
   {
-    printf("Error loading sample %s, channels != 1\n", path.c_str() );
+    printf("Error loading sample %s, channels >= 2\n", path.c_str() );
     return;
   }
   
@@ -62,27 +67,6 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
   QUNIT_IS_TRUE( info.frames > 0 );
   QUNIT_IS_TRUE( audio.size() == info.frames );
 #endif
-}
-
-/// the process function: explicitly passed in voice buffers for FX later
-void Sample::process(int nframes, int& playhead, const float& resample, float* L, float* R)
-{
-  if( isMono_ )
-  {
-    for(int i = 0; i < nframes; i++ )
-    {
-      *L++ = audio.at( playhead   );
-      *R++ = audio.at( playhead++ );
-    }
-  }
-  else
-  {
-    for(int i = 0; i < nframes; i++ )
-    {
-      *L++ = audio.at( playhead++ );
-      *R++ = audio.at( playhead++ );
-    }
-  }
 }
 
 Sample::~Sample()
