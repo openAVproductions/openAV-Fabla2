@@ -36,11 +36,6 @@
 #define FABLA2_URI    "http://www.openavproductions.com/fabla2"
 #define FABLA2_UI_URI "http://www.openavproductions.com/fabla2#gui"
 
-namespace Fabla2
-{
-  class Fabla2DSP;
-};
-
 typedef struct {
   LV2_URID atom_Blank;
   LV2_URID atom_Path;
@@ -72,6 +67,17 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->patch_value        = map->map(map->handle, LV2_PATCH__value);
 }
 
+
+
+/// ################################
+/// DSP implementations below here #
+/// ################################
+
+namespace Fabla2
+{
+  class Fabla2DSP;
+};
+
 class FablaLV2
 {
   public:
@@ -97,6 +103,7 @@ class FablaLV2
     
     // Forge for Atoms
     LV2_Atom_Forge forge;
+    LV2_Atom_Forge_Frame notify_frame;
     
     // Features
     LV2_URID_Map* map;

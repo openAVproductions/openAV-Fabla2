@@ -105,6 +105,13 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
 {
   FablaLV2* self = (FablaLV2*) instance;
   
+  // setup Forge for Atom output (to UI)
+  const uint32_t notify_capacity = self->notify->atom.size;
+  lv2_atom_forge_set_buffer(&self->forge, (uint8_t*)self->notify, notify_capacity);
+  
+  // Start a sequence in the notify output port.
+  lv2_atom_forge_sequence_head(&self->forge, &self->notify_frame, 0);
+  
   // handle incoming MIDI
   LV2_ATOM_SEQUENCE_FOREACH(self->control, ev)
   {

@@ -24,22 +24,32 @@ static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descript
     return NULL;
   }
   
+  LV2_URID_Map* map;
   LV2UI_Resize* resize = NULL;
   PuglNativeWindow parentXwindow = 0;
+  
   for (int i = 0; features[i]; ++i)
   {
     //printf("Feature %s\n", features[i]->URI );
-    if (!strcmp(features[i]->URI, LV2_UI__parent)) {
+    if (!strcmp(features[i]->URI, LV2_UI__parent))
+    {
       parentXwindow = (PuglNativeWindow)features[i]->data;
-      //printf("\tParent X11 ID %i\n", parentXwindow );
-    } else if (!strcmp(features[i]->URI, LV2_UI__resize)) {
+    }
+    else if (!strcmp(features[i]->URI, LV2_UI__resize))
+    {
       resize = (LV2UI_Resize*)features[i]->data;
+    }
+    else if (!strcmp(features[i]->URI, LV2_URID__map))
+    {
+      map = (LV2_URID_Map*)features[i]->data;
+      break;
     }
     
   }
   //write_function, controller,
   TestUI* t = new TestUI( parentXwindow );
   
+  t->map = map;
   t->write_function = write_function;
   t->controller     = controller;
   
@@ -66,6 +76,30 @@ static void fabla2_port_event(LV2UI_Handle handle,
                const void * buffer)
 {
   TestUI* ui = (TestUI*)handle;
+  
+  if (format == ui->uris.atom_eventTransfer)
+  {
+    const LV2_Atom* atom = (const LV2_Atom*)buffer;
+    if (atom->type == ui->uris.atom_Blank)
+    {
+      /*
+      const LV2_Atom_Object* obj      = (const LV2_Atom_Object*)atom;
+      const LV2_Atom*        file_uri = read_set_file(&ui->uris, obj);
+      if (!file_uri)
+      {
+              fprintf(stderr, "Unknown message sent to UI.\n");
+              return;
+      }
+      const char* uri = (const char*)LV2_ATOM_BODY_CONST(file_uri);
+      //gtk_label_set_text(GTK_LABEL(ui->label), uri);
+      */
+    }
+    else
+    {
+      fprintf(stderr, "Unknown message type.\n");
+    }
+  }
+  
   ui->redraw();
 }
 

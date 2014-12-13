@@ -4,6 +4,8 @@
 
 #include "avtk/avtk.hxx"
 
+#include "../shared.hxx"
+
 #include "header.c"
 
 // for write_function and controller
@@ -28,8 +30,11 @@ class TestUI : public Avtk::UI
     Avtk::List* list2;
     Avtk::Waveform* waveform;
     
-    LV2UI_Write_Function write_function;
     LV2UI_Controller controller;
+    LV2UI_Write_Function write_function;
+    
+    LV2_URID_Map* map;
+    URIs uris;
   
   private:
     // stores the origin widget, to avoid recusive calling
