@@ -32,6 +32,8 @@ class TestUI : public Avtk::UI
     
     Avtk::Widget* loadSampleBtn;
     
+    Avtk::Widget* pads[16];
+    
     // LV2 ports
     LV2UI_Controller controller;
     LV2UI_Write_Function write_function;

@@ -111,8 +111,8 @@ void Voice::process()
   
   for(int i = 0; i < dsp->nframes; i++ )
   {
-    *outL++ += voiceBuffer[             i] * 0.8 * adsrVal;
-    *outR++ += voiceBuffer[dsp->nframes+i] * 0.8 * adsrVal;
+    *outL++ += voiceBuffer[             i] * 0.4 * adsrVal;
+    *outR++ += voiceBuffer[dsp->nframes+i] * 0.4 * adsrVal;
   }
   
   if( done )

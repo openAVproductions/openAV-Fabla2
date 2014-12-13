@@ -32,7 +32,7 @@ void Button::draw( cairo_t* cr )
     ui->theme->color( cr, BG_DARK );
     cairo_fill_preserve(cr);
     ui->theme->color( cr, FG );
-    cairo_set_line_width(cr, 1.4);
+    cairo_set_line_width(cr, 1.2);
     cairo_stroke(cr);
   }
   

@@ -118,6 +118,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
           printf("UI Fabla Pad %i, Vel %i\n", p, v );
           
           // update UI grid here
+          ui->pads[p-36]->value( v );
         }
       }
       

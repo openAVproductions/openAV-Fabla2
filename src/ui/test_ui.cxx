@@ -21,10 +21,33 @@ TestUI::TestUI( PuglNativeWindow parent ):
   masterVolume->callbackUD = this;
   add( masterVolume );
   
+  /*
   loadSampleBtn = new Avtk::Button( this, 70, 70, 120, 25, "Load Sample" );
   loadSampleBtn->callback = widgetCB;
   loadSampleBtn->callbackUD = this;
   add( loadSampleBtn );
+  */
+  
+  // pads
+  int x = 5;
+  int y = 41 + (45+2) * 4;
+  for(int i = 0; i < 16; i++ )
+  {
+    if( i != 0 && i % 4 == 0 )
+    {
+      y -= 45 + 2;
+      x = 5;
+    }
+    
+    pads[i] = new Avtk::Button( this, x, y, 52, 44, "-" );
+    pads[i]->callback = widgetCB;
+    pads[i]->callbackUD = this;
+    add( pads[i] );
+    
+    x += 55;
+    
+  }
+  
 }
 
 static void widgetCB(Avtk::Widget* w, void* ud)

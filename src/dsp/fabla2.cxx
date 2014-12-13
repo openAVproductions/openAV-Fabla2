@@ -103,15 +103,16 @@ void Fabla2DSP::process( int nf )
   memset( controlPorts[OUTPUT_L], 0, sizeof(float) * nframes );
   memset( controlPorts[OUTPUT_R], 0, sizeof(float) * nframes );
   
-  if( recordEnable && recordIndex + nframes < sr * 4 )
+  if( recordEnable && recordPad != -1 && recordIndex + nframes < sr * 4 )
   {
+    printf("recording...\n" );
     for(int i = 0; i < nframes; i++)
     {
       recordBuffer[recordIndex++] = controlPorts[INPUT_L][i];
       recordBuffer[recordIndex++] = controlPorts[INPUT_R][i];
     }
   }
-  else if( recordEnable )
+  else if( recordEnable && recordPad != -1 )
   {
     recordEnable = false;
     printf("record stopped: out of space! %li\n", recordIndex );
@@ -152,6 +153,12 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
   
   if( msg[0] == 144 )
   {
+    if( recordEnable && recordPad == -1 )
+    {
+      recordPad = msg[1] - 36;
+      recordIndex = 0;
+    }
+    
     if( !recordEnable )
     {
       /// Logic for incoming MIDI -> Pad mapping
@@ -174,15 +181,9 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
         }
       }
     }
-    else
-    {
-      // record on this Pad
-      recordPad = msg[1] - 36;
-      recordIndex = 0;
-    }
     
   }
-  else if ( msg[0] == 240 && msg[1] == 127 )
+  else if ( msg[0] == 128 )
   {
     if( recordEnable )
     {
@@ -201,14 +202,13 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
       recordIndex = 0;
       recordEnable = false;
     }
-    else
-    {
-      recordEnable = true;
-      recordIndex = 0;
-      recordPad = -1;
-      printf("record enabled!\n");
-    }
-    
+  }
+  else if ( msg[0] == 240 && msg[1] == 127 )
+  {
+    recordEnable = true;
+    recordIndex = 0;
+    recordPad = -1;
+    printf("record enabled!\n");
   }
   
   else if( msg[0] == 176 )
