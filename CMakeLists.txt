@@ -37,7 +37,7 @@ pkg_check_modules(X11 x11 REQUIRED)
 include_directories( ${X11_INCLUDE_DIRS} )
 link_directories   ( ${X11_LIBRARY_DIRS} )
 
-SET(CMAKE_CXX_FLAGS "-trigraphs -Wl,-z,nodelete  -Wl,--no-undefined -fPIC -shared ")
+SET(CMAKE_CXX_FLAGS "-g -trigraphs -Wl,-z,nodelete  -Wl,--no-undefined -fPIC -shared ")
 
 
 

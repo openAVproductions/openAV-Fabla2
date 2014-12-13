@@ -42,6 +42,8 @@ void Sampler::play( Pad* p, int velocity )
 {
   pad = p;
   
+  printf("%s\n", __PRETTY_FUNCTION__ );
+  
   sample = pad->getPlaySample( velocity );
   
   if( !sample )
@@ -52,7 +54,7 @@ void Sampler::play( Pad* p, int velocity )
     return;
   }
   
-  printf("sampler playgin sample %s\n", sample->getName() );
+  printf("sampler playing sample %s\n", sample->getName() );
   
   // trigger audio playback here
   playIndex = 0;
@@ -60,13 +62,19 @@ void Sampler::play( Pad* p, int velocity )
 
 int Sampler::process(int nframes, float* L, float* R)
 {
+  if( !sample )
+  {
+    // no sample loaded on the Pad that this Sampler represents
+    return 1;
+  }
   const int    chans = sample->getChannels();
-  const int    size  = sample->getFrames();
+  const int    frames= sample->getFrames();
   const float* audio = sample->getAudio();
   
   // return immidiatly if we are finished playing the sample
-  if( playIndex > size )
+  if( playIndex > frames * chans )
     return 1;
+  
   
   if( chans == 1 )
   {
@@ -74,7 +82,8 @@ int Sampler::process(int nframes, float* L, float* R)
     {
       *L++ = audio[playIndex  ];
       *R++ = audio[playIndex++];
-      if( playIndex > size )
+      
+      if( playIndex > frames * chans )
         return 1;
     }
   }
@@ -84,8 +93,11 @@ int Sampler::process(int nframes, float* L, float* R)
     {
       *L++ = audio[playIndex++];
       *R++ = audio[playIndex++];
-      if( playIndex > size )
+      
+      if( playIndex > frames * chans)
+      {
         return 1;
+      }
     }
   }
   else

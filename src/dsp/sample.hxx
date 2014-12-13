@@ -40,10 +40,10 @@ class Sample
     ~Sample();
     
     /// data get functions
-    const int getChannels(){return channels   ;}
-    const long getFrames(){return audio.size();}
-    const float* getAudio(){return &audio[0]  ;}
-    const char* getName(){return name.c_str() ;}
+    const int     getChannels() {return channels    ;}
+    const long    getFrames()   {return frames      ;}
+    const float*  getAudio()    {return &audio[0]   ;}
+    const char*   getName()     {return name.c_str();}
   
   private:
     Fabla2DSP* dsp;

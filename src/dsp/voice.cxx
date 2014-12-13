@@ -55,7 +55,7 @@ void Voice::play( Pad* pad, int velocity )
   adsr->reset();
   adsr->gate( true );
   
-  sampler->play( pad , velocity );
+  sampler->play( pad, velocity );
 
 #ifdef FABLA2_COMPONENT_TEST
   if( true )
@@ -79,12 +79,6 @@ void Voice::play( Pad* pad, int velocity )
 #endif
 }
 
-/*
-void Voice::stop()
-{
-  adsr->gate( false );
-}
-*/
 
 void Voice::process()
 {
@@ -98,23 +92,6 @@ void Voice::process()
     printf("Voice done\n");
     active_ = false;
   }
-  /*
-  for( int i = 0; i < dsp->nframes; i++ )
-  {
-    float adsrValue = adsr->process();
-    float freq = 40 + 400.f * *dsp->controlPorts[MASTER_VOL];
-    
-    const float sampsPerCycle = sr / freq;
-    const float phaseInc = (1.f / sampsPerCycle);
-    
-    const float tmp = sin( phase * 2 * 3.1415 ) * 0.2;
-    
-    *outL++ += tmp;
-    *outR++ += tmp;
-    
-    phase += phaseInc;
-  }
-  */
 }
 
 Voice::~Voice()

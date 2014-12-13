@@ -60,6 +60,9 @@ class Voice
     /// audio buffers etc from there: no need to pass them around.
     void process();
     
+    ADSR* getADSR(){return adsr.GetRawPointer();}
+    Sampler* getSampler(){return sampler.GetRawPointer();}
+    
   private:
     Fabla2DSP* dsp;
     int sr;

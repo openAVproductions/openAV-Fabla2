@@ -21,8 +21,9 @@
 #include "pad.hxx"
 
 #include "sample.hxx"
-#ifdef FABLA2_COMPONENT_TEST
 #include <stdio.h>
+
+#ifdef FABLA2_COMPONENT_TEST
 #include "tests/qunit.hxx"
 extern QUnit::UnitTest qunit;
 #endif 
@@ -33,13 +34,17 @@ namespace Fabla2
 
 Pad::Pad( Fabla2DSP* d, int rate ) :
   dsp( d ),
-  sr(rate)
+  sr(rate),
+  
+  sampleSwitchSystem( SS_NONE ),
+  roundRobinCounter(0)
 {
 }
 
 void Pad::add( Sample* s )
 {
   samples.push_back( s );
+  //printf( "Pad::add() #samples = %i\n", samples.size() );
 }
 
 Sample* Pad::getPlaySample( int velocity )
@@ -47,11 +52,30 @@ Sample* Pad::getPlaySample( int velocity )
 #ifdef FABLA2_COMPONENT_TEST
   QUNIT_IS_TRUE( samples.size() > 0 );
 #endif
+  
   /// Logic to do round-robin / velocity mapping here
-  if( samples.size() )
-    return samples.at( 0 );
+  if( samples.size() > 0 )
+  {
+    if( sampleSwitchSystem == SS_NONE )
+    {
+      return samples.at( 0 );
+    }
+    else if( sampleSwitchSystem == SS_ROUND_ROBIN )
+    {
+      Sample* tmp = samples.at(roundRobinCounter++);
+      if( roundRobinCounter >= samples.size() )
+        roundRobinCounter = 0;
+      return tmp;
+    }
+  }
+  
   
   return 0;
+}
+
+void Pad::switchSystem( SAMPLE_SWITCH_SYSTEM ss )
+{
+  sampleSwitchSystem = ss;
 }
 
 Pad::~Pad()

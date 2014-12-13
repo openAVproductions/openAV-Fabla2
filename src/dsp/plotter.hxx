@@ -53,10 +53,10 @@ class Plotter
       printf("Plotter::plot() writing %s to %s\n", name.c_str(), getenv("PWD") );
       
       std::stringstream s;
-      //s << plotNum++ << "_plot.dat";
+      s << name << ".dat";
       
       std::ofstream outFile;
-      outFile.open ( name.c_str() );// s.str().c_str() );
+      outFile.open ( s.str().c_str() );
       
       for(long i = 0; i < samples; i++ )
         outFile << data[i] << "\n";

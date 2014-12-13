@@ -26,6 +26,7 @@
 #include "pad.hxx"
 #include "voice.hxx"
 #include "sample.hxx"
+#include "sampler.hxx"
 #include "library.hxx"
 
 namespace Fabla2
@@ -33,6 +34,9 @@ namespace Fabla2
 
 Fabla2DSP::Fabla2DSP( int rate )
 {
+  voices.push_back( new Voice( this, rate ) );
+  voices.push_back( new Voice( this, rate ) );
+  voices.push_back( new Voice( this, rate ) );
   voices.push_back( new Voice( this, rate ) );
   
   memset( controlPorts, 0, sizeof(float*) * PORT_COUNT );
@@ -47,7 +51,14 @@ Fabla2DSP::Fabla2DSP( int rate )
       // hack code load sample for now
       Sample* tmp = new Sample( this, rate, "SampleName#1", "/usr/local/lib/lv2/fabla2.lv2/test.wav");
       tmpPad->add( tmp );
-      tmp = new Sample( this, rate, "SampleName#2", "/usr/local/lib/lv2/fabla2.lv2/test.wav");
+      tmp = new Sample( this, rate, "SampleName#2", "/usr/local/lib/lv2/fabla2.lv2/test2.wav");
+      tmpPad->add( tmp );
+    }
+    if ( i == 1 )
+    {
+      // TODO: Fixme to use Library & RT-safe loading
+      // hack code load sample for now
+      Sample* tmp = new Sample( this, rate, "SampleName#2", "/usr/local/lib/lv2/fabla2.lv2/test2.wav");
       tmpPad->add( tmp );
     }
     
@@ -83,7 +94,6 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
     /// Logic for incoming MIDI -> Pad mapping
     for (std::map< int, yasper::ptr<Pad> >::iterator it= midiToPad.begin(); it != midiToPad.end(); ++it)
     {
-      
       if( it->first == msg[1] )
       {
         /// Logic for fetch-pad-data from Library
@@ -92,6 +102,18 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
     }
   }
   
+  else if( msg[0] == 176 )
+  {
+    /// library to get Pad
+    for (std::map< int, yasper::ptr<Pad> >::iterator it= midiToPad.begin(); it != midiToPad.end(); ++it)
+    {
+      if( msg[2] < 63 )
+        it->second->switchSystem( Pad::SS_NONE );
+      else
+        it->second->switchSystem( Pad::SS_ROUND_ROBIN );
+      
+    }
+  }
 }
 
 Fabla2DSP::~Fabla2DSP()

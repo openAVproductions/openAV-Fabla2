@@ -21,6 +21,8 @@
 #include "sample.hxx"
 
 #include "pad.hxx"
+#include "plotter.hxx"
+
 #include <sndfile.h>
 #include <stdio.h>
 
@@ -47,7 +49,6 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
     return;
   }
   
-  
   channels = info.channels;
   frames   = info.frames;
   
@@ -57,12 +58,16 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
     return;
   }
   
-  audio.resize( info.frames );
+  audio.resize( frames * channels );
   
   sf_seek(sndfile, 0ul, SEEK_SET);
-  sf_read_float( sndfile, &audio[0], info.frames );
+  sf_read_float( sndfile, &audio[0], info.frames *channels );
   sf_close(sndfile);
-
+  
+  Plotter::plot( path, frames * channels, &audio[0] );
+  
+  printf("Sample %s loaded OK: Channels = %i, Frames = %i\n", path.c_str(), channels, frames );
+  
 #ifdef FABLA2_COMPONENT_TEST
   QUNIT_IS_TRUE( info.frames > 0 );
   QUNIT_IS_TRUE( audio.size() == info.frames );

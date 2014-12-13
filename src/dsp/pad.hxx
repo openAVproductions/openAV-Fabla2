@@ -54,10 +54,21 @@ class Pad
     
     /// playback functions
     Sample* getPlaySample( int velocity );
+    
+    /// Sets the switch system between samples
+    enum SAMPLE_SWITCH_SYSTEM {
+      SS_NONE = 0,        /// always plays first sample added
+      SS_ROUND_ROBIN,     /// iterates over all samples 1 by 1
+      SS_VELOCITY_LAYERS, /// takes velocity into account, and plays a sample
+    };
+    void switchSystem( SAMPLE_SWITCH_SYSTEM sss );
   
   private:
     Fabla2DSP* dsp;
     int sr;
+    
+    SAMPLE_SWITCH_SYSTEM sampleSwitchSystem;
+    int roundRobinCounter;
     
     /// shared pointer to each of the samples available on this pad
     std::vector< yasper::ptr<Sample> > samples;
