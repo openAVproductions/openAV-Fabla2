@@ -30,6 +30,8 @@
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "lv2/lv2plug.in/ns/ext/midi/midi.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#include "lv2/lv2plug.in/ns/ext/atom/forge.h"
+#include "lv2/lv2plug.in/ns/ext/patch/patch.h"
 
 #define FABLA2_URI    "http://www.openavproductions.com/fabla2"
 #define FABLA2_UI_URI "http://www.openavproductions.com/fabla2#gui"
@@ -38,6 +40,37 @@ namespace Fabla2
 {
   class Fabla2DSP;
 };
+
+typedef struct {
+  LV2_URID atom_Blank;
+  LV2_URID atom_Path;
+  LV2_URID atom_Resource;
+  LV2_URID atom_Sequence;
+  LV2_URID atom_URID;
+  LV2_URID atom_eventTransfer;
+
+  LV2_URID midi_MidiEvent;
+  
+  LV2_URID patch_Set;
+  LV2_URID patch_property;
+  LV2_URID patch_value;
+} URIs;
+
+static void mapUri( URIs* uris, LV2_URID_Map* map )
+{
+  uris->atom_Blank         = map->map(map->handle, LV2_ATOM__Blank);
+  uris->atom_Path          = map->map(map->handle, LV2_ATOM__Path);
+  uris->atom_Resource      = map->map(map->handle, LV2_ATOM__Resource);
+  uris->atom_Sequence      = map->map(map->handle, LV2_ATOM__Sequence);
+  uris->atom_URID          = map->map(map->handle, LV2_ATOM__URID);
+  uris->atom_eventTransfer = map->map(map->handle, LV2_ATOM__eventTransfer);
+  
+  uris->midi_MidiEvent     = map->map(map->handle, LV2_MIDI__MidiEvent);
+  
+  uris->patch_Set          = map->map(map->handle, LV2_PATCH__Set);
+  uris->patch_property     = map->map(map->handle, LV2_PATCH__property);
+  uris->patch_value        = map->map(map->handle, LV2_PATCH__value);
+}
 
 class FablaLV2
 {
@@ -62,13 +95,13 @@ class FablaLV2
     const LV2_Atom_Sequence* control;
     const LV2_Atom_Sequence* notify;
     
+    // Forge for Atoms
+    LV2_Atom_Forge forge;
+    
     // Features
     LV2_URID_Map* map;
     
-    struct {
-            LV2_URID midi_MidiEvent;
-    } uris;
-    
+    URIs uris;
     
 };
 

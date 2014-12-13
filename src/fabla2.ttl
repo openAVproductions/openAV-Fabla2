@@ -14,8 +14,16 @@
   a ui:X11UI;
   ui:binary <fabla2ui.so>;
   ui:requiredFeature ui:makeResident ;
+  
   lv2:requiredFeature ui:idleInterface ;
-  lv2:extensionData ui:idleInterface .
+  lv2:extensionData ui:idleInterface ;
+  
+  lv2:requiredFeature urid:map ;
+  ui:portNotification [
+    ui:plugin <http://lv2plug.in/plugins/eg-sampler> ;
+    lv2:symbol "notify" ;
+    ui:notifyType atom:Blank
+  ] .
 
 
 <http://www.openavproductions.com/fabla2>

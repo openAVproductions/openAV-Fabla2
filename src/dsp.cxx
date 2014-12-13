@@ -50,7 +50,10 @@ LV2_Handle FablaLV2::instantiate( const LV2_Descriptor* descriptor,
   
   FablaLV2* tmp = new FablaLV2( samplerate );
   tmp->map = map;
-  tmp->uris.midi_MidiEvent = map->map(map->handle, LV2_MIDI__MidiEvent);
+  
+  mapUri( &tmp->uris, map );
+  
+  lv2_atom_forge_init( &tmp->forge, map);
   
   return (LV2_Handle)tmp;
 }
