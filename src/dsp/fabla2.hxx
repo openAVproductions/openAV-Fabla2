@@ -26,11 +26,13 @@
 #include "midi.hxx"
 #include "yasper.hxx"
 
+#include <map>
 #include <vector>
 
 namespace Fabla2
 {
 
+class Pad;
 class Voice;
 class Library;
 
@@ -69,6 +71,9 @@ class Fabla2DSP
     
     /// Library stores all data
     yasper::ptr<Library> library;
+    
+    /// map from MIDI number to pad instance
+    std::map< int, yasper::ptr<Pad> > midiToPad;
     
     std::vector< MidiMessage > midiMessages;
 };

@@ -41,7 +41,7 @@ Sampler::Sampler( Fabla2DSP* d, int rate ) :
 {
 }
 
-void Sampler::play( int velocity, Pad* p )
+void Sampler::play( Pad* p, int velocity )
 {
   pad = p;
   

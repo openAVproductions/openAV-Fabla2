@@ -20,10 +20,14 @@
 
 #include "voice.hxx"
 
-#include "plotter.hxx"
-#include "sampler.hxx"
-#include "fabla2.hxx"
 #include <math.h>
+
+#include "fabla2.hxx"
+#include "sampler.hxx"
+
+#ifdef FABLA2_COMPONENT_TEST
+#include "plotter.hxx"
+#endif
 
 namespace Fabla2
 {
@@ -34,6 +38,7 @@ Voice::Voice( Fabla2DSP* d, int r ) :
   active_( false )
 {
   adsr = new ADSR();
+  sampler = new Sampler( d, r );
   
   adsr->setAttackRate  ( 1.0 * r );
   adsr->setDecayRate   ( 1.0 * r );
@@ -41,13 +46,15 @@ Voice::Voice( Fabla2DSP* d, int r ) :
   adsr->setReleaseRate ( 0.5 * r );
 }
 
-void Voice::play()
+void Voice::play( Pad* pad, int velocity )
 {
   active_ = true;
   phase = 0;
   
   adsr->reset();
   adsr->gate( true );
+  
+  sampler->play( pad , velocity );
   
   if( true )
   {

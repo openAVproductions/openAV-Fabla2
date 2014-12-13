@@ -27,6 +27,7 @@
 namespace Fabla2
 {
 
+class Pad;
 class FxUnit;
 class Sampler;
 class Fabla2DSP;
@@ -51,7 +52,7 @@ class Voice
     bool active(){return active_;}
     
     /// start playing a sample on this voice
-    void play();
+    void play( Pad*, int velocity );
     
     /// start recording a sample on this voice
     

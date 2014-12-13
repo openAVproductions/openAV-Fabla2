@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "pad.hxx"
 #include "voice.hxx"
 #include "library.hxx"
 
@@ -32,10 +33,14 @@ namespace Fabla2
 Fabla2DSP::Fabla2DSP( int rate )
 {
   voices.push_back( new Voice( this, rate ) );
-  voices.back()->play();
   
   memset( controlPorts, 0, sizeof(float*) * PORT_COUNT );
   
+  for(int i = 0; i < 16; i++)
+  {
+    Pad* tmpPad = new Pad( this, rate );
+    midiToPad.insert( std::pair< int,yasper::ptr<Pad> >( i + 36, tmpPad ) );
+  }
   midiMessages.resize( 1024 );
 }
 
@@ -59,9 +64,19 @@ void Fabla2DSP::process( int nf )
 void Fabla2DSP::midi( int f, const uint8_t* msg )
 {
   printf("MIDI: %i, %i, %i\n", (int)msg[0], (int)msg[1], (int)msg[2] );
-  voices.at(0)->play();
   
-  /// Logic for incoming MIDI -> Pad mapping
+  if( msg[0] == 144 )
+  {
+    /// Logic for incoming MIDI -> Pad mapping
+    for (std::map< int, yasper::ptr<Pad> >::iterator it= midiToPad.begin(); it != midiToPad.end(); ++it)
+    {
+      if( it->first == msg[1] )
+      {
+        voices.at(0)->play( it->second, msg[2] );
+      }
+    }
+    
+  }
   
   /// Logic for fetch-pad-data from Library
   
