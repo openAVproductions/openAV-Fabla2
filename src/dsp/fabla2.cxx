@@ -35,6 +35,9 @@ namespace Fabla2
 Fabla2DSP::Fabla2DSP( int rate )
 {
   voices.push_back( new Voice( this, rate ) );
+  voices.push_back( new Voice( this, rate ) );
+  voices.push_back( new Voice( this, rate ) );
+  voices.push_back( new Voice( this, rate ) );
   
   memset( controlPorts, 0, sizeof(float*) * PORT_COUNT );
   
@@ -137,6 +140,16 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
     {
       if( it->first == msg[1] )
       {
+        
+        for(int i = 0; i < voices.size(); i++)
+        {
+          if( !voices.at(i)->active() )
+          {
+            voices.at(i)->play( it->second, msg[2] );
+            break;
+          }
+        }
+        
         /// Logic for fetch-pad-data from Library
         voices.at(0)->play( it->second, msg[2] );
       }

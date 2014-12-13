@@ -1,6 +1,4 @@
 
-//#include "../fabla2/fabla2.hxx"
-
 /// lv2 core / ui includes
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"

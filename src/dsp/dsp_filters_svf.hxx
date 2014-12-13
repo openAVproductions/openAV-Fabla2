@@ -83,7 +83,7 @@ class FiltersSVF
     {
       frequency = f;
       if ( frequency < 40 ) frequency = 40;
-      if ( frequency > samplerate / 2 ) frequency = samplerate / 2;
+      if ( frequency > samplerate / 2 - 200 ) frequency = samplerate / 2 - 200;
       
       // samplerate * 2 because it's double sampled
       impFreq = 2.0*sin(M_PI*min(0.25f, frequency/(samplerate*2.f)));

@@ -49,10 +49,10 @@ Voice::Voice( Fabla2DSP* d, int r ) :
   
   voiceBuffer.resize( 1024 );
   
-  adsr->setAttackRate  ( 1.0 * r );
-  adsr->setDecayRate   ( 1.0 * r );
+  adsr->setAttackRate  ( 0.1 * r );
+  adsr->setDecayRate   ( 0.2 * r );
   adsr->setSustainLevel( 0.5  );
-  adsr->setReleaseRate ( 0.5 * r );
+  adsr->setReleaseRate ( 0.2 * r );
 }
 
 void Voice::play( Pad* p, int velocity )
@@ -91,8 +91,6 @@ void Voice::play( Pad* p, int velocity )
 void Voice::process()
 {
   
-  filterL->setValue( pad->controls[Pad::FILTER_CUTOFF] );
-  filterR->setValue( pad->controls[Pad::FILTER_CUTOFF] );
   
   int done = sampler->process( dsp->nframes, &voiceBuffer[0], &voiceBuffer[dsp->nframes] );
   
@@ -104,8 +102,13 @@ void Voice::process()
   
   for(int i = 0; i < dsp->nframes; i++ )
   {
-    *outL++ += voiceBuffer[             i];
-    *outR++ += voiceBuffer[dsp->nframes+i];
+    float adsrVal = adsr->process();
+    
+    filterL->setValue( pad->controls[Pad::FILTER_CUTOFF] * adsrVal );
+    filterR->setValue( pad->controls[Pad::FILTER_CUTOFF] * adsrVal );
+    
+    *outL++ += voiceBuffer[             i] *0.3;
+    *outR++ += voiceBuffer[dsp->nframes+i] *0.3;
   }
   
   if( done )
