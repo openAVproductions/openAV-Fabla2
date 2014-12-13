@@ -21,6 +21,10 @@
 #include "pad.hxx"
 
 #include "sample.hxx"
+#ifdef FABLA2_COMPONENT_TEST
+#include <stdio.h>
+#endif 
+
 
 namespace Fabla2
 {
@@ -44,6 +48,9 @@ Sample* Pad::getPlaySample( int velocity )
 
 Pad::~Pad()
 {
+#ifdef FABLA2_COMPONENT_TEST
+  printf("%s\n", __PRETTY_FUNCTION__ );
+#endif
 }
 
 };

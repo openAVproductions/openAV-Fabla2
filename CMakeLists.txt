@@ -11,6 +11,7 @@ set(FABLA2_VERSION "${FABLA2_VERSION_MAJOR}.${FABLA2_VERSION_MINOR}.${FABLA2_VER
 
 option(FABLA2_RELEASE_BUILD   "Build for releasing"         OFF )
 option(FABLA2_DEBUG_PRINTS    "Build with debugging prints" ON )
+option(FABLA2_TESTS           "Build component tests"       ON )
 
 
 ################################################################################
@@ -39,13 +40,13 @@ link_directories   ( ${X11_LIBRARY_DIRS} )
 SET(CMAKE_CXX_FLAGS "-trigraphs -Wl,-z,nodelete  -Wl,--no-undefined -fPIC -shared ")
 
 FILE(GLOB srcDSP src/dsp.cxx src/dsp/*.cxx )
-
 FILE(GLOB srcUI  src/ui.cxx  src/ui/*.cxx src/ui/avtk/*.cxx src/ui/avtk/pugl/pugl_x11.c )
 
 ADD_LIBRARY( fabla2   SHARED ${srcDSP} )
 ADD_LIBRARY( fabla2ui SHARED ${srcUI}  )
 set_target_properties(fabla2   PROPERTIES PREFIX "")
 set_target_properties(fabla2ui PROPERTIES PREFIX "")
+
 
 target_link_libraries( fabla2 ${SNDFILE_LIBRARIES})
 
@@ -63,3 +64,13 @@ FILE(GLOB ttls "src/*.ttl")
 install(FILES ${ttls}   DESTINATION lib/lv2/fabla2.lv2/)
 
 
+######################
+### Tests
+######################
+IF( FABLA2_TESTS )
+  ADD_DEFINITIONS( "-DFABLA2_COMPONENT_TEST" )
+  SET(CMAKE_CXX_FLAGS "-g -trigraphs -Wl,-z,nodelete  -Wl,--no-undefined")
+  FILE(GLOB srcDspTests src/dsp/tests/*.cxx src/dsp/*.cxx )
+  ADD_EXECUTABLE( fabla2test ${srcDspTests} )
+  configure_file( "src/dsp/tests/test.wav" "input" COPYONLY)
+ENDIF()

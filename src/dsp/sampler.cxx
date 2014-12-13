@@ -22,6 +22,11 @@
 
 #include "pad.hxx"
 
+#ifdef FABLA2_COMPONENT_TEST
+#include <stdio.h>
+#endif 
+
+
 namespace Fabla2
 {
 
@@ -53,6 +58,9 @@ void Sampler::process(int nframes, float* L, float* R)
 
 Sampler::~Sampler()
 {
+#ifdef FABLA2_COMPONENT_TEST
+  printf("%s\n", __PRETTY_FUNCTION__ );
+#endif
 }
 
 };

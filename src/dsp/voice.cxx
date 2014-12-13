@@ -64,9 +64,10 @@ void Voice::play()
     {
       tmp.at(i) = adsr->process();
     }
-    
+
+#ifdef FABLA2_COMPONENT_TEST
     Plotter::plot( "adsr.dat", 44100 * 5, &tmp[0] );
-    
+#endif 
   }
   
 }

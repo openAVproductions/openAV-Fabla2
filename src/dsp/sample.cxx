@@ -22,6 +22,10 @@
 
 #include "pad.hxx"
 
+#ifdef FABLA2_COMPONENT_TEST
+#include <stdio.h>
+#endif 
+
 namespace Fabla2
 {
 
@@ -32,24 +36,34 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string filePathToLoa
   isMono_( true )
 {
   // load the audio data from disk here
-  // filePathToLoad
-  
-  // isMono_
 }
 
 /// the process function: explicitly passed in voice buffers for FX later
-void Sample::process(int nframes, float* L, float* R)
+void Sample::process(int nframes, int& playhead, const float& resample, float* L, float* R)
 {
-  //if( 
-}
-
-bool Sample::isMono()
-{
-  return isMono_;
+  if( isMono_ )
+  {
+    for(int i = 0; i < nframes; i++ )
+    {
+      *L++ = audio.at( playhead   );
+      *R++ = audio.at( playhead++ );
+    }
+  }
+  else
+  {
+    for(int i = 0; i < nframes; i++ )
+    {
+      *L++ = audio.at( playhead++ );
+      *R++ = audio.at( playhead++ );
+    }
+  }
 }
 
 Sample::~Sample()
 {
+#ifdef FABLA2_COMPONENT_TEST
+  printf("%s\n", __PRETTY_FUNCTION__ );
+#endif
 }
 
 };
