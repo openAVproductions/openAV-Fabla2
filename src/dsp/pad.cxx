@@ -67,9 +67,24 @@ Sample* Pad::getPlaySample( int velocity )
         roundRobinCounter = 0;
       return tmp;
     }
+    else if( sampleSwitchSystem == SS_VELOCITY_LAYERS )
+    {
+      // iter trough samples, return first that was add()-ed that applies
+      for(int i = 0; i < samples.size(); i++ )
+      {
+        if( samples.at(i)->velocity( velocity ) )
+        {
+          return samples.at(i);
+        }
+      }
+      Sample* tmp = samples.at(roundRobinCounter++);
+      if( roundRobinCounter >= samples.size() )
+        roundRobinCounter = 0;
+      return tmp;
+    }
   }
   
-  
+  // if no sample is loaded, or a velocity outside the mapped regions is played
   return 0;
 }
 

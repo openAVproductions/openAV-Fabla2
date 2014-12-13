@@ -49,9 +49,20 @@ Fabla2DSP::Fabla2DSP( int rate )
     {
       // TODO: Fixme to use Library & RT-safe loading
       // hack code load sample for now
-      Sample* tmp = new Sample( this, rate, "SampleName#1", "/usr/local/lib/lv2/fabla2.lv2/test.wav");
+      Sample* tmp = new Sample( this, rate, "One", "/usr/local/lib/lv2/fabla2.lv2/test.wav");
+      tmp->velocity( 0, 32 );
       tmpPad->add( tmp );
-      tmp = new Sample( this, rate, "SampleName#2", "/usr/local/lib/lv2/fabla2.lv2/test2.wav");
+      
+      tmp = new Sample( this, rate, "Two", "/usr/local/lib/lv2/fabla2.lv2/test2.wav");
+      tmp->velocity( 32, 64 );
+      tmpPad->add( tmp );
+      
+      tmp = new Sample( this, rate, "Three", "/usr/local/lib/lv2/fabla2.lv2/test3.wav");
+      tmp->velocity( 64, 96 );
+      tmpPad->add( tmp );
+      
+      tmp = new Sample( this, rate, "Four", "/usr/local/lib/lv2/fabla2.lv2/test4.wav");
+      tmp->velocity( 96, 128 );
       tmpPad->add( tmp );
     }
     if ( i == 1 )
@@ -108,7 +119,7 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
     for (std::map< int, yasper::ptr<Pad> >::iterator it= midiToPad.begin(); it != midiToPad.end(); ++it)
     {
       if( msg[2] < 63 )
-        it->second->switchSystem( Pad::SS_NONE );
+        it->second->switchSystem( Pad::SS_VELOCITY_LAYERS );
       else
         it->second->switchSystem( Pad::SS_ROUND_ROBIN );
       

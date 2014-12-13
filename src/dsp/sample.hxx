@@ -44,6 +44,10 @@ class Sample
     const long    getFrames()   {return frames      ;}
     const float*  getAudio()    {return &audio[0]   ;}
     const char*   getName()     {return name.c_str();}
+    
+    /// velocity functions
+    bool velocity( int vel );
+    void velocity( int low, int high );
   
   private:
     Fabla2DSP* dsp;
@@ -55,6 +59,9 @@ class Sample
     long frames;
     std::vector<float> audio;
     
+    /// velocity range
+    int velLow;
+    int velHigh;
 };
 
 };

@@ -39,7 +39,9 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
   sr(rate),
   name( n ),
   channels( 0 ),
-  frames( 0 )
+  frames( 0 ),
+  velLow( 0 ),
+  velHigh( 127 )
 {
   SF_INFO info;
   SNDFILE* const sndfile = sf_open( path.c_str(), SFM_READ, &info);
@@ -72,6 +74,23 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
   QUNIT_IS_TRUE( info.frames > 0 );
   QUNIT_IS_TRUE( audio.size() == info.frames );
 #endif
+}
+
+void Sample::velocity( int low, int high )
+{
+  velLow  = low;
+  velHigh = high;
+}
+
+bool Sample::velocity( int vel )
+{
+  if( vel > velLow &&
+      vel <= velHigh )
+  {
+    return true;
+  }
+  
+  return false;
 }
 
 Sample::~Sample()
