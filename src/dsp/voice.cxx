@@ -49,10 +49,10 @@ Voice::Voice( Fabla2DSP* d, int r ) :
   
   voiceBuffer.resize( 1024 );
   
-  adsr->setAttackRate  ( 0.1 * r );
-  adsr->setDecayRate   ( 0.2 * r );
+  adsr->setAttackRate  ( 0.001 * r );
+  adsr->setDecayRate   ( 0.25 * r );
   adsr->setSustainLevel( 0.5  );
-  adsr->setReleaseRate ( 0.2 * r );
+  adsr->setReleaseRate ( 0.5 * r );
 }
 
 void Voice::play( Pad* p, int velocity )
@@ -90,9 +90,18 @@ void Voice::play( Pad* p, int velocity )
 
 void Voice::process()
 {
-  
+  if( !active_ )
+    return;
   
   int done = sampler->process( dsp->nframes, &voiceBuffer[0], &voiceBuffer[dsp->nframes] );
+  
+  // fast forward the ADSR to the after nframes-value, to respond faster
+  for(int i = 0; i < dsp->nframes - 1; i++)
+    adsr->process();
+  
+  float adsrVal = adsr->process();
+  filterL->setValue( (pad->controls[Pad::FILTER_CUTOFF]+0.3) * adsrVal );
+  filterR->setValue( (pad->controls[Pad::FILTER_CUTOFF]+0.3) * adsrVal );
   
   filterL->process( dsp->nframes, &voiceBuffer[           0], &voiceBuffer[           0] );
   filterR->process( dsp->nframes, &voiceBuffer[dsp->nframes], &voiceBuffer[dsp->nframes] );
@@ -102,11 +111,6 @@ void Voice::process()
   
   for(int i = 0; i < dsp->nframes; i++ )
   {
-    float adsrVal = adsr->process();
-    
-    filterL->setValue( pad->controls[Pad::FILTER_CUTOFF] * adsrVal );
-    filterR->setValue( pad->controls[Pad::FILTER_CUTOFF] * adsrVal );
-    
     *outL++ += voiceBuffer[             i] *0.3;
     *outR++ += voiceBuffer[dsp->nframes+i] *0.3;
   }
