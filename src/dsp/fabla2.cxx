@@ -32,12 +32,16 @@
 namespace Fabla2
 {
 
-Fabla2DSP::Fabla2DSP( int rate )
+Fabla2DSP::Fabla2DSP( int rate ) :
+  sr( rate ),
+  recordEnable( false )
 {
   voices.push_back( new Voice( this, rate ) );
   voices.push_back( new Voice( this, rate ) );
   voices.push_back( new Voice( this, rate ) );
   voices.push_back( new Voice( this, rate ) );
+  
+  recordBuffer.resize( rate * 4 );
   
   memset( controlPorts, 0, sizeof(float*) * PORT_COUNT );
   
@@ -90,7 +94,6 @@ Fabla2DSP::Fabla2DSP( int rate )
     
     midiToPad.insert( std::pair< int,yasper::ptr<Pad> >( i + 36, tmpPad ) );
   }
-  midiMessages.resize( 1024 );
 }
 
 void Fabla2DSP::process( int nf )
@@ -99,6 +102,20 @@ void Fabla2DSP::process( int nf )
   
   memset( controlPorts[OUTPUT_L], 0, sizeof(float) * nframes );
   memset( controlPorts[OUTPUT_R], 0, sizeof(float) * nframes );
+  
+  if( recordEnable && recordIndex + nframes < sr * 4 )
+  {
+    for(int i = 0; i < nframes; i++)
+    {
+      recordBuffer[recordIndex++] = controlPorts[INPUT_L][i];
+      recordBuffer[recordIndex++] = controlPorts[INPUT_R][i];
+    }
+  }
+  else if( recordEnable )
+  {
+    recordEnable = false;
+    printf("record stopped: out of space! %li\n", recordIndex );
+  }
   
   for( int i = 0; i < voices.size(); i++ )
   {
@@ -135,27 +152,64 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
   
   if( msg[0] == 144 )
   {
-    /// Logic for incoming MIDI -> Pad mapping
-    for (std::map< int, yasper::ptr<Pad> >::iterator it= midiToPad.begin(); it != midiToPad.end(); ++it)
+    if( !recordEnable )
     {
-      if( it->first == msg[1] )
+      /// Logic for incoming MIDI -> Pad mapping
+      for (std::map< int, yasper::ptr<Pad> >::iterator it= midiToPad.begin(); it != midiToPad.end(); ++it)
       {
-        
-        for(int i = 0; i < voices.size(); i++)
+        if( it->first == msg[1] )
         {
-          if( !voices.at(i)->active() )
+          
+          for(int i = 0; i < voices.size(); i++)
           {
-            voices.at(i)->play( it->second, msg[2] );
-            break;
+            if( !voices.at(i)->active() )
+            {
+              voices.at(i)->play( it->second, msg[2] );
+              break;
+            }
           }
+          
+          /// Logic for fetch-pad-data from Library
+          voices.at(0)->play( it->second, msg[2] );
         }
-        
-        /// Logic for fetch-pad-data from Library
-        voices.at(0)->play( it->second, msg[2] );
       }
     }
+    else
+    {
+      // record on this Pad
+      recordPad = msg[1] - 36;
+      recordIndex = 0;
+    }
+    
   }
-  
+  else if ( msg[0] == 240 && msg[1] == 127 )
+  {
+    if( recordEnable )
+    {
+      printf("record disabled, pad # %i\n", recordPad );
+      
+      if( midiToPad.find( 36 + recordPad ) != midiToPad.end() )
+      {
+        printf("%s : NON RT SAFE NEW SAMPLE()\n", __PRETTY_FUNCTION__ );
+        Sample* s = new Sample( this, sr, recordIndex, &recordBuffer[0] );
+        
+        // s is auto-released when shared_ptr goes out of scope
+        midiToPad[ 36 + recordPad ]->clearAllSamples();
+        midiToPad[ 36 + recordPad ]->add( s );
+      }
+      recordPad = -1;
+      recordIndex = 0;
+      recordEnable = false;
+    }
+    else
+    {
+      recordEnable = true;
+      recordIndex = 0;
+      recordPad = -1;
+      printf("record enabled!\n");
+    }
+    
+  }
   
   else if( msg[0] == 176 )
   {

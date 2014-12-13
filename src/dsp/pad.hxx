@@ -58,6 +58,7 @@ class Pad
     
     /// library functions
     void add( Sample* );
+    void clearAllSamples();
     
     /// playback functions
     Sample* getPlaySample( int velocity );

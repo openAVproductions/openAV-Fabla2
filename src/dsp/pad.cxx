@@ -90,6 +90,11 @@ Sample* Pad::getPlaySample( int velocity )
   return 0;
 }
 
+void Pad::clearAllSamples()
+{
+  samples.clear();
+}
+
 void Pad::switchSystem( SAMPLE_SWITCH_SYSTEM ss )
 {
   sampleSwitchSystem = ss;

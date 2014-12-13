@@ -37,8 +37,8 @@ class Library
     
     /// get resources for a certain bank/pad
     
-  private:
     
+  private:
     
 };
 

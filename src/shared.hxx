@@ -40,6 +40,10 @@
 //#define EG_SAMPLER__sample      EG_SAMPLER_URI "#sample"
 
 #define FABLA2_sample           FABLA2_URI "#sample"
+#define FABLA2_PadEvent         FABLA2_URI "#PadEvent"
+//#define FABLA2_bank             FABLA2_URI "#bank"
+#define FABLA2_pad              FABLA2_URI "#pad"
+#define FABLA2_velocity         FABLA2_URI "#velocity"
 
 
 typedef struct {
@@ -57,6 +61,9 @@ typedef struct {
   LV2_URID patch_value;
   
   LV2_URID fabla2_sample;
+  LV2_URID fabla2_PadEvent;
+  LV2_URID fabla2_velocity;
+  LV2_URID fabla2_pad;
 } URIs;
 
 static void mapUri( URIs* uris, LV2_URID_Map* map )
@@ -75,6 +82,9 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->patch_value        = map->map(map->handle, LV2_PATCH__value);
   
   uris->fabla2_sample      = map->map(map->handle, FABLA2_sample);
+  uris->fabla2_PadEvent    = map->map(map->handle, FABLA2_PadEvent);
+  uris->fabla2_pad         = map->map(map->handle, FABLA2_pad);
+  uris->fabla2_velocity    = map->map(map->handle, FABLA2_velocity);
 }
 
 

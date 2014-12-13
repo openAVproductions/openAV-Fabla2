@@ -66,6 +66,8 @@ class Fabla2DSP
     void midi( int frame, const uint8_t* );
     
   private:
+    int sr;
+    
     /// voices store all the voices available for use
     std::vector< yasper::ptr<Voice> > voices;
     
@@ -75,7 +77,11 @@ class Fabla2DSP
     /// map from MIDI number to pad instance
     std::map< int, yasper::ptr<Pad> > midiToPad;
     
-    std::vector< MidiMessage > midiMessages;
+    /// record buffer: when a record operation begins, it uses this buffer
+    bool recordEnable;
+    int  recordPad;
+    long recordIndex;
+    std::vector<float> recordBuffer;
 };
 
 }; // Fabla2

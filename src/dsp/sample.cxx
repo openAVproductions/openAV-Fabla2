@@ -25,6 +25,7 @@
 
 #include <sndfile.h>
 #include <stdio.h>
+#include <string.h>
 
 #ifdef FABLA2_COMPONENT_TEST
 #include "tests/qunit.hxx"
@@ -33,6 +34,20 @@ extern QUnit::UnitTest qunit;
 
 namespace Fabla2
 {
+
+Sample::Sample( Fabla2DSP* d, int rate, int size, float* data ) :
+  dsp( d ),
+  sr(rate),
+  channels( 2 ),
+  frames( size / 2 ),
+  velLow( 0 ),
+  velHigh( 127 )
+{
+  audio.resize( size );
+  
+  memcpy( &audio[0], data, sizeof(float) * size );
+  
+}
 
 Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
   dsp( d ),

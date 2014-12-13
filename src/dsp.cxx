@@ -119,7 +119,25 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
     {
       const uint8_t* const msg = (const uint8_t*)(ev + 1);
       self->dsp->midi( ev->time.frames, msg );
+      
+      if( msg[0] == 144 || msg[0] == 128 )
+      {
+        // write note on/off MIDI events to UI
+        LV2_Atom_Forge_Frame frame;
+        lv2_atom_forge_frame_time( &self->forge, ev->time.frames );
+        lv2_atom_forge_object( &self->forge, &frame, 0, self->uris.fabla2_PadEvent );
+
+        // Add UI state as properties
+        lv2_atom_forge_key(&self->forge, self->uris.fabla2_pad);
+        lv2_atom_forge_int(&self->forge, msg[1] );
+        
+        lv2_atom_forge_key(&self->forge, self->uris.fabla2_velocity);
+        lv2_atom_forge_int(&self->forge, msg[2] );
+        
+      }
+      
     }
+    
   }
   
   self->dsp->process( nframes );
