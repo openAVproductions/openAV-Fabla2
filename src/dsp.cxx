@@ -133,7 +133,6 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
         
         lv2_atom_forge_key(&self->forge, self->uris.fabla2_velocity);
         lv2_atom_forge_int(&self->forge, msg[2] );
-        
       }
       
     }
