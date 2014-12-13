@@ -67,7 +67,7 @@ void Voice::play( Pad* p, int velocity )
   sampler->play( pad, velocity );
 
 #ifdef FABLA2_COMPONENT_TEST
-  if( true )
+  if( false )
   {
     std::vector<float> tmp(44100 * 5);
     int i = 0;

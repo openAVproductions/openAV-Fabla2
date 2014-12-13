@@ -12,8 +12,6 @@ static void widgetCB(Avtk::Widget* w, void* ud);
 TestUI::TestUI( PuglNativeWindow parent ):
   Avtk::UI( 610, 430, parent )
 {
-  mapUri( &uris, map );
-  
   // slider vert
   masterVolume = new Avtk::Slider( this, 520, 40, 22, 220, "Master Volume" );
   masterVolume->callback = widgetCB;

@@ -66,11 +66,12 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
   sf_read_float( sndfile, &audio[0], info.frames *channels );
   sf_close(sndfile);
   
-  Plotter::plot( path, frames * channels, &audio[0] );
-  
-  printf("Sample %s loaded OK: Channels = %i, Frames = %i\n", path.c_str(), channels, frames );
-  
 #ifdef FABLA2_COMPONENT_TEST
+  if( false )
+  {
+    Plotter::plot( path, frames * channels, &audio[0] );
+    printf("Sample %s loaded OK: Channels = %i, Frames = %i\n", path.c_str(), channels, frames );
+  }
   QUNIT_IS_TRUE( info.frames > 0 );
   QUNIT_IS_TRUE( audio.size() == info.frames );
 #endif

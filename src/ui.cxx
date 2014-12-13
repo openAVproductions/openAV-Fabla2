@@ -30,7 +30,7 @@ static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descript
   
   for (int i = 0; features[i]; ++i)
   {
-    //printf("Feature %s\n", features[i]->URI );
+    printf("Feature %s\n", features[i]->URI );
     if (!strcmp(features[i]->URI, LV2_UI__parent))
     {
       parentXwindow = (PuglNativeWindow)features[i]->data;
@@ -42,23 +42,31 @@ static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descript
     else if (!strcmp(features[i]->URI, LV2_URID__map))
     {
       map = (LV2_URID_Map*)features[i]->data;
-      break;
     }
-    
   }
-  //write_function, controller,
+  
+  // ensure we have the LV2 requirements
+  if( !map || !write_function || !controller || !parentXwindow )
+  {
+    return 0;
+  }
+  
   TestUI* t = new TestUI( parentXwindow );
   
   t->map = map;
   t->write_function = write_function;
   t->controller     = controller;
   
+  mapUri( &t->uris, map );
+  
   *widget = (void*)t->getNativeHandle();
   
-  //printf("init() - returning\n");
-  
-  if (resize) {
+  if (resize)
+  {
     resize->ui_resize(resize->handle, 610, 430 );
+  } else
+  {
+    printf("Your host does not support LV2:Resize, please ask the developers to implement it!\n");
   }
   
   return t;
