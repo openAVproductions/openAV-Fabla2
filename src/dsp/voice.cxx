@@ -24,7 +24,10 @@
 #include <stdio.h>
 
 #include "fabla2.hxx"
+
+#include "pad.hxx"
 #include "sampler.hxx"
+#include "dsp_filters_svf.hxx"
 
 #ifdef FABLA2_COMPONENT_TEST
 #include "plotter.hxx"
@@ -36,10 +39,15 @@ namespace Fabla2
 Voice::Voice( Fabla2DSP* d, int r ) :
   dsp( d ),
   sr ( r ),
+  pad( 0 ),
   active_( false )
 {
   adsr = new ADSR();
   sampler = new Sampler( d, r );
+  filterL = new FiltersSVF( r );
+  filterR = new FiltersSVF( r );
+  
+  voiceBuffer.resize( 1024 );
   
   adsr->setAttackRate  ( 1.0 * r );
   adsr->setDecayRate   ( 1.0 * r );
@@ -47,8 +55,9 @@ Voice::Voice( Fabla2DSP* d, int r ) :
   adsr->setReleaseRate ( 0.5 * r );
 }
 
-void Voice::play( Pad* pad, int velocity )
+void Voice::play( Pad* p, int velocity )
 {
+  pad = p;
   active_ = true;
   phase = 0;
   
@@ -79,13 +88,25 @@ void Voice::play( Pad* pad, int velocity )
 #endif
 }
 
-
 void Voice::process()
 {
+  
+  filterL->setValue( pad->controls[Pad::FILTER_CUTOFF] );
+  filterR->setValue( pad->controls[Pad::FILTER_CUTOFF] );
+  
+  int done = sampler->process( dsp->nframes, &voiceBuffer[0], &voiceBuffer[dsp->nframes] );
+  
+  filterL->process( dsp->nframes, &voiceBuffer[           0], &voiceBuffer[           0] );
+  filterR->process( dsp->nframes, &voiceBuffer[dsp->nframes], &voiceBuffer[dsp->nframes] );
+  
   float* outL = dsp->controlPorts[OUTPUT_L];
   float* outR = dsp->controlPorts[OUTPUT_R];
   
-  int done = sampler->process( dsp->nframes, outL, outR );
+  for(int i = 0; i < dsp->nframes; i++ )
+  {
+    *outL++ += voiceBuffer[             i];
+    *outR++ += voiceBuffer[dsp->nframes+i];
+  }
   
   if( done )
   {

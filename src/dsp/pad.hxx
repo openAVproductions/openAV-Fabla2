@@ -49,6 +49,13 @@ class Pad
     Pad( Fabla2DSP* dsp, int rate );
     ~Pad();
     
+    enum PAD_CONTROLS {
+      FILTER_CUTOFF,
+      CONTROLS_COUNT,
+    };
+    
+    float controls[CONTROLS_COUNT];
+    
     /// library functions
     void add( Sample* );
     

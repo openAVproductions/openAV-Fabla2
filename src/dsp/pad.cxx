@@ -22,6 +22,7 @@
 
 #include "sample.hxx"
 #include <stdio.h>
+#include <string.h>
 
 #ifdef FABLA2_COMPONENT_TEST
 #include "tests/qunit.hxx"
@@ -39,6 +40,7 @@ Pad::Pad( Fabla2DSP* d, int rate ) :
   sampleSwitchSystem( SS_NONE ),
   roundRobinCounter(0)
 {
+  memset( controls, 0, sizeof(float) * CONTROLS_COUNT );
 }
 
 void Pad::add( Sample* s )

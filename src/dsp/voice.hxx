@@ -24,12 +24,16 @@
 #include "yasper.hxx"
 #include "dsp_adsr.hxx"
 
+#include <vector>
+
 namespace Fabla2
 {
 
 class Pad;
 class FxUnit;
 class Sampler;
+class FiltersSVF;
+
 class Fabla2DSP;
 
 /** Voice
@@ -60,12 +64,17 @@ class Voice
     /// audio buffers etc from there: no need to pass them around.
     void process();
     
-    ADSR* getADSR(){return adsr.GetRawPointer();}
-    Sampler* getSampler(){return sampler.GetRawPointer();}
+    //ADSR* getADSR(){return adsr.GetRawPointer();}
+    //Sampler* getSampler(){return sampler.GetRawPointer();}
     
+    float* getVoiceBuffer(){return &voiceBuffer[0];}
+    
+  
   private:
     Fabla2DSP* dsp;
     int sr;
+    
+    Pad* pad;
     
     bool active_;
     
@@ -73,6 +82,11 @@ class Voice
     
     yasper::ptr<ADSR> adsr;
     yasper::ptr<Sampler> sampler;
+    yasper::ptr<FiltersSVF> filterL;
+    yasper::ptr<FiltersSVF> filterR;
+    
+    std::vector<float> voiceBuffer;
+    
 };
 
 };

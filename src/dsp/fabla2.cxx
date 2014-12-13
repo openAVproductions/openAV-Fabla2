@@ -35,9 +35,6 @@ namespace Fabla2
 Fabla2DSP::Fabla2DSP( int rate )
 {
   voices.push_back( new Voice( this, rate ) );
-  voices.push_back( new Voice( this, rate ) );
-  voices.push_back( new Voice( this, rate ) );
-  voices.push_back( new Voice( this, rate ) );
   
   memset( controlPorts, 0, sizeof(float*) * PORT_COUNT );
   
@@ -52,7 +49,7 @@ Fabla2DSP::Fabla2DSP( int rate )
       Sample* tmp = new Sample( this, rate, "One", "/usr/local/lib/lv2/fabla2.lv2/test.wav");
       tmp->velocity( 0, 32 );
       tmpPad->add( tmp );
-      
+      /*
       tmp = new Sample( this, rate, "Two", "/usr/local/lib/lv2/fabla2.lv2/test2.wav");
       tmp->velocity( 32, 64 );
       tmpPad->add( tmp );
@@ -64,12 +61,27 @@ Fabla2DSP::Fabla2DSP( int rate )
       tmp = new Sample( this, rate, "Four", "/usr/local/lib/lv2/fabla2.lv2/test4.wav");
       tmp->velocity( 96, 128 );
       tmpPad->add( tmp );
+      */
     }
     if ( i == 1 )
     {
       // TODO: Fixme to use Library & RT-safe loading
       // hack code load sample for now
-      Sample* tmp = new Sample( this, rate, "SampleName#2", "/usr/local/lib/lv2/fabla2.lv2/test2.wav");
+      Sample* tmp = new Sample( this, rate, "Two", "/usr/local/lib/lv2/fabla2.lv2/test2.wav");
+      tmpPad->add( tmp );
+    }
+    if ( i == 2 )
+    {
+      // TODO: Fixme to use Library & RT-safe loading
+      // hack code load sample for now
+      Sample* tmp = new Sample( this, rate, "Three", "/usr/local/lib/lv2/fabla2.lv2/test3.wav");
+      tmpPad->add( tmp );
+    }
+    if ( i == 3 )
+    {
+      // TODO: Fixme to use Library & RT-safe loading
+      // hack code load sample for now
+      Sample* tmp = new Sample( this, rate, "Four", "/usr/local/lib/lv2/fabla2.lv2/test4.wav");
       tmpPad->add( tmp );
     }
     
@@ -94,6 +106,24 @@ void Fabla2DSP::process( int nf )
       v->process();
     }
   }
+  
+  // master outputs
+  
+  /*
+  for(int i = 0; i < nframes; i++ )
+  {
+    float* outL = controlPorts[OUTPUT_L];
+    float* outR = controlPorts[OUTPUT_R];
+    
+    for(int i = 0; i < voices.size(); i++ )
+    {
+      float* v = voices.at(i)->getVoiceBuffer();
+      *outL++ += v[ i ];
+      *outR++ += v[ nframes + i ];
+    }
+  }
+  */
+  
 }
 
 void Fabla2DSP::midi( int f, const uint8_t* msg )
@@ -113,8 +143,17 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
     }
   }
   
+  
   else if( msg[0] == 176 )
   {
+    if( midiToPad.find( 36 + msg[1] ) != midiToPad.end() )
+    {
+      midiToPad[ 36 + msg[1] - 1 ]->controls[Pad::FILTER_CUTOFF] = msg[2] / 127.f;
+    }
+    
+    
+    
+    /*
     /// library to get Pad
     for (std::map< int, yasper::ptr<Pad> >::iterator it= midiToPad.begin(); it != midiToPad.end(); ++it)
     {
@@ -122,9 +161,10 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
         it->second->switchSystem( Pad::SS_VELOCITY_LAYERS );
       else
         it->second->switchSystem( Pad::SS_ROUND_ROBIN );
-      
     }
+    */
   }
+  
 }
 
 Fabla2DSP::~Fabla2DSP()
