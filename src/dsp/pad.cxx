@@ -23,6 +23,8 @@
 #include "sample.hxx"
 #ifdef FABLA2_COMPONENT_TEST
 #include <stdio.h>
+#include "tests/qunit.hxx"
+extern QUnit::UnitTest qunit;
 #endif 
 
 
@@ -42,8 +44,14 @@ void Pad::add( Sample* s )
 
 Sample* Pad::getPlaySample( int velocity )
 {
+#ifdef FABLA2_COMPONENT_TEST
+  QUNIT_IS_TRUE( samples.size() > 0 );
+#endif
   /// Logic to do round-robin / velocity mapping here
-  return samples.at( 0 );
+  if( samples.size() )
+    return samples.at( 0 );
+  
+  return 0;
 }
 
 Pad::~Pad()

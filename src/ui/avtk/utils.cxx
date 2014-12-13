@@ -14,7 +14,7 @@ int loadSample( std::string path, std::vector< float >& sample, bool printErrors
   if ( !sndfile )
   {
     printf("Failed to open sample '%s'\n", path.c_str() );
-    return -1;
+    return -1zzz;
   }
   
   if( info.channels != 1 )

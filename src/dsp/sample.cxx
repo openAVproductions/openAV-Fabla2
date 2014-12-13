@@ -21,21 +21,47 @@
 #include "sample.hxx"
 
 #include "pad.hxx"
+#include <sndfile.h>
+#include <stdio.h>
 
 #ifdef FABLA2_COMPONENT_TEST
-#include <stdio.h>
+#include "tests/qunit.hxx"
+extern QUnit::UnitTest qunit;
 #endif 
 
 namespace Fabla2
 {
 
-Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string filePathToLoad  ) :
+Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
   dsp( d ),
   sr(rate),
   name( n ),
   isMono_( true )
 {
-  // load the audio data from disk here
+  SF_INFO info;
+  SNDFILE* const sndfile = sf_open( path.c_str(), SFM_READ, &info);
+  if ( !sndfile )
+  {
+    printf("Failed to open sample '%s'\n", path.c_str() );
+    return;
+  }
+  
+  if( info.channels != 1 )
+  {
+    printf("Error loading sample %s, channels != 1\n", path.c_str() );
+    return;
+  }
+  
+  audio.resize( info.frames );
+  
+  sf_seek(sndfile, 0ul, SEEK_SET);
+  sf_read_float( sndfile, &audio[0], info.frames );
+  sf_close(sndfile);
+
+#ifdef FABLA2_COMPONENT_TEST
+  QUNIT_IS_TRUE( info.frames > 0 );
+  QUNIT_IS_TRUE( audio.size() == info.frames );
+#endif
 }
 
 /// the process function: explicitly passed in voice buffers for FX later

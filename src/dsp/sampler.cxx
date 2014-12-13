@@ -47,6 +47,14 @@ void Sampler::play( int velocity, Pad* p )
   
   sample = pad->getPlaySample( velocity );
   
+  if( !sample )
+  {
+#ifdef FABLA2_COMPONENT_TEST
+  printf("%s ERROR : pad->getPlaySample() returned 0!\n", __PRETTY_FUNCTION__ );
+#endif
+    return;
+  }
+  
   // trigger audio playback here
   playIndex = 0;
 }
