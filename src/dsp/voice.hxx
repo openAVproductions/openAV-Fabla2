@@ -21,9 +21,14 @@
 #ifndef OPENAV_FABLA2_VOICE_HXX
 #define OPENAV_FABLA2_VOICE_HXX
 
+#include "yasper.hxx"
+#include "dsp_adsr.hxx"
+
 namespace Fabla2
 {
 
+class FxUnit;
+class Sampler;
 class Fabla2DSP;
 
 /** Voice
@@ -62,6 +67,8 @@ class Voice
     
     float phase;
     
+    yasper::ptr<ADSR> adsr;
+    yasper::ptr<Sampler> sampler;
 };
 
 };

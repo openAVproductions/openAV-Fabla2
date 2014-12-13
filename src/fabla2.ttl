@@ -42,8 +42,8 @@
           atom:supports midi:MidiEvent ;
           lv2:designation lv2:control ;
           lv2:index 0 ;
-          lv2:symbol "control" ;
-          lv2:name "Control"
+          lv2:symbol "midi_in" ;
+          lv2:name "MIDI Input"
   ] , [
       a lv2:OutputPort ,
           atom:AtomPort ;

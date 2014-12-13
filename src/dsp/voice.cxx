@@ -20,6 +20,8 @@
 
 #include "voice.hxx"
 
+#include "plotter.hxx"
+#include "sampler.hxx"
 #include "fabla2.hxx"
 #include <math.h>
 
@@ -31,13 +33,50 @@ Voice::Voice( Fabla2DSP* d, int r ) :
   sr ( r ),
   active_( false )
 {
+  adsr = new ADSR();
+  
+  adsr->setAttackRate  ( 1.0 * r );
+  adsr->setDecayRate   ( 1.0 * r );
+  adsr->setSustainLevel( 0.5  );
+  adsr->setReleaseRate ( 0.5 * r );
 }
 
 void Voice::play()
 {
   active_ = true;
   phase = 0;
+  
+  adsr->reset();
+  adsr->gate( true );
+  
+  if( true )
+  {
+    std::vector<float> tmp(44100 * 5);
+    int i = 0;
+    for( i = 0; i < 44100 * 3; i++ )
+    {
+      tmp.at(i) = adsr->process();
+    }
+    
+    adsr->gate( false );
+    
+    for( ; i < 44100 * 5; i++ )
+    {
+      tmp.at(i) = adsr->process();
+    }
+    
+    Plotter::plot( "adsr.dat", 44100 * 5, &tmp[0] );
+    
+  }
+  
 }
+
+/*
+void Voice::stop()
+{
+  adsr->gate( false );
+}
+*/
 
 void Voice::process()
 {
@@ -46,12 +85,16 @@ void Voice::process()
   
   for( int i = 0; i < dsp->nframes; i++ )
   {
-    float freq = 40 + 400 * *dsp->controlPorts[MASTER_VOL];
-    const float sampsPerCycle = sr / freq;
+    float adsrValue = adsr->process();
+    float freq = 40 + 400.f * *dsp->controlPorts[MASTER_VOL];
+    
+    const float sampsPerCycle = sr / 110;
     const float phaseInc = (1.f / sampsPerCycle);
     
-    *outL++ += sin( phase * 3.1415 ) * 0.2;
-    *outR++ += sin( phase * 3.1415 ) * 0.2;
+    const float tmp = sin( phase * 2 * 3.1415 ) * 0.2 * adsrValue;
+    
+    *outL++ += tmp;
+    *outR++ += tmp;
     
     phase += phaseInc;
   }

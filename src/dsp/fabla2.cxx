@@ -59,6 +59,14 @@ void Fabla2DSP::process( int nf )
 void Fabla2DSP::midi( int f, const uint8_t* msg )
 {
   printf("MIDI: %i, %i, %i\n", (int)msg[0], (int)msg[1], (int)msg[2] );
+  voices.at(0)->play();
+  
+  /// Logic for incoming MIDI -> Pad mapping
+  
+  /// Logic for fetch-pad-data from Library
+  
+  /// Logic for set-pad-data to available Voice
+  
 }
 
 Fabla2DSP::~Fabla2DSP()
