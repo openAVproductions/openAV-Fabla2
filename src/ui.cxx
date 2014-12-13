@@ -58,6 +58,7 @@ static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descript
   t->controller     = controller;
   
   mapUri( &t->uris, map );
+  lv2_atom_forge_init( &t->forge, map );
   
   *widget = (void*)t->getNativeHandle();
   

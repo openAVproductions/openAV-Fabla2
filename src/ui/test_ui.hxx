@@ -30,17 +30,16 @@ class TestUI : public Avtk::UI
     Avtk::List* list2;
     Avtk::Waveform* waveform;
     
+    Avtk::Widget* loadSampleBtn;
+    
+    // LV2 ports
     LV2UI_Controller controller;
     LV2UI_Write_Function write_function;
     
-    LV2_URID_Map* map;
+    // LV2 Atom
     URIs uris;
-  
-  private:
-    // stores the origin widget, to avoid recusive calling
-    Avtk::Widget* originSetAllWidget;
-    
-    
+    LV2_URID_Map* map;
+    LV2_Atom_Forge forge;
 };
 
 

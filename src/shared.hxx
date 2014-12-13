@@ -36,6 +36,12 @@
 #define FABLA2_URI    "http://www.openavproductions.com/fabla2"
 #define FABLA2_UI_URI "http://www.openavproductions.com/fabla2#gui"
 
+//#define EG_SAMPLER_URI          "http://lv2plug.in/plugins/eg-sampler"
+//#define EG_SAMPLER__sample      EG_SAMPLER_URI "#sample"
+
+#define FABLA2_sample           FABLA2_URI "#sample"
+
+
 typedef struct {
   LV2_URID atom_Blank;
   LV2_URID atom_Path;
@@ -49,6 +55,8 @@ typedef struct {
   LV2_URID patch_Set;
   LV2_URID patch_property;
   LV2_URID patch_value;
+  
+  LV2_URID fabla2_sample;
 } URIs;
 
 static void mapUri( URIs* uris, LV2_URID_Map* map )
@@ -65,6 +73,8 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->patch_Set          = map->map(map->handle, LV2_PATCH__Set);
   uris->patch_property     = map->map(map->handle, LV2_PATCH__property);
   uris->patch_value        = map->map(map->handle, LV2_PATCH__value);
+  
+  uris->fabla2_sample      = map->map(map->handle, FABLA2_sample);
 }
 
 

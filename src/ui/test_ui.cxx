@@ -7,6 +7,9 @@
 
 #include "../shared.hxx"
 
+// implementation of LV2 Atom writing
+#include "writer.hxx"
+
 static void widgetCB(Avtk::Widget* w, void* ud);
 
 TestUI::TestUI( PuglNativeWindow parent ):
@@ -17,6 +20,11 @@ TestUI::TestUI( PuglNativeWindow parent ):
   masterVolume->callback = widgetCB;
   masterVolume->callbackUD = this;
   add( masterVolume );
+  
+  loadSampleBtn = new Avtk::Button( this, 70, 70, 120, 25, "Load Sample" );
+  loadSampleBtn->callback = widgetCB;
+  loadSampleBtn->callbackUD = this;
+  add( loadSampleBtn );
 }
 
 static void widgetCB(Avtk::Widget* w, void* ud)
@@ -30,21 +38,21 @@ static void widgetCB(Avtk::Widget* w, void* ud)
     printf("master volume\n");
     ui->write_function( ui->controller, Fabla2::MASTER_VOL, sizeof(float), 0, &tmp );
   }
-  if( false ) // load widget clicked
+  if( w == ui->loadSampleBtn )
   {
-    /*
+    printf("load clicked\n");
+    
 #define OBJ_BUF_SIZE 1024
     uint8_t obj_buf[OBJ_BUF_SIZE];
     lv2_atom_forge_set_buffer(&ui->forge, obj_buf, OBJ_BUF_SIZE);
     
-    std::string filenameToLoad;
+    std::string filenameToLoad = "test.wav";
     
-    LV2_Atom* msg = writeSetFile(&ui->forge, &ui->uris,
-        filenameToLoad.c_str(), strlen(filenameToLoad.c_str()) );
+    LV2_Atom* msg = writeSetFile(&ui->forge, &ui->uris, filenameToLoad );
     
-    ui->write(ui->controller, 0, lv2_atom_total_size(msg),
+    ui->write_function(ui->controller, 0, lv2_atom_total_size(msg),
               ui->uris.atom_eventTransfer,
               msg);
-    */
+    
   }
 }
