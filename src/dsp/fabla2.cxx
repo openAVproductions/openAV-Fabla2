@@ -25,6 +25,7 @@
 
 #include "pad.hxx"
 #include "voice.hxx"
+#include "sample.hxx"
 #include "library.hxx"
 
 namespace Fabla2
@@ -39,6 +40,15 @@ Fabla2DSP::Fabla2DSP( int rate )
   for(int i = 0; i < 16; i++)
   {
     Pad* tmpPad = new Pad( this, rate );
+    
+    if ( i == 0 )
+    {
+      // TODO: Fixme to use Library & RT-safe loading
+      // hack code load sample for now
+      Sample* tmp = new Sample( this, rate, "SampleName#1", "/root/openav/fabla2/src/dsp/tests/test.wav");
+      tmpPad->add( tmp );
+    }
+    
     midiToPad.insert( std::pair< int,yasper::ptr<Pad> >( i + 36, tmpPad ) );
   }
   midiMessages.resize( 1024 );

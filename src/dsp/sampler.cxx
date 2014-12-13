@@ -21,11 +21,8 @@
 #include "sampler.hxx"
 
 #include "pad.hxx"
-
-#ifdef FABLA2_COMPONENT_TEST
+#include "sample.hxx"
 #include <stdio.h>
-#endif 
-
 
 namespace Fabla2
 {
@@ -54,6 +51,8 @@ void Sampler::play( Pad* p, int velocity )
 #endif
     return;
   }
+  
+  printf("sampler playgin sample %s\n", sample->getName() );
   
   // trigger audio playback here
   playIndex = 0;

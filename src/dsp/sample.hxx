@@ -41,6 +41,8 @@ class Sample
     
     /// the process function: explicitly passed in voice buffers for FX later
     void process(int nframes, int& playhead, const float& resample, float* L, float* R);
+    
+    const char* getName(){return name.c_str();}
   
   private:
     Fabla2DSP* dsp;
