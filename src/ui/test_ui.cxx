@@ -13,13 +13,18 @@
 static void widgetCB(Avtk::Widget* w, void* ud);
 
 TestUI::TestUI( PuglNativeWindow parent ):
-  Avtk::UI( 610, 430, parent )
+  Avtk::UI( 780, 330, parent )
 {
   // slider vert
   masterVolume = new Avtk::Slider( this, 520, 40, 22, 220, "Master Volume" );
   masterVolume->callback = widgetCB;
   masterVolume->callbackUD = this;
   add( masterVolume );
+  
+  // slider vert
+  Avtk::Image* headerImage = new Avtk::Image( this, 0, 0, 780, 36, "Header Image" );
+  headerImage->load( header.pixel_data );
+  add( headerImage );
   
   /*
   loadSampleBtn = new Avtk::Button( this, 70, 70, 120, 25, "Load Sample" );
@@ -29,22 +34,26 @@ TestUI::TestUI( PuglNativeWindow parent ):
   */
   
   // pads
-  int x = 5;
-  int y = 41 + (45+2) * 4;
+  int xS = 64;
+  int yS = 64;
+  int border = 8;
+  
+  int x = 62;
+  int y = -29 + (yS+border) * 4;
   for(int i = 0; i < 16; i++ )
   {
     if( i != 0 && i % 4 == 0 )
     {
-      y -= 45 + 2;
-      x = 5;
+      y -= yS + border;
+      x = 62;
     }
     
-    pads[i] = new Avtk::Button( this, x, y, 52, 44, "-" );
+    pads[i] = new Avtk::Button( this, x, y, xS, yS, "-" );
     pads[i]->callback = widgetCB;
     pads[i]->callbackUD = this;
     add( pads[i] );
     
-    x += 55;
+    x += xS + border;
     
   }
   

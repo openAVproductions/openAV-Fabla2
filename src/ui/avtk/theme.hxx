@@ -38,7 +38,7 @@ class Theme
 {
   public:
     Theme( Avtk::UI* ui_, std::string name = "OpenAV Default" ) :
-      cornerRadius_( 2 ),
+      cornerRadius_( 0 ),
       lineWidthThin_( 0.9 ),
       lineWidthWide_( 2.1 ),
       

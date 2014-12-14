@@ -62,8 +62,9 @@ static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descript
   
   if (resize)
   {
-    resize->ui_resize(resize->handle, 610, 430 );
-  } else
+    resize->ui_resize(resize->handle, 780, 330 );
+  }
+  else
   {
     printf("Your host does not support LV2:Resize, please ask the developers to implement it!\n");
   }
