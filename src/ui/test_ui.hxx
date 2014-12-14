@@ -2,11 +2,9 @@
 #ifndef OPENAV_AVTK_TEST_UI_HXX
 #define OPENAV_AVTK_TEST_UI_HXX
 
-#include "avtk/avtk.hxx"
+#include "avtk.hxx"
 
 #include "../shared.hxx"
-
-#include "header.c"
 
 // for write_function and controller
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"

@@ -1,7 +1,10 @@
 
 #include "test_ui.hxx"
-#include "avtk/utils.hxx"
-#include "avtk/theme.hxx"
+
+#include "utils.hxx"
+#include "theme.hxx"
+
+#include "header.c"
 
 #include <sstream>
 

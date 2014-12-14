@@ -20,7 +20,7 @@ option(FABLA2_TESTS           "Build component tests"       OFF )
 
 ADD_DEFINITIONS( "-DFABLA2_VERSION_STRING=\"v ${FABLA2_VERSION}\"" )
 
-include_directories ("${PROJECT_SOURCE_DIR}/src/ui/avtk")
+include_directories ("${PROJECT_SOURCE_DIR}/src/ui/avtk/avtk/")
 
 find_package(PkgConfig)
 
@@ -59,7 +59,7 @@ IF( FABLA2_TESTS )
 ELSE()
 
   FILE(GLOB srcDSP src/dsp.cxx src/lv2_work.cxx src/dsp/*.cxx )
-  FILE(GLOB srcUI  src/ui.cxx  src/ui/*.cxx src/ui/avtk/*.cxx src/ui/avtk/pugl/pugl_x11.c )
+  FILE(GLOB srcUI  src/ui.cxx  src/ui/*.cxx src/ui/avtk/avtk/*.cxx src/ui/avtk/avtk/pugl/pugl_x11.c )
 
   ADD_LIBRARY( fabla2   SHARED ${srcDSP} )
   ADD_LIBRARY( fabla2ui SHARED ${srcUI}  )
