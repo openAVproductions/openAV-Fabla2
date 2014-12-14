@@ -58,7 +58,7 @@ IF( FABLA2_TESTS )
 
 ELSE()
 
-  FILE(GLOB srcDSP src/dsp.cxx src/dsp/*.cxx )
+  FILE(GLOB srcDSP src/dsp.cxx src/lv2_work.cxx src/dsp/*.cxx )
   FILE(GLOB srcUI  src/ui.cxx  src/ui/*.cxx src/ui/avtk/*.cxx src/ui/avtk/pugl/pugl_x11.c )
 
   ADD_LIBRARY( fabla2   SHARED ${srcDSP} )

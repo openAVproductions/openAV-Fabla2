@@ -9,6 +9,8 @@
 @prefix ui: <http://lv2plug.in/ns/extensions/ui#>.
 @prefix urid: <http://lv2plug.in/ns/ext/urid#> .
 @prefix midi: <http://lv2plug.in/ns/ext/midi#> .
+@prefix patch: <http://lv2plug.in/ns/ext/patch#> .
+@prefix work:  <http://lv2plug.in/ns/ext/worker#> .
 
 <http://www.openavproductions.com/fabla2#gui>
   a ui:X11UI;
@@ -19,7 +21,6 @@
   lv2:requiredFeature ui:idleInterface ;
   
   lv2:requiredFeature urid:map ;
-  
   lv2:optionalFeature ui:noUserResize;
   
   ui:portNotification [
@@ -27,6 +28,11 @@
     lv2:symbol "notify" ;
     ui:notifyType atom:Blank
   ] .
+
+<http://www.openavproductions.com/fabla2#SampleLoad>
+  a lv2:Parameter ;
+  rdfs:label "Sample" ;
+  rdfs:range atom:Path .
 
 
 <http://www.openavproductions.com/fabla2>
@@ -39,18 +45,25 @@
   lv2:project <http://www.openavproductions.com> ;
   
   lv2:requiredFeature urid:map;
+  lv2:requiredFeature work:schedule ;
   
+  lv2:extensionData   work:interface ;
+  
+  lv2:optionalFeature lv2:hardRTCapable;
   lv2:optionalFeature epp:supportsStrictBounds ;
   lv2:optionalFeature lv2:hardRtCapable ;
   
   ui:ui <http://www.openavproductions.com/fabla2#gui>;
+  
+  patch:writable <http://www.openavproductions.com/fabla2#SampleLoad> ;
   
   lv2:port
   [
       a lv2:InputPort ,
           atom:AtomPort ;
           atom:bufferType atom:Sequence ;
-          atom:supports midi:MidiEvent ;
+          atom:supports midi:MidiEvent,
+                        patch:Message ;
           lv2:designation lv2:control ;
           lv2:index 0 ;
           lv2:symbol "midi_in" ;

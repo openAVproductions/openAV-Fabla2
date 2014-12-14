@@ -34,6 +34,7 @@
 #include "lv2/lv2plug.in/ns/ext/patch/patch.h"
 #include "lv2/lv2plug.in/ns/ext/log/log.h"
 #include "lv2/lv2plug.in/ns/ext/log/logger.h"
+#include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 
 #define FABLA2_URI    "http://www.openavproductions.com/fabla2"
 #define FABLA2_UI_URI "http://www.openavproductions.com/fabla2#gui"
@@ -43,6 +44,7 @@
 
 /// Atom Event types
 #define FABLA2_PadEvent         FABLA2_URI "#PadEvent"
+#define FABLA2_SampleLoad       FABLA2_URI "#SampleLoad"
 #define FABLA2_SampleAudioData  FABLA2_URI "#SampleAudioData"
 
 /// "Inside Atoms" data types
@@ -67,8 +69,10 @@ typedef struct {
   LV2_URID patch_property;
   LV2_URID patch_value;
   
-  LV2_URID fabla2_sample;
   LV2_URID fabla2_PadEvent;
+  LV2_URID fabla2_SampleLoad;
+  
+  LV2_URID fabla2_sample;
   LV2_URID fabla2_velocity;
   LV2_URID fabla2_pad;
 } URIs;
@@ -89,8 +93,11 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->patch_property     = map->map(map->handle, LV2_PATCH__property);
   uris->patch_value        = map->map(map->handle, LV2_PATCH__value);
   
-  uris->fabla2_sample      = map->map(map->handle, FABLA2_sample);
   uris->fabla2_PadEvent    = map->map(map->handle, FABLA2_PadEvent);
+  uris->fabla2_SampleLoad  = map->map(map->handle, FABLA2_SampleLoad);
+  
+  
+  uris->fabla2_sample      = map->map(map->handle, FABLA2_sample);
   uris->fabla2_pad         = map->map(map->handle, FABLA2_pad);
   uris->fabla2_velocity    = map->map(map->handle, FABLA2_velocity);
 }

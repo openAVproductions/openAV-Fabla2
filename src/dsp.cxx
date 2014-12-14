@@ -20,6 +20,7 @@
 
 #include "dsp.hxx"
 #include "shared.hxx"
+#include "lv2_work.hxx"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,25 +37,53 @@ LV2_Handle FablaLV2::instantiate( const LV2_Descriptor* descriptor,
                                   const char* bundle_path,
                                   const LV2_Feature* const* features)
 {
+  LV2_Log_Log* log = 0;
+  LV2_URID_Map* map = 0;
+  LV2_URID_Unmap* unmap = 0;
+  LV2_Worker_Schedule* schedule = 0;
   
-  LV2_URID_Map* map = NULL;
   for (int i = 0; features[i]; ++i)
   {
     if (!strcmp(features[i]->URI, LV2_URID__map))
     {
       map = (LV2_URID_Map*)features[i]->data;
-      break;
+    }
+    else if (!strcmp(features[i]->URI, LV2_URID__unmap))
+    {
+      unmap = (LV2_URID_Unmap*)features[i]->data;
+    }
+    else if (!strcmp(features[i]->URI, LV2_LOG__log))
+    {
+      log = (LV2_Log_Log*)features[i]->data;
+    }
+    else if (!strcmp(features[i]->URI, LV2_WORKER__schedule))
+    {
+      schedule = (LV2_Worker_Schedule*)features[i]->data;
     }
   }
+  
+  if (!map)
+  {
+    fprintf( stderr, "Missing feature urid:map\n");
+    return 0;
+  }
+  else if (!schedule)
+  {
+    printf("Fabla2: the host does not support Work:schedule, so Fabla2 cannot load samples without glitches! Please ask your host developers to implement Work:schedule!\n");
+  }
+  
   if (!map)
     return 0;
   
   FablaLV2* tmp = new FablaLV2( samplerate );
-  tmp->map = map;
+  tmp->log      = log;
+  tmp->map      = map;
+  tmp->unmap    = unmap;
+  tmp->schedule = schedule;
   
   mapUri( &tmp->uris, map );
-  
   lv2_atom_forge_init( &tmp->forge, map);
+  lv2_log_logger_init( &tmp->logger, tmp->map, tmp->log);
   
   return (LV2_Handle)tmp;
 }
@@ -135,9 +164,28 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
         lv2_atom_forge_key(&self->forge, self->uris.fabla2_velocity);
         lv2_atom_forge_int(&self->forge, msg[2] );
       }
-      
     }
-    
+    else if (lv2_atom_forge_is_object_type(&self->forge, ev->body.type))
+    {
+        const LV2_Atom_Object* obj = (const LV2_Atom_Object*)&ev->body;
+        if (obj->body.otype == self->uris.patch_Set)
+        {
+                // Received a set message, send it to the worker.
+                printf("Queueing set message\n");
+                lv2_log_trace(&self->logger, "Queueing set message\n");
+                self->schedule->schedule_work(self->schedule->handle,
+                                              lv2_atom_total_size(&ev->body),
+                                              &ev->body);
+        }
+        else
+        {
+          lv2_log_trace(&self->logger, "Unknown object type %d\n", self->unmap->unmap( self->unmap->handle, obj->body.otype) );
+        }
+    }
+    else
+    {
+      lv2_log_trace(&self->logger, "Unknown event type %d\n", ev->body.type);
+    }
   }
   
   self->dsp->process( nframes );
@@ -150,6 +198,10 @@ void FablaLV2::cleanup(LV2_Handle instance)
 
 const void* FablaLV2::extension_data(const char* uri)
 {
+  static const LV2_Worker_Interface worker = { fabla2_work, fabla2_work_response, NULL };
+  if (!strcmp(uri, LV2_WORKER__interface)) {
+		return &worker;
+	}
   return NULL;
 }
 

@@ -55,8 +55,16 @@ class FablaLV2
     LV2_Atom_Forge forge;
     LV2_Atom_Forge_Frame notify_frame;
     
+    // Log feature and convenience API
+    LV2_Log_Log*   log;
+    LV2_Log_Logger logger;
+    
+    // Worker thread
+    LV2_Worker_Schedule* schedule;
+    
     // Features
-    LV2_URID_Map* map;
+    LV2_URID_Map*   map;
+    LV2_URID_Unmap* unmap;
     
     URIs uris;
     
