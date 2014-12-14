@@ -26,12 +26,32 @@ TestUI::TestUI( PuglNativeWindow parent ):
   headerImage->load( header.pixel_data );
   add( headerImage );
   
-  /*
-  loadSampleBtn = new Avtk::Button( this, 70, 70, 120, 25, "Load Sample" );
-  loadSampleBtn->callback = widgetCB;
-  loadSampleBtn->callbackUD = this;
-  add( loadSampleBtn );
-  */
+  bankA = new Avtk::Button( this, 5, 43, 50, 65, "A" );
+  bankA->callback = widgetCB;
+  bankA->callbackUD = this;
+  bankA->value( true );
+  add( bankA );
+  
+  bankB = new Avtk::Button( this, 5, 115, 50, 65, "B" );
+  bankB->callback = widgetCB;
+  bankB->callbackUD = this;
+  add( bankB );
+  
+  bankC = new Avtk::Button( this, 5, 187, 50, 65, "A" );
+  bankC->callback = widgetCB;
+  bankC->callbackUD = this;
+  add( bankC );
+  
+  bankD = new Avtk::Button( this, 5, 258, 50, 65, "A" );
+  bankD->callback = widgetCB;
+  bankD->callbackUD = this;
+  add( bankD );
+  
+  waveform = new Avtk::Waveform( this, 355, 42, 422, 113, "A" );
+  //waveform->callback = widgetCB;
+  //waveform->callbackUD = this;
+  add( waveform );
+  
   
   // pads
   int xS = 64;

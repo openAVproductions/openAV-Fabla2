@@ -20,6 +20,8 @@
   
   lv2:requiredFeature urid:map ;
   
+  lv2:optionalFeature ui:noUserResize;
+  
   ui:portNotification [
     ui:plugin <http://www.openavproductions.com/fabla2> ;
     lv2:symbol "notify" ;

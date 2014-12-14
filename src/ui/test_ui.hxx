@@ -26,6 +26,12 @@ class TestUI : public Avtk::UI
     void setAllWidgets( Avtk::Widget* w, float value );
   
     Avtk::Widget* masterVolume;
+    
+    Avtk::Button* bankA;
+    Avtk::Button* bankB;
+    Avtk::Button* bankC;
+    Avtk::Button* bankD;
+    
     Avtk::List* list;
     Avtk::List* list2;
     Avtk::Waveform* waveform;
