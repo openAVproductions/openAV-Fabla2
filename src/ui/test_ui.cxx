@@ -6,6 +6,7 @@
 #include <sstream>
 
 #include "../shared.hxx"
+#include "../lv2_messaging.hxx"
 
 // implementation of LV2 Atom writing
 #include "writer.hxx"
@@ -91,7 +92,14 @@ static void widgetCB(Avtk::Widget* w, void* ud)
     printf("master volume\n");
     ui->write_function( ui->controller, Fabla2::MASTER_VOL, sizeof(float), 0, &tmp );
   }
-  if( w == ui->loadSampleBtn )
+  else if( w == ui->bankB )
+  {
+    const char* f = "/usr/local/lib/lv2/fabla2.lv2/drum_loop.wav";
+    fabla2_writeSampleLoadUnload( &ui->forge, &ui->uris, true, f, strlen(f) );
+    
+    //ui->write_function( ui->controller, Fabla2::MASTER_VOL, sizeof(float), 0, &tmp );
+  }
+  else if( w == ui->loadSampleBtn )
   {
     printf("load clicked\n");
     
