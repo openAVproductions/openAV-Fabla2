@@ -29,6 +29,8 @@
     ui:notifyType atom:Blank
   ] .
 
+# a message that can be sent to the Atom port, with this URI (mapped), and an
+# atom:Path as the contents: the action the plugin takes what it describes in label
 <http://www.openavproductions.com/fabla2#SampleLoad>
   a lv2:Parameter ;
   rdfs:label "Sample" ;
@@ -55,7 +57,7 @@
   
   ui:ui <http://www.openavproductions.com/fabla2#gui>;
   
-  patch:writable <http://www.openavproductions.com/fabla2#SampleLoad> ;
+  patch:writable <http://www.openavproductions.com/fabla2#SampleLoad>;
   
   lv2:port
   [

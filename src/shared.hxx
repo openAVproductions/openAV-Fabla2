@@ -45,6 +45,7 @@
 /// Atom Event types
 #define FABLA2_PadEvent         FABLA2_URI "#PadEvent"
 #define FABLA2_SampleLoad       FABLA2_URI "#SampleLoad"
+#define FABLA2_SampleUnload     FABLA2_URI "#SampleUnload"
 #define FABLA2_SampleAudioData  FABLA2_URI "#SampleAudioData"
 
 /// "Inside Atoms" data types
@@ -71,6 +72,7 @@ typedef struct {
   
   LV2_URID fabla2_PadEvent;
   LV2_URID fabla2_SampleLoad;
+  LV2_URID fabla2_SampleUnload;
   
   LV2_URID fabla2_sample;
   LV2_URID fabla2_velocity;
@@ -95,6 +97,7 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   
   uris->fabla2_PadEvent    = map->map(map->handle, FABLA2_PadEvent);
   uris->fabla2_SampleLoad  = map->map(map->handle, FABLA2_SampleLoad);
+  uris->fabla2_SampleUnload= map->map(map->handle, FABLA2_SampleUnload);
   
   
   uris->fabla2_sample      = map->map(map->handle, FABLA2_sample);

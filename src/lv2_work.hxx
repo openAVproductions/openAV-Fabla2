@@ -21,7 +21,13 @@
 #ifndef OPENAV_FABLA2_LV2_WORK_HXX
 #define OPENAV_FABLA2_LV2_WORK_HXX
 
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/worker/worker.h"
+
+namespace Fabla2
+{
+  class Sample;
+};
 
 /// definitions of the Work:schedule LV2 extension functions
 /// See lv2_work.cxx for implementations.
@@ -36,5 +42,13 @@ extern LV2_Worker_Status
 fabla2_work_response(LV2_Handle  instance,
                     uint32_t    size,
                     const void* data);
+
+/// events that can be sent to the worker thread
+typedef struct
+{
+  LV2_Atom atom;
+  bool load;
+  Fabla2::Sample*  sample;
+} SampleLoadUnload;
 
 #endif // OPENAV_FABLA2_LV2_WORK_HXX

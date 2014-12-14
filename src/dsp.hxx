@@ -44,7 +44,6 @@ class FablaLV2
     static void cleanup(LV2_Handle instance);
     static const void* extension_data(const char* uri);
   
-  private:
     Fabla2::Fabla2DSP* dsp;
     
     // LV2 Atom Ports
