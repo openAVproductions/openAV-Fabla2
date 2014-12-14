@@ -97,10 +97,14 @@ static void widgetCB(Avtk::Widget* w, void* ud)
   }
   else if( w == ui->bankB )
   {
+    printf("bank B callback!\n");
     const char* f = "/usr/local/lib/lv2/fabla2.lv2/drum_loop.wav";
-    fabla2_writeSampleLoadUnload( &ui->forge, &ui->uris, true, f, strlen(f) );
     
-    //ui->write_function( ui->controller, Fabla2::MASTER_VOL, sizeof(float), 0, &tmp );
+    LV2_Atom* msg = fabla2_writeSampleLoadUnload( &ui->forge, &ui->uris, true, f, strlen(f) );
+    
+    printf("Lv2Atom MSG: size = %li, eventTransfer = %i\n", (long)lv2_atom_total_size(msg), ui->uris.atom_eventTransfer ); 
+    
+    ui->write_function( ui->controller, Fabla2::ATOM_IN, lv2_atom_total_size(msg), ui->uris.atom_eventTransfer, &msg );
   }
   else if( w == ui->loadSampleBtn )
   {

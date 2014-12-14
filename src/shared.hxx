@@ -99,10 +99,9 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->fabla2_SampleLoad  = map->map(map->handle, FABLA2_SampleLoad);
   uris->fabla2_SampleUnload= map->map(map->handle, FABLA2_SampleUnload);
   
-  
   uris->fabla2_sample      = map->map(map->handle, FABLA2_sample);
-  uris->fabla2_pad         = map->map(map->handle, FABLA2_pad);
   uris->fabla2_velocity    = map->map(map->handle, FABLA2_velocity);
+  uris->fabla2_pad         = map->map(map->handle, FABLA2_pad);
 }
 
 #endif // OPENAV_FABLA2_SHARED_HXX

@@ -30,18 +30,26 @@ static inline LV2_Atom* fabla2_writeSampleLoadUnload(
    const char*      filename,
    const uint32_t   filename_len)
 {
+  // setup
+  uint8_t obj_buf[1024];
+  lv2_atom_forge_set_buffer( forge, obj_buf, 1024);
+  
+  // create + write atom details
   LV2_Atom_Forge_Frame frame;
   LV2_Atom* set = (LV2_Atom*)lv2_atom_forge_object( forge, &frame, 0, uris->patch_Set);
   
   lv2_atom_forge_key(forge, uris->patch_property);
-  
-  if( load )
-    lv2_atom_forge_urid(forge, uris->fabla2_SampleLoad);
-  else
-    lv2_atom_forge_urid(forge, uris->fabla2_SampleUnload);
+  lv2_atom_forge_urid(forge, uris->fabla2_SampleLoad);
   
   lv2_atom_forge_key(forge, uris->patch_value);
-  lv2_atom_forge_path(forge, filename, filename_len);
+  lv2_atom_forge_path(forge, "test.wav", strlen("test.wav") );
+  
+  //if( load )
+  //else
+  //  lv2_atom_forge_urid(forge, uris->fabla2_SampleUnload);
+  
+  /*
+  */
   
   lv2_atom_forge_pop(forge, &frame);
   return set;
