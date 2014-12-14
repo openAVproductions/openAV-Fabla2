@@ -16,12 +16,6 @@ TestUI::TestUI( PuglNativeWindow parent ):
   Avtk::UI( 780, 330, parent )
 {
   // slider vert
-  masterVolume = new Avtk::Slider( this, 520, 40, 22, 220, "Master Volume" );
-  masterVolume->callback = widgetCB;
-  masterVolume->callbackUD = this;
-  add( masterVolume );
-  
-  // slider vert
   Avtk::Image* headerImage = new Avtk::Image( this, 0, 0, 780, 36, "Header Image" );
   headerImage->load( header.pixel_data );
   add( headerImage );
@@ -37,24 +31,28 @@ TestUI::TestUI( PuglNativeWindow parent ):
   bankB->callbackUD = this;
   add( bankB );
   
-  bankC = new Avtk::Button( this, 5, 187, 50, 65, "A" );
+  bankC = new Avtk::Button( this, 5, 187, 50, 65, "C" );
   bankC->callback = widgetCB;
   bankC->callbackUD = this;
   add( bankC );
   
-  bankD = new Avtk::Button( this, 5, 258, 50, 65, "A" );
+  bankD = new Avtk::Button( this, 5, 258, 50, 65, "D" );
   bankD->callback = widgetCB;
   bankD->callbackUD = this;
   add( bankD );
   
-  waveform = new Avtk::Waveform( this, 355, 42, 422, 113, "A" );
+  waveform = new Avtk::Waveform( this, 355, 42, 422, 113, "Waveform" );
   //waveform->callback = widgetCB;
   //waveform->callbackUD = this;
+  
+  std::vector<float> tmp;
+  Avtk::loadSample("/usr/local/lib/lv2/fabla2.lv2/test.wav", tmp);
+  waveform->show( tmp );
   add( waveform );
   
   
   // pads
-  int xS = 64;
+  int xS = 65;
   int yS = 64;
   int border = 8;
   
@@ -74,7 +72,6 @@ TestUI::TestUI( PuglNativeWindow parent ):
     add( pads[i] );
     
     x += xS + border;
-    
   }
   
 }

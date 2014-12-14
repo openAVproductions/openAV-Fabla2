@@ -24,6 +24,7 @@ include_directories ("${PROJECT_SOURCE_DIR}/src/ui/avtk")
 
 find_package(PkgConfig)
 
+ADD_DEFINITIONS( "-DAVTK_SNDFILE" )
 pkg_check_modules(SNDFILE sndfile REQUIRED)
 include_directories( ${SNDFILE_INCLUDE_DIRS})
 link_directories   ( ${SNDFILE_LIBRARY_DIRS})

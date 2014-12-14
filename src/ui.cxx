@@ -28,7 +28,7 @@ static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descript
   
   for (int i = 0; features[i]; ++i)
   {
-    printf("Feature %s\n", features[i]->URI );
+    //printf("Feature %s\n", features[i]->URI );
     if (!strcmp(features[i]->URI, LV2_UI__parent))
     {
       parentXwindow = (PuglNativeWindow)features[i]->data;
