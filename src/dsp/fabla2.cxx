@@ -149,7 +149,7 @@ void Fabla2DSP::process( int nf )
 
 void Fabla2DSP::midi( int f, const uint8_t* msg )
 {
-  printf("MIDI: %i, %i, %i\n", (int)msg[0], (int)msg[1], (int)msg[2] );
+  //printf("MIDI: %i, %i, %i\n", (int)msg[0], (int)msg[1], (int)msg[2] );
   
   if( msg[0] == 144 )
   {
@@ -166,7 +166,6 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
       {
         if( it->first == msg[1] )
         {
-          
           for(int i = 0; i < voices.size(); i++)
           {
             if( !voices.at(i)->active() )

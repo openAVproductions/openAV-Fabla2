@@ -42,13 +42,17 @@ TestUI::TestUI( PuglNativeWindow parent ):
   add( bankD );
   
   waveform = new Avtk::Waveform( this, 355, 42, 422, 113, "Waveform" );
-  //waveform->callback = widgetCB;
-  //waveform->callbackUD = this;
-  
   std::vector<float> tmp;
   Avtk::loadSample("/usr/local/lib/lv2/fabla2.lv2/test.wav", tmp);
   waveform->show( tmp );
   add( waveform );
+  
+  
+  Avtk::Widget* sampleCtrls = new Avtk::Button( this, 446, 160, 332, 167, "Sample Controls" );
+  add( sampleCtrls );
+  
+  Avtk::Widget* layers = new Avtk::Button( this, 355, 160, 85, 167, "Layers" );
+  add( layers );
   
   
   // pads

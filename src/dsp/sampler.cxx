@@ -42,8 +42,6 @@ void Sampler::play( Pad* p, int velocity )
 {
   pad = p;
   
-  printf("%s\n", __PRETTY_FUNCTION__ );
-  
   sample = pad->getPlaySample( velocity );
   
   if( !sample )
@@ -53,8 +51,6 @@ void Sampler::play( Pad* p, int velocity )
 #endif
     return;
   }
-  
-  printf("sampler playing sample %s\n", sample->getName() );
   
   // trigger audio playback here
   playIndex = 0;

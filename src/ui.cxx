@@ -99,7 +99,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
       
       if (obj->body.otype == ui->uris.fabla2_PadEvent)
       {
-        printf("UI: Fabla Pad Event\n");
+        //printf("UI: Fabla Pad Event\n");
         const LV2_Atom* pad  = NULL;
         const LV2_Atom* vel  = NULL;
         const int n_props  = lv2_atom_object_get( obj,
@@ -116,7 +116,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
         {
           const int32_t p  = ((const LV2_Atom_Int*)pad)->body;
           const int32_t v  = ((const LV2_Atom_Int*)vel)->body;
-          printf("UI Fabla Pad %i, Vel %i\n", p, v );
+          //printf("UI Fabla Pad %i, Vel %i\n", p, v );
           
           // update UI grid here
           ui->pads[p-36]->value( v );

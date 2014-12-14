@@ -117,7 +117,7 @@ void Voice::process()
   
   if( done )
   {
-    printf("Voice done\n");
+    //printf("Voice done\n");
     active_ = false;
   }
 }
