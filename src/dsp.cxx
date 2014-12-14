@@ -18,6 +18,7 @@
  * MA 02110-1301, USA.
  */
 
+#include "dsp.hxx"
 #include "shared.hxx"
 
 #include <stdio.h>
