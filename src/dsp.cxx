@@ -158,6 +158,9 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
         lv2_atom_forge_object( &self->forge, &frame, 0, self->uris.fabla2_PadEvent );
 
         // Add UI state as properties
+        lv2_atom_forge_key(&self->forge, self->uris.fabla2_bank);
+        lv2_atom_forge_int(&self->forge, 0 );
+        
         lv2_atom_forge_key(&self->forge, self->uris.fabla2_pad);
         lv2_atom_forge_int(&self->forge, msg[1] );
         
