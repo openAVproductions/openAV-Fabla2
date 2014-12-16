@@ -29,6 +29,7 @@
 #include "sample.hxx"
 #include "sampler.hxx"
 #include "library.hxx"
+#include "midi_helper.hxx"
 
 namespace Fabla2
 {
@@ -58,10 +59,10 @@ Fabla2DSP::Fabla2DSP( int rate ) :
     
     Pad* tmpPad = new Pad( this, rate, i % 16 );
     
+    // TODO: Fixme to use Library & RT-safe loading
+    // hack code load sample for now
     if ( i == 0 )
     {
-      // TODO: Fixme to use Library & RT-safe loading
-      // hack code load sample for now
       Sample* tmp = new Sample( this, rate, "One", "/usr/local/lib/lv2/fabla2.lv2/test.wav");
       tmp->velocity( 0, 32 );
       tmpPad->add( tmp );
@@ -81,36 +82,26 @@ Fabla2DSP::Fabla2DSP( int rate ) :
     }
     if ( i == 1 )
     {
-      // TODO: Fixme to use Library & RT-safe loading
-      // hack code load sample for now
       Sample* tmp = new Sample( this, rate, "Two", "/usr/local/lib/lv2/fabla2.lv2/test2.wav");
       tmpPad->add( tmp );
     }
     if ( i == 2 )
     {
-      // TODO: Fixme to use Library & RT-safe loading
-      // hack code load sample for now
       Sample* tmp = new Sample( this, rate, "Three", "/usr/local/lib/lv2/fabla2.lv2/test3.wav");
       tmpPad->add( tmp );
     }
     if ( i == 3 )
     {
-      // TODO: Fixme to use Library & RT-safe loading
-      // hack code load sample for now
       Sample* tmp = new Sample( this, rate, "Four", "/usr/local/lib/lv2/fabla2.lv2/test4.wav");
       tmpPad->add( tmp );
     }
     if ( i == 4 )
     {
-      // TODO: Fixme to use Library & RT-safe loading
-      // hack code load sample for now
       Sample* tmp = new Sample( this, rate, "Four", "/usr/local/lib/lv2/fabla2.lv2/kick.wav");
       tmpPad->add( tmp );
     }
     
-    //midiToPad.insert( std::pair< int,yasper::ptr<Pad> >( i + 36, tmpPad ) );
-    
-    library->bank( bankID )->addPad( tmpPad );
+    library->bank( bankID )->pad( tmpPad );
   }
 }
 
@@ -169,6 +160,50 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
 {
   //printf("MIDI: %i, %i, %i\n", (int)msg[0], (int)msg[1], (int)msg[2] );
   
+  switch( lv2_midi_message_type( msg ) )
+  {
+    case LV2_MIDI_MSG_NOTE_ON:
+        printf("MIDI : Note On received\n");
+        // valid MIDI note on for a sampler
+        if( msg[1] >= 36 && msg[1] < 36 + 16 )
+        {
+          for(int i = 0; i < 4; i ++)
+          {
+            // bank 1 == MIDI channel 1, etc
+            if( (msg[0] & 0x0F) == i )
+            {
+              // get pad, and push to a voice
+              Pad* p =library->bank( i )->pad( msg[1] - 36 );
+              
+              for(int i = 0; i < voices.size(); i++)
+              {
+                if( !voices.at(i)->active() )
+                {
+                  voices.at(i)->play( p, msg[2] );
+                  break;
+                }
+              }
+            }
+          }
+        }
+        break;
+    
+    case LV2_MIDI_MSG_NOTE_OFF:
+        printf("MIDI : Note Off received\n");
+        break;
+    
+    case LV2_MIDI_MSG_CONTROLLER:
+        printf("MIDI : Controller received\n");
+        break;
+    
+    case LV2_MIDI_MSG_PGM_CHANGE:
+        printf("MIDI : Program Change received\n");
+        break;
+    
+  }
+  
+  /// OLD midi handling code, doesn't use Library. Fixing
+  /*
   if( msg[0] == 144 )
   {
     if( recordEnable && recordPad == -1 )
@@ -266,6 +301,7 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
     }
     
   }
+  **/
   
 }
 

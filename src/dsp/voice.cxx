@@ -70,11 +70,11 @@ void Voice::play( Pad* p, int velocity )
   Sample* samp = sampler->getSample();
   if( samp )
   {
-    //printf("Voice::play() %i, on Sample %s\n", ID, samp->getName() );
+    printf("Voice::play() %i, on Sample %s\n", ID, samp->getName() );
   }
   else
   {
-    //printf("Voice::play() %i, sampler->play() returns NULL sample! Setting active to false\n", ID );
+    printf("Voice::play() %i, sampler->play() returns NULL sample! Setting active to false\n", ID );
     // *hard* set the sample to not play: we don't have a sample!
     active_ = false;
   }

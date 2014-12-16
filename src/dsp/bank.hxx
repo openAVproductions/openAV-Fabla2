@@ -21,7 +21,7 @@
 #ifndef OPENAV_FABLA2_BANK_HXX
 #define OPENAV_FABLA2_BANK_HXX
 
-#include <list>
+#include <vector>
 #include "yasper.hxx"
 
 namespace Fabla2
@@ -43,7 +43,10 @@ class Bank
     int ID(){return ID_;}
     
     /// add resources for a certain bank/pad
-    void addPad( Pad* p );
+    void pad( Pad* p );
+    
+    /// get a pad based on its location in the grid
+    Pad* pad( int num );
     
     void name( const char* name );
     
@@ -53,7 +56,7 @@ class Bank
     char name_[21]; // 20 letters + \n
     
     
-    std::list< yasper::ptr<Pad> > pads;
+    std::vector< yasper::ptr<Pad> > pads;
 };
 
 };

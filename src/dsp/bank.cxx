@@ -39,12 +39,17 @@ void Bank::name( const char* name )
   name_[20] = '\n';
 }
 
-void Bank::addPad( Pad* p )
+void Bank::pad( Pad* p )
 {
 #ifdef FABLA2_DEBUG
   printf("%s : %i : Adding pad %i\n", __PRETTY_FUNCTION__, ID_, p->ID() );
 #endif // FABLA2_DEBUG
   pads.push_back( p );
+}
+
+Pad* Bank::pad( int n )
+{
+  return pads.at(n);
 }
 
 Bank::~Bank()
