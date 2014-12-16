@@ -32,7 +32,7 @@ UI::UI( int w__, int h__, PuglNativeWindow parent ) :
   
   puglSetHandle       (view, this);
   
-  theme = new Theme( this );
+  //themes.push_back( new Theme( this ) );
   
   motionUpdateWidget = 0;
   
@@ -42,6 +42,8 @@ UI::UI( int w__, int h__, PuglNativeWindow parent ) :
   
   dragDropTargetVerified       = false;
   dragDropTargetVerifiedWidget = 0;
+  
+  themes.push_back( new Theme( this, "default.avtk" ) );
 }
 
 void UI::display( cairo_t* cr )
@@ -58,6 +60,15 @@ void UI::display( cairo_t* cr )
     //printf("display() widget # %i\n", i++ );
     (*it)->draw( cr );
   }
+}
+
+Theme* UI::theme( int id )
+{
+  if( id < themes.size() )
+    return themes.at( id );
+  
+  // default theme
+  return themes.at( 0 );
 }
 
 void UI::event( const PuglEvent* event )
