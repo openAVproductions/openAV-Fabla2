@@ -50,7 +50,13 @@ Fabla2DSP::Fabla2DSP( int rate ) :
   int bankID = 0;
   for(int i = 0; i < 16 * 4; i++)
   {
-    Pad* tmpPad = new Pad( this, rate );
+    // move to next bank
+    if( i > 0 && i % 16 == 0 )
+    {
+      bankID++;
+    }
+    
+    Pad* tmpPad = new Pad( this, rate, i % 16 );
     
     if ( i == 0 )
     {
@@ -105,12 +111,6 @@ Fabla2DSP::Fabla2DSP( int rate ) :
     //midiToPad.insert( std::pair< int,yasper::ptr<Pad> >( i + 36, tmpPad ) );
     
     library->bank( bankID )->addPad( tmpPad );
-    
-    // move to next bank
-    if( i > 0 && i % 16 == 0 )
-    {
-      bankID++;
-    }
   }
 }
 

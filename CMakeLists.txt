@@ -20,6 +20,10 @@ option(FABLA2_TESTS           "Build component tests"       OFF )
 
 ADD_DEFINITIONS( "-DFABLA2_VERSION_STRING=\"v ${FABLA2_VERSION}\"" )
 
+IF( FABLA2_DEBUG_PRINTS )
+  ADD_DEFINITIONS( "-DFABLA2_DEBUG" )
+ENDIF()
+
 include_directories ("${PROJECT_SOURCE_DIR}/src/ui/avtk/avtk/")
 
 find_package(PkgConfig)

@@ -33,9 +33,10 @@ extern QUnit::UnitTest qunit;
 namespace Fabla2
 {
 
-Pad::Pad( Fabla2DSP* d, int rate ) :
+Pad::Pad( Fabla2DSP* d, int rate, int ID ) :
   dsp( d ),
   sr(rate),
+  ID_( ID ),
   
   sampleSwitchSystem( SS_NONE ),
   roundRobinCounter(0)

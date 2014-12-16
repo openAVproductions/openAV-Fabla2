@@ -46,8 +46,10 @@ class Fabla2DSP;
 class Pad
 {
   public:
-    Pad( Fabla2DSP* dsp, int rate );
+    Pad( Fabla2DSP* dsp, int rate, int ID );
     ~Pad();
+    
+    int ID(){return ID_;}
     
     enum PAD_CONTROLS {
       FILTER_CUTOFF,
@@ -74,6 +76,7 @@ class Pad
   private:
     Fabla2DSP* dsp;
     int sr;
+    int ID_; // pad place within Bank
     
     SAMPLE_SWITCH_SYSTEM sampleSwitchSystem;
     int roundRobinCounter;
