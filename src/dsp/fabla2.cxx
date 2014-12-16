@@ -97,7 +97,12 @@ Fabla2DSP::Fabla2DSP( int rate ) :
     }
     if ( i == 4 )
     {
-      Sample* tmp = new Sample( this, rate, "Four", "/usr/local/lib/lv2/fabla2.lv2/kick.wav");
+      Sample* tmp = new Sample( this, rate, "Kick", "/usr/local/lib/lv2/fabla2.lv2/kick.wav");
+      tmpPad->add( tmp );
+    }
+    if ( i == 16 )
+    {
+      Sample* tmp = new Sample( this, rate, "Kick", "/usr/local/lib/lv2/fabla2.lv2/kick.wav");
       tmpPad->add( tmp );
     }
     
@@ -163,33 +168,47 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
   switch( lv2_midi_message_type( msg ) )
   {
     case LV2_MIDI_MSG_NOTE_ON:
-        printf("MIDI : Note On received\n");
+        //printf("MIDI : Note On received\n");
         // valid MIDI note on for a sampler
         if( msg[1] >= 36 && msg[1] < 36 + 16 )
         {
-          for(int i = 0; i < 4; i ++)
+          int chnl = (msg[0] & 0x0F);
+          if( chnl < 0 && chnl >= 4 ) { return; }
+          //printf("midi channel %i\n", chnl );
+          // get pad, and push to a voice
+          Pad* p = library->bank( chnl )->pad( msg[1] - 36 );
+          
+          for(int i = 0; i < voices.size(); i++)
           {
-            // bank 1 == MIDI channel 1, etc
-            if( (msg[0] & 0x0F) == i )
+            if( !voices.at(i)->active() )
             {
-              // get pad, and push to a voice
-              Pad* p =library->bank( i )->pad( msg[1] - 36 );
-              
-              for(int i = 0; i < voices.size(); i++)
-              {
-                if( !voices.at(i)->active() )
-                {
-                  voices.at(i)->play( p, msg[2] );
-                  break;
-                }
-              }
+              voices.at(i)->play( p, msg[2] );
+              return;
             }
           }
         }
         break;
     
     case LV2_MIDI_MSG_NOTE_OFF:
-        printf("MIDI : Note Off received\n");
+        //printf("MIDI : Note Off received\n");
+        for(int i = 0; i < voices.size(); i++)
+        {
+          Voice* v = voices.at(i);
+          if( v->active() )
+          {
+            int chnl = (msg[0] & 0x0F);
+            if( chnl < 0 && chnl >= 4 ) { return; }
+            if( msg[1] < 36 && msg[1] >= 36 + 16 ){ return; }
+            
+            Pad* p = library->bank( chnl )->pad( msg[1] - 36 );
+            
+            if ( v->getPad() == p );
+            {
+              voices.at(i)->stop();
+              return;
+            }
+          }
+        }
         break;
     
     case LV2_MIDI_MSG_CONTROLLER:
