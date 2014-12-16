@@ -78,7 +78,11 @@ class Fabla2DSP
     std::map< int, yasper::ptr<Pad> > midiToPad;
     
     /// record buffer: when a record operation begins, it uses this buffer
+    void startRecordToPad(int bank, int pad);
+    void stopRecordToPad();
+    
     bool recordEnable;
+    int  recordBank;
     int  recordPad;
     long recordIndex;
     std::vector<float> recordBuffer;

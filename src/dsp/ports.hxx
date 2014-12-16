@@ -37,6 +37,7 @@ typedef enum
   OUTPUT_R,
   
   MASTER_VOL,
+  RECORD_OVER_LAST_PLAYED_PAD,
   
   PORT_COUNT
 } Fabla2Ports;

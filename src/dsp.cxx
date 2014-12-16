@@ -116,7 +116,7 @@ void FablaLV2::connect_port(LV2_Handle instance, uint32_t port, void *data)
   
   switch (port)
   {
-    // handle Atom ports gracefully here
+      // handle Atom ports gracefully here
       case ATOM_IN:
           self->control = (const LV2_Atom_Sequence*)data;
           break;
@@ -124,7 +124,9 @@ void FablaLV2::connect_port(LV2_Handle instance, uint32_t port, void *data)
       case ATOM_OUT:
           self->notify  = (const LV2_Atom_Sequence*)data;
           break;
-    
+      
+      // and push all other float*s for audio / control into the controlPorts
+      // array. They can be retrieved using enum in ports.hxx
       default:
           self->dsp->controlPorts[port]     = (float*)data;
           break;

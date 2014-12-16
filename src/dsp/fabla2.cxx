@@ -36,7 +36,9 @@ namespace Fabla2
 
 Fabla2DSP::Fabla2DSP( int rate ) :
   sr( rate ),
-  recordEnable( false )
+  recordEnable( false ),
+  recordBank( 0 ),
+  recordPad( 0 )
 {
   // init the library
   library = new Library( this, rate );
@@ -114,6 +116,22 @@ void Fabla2DSP::process( int nf )
 {
   nframes = nf;
   
+  float recordOverLast = *controlPorts[RECORD_OVER_LAST_PLAYED_PAD];
+  if( recordEnable != (int)recordOverLast )
+  {
+    recordEnable = (int)recordOverLast;
+    if( recordEnable )
+    {
+      printf("recording switch! %i\n", recordEnable );
+      startRecordToPad( recordBank, recordPad );
+    }
+    else
+    {
+      stopRecordToPad();
+    }
+  }
+  
+  
   memset( controlPorts[OUTPUT_L], 0, sizeof(float) * nframes );
   memset( controlPorts[OUTPUT_R], 0, sizeof(float) * nframes );
   
@@ -174,6 +192,10 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
         {
           int chnl = (msg[0] & 0x0F);
           if( chnl < 0 && chnl >= 4 ) { return; }
+          
+          recordBank = chnl;
+          recordPad  = msg[1] - 36; // 0 - 15 based Pad num
+          
           //printf("midi channel %i\n", chnl );
           // get pad, and push to a voice
           Pad* p = library->bank( chnl )->pad( msg[1] - 36 );
@@ -255,19 +277,7 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
   {
     if( recordEnable )
     {
-      printf("record finished, pad # %i\n", recordPad );
       
-      if( midiToPad.find( 36 + recordPad ) != midiToPad.end() )
-      {
-        printf("%s : NON RT SAFE NEW SAMPLE()\n", __PRETTY_FUNCTION__ );
-        Sample* s = new Sample( this, sr, recordIndex, &recordBuffer[0] );
-        
-        // s is auto-released when shared_ptr goes out of scope
-        midiToPad[ 36 + recordPad ]->clearAllSamples();
-        midiToPad[ 36 + recordPad ]->add( s );
-      }
-      recordPad = -1;
-      recordIndex = 0;
     }
     else
     {
@@ -322,6 +332,30 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
   }
   **/
   
+}
+
+void Fabla2DSP::startRecordToPad( int b, int p )
+{
+  recordBank  = b;
+  recordPad   = p;
+  recordIndex = 0;
+  printf("record starting, bank %i, pad %i\n", recordBank, recordPad );
+}
+
+void Fabla2DSP::stopRecordToPad()
+{
+  printf("record finished, pad # %i\n", recordPad );
+  
+  Pad* pad = library->bank( recordBank )->pad( recordPad );
+  
+  printf("%s : NON RT SAFE NEW SAMPLE()\n", __PRETTY_FUNCTION__ );
+  Sample* s = new Sample( this, sr, recordIndex, &recordBuffer[0] );
+  
+  // reset the pad
+  pad->clearAllSamples();
+  pad->add( s );
+  
+  recordIndex = 0;
 }
 
 Fabla2DSP::~Fabla2DSP()
