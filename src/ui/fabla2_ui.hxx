@@ -24,6 +24,7 @@ class TestUI : public Avtk::UI
     void setAllWidgets( Avtk::Widget* w, float value );
   
     Avtk::Widget* masterVolume;
+    Avtk::Widget* recordOverPad;
     
     Avtk::List* list;
     Avtk::List* list2;

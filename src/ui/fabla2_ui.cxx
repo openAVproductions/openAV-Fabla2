@@ -22,6 +22,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   themes.push_back( new Avtk::Theme( this, "orange.avtk" ) );
   themes.push_back( new Avtk::Theme( this, "green.avtk" ) );
   themes.push_back( new Avtk::Theme( this, "yellow.avtk" ) );
+  themes.push_back( new Avtk::Theme( this, "red.avtk" ) );
   
   // slider vert
   Avtk::Image* headerImage = new Avtk::Image( this, 0, 0, 780, 36, "Header Image" );
@@ -52,6 +53,12 @@ TestUI::TestUI( PuglNativeWindow parent ):
   bankBtns[3]->callbackUD = this;
   bankBtns[3]->theme( theme( 3 ) );
   add( bankBtns[3] );
+  
+  recordOverPad = new Avtk::Button( this, 5, 43+(s+6)*2, s * 2 + 6, s*2+6,  "X-REC" );
+  recordOverPad->callback = fabla2_widgetCB;
+  recordOverPad->callbackUD = this;
+  recordOverPad->theme( theme( 4 ) );
+  add( recordOverPad );
   
   waveform = new Avtk::Waveform( this, 355, 42, 422, 113, "Waveform" );
   std::vector<float> tmp;
@@ -120,9 +127,12 @@ static void fabla2_widgetCB(Avtk::Widget* w, void* ud)
   
   printf("widgetCB : %s\n", w->label() );
   
-  if( w == ui->masterVolume )
+  if( w == ui->recordOverPad )
   {
-    printf("master volume\n");
+    ui->write_function( ui->controller, Fabla2::RECORD_OVER_LAST_PLAYED_PAD, sizeof(float), 0, &tmp );
+  }
+  else if( w == ui->masterVolume )
+  {
     ui->write_function( ui->controller, Fabla2::MASTER_VOL, sizeof(float), 0, &tmp );
   }
   else if( w == ui->bankBtns[0] )

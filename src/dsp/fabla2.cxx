@@ -119,7 +119,9 @@ void Fabla2DSP::process( int nf )
   float recordOverLast = *controlPorts[RECORD_OVER_LAST_PLAYED_PAD];
   if( recordEnable != (int)recordOverLast )
   {
+    // update based on control port value
     recordEnable = (int)recordOverLast;
+    
     if( recordEnable )
     {
       printf("recording switch! %i\n", recordEnable );
@@ -181,7 +183,7 @@ void Fabla2DSP::process( int nf )
 
 void Fabla2DSP::midi( int f, const uint8_t* msg )
 {
-  //printf("MIDI: %i, %i, %i\n", (int)msg[0], (int)msg[1], (int)msg[2] );
+  printf("MIDI: %i, %i, %i\n", (int)msg[0], (int)msg[1], (int)msg[2] );
   
   switch( lv2_midi_message_type( msg ) )
   {
@@ -235,6 +237,14 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
     
     case LV2_MIDI_MSG_CONTROLLER:
         printf("MIDI : Controller received\n");
+        if( msg[1] == 119 ) 
+        {
+          startRecordToPad( recordBank, recordPad );
+        }
+        else if( msg[1] == 117 )
+        {
+          stopRecordToPad();
+        }
         break;
     
     case LV2_MIDI_MSG_PGM_CHANGE:
@@ -339,6 +349,7 @@ void Fabla2DSP::startRecordToPad( int b, int p )
   recordBank  = b;
   recordPad   = p;
   recordIndex = 0;
+  recordEnable = true;
   printf("record starting, bank %i, pad %i\n", recordBank, recordPad );
 }
 
@@ -356,6 +367,7 @@ void Fabla2DSP::stopRecordToPad()
   pad->add( s );
   
   recordIndex = 0;
+  recordEnable = false;
 }
 
 Fabla2DSP::~Fabla2DSP()

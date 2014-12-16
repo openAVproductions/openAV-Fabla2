@@ -54,7 +54,7 @@
   lv2:optionalFeature lv2:hardRTCapable;
   lv2:optionalFeature epp:supportsStrictBounds ;
   
-  #ui:ui <http://www.openavproductions.com/fabla2#gui>;
+  ui:ui <http://www.openavproductions.com/fabla2#gui>;
   
   patch:writable <http://www.openavproductions.com/fabla2#SampleLoad>;
   
