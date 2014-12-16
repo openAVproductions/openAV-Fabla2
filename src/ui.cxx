@@ -22,8 +22,8 @@ static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descript
     return NULL;
   }
   
-  LV2_URID_Map* map;
-  LV2UI_Resize* resize = NULL;
+  LV2_URID_Map* map = 0;
+  LV2UI_Resize* resize = 0;
   PuglNativeWindow parentXwindow = 0;
   
   for (int i = 0; features[i]; ++i)
