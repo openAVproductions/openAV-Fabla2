@@ -14,7 +14,7 @@
 // implementation of LV2 Atom writing
 #include "writer.hxx"
 
-static void widgetCB(Avtk::Widget* w, void* ud);
+static void fabla2_widgetCB(Avtk::Widget* w, void* ud);
 
 TestUI::TestUI( PuglNativeWindow parent ):
   Avtk::UI( 780, 330, parent )
@@ -30,29 +30,28 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   int s = 32;
   
-  bankA = new Avtk::Button( this, 5, 43, s, s, "A" );
-  bankA->callback = widgetCB;
-  bankA->callbackUD = this;
-  bankA->value( true );
-  add( bankA );
+  bankBtns[0] = new Avtk::Button( this, 5, 43, s, s, "A" );
+  bankBtns[0]->callback = fabla2_widgetCB;
+  bankBtns[0]->callbackUD = this;
+  add( bankBtns[0] );
   
-  bankB = new Avtk::Button( this, 5 + +s+6, 43, s, s, "B" );
-  //bankB->callback = widgetCB;
-  //bankB->callbackUD = this;
-  bankB->theme( theme( 1 ) );
-  add( bankB );
+  bankBtns[1] = new Avtk::Button( this, 5 + +s+6, 43, s, s, "B" );
+  bankBtns[1]->callback = fabla2_widgetCB;
+  bankBtns[1]->callbackUD = this;
+  bankBtns[1]->theme( theme( 1 ) );
+  add( bankBtns[1] );
   
-  bankC = new Avtk::Button( this, 5, 43  + +s+6, s, s, "C" );
-  bankC->callback = widgetCB;
-  bankC->callbackUD = this;
-  bankC->theme( theme( 2 ) );
-  add( bankC );
+  bankBtns[2] = new Avtk::Button( this, 5, 43  + +s+6, s, s, "C" );
+  bankBtns[2]->callback = fabla2_widgetCB;
+  bankBtns[2]->callbackUD = this;
+  bankBtns[2]->theme( theme( 2 ) );
+  add( bankBtns[2] );
   
-  bankD = new Avtk::Button( this, 5 + +s+6, 43 +s+6, s, s, "D" );
-  bankD->callback = widgetCB;
-  bankD->callbackUD = this;
-  bankD->theme( theme( 3 ) );
-  add( bankD );
+  bankBtns[3] = new Avtk::Button( this, 5 + +s+6, 43 +s+6, s, s, "D" );
+  bankBtns[3]->callback = fabla2_widgetCB;
+  bankBtns[3]->callbackUD = this;
+  bankBtns[3]->theme( theme( 3 ) );
+  add( bankBtns[3] );
   
   waveform = new Avtk::Waveform( this, 355, 42, 422, 113, "Waveform" );
   std::vector<float> tmp;
@@ -84,36 +83,69 @@ TestUI::TestUI( PuglNativeWindow parent ):
     }
     
     pads[i] = new Avtk::Button( this, x, y, xS, yS, "-" );
-    pads[i]->callback = widgetCB;
+    pads[i]->callback = fabla2_widgetCB;
     pads[i]->callbackUD = this;
     add( pads[i] );
     
     x += xS + border;
   }
   
+  // initial values
+  bankBtns[0]->value( true );
+  
 }
 
-static void widgetCB(Avtk::Widget* w, void* ud)
+static void fabla2_setBank( TestUI* ui, int bank )
+{
+  // bank buttons highlight
+  for(int i = 0; i < 4; i++ )
+  {
+    if( i == bank )
+      ui->bankBtns[i]->value( true  );
+    else
+      ui->bankBtns[i]->value( false );
+  }
+  
+  // pad theme set
+  for(int i = 0; i < 16; i++)
+    ui->pads[i]->theme( ui->theme( bank ) );
+  
+  ui->redraw();
+}
+static void fabla2_widgetCB(Avtk::Widget* w, void* ud)
 {
   TestUI* ui = (TestUI*)ud;
   
   float tmp = w->value();
+  
+  printf("widgetCB : %s\n", w->label() );
   
   if( w == ui->masterVolume )
   {
     printf("master volume\n");
     ui->write_function( ui->controller, Fabla2::MASTER_VOL, sizeof(float), 0, &tmp );
   }
-  else if( w == ui->bankB )
+  else if( w == ui->bankBtns[0] )
   {
-    printf("bank B callback!\n");
+    fabla2_setBank( ui, 0 );
+  }
+  else if( w == ui->bankBtns[1] )
+  {
+    fabla2_setBank( ui, 1 );
+  }
+  else if( w == ui->bankBtns[2] )
+  {
+    fabla2_setBank( ui, 2 );
+  }
+  else if( w == ui->bankBtns[3] )
+  {
+    fabla2_setBank( ui, 3 );
+    /*
     const char* f = "/usr/local/lib/lv2/fabla2.lv2/drum_loop.wav";
-    
     LV2_Atom* msg = fabla2_writeSampleLoadUnload( &ui->forge, &ui->uris, true, f, strlen(f) );
-    
     printf("Lv2Atom MSG: size = %li, eventTransfer = %i\n", (long)lv2_atom_total_size(msg), ui->uris.atom_eventTransfer ); 
-    
     ui->write_function( ui->controller, Fabla2::ATOM_IN, lv2_atom_total_size(msg), ui->uris.atom_eventTransfer, &msg );
+    */
   }
   else if( w == ui->loadSampleBtn )
   {

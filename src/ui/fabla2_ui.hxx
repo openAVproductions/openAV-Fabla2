@@ -25,17 +25,13 @@ class TestUI : public Avtk::UI
   
     Avtk::Widget* masterVolume;
     
-    Avtk::Button* bankA;
-    Avtk::Button* bankB;
-    Avtk::Button* bankC;
-    Avtk::Button* bankD;
-    
     Avtk::List* list;
     Avtk::List* list2;
     Avtk::Waveform* waveform;
     
     Avtk::Widget* loadSampleBtn;
     
+    Avtk::Widget* bankBtns[4];
     Avtk::Widget* pads[16];
     
     // LV2 ports
