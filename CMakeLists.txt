@@ -57,7 +57,6 @@ IF( FABLA2_TESTS )
   configure_file( "src/dsp/tests/test.wav" "test.wav" COPYONLY)
 
 ELSE()
-
   FILE(GLOB srcDSP src/dsp.cxx src/lv2_work.cxx src/dsp/*.cxx )
   FILE(GLOB srcUI  src/ui.cxx  src/ui/*.cxx src/ui/avtk/avtk/*.cxx src/ui/avtk/avtk/pugl/pugl_x11.c )
 
@@ -81,5 +80,9 @@ ELSE()
   # install LV2 .ttl files
   FILE(GLOB ttls "src/*.ttl")
   install(FILES ${ttls}   DESTINATION lib/lv2/fabla2.lv2/)
-
+  
+  configure_file( "src/ui/themes/default.avtk"  "default.avtk" COPYONLY)
+  configure_file( "src/ui/themes/green.avtk"    "green.avtk"   COPYONLY)
+  configure_file( "src/ui/themes/orange.avtk"   "orange.avtk"  COPYONLY)
+  configure_file( "src/ui/themes/yellow.avtk"   "yellow.avtk"  COPYONLY)
 ENDIF()

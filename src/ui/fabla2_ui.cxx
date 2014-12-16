@@ -19,6 +19,10 @@ static void widgetCB(Avtk::Widget* w, void* ud);
 TestUI::TestUI( PuglNativeWindow parent ):
   Avtk::UI( 780, 330, parent )
 {
+  themes.push_back( new Avtk::Theme( this, "orange.avtk" ) );
+  themes.push_back( new Avtk::Theme( this, "green.avtk" ) );
+  themes.push_back( new Avtk::Theme( this, "yellow.avtk" ) );
+  
   // slider vert
   Avtk::Image* headerImage = new Avtk::Image( this, 0, 0, 780, 36, "Header Image" );
   headerImage->load( header.pixel_data );
@@ -35,16 +39,19 @@ TestUI::TestUI( PuglNativeWindow parent ):
   bankB = new Avtk::Button( this, 5 + +s+6, 43, s, s, "B" );
   //bankB->callback = widgetCB;
   //bankB->callbackUD = this;
+  bankB->theme( theme( 1 ) );
   add( bankB );
   
   bankC = new Avtk::Button( this, 5, 43  + +s+6, s, s, "C" );
   bankC->callback = widgetCB;
   bankC->callbackUD = this;
+  bankC->theme( theme( 2 ) );
   add( bankC );
   
   bankD = new Avtk::Button( this, 5 + +s+6, 43 +s+6, s, s, "D" );
   bankD->callback = widgetCB;
   bankD->callbackUD = this;
+  bankD->theme( theme( 3 ) );
   add( bankD );
   
   waveform = new Avtk::Waveform( this, 355, 42, 422, 113, "Waveform" );
