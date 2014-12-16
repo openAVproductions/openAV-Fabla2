@@ -24,6 +24,7 @@
 #include <string.h>
 
 #include "pad.hxx"
+#include "bank.hxx"
 #include "voice.hxx"
 #include "sample.hxx"
 #include "sampler.hxx"
@@ -36,6 +37,9 @@ Fabla2DSP::Fabla2DSP( int rate ) :
   sr( rate ),
   recordEnable( false )
 {
+  // init the library
+  library = new Library( this, rate );
+  
   for( int i = 0; i < 16; i++ )
     voices.push_back( new Voice( this, rate ) );
   
@@ -43,7 +47,8 @@ Fabla2DSP::Fabla2DSP( int rate ) :
   
   memset( controlPorts, 0, sizeof(float*) * PORT_COUNT );
   
-  for(int i = 0; i < 16; i++)
+  int bankID = 0;
+  for(int i = 0; i < 16 * 4; i++)
   {
     Pad* tmpPad = new Pad( this, rate );
     
@@ -97,7 +102,15 @@ Fabla2DSP::Fabla2DSP( int rate ) :
       tmpPad->add( tmp );
     }
     
-    midiToPad.insert( std::pair< int,yasper::ptr<Pad> >( i + 36, tmpPad ) );
+    //midiToPad.insert( std::pair< int,yasper::ptr<Pad> >( i + 36, tmpPad ) );
+    
+    library->bank( bankID )->addPad( tmpPad );
+    
+    // move to next bank
+    if( i > 0 && i % 16 == 0 )
+    {
+      bankID++;
+    }
   }
 }
 

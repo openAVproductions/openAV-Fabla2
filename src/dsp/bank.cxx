@@ -18,38 +18,33 @@
  * MA 02110-1301, USA.
  */
 
-#ifndef OPENAV_FABLA2_LIBRARY_HXX
-#define OPENAV_FABLA2_LIBRARY_HXX
+#include "bank.hxx"
 
-#include <list>
-#include "yasper.hxx"
+#include "pad.hxx"
+#include <cstring>
 
 namespace Fabla2
 {
 
-class Bank;
-class Fabla2DSP;
-
-/** Library
- * The Library class holds all resources. When a Voice gets a play() event, the
- * appropriate resources are linked from the Library. This avoids multiple loading
- * of sample files, and allows voices to play back any sample.
- */
-class Library
+Bank::Bank( Fabla2DSP* d, int rate, int ID, const char* name ) :
+  dsp( d ),
+  ID_( ID )
 {
-  public:
-    Library( Fabla2DSP* dsp, int rate );
-    ~Library();
-    
-    /// add resources for a certain bank/pad
-    void bank( Bank* b );
-    Bank* bank( int ID );
-    
-  private:
-    Fabla2DSP* dsp;
-    std::list< yasper::ptr<Bank> > banks;
-};
+}
 
-};
+void Bank::name( const char* name )
+{
+  memcpy( name_, name, 20 );
+  name_[20] = '\n';
+}
 
-#endif // OPENAV_FABLA2_LIBRARY_HXX
+void Bank::addPad( Pad* p )
+{
+  pads.push_back( p );
+}
+
+Bank::~Bank()
+{
+}
+
+}; // Fabla2

@@ -20,11 +20,36 @@
 
 #include "library.hxx"
 
+#include "bank.hxx"
+
 namespace Fabla2
 {
 
-Library::Library( int rate )
+Library::Library( Fabla2DSP* d, int rate ) :
+  dsp( d )
 {
+  // add the 4 initial banks
+  bank( new Bank( d, rate, 0, "A" ) );
+  bank( new Bank( d, rate, 1, "B" ) );
+  bank( new Bank( d, rate, 2, "C" ) );
+  bank( new Bank( d, rate, 3, "D" ) );
+}
+
+void Library::bank( Bank* b )
+{
+  banks.push_back( b );
+}
+
+Bank* Library::bank( int id )
+{
+  for (std::list< yasper::ptr<Bank> >::iterator it= banks.begin(); it != banks.end(); ++it)
+  {
+    if( (*it)->ID() == id )
+    {
+      return (*it);
+    }
+  }
+  return 0;
 }
 
 Library::~Library()
