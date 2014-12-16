@@ -6,7 +6,7 @@
 
 #include "shared.hxx"
 
-#include "ui/test_ui.hxx"
+#include "ui/fabla2_ui.hxx"
 
 static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descriptor,
                               const char * plugin_uri,

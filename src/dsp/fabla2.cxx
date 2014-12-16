@@ -89,6 +89,13 @@ Fabla2DSP::Fabla2DSP( int rate ) :
       Sample* tmp = new Sample( this, rate, "Four", "/usr/local/lib/lv2/fabla2.lv2/test4.wav");
       tmpPad->add( tmp );
     }
+    if ( i == 4 )
+    {
+      // TODO: Fixme to use Library & RT-safe loading
+      // hack code load sample for now
+      Sample* tmp = new Sample( this, rate, "Four", "/usr/local/lib/lv2/fabla2.lv2/kick.wav");
+      tmpPad->add( tmp );
+    }
     
     midiToPad.insert( std::pair< int,yasper::ptr<Pad> >( i + 36, tmpPad ) );
   }

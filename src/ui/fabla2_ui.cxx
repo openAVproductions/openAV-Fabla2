@@ -1,5 +1,5 @@
 
-#include "test_ui.hxx"
+#include "fabla2_ui.hxx"
 
 #include "utils.hxx"
 #include "theme.hxx"
@@ -24,23 +24,25 @@ TestUI::TestUI( PuglNativeWindow parent ):
   headerImage->load( header.pixel_data );
   add( headerImage );
   
-  bankA = new Avtk::Button( this, 5, 43, 50, 65, "A" );
+  int s = 32;
+  
+  bankA = new Avtk::Button( this, 5, 43, s, s, "A" );
   bankA->callback = widgetCB;
   bankA->callbackUD = this;
   bankA->value( true );
   add( bankA );
   
-  bankB = new Avtk::Button( this, 5, 115, 50, 65, "B" );
-  bankB->callback = widgetCB;
-  bankB->callbackUD = this;
+  bankB = new Avtk::Button( this, 5 + +s+6, 43, s, s, "B" );
+  //bankB->callback = widgetCB;
+  //bankB->callbackUD = this;
   add( bankB );
   
-  bankC = new Avtk::Button( this, 5, 187, 50, 65, "C" );
+  bankC = new Avtk::Button( this, 5, 43  + +s+6, s, s, "C" );
   bankC->callback = widgetCB;
   bankC->callbackUD = this;
   add( bankC );
   
-  bankD = new Avtk::Button( this, 5, 258, 50, 65, "D" );
+  bankD = new Avtk::Button( this, 5 + +s+6, 43 +s+6, s, s, "D" );
   bankD->callback = widgetCB;
   bankD->callbackUD = this;
   add( bankD );
@@ -60,18 +62,18 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   
   // pads
-  int xS = 65;
-  int yS = 64;
+  int xS = 60;
+  int yS = 60;
   int border = 8;
   
-  int x = 62;
-  int y = -29 + (yS+border) * 4;
+  int x = 82;
+  int y = -18 + (yS+border) * 4;
   for(int i = 0; i < 16; i++ )
   {
     if( i != 0 && i % 4 == 0 )
     {
       y -= yS + border;
-      x = 62;
+      x = 82;
     }
     
     pads[i] = new Avtk::Button( this, x, y, xS, yS, "-" );
