@@ -40,7 +40,11 @@ Pad::Pad( Fabla2DSP* d, int rate ) :
   sampleSwitchSystem( SS_NONE ),
   roundRobinCounter(0)
 {
+  // initialze to zero
   memset( controls, 0, sizeof(float) * CONTROLS_COUNT );
+  
+  // individual controls to init values
+  controls[FILTER_CUTOFF] = 1.0;
 }
 
 void Pad::add( Sample* s )

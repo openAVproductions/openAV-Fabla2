@@ -44,11 +44,13 @@ class Sample
     
     ~Sample();
     
+    /// gives the name of the sample
+    const char*   getName()     {return name.c_str();}
+    
     /// data get functions
     const int     getChannels() {return channels    ;}
     const long    getFrames()   {return frames      ;}
     const float*  getAudio()    {return &audio[0]   ;}
-    const char*   getName()     {return name.c_str();}
     
     /// velocity functions
     bool velocity( int vel );

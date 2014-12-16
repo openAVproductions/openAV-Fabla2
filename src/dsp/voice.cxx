@@ -26,6 +26,7 @@
 #include "fabla2.hxx"
 
 #include "pad.hxx"
+#include "sample.hxx"
 #include "sampler.hxx"
 #include "dsp_filters_svf.hxx"
 
@@ -36,7 +37,10 @@
 namespace Fabla2
 {
 
+int Voice::privateID = 0;
+
 Voice::Voice( Fabla2DSP* d, int r ) :
+  ID( privateID++ ),
   dsp( d ),
   sr ( r ),
   pad( 0 ),
@@ -52,7 +56,7 @@ Voice::Voice( Fabla2DSP* d, int r ) :
   adsr->setAttackRate  ( 0.001 * r );
   adsr->setDecayRate   ( 0.25 * r );
   adsr->setSustainLevel( 0.5  );
-  adsr->setReleaseRate ( 0.5 * r );
+  adsr->setReleaseRate ( 0.05 * r );
 }
 
 void Voice::play( Pad* p, int velocity )
@@ -61,11 +65,23 @@ void Voice::play( Pad* p, int velocity )
   active_ = true;
   phase = 0;
   
+  sampler->play( pad, velocity );
+  
+  Sample* samp = sampler->getSample();
+  if( samp )
+  {
+    //printf("Voice::play() %i, on Sample %s\n", ID, samp->getName() );
+  }
+  else
+  {
+    //printf("Voice::play() %i, sampler->play() returns NULL sample! Setting active to false\n", ID );
+    // *hard* set the sample to not play: we don't have a sample!
+    active_ = false;
+  }
+  
   adsr->reset();
   adsr->gate( true );
   
-  sampler->play( pad, velocity );
-
 #ifdef FABLA2_COMPONENT_TEST
   if( false )
   {
@@ -88,37 +104,60 @@ void Voice::play( Pad* p, int velocity )
 #endif
 }
 
+void Voice::stop()
+{
+  if( active_ )
+  {
+    /*
+    Sample* samp = sampler->getSample();
+    if( samp )
+      printf("Voice::stop() %i, on Sample %s\n", ID, samp->getName() );
+    */
+    adsr->gate( false );
+  }
+}
+
 void Voice::process()
 {
   if( !active_ )
+  {
     return;
+  }
+  
   
   int done = sampler->process( dsp->nframes, &voiceBuffer[0], &voiceBuffer[dsp->nframes] );
   
   // fast forward the ADSR to the after nframes-value, to respond faster
-  for(int i = 0; i < dsp->nframes - 1; i++)
-    adsr->process();
+  //for(int i = 0; i < dsp->nframes - 1; i++)
   
   float adsrVal = adsr->process();
-  filterL->setValue( (pad->controls[Pad::FILTER_CUTOFF]+0.3) * adsrVal );
-  filterR->setValue( (pad->controls[Pad::FILTER_CUTOFF]+0.3) * adsrVal );
+  filterL->setValue( (pad->controls[Pad::FILTER_CUTOFF]+0.3) );//* adsrVal );
+  filterR->setValue( (pad->controls[Pad::FILTER_CUTOFF]+0.3) );//* adsrVal );
   
-  filterL->process( dsp->nframes, &voiceBuffer[           0], &voiceBuffer[           0] );
-  filterR->process( dsp->nframes, &voiceBuffer[dsp->nframes], &voiceBuffer[dsp->nframes] );
+  bool filterOn = true;
+  if( filterOn )
+  {
+    filterL->process( dsp->nframes, &voiceBuffer[           0], &voiceBuffer[           0] );
+    filterR->process( dsp->nframes, &voiceBuffer[dsp->nframes], &voiceBuffer[dsp->nframes] );
+  }
   
   float* outL = dsp->controlPorts[OUTPUT_L];
   float* outR = dsp->controlPorts[OUTPUT_R];
   
   for(int i = 0; i < dsp->nframes; i++ )
   {
-    *outL++ += voiceBuffer[             i] * 0.4 * adsrVal;
-    *outR++ += voiceBuffer[dsp->nframes+i] * 0.4 * adsrVal;
+    *outL++ += voiceBuffer[             i] * adsrVal;
+    *outR++ += voiceBuffer[dsp->nframes+i] * adsrVal;
+    
+    // ADSR processes first sample *before* the filter set section. 
+    adsrVal = adsr->process();
   }
   
-  if( done )
+  if( done || adsr->getState() == ADSR::ENV_IDLE )
   {
     //printf("Voice done\n");
     active_ = false;
+    pad = 0;
   }
 }
 

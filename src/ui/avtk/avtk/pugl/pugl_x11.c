@@ -432,11 +432,11 @@ translateEvent(PuglView* view, XEvent xevent)
 
   if ( event.type == PUGL_EXPOSE )
   {
-    printf("sending PUGL_EXPOSE...\n" );
+    //printf("sending PUGL_EXPOSE...\n" );
   }
   else if ( event.type == PUGL_CONFIGURE )
   {
-    printf("sending PUGL_CONFIGURE...\n" );
+    //printf("sending PUGL_CONFIGURE...\n" );
   }
 
   return event;

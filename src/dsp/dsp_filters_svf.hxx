@@ -46,6 +46,7 @@ class FiltersSVF
     {
       init();
       active = false;
+      setValue( 1 );
     }
     
     /** Sets the type of filter use

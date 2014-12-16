@@ -142,21 +142,32 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
   // Start a sequence in the notify output port.
   lv2_atom_forge_sequence_head(&self->forge, &self->notify_frame, 0);
   
+  int midiMessagesIn = 0;
   // handle incoming MIDI
   LV2_ATOM_SEQUENCE_FOREACH(self->control, ev)
   {
     if (ev->body.type == self->uris.midi_MidiEvent)
     {
+      midiMessagesIn++;
+      if( midiMessagesIn > 1 )
+      {
+        printf("MidiMessage IN %d\n", midiMessagesIn );
+        //lv2_log_note(&self->logger, "MidiMessage IN %d\n", midiMessagesIn );
+      }
       const uint8_t* const msg = (const uint8_t*)(ev + 1);
       self->dsp->midi( ev->time.frames, msg );
       
+      if( midiMessagesIn > 1 )
+        printf("past dsp->midi()\n" );
+      
+      /*
       if( msg[0] == 144 || msg[0] == 128 )
       {
         // write note on/off MIDI events to UI
         LV2_Atom_Forge_Frame frame;
         lv2_atom_forge_frame_time( &self->forge, ev->time.frames );
         lv2_atom_forge_object( &self->forge, &frame, 0, self->uris.fabla2_PadEvent );
-
+        
         // Add UI state as properties
         lv2_atom_forge_key(&self->forge, self->uris.fabla2_bank);
         lv2_atom_forge_int(&self->forge, 0 );
@@ -167,6 +178,8 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
         lv2_atom_forge_key(&self->forge, self->uris.fabla2_velocity);
         lv2_atom_forge_int(&self->forge, msg[2] );
       }
+      */
+      
     }
     else if (lv2_atom_forge_is_object_type(&self->forge, ev->body.type))
     {

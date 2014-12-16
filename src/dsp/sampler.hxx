@@ -47,7 +47,8 @@ class Sampler
     /// process function, passing in the voice buffers for FX
     int process(int nframes, float* L, float* R);
     
-    Pad* getPad(){return pad;}
+    Pad*    getPad()    {return pad   ;}
+    Sample* getSample() {return sample;}
   
   private:
     Fabla2DSP* dsp;

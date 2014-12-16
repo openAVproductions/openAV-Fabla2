@@ -57,12 +57,15 @@ class Voice
     
     /// start playing a sample on this voice
     void play( Pad*, int velocity );
+    void stop();
     
     /// start recording a sample on this voice
     
     /// the main audio callback: since we have the dsp pointer, we can access the
     /// audio buffers etc from there: no need to pass them around.
     void process();
+    
+    Pad* getPad(){return pad;}
     
     //ADSR* getADSR(){return adsr.GetRawPointer();}
     //Sampler* getSampler(){return sampler.GetRawPointer();}
@@ -71,6 +74,9 @@ class Voice
     
   
   private:
+    static int privateID;
+    int ID;
+    
     Fabla2DSP* dsp;
     int sr;
     

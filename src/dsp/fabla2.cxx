@@ -36,12 +36,10 @@ Fabla2DSP::Fabla2DSP( int rate ) :
   sr( rate ),
   recordEnable( false )
 {
-  voices.push_back( new Voice( this, rate ) );
-  voices.push_back( new Voice( this, rate ) );
-  voices.push_back( new Voice( this, rate ) );
-  voices.push_back( new Voice( this, rate ) );
+  for( int i = 0; i < 16; i++ )
+    voices.push_back( new Voice( this, rate ) );
   
-  recordBuffer.resize( rate * 4 );
+  recordBuffer.resize( rate * 10 );
   
   memset( controlPorts, 0, sizeof(float*) * PORT_COUNT );
   
@@ -174,9 +172,6 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
               break;
             }
           }
-          
-          /// Logic for fetch-pad-data from Library
-          voices.at(0)->play( it->second, msg[2] );
         }
       }
     }
@@ -186,7 +181,7 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
   {
     if( recordEnable )
     {
-      printf("record disabled, pad # %i\n", recordPad );
+      printf("record finished, pad # %i\n", recordPad );
       
       if( midiToPad.find( 36 + recordPad ) != midiToPad.end() )
       {
@@ -199,36 +194,57 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
       }
       recordPad = -1;
       recordIndex = 0;
-      recordEnable = false;
     }
-  }
-  else if ( msg[0] == 240 && msg[1] == 127 )
-  {
-    recordEnable = true;
-    recordIndex = 0;
-    recordPad = -1;
-    printf("record enabled!\n");
+    else
+    {
+      // lookup which Pad* gets *played* when a note on arrives
+      Pad* padOnPtr = 0;
+      for (std::map< int, yasper::ptr<Pad> >::iterator it= midiToPad.begin(); it != midiToPad.end(); ++it)
+      {
+        if( it->first == msg[1] )
+        {
+          padOnPtr = it->second;
+        }
+      }
+      
+      if( padOnPtr )
+      {
+        // normal note off event, so kill voice
+        for(int i = 0; i < voices.size(); i++)
+        {
+          if( voices.at(i)->getPad() == padOnPtr )
+          {
+            voices.at(i)->stop();
+            break;
+          }
+        }
+      }
+    }
   }
   
   else if( msg[0] == 176 )
   {
+    // STOP on MPD32 "ctrl" mode for transport
+    if( msg[1] == 117 )
+    {
+      recordEnable = false;
+      recordIndex = 0;
+      recordPad = -1;
+      printf("record disabled!\n");
+    }
+    if( msg[1] == 119 ) // record
+    {
+      recordEnable = true;
+      recordIndex = 0;
+      recordPad = -1;
+      printf("record enabled!\n");
+    }
+    
     if( midiToPad.find( 36 + msg[1] ) != midiToPad.end() )
     {
       midiToPad[ 36 + msg[1] - 1 ]->controls[Pad::FILTER_CUTOFF] = msg[2] / 127.f;
     }
     
-    
-    
-    /*
-    /// library to get Pad
-    for (std::map< int, yasper::ptr<Pad> >::iterator it= midiToPad.begin(); it != midiToPad.end(); ++it)
-    {
-      if( msg[2] < 63 )
-        it->second->switchSystem( Pad::SS_VELOCITY_LAYERS );
-      else
-        it->second->switchSystem( Pad::SS_ROUND_ROBIN );
-    }
-    */
   }
   
 }
