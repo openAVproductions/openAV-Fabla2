@@ -61,6 +61,12 @@ TestUI::TestUI( PuglNativeWindow parent ):
   recordOverPad->clickMode( Avtk::Widget::CLICK_TOGGLE );
   add( recordOverPad );
   
+  masterPitch = new Avtk::Dial( this, 5, 43+(s+6)*4+6, s * 2 + 6, s*2+6,  "Pitch" );
+  masterPitch->callback = fabla2_widgetCB;
+  masterPitch->callbackUD = this;
+  masterPitch->theme( theme( 2 ) );
+  add( masterPitch );
+  
   waveform = new Avtk::Waveform( this, 355, 42, 422, 113, "Waveform" );
   std::vector<float> tmp;
   Avtk::loadSample("/usr/local/lib/lv2/fabla2.lv2/test.wav", tmp);
@@ -131,6 +137,11 @@ static void fabla2_widgetCB(Avtk::Widget* w, void* ud)
   if( w == ui->recordOverPad )
   {
     ui->write_function( ui->controller, Fabla2::RECORD_OVER_LAST_PLAYED_PAD, sizeof(float), 0, &tmp );
+  }
+  else if( w == ui->masterPitch )
+  {
+    float scaleVal = tmp * 24 - 12;
+    ui->write_function( ui->controller, Fabla2::MASTER_PITCH, sizeof(float), 0, &scaleVal );
   }
   else if( w == ui->masterVolume )
   {

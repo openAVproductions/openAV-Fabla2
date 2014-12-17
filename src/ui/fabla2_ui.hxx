@@ -26,6 +26,8 @@ class TestUI : public Avtk::UI
     Avtk::Widget* masterVolume;
     Avtk::Widget* recordOverPad;
     
+    Avtk::Dial* masterPitch;
+    
     Avtk::List* list;
     Avtk::List* list2;
     Avtk::Waveform* waveform;

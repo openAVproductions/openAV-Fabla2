@@ -36,7 +36,7 @@ Sampler::Sampler( Fabla2DSP* d, int rate ) :
   pad( 0 ),
   sample( 0 ),
   
-  playheadDelta(2),
+  playheadDelta(1),
   playIndex(0)
 {
 }
