@@ -66,6 +66,11 @@ class FablaLV2
     LV2_URID_Unmap* unmap;
     
     URIs uris;
+  
+  private:
+    /// convienience functions to extract bank/pad info from an Atom
+    /// @return 0 on success, non-zero on error
+    int atomBankPad( const LV2_Atom_Object* obj, int& bank, int& pad );
     
 };
 

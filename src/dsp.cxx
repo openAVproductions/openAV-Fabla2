@@ -129,6 +129,21 @@ void FablaLV2::connect_port(LV2_Handle instance, uint32_t port, void *data)
   }
 }
 
+int FablaLV2::atomBankPad( const LV2_Atom_Object* obj, int& b, int& p )
+{
+  const LV2_Atom* bank = 0;
+  const LV2_Atom* pad  = 0;
+  lv2_atom_object_get(obj,uris.fabla2_bank, &bank,
+                          uris.fabla2_pad , &pad, 0);
+  if( bank && pad )
+  {
+    b = ((const LV2_Atom_Int*)bank)->body;
+    p = ((const LV2_Atom_Int*)pad )->body;
+    return 0;
+  }
+  return -1;
+}
+
 static void
 tx_rawaudio(LV2_Atom_Forge* forge,
             URIs*           uris,
@@ -217,20 +232,15 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
         const LV2_Atom_Object* obj = (const LV2_Atom_Object*)&ev->body;
         if (obj->body.otype == self->uris.fabla2_PadPlay )
         {
-          printf("Pad play recieved!\n");
-          const LV2_Atom* bank = 0;
-          const LV2_Atom* pad  = 0;
-          lv2_atom_object_get(obj,self->uris.fabla2_bank, &bank,
-                                  self->uris.fabla2_pad , &pad, 0);
-          if( bank && pad )
+          int bank, pad;
+          // convienience func to get bank, pad, and check OK
+          if( self->atomBankPad( obj, bank, pad ) == 0 )
           {
-            int b = ((const LV2_Atom_Int*)bank)->body;
-            int p = ((const LV2_Atom_Int*)pad )->body;
             uint8_t msg[3];
-            msg[0] = 0x90 + b;
-            msg[1] = 36 + p;
+            msg[0] = 0x90 + bank;
+            msg[1] = 36 + pad;
             msg[2] = 90;
-            self->dsp->midi( ev->time.frames, msg );
+            self->dsp->midi( 0, msg );
           }
         }
         else if (obj->body.otype == self->uris.patch_Set)

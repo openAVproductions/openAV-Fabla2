@@ -46,6 +46,8 @@
 #define FABLA2_PadPlay          FABLA2_URI "#PadPlay"
 #define FABLA2_PadStop          FABLA2_URI "#PadStop"
 
+#define FABLA2_SampleGain       FABLA2_URI "#SampleGain"
+#define FABLA2_SamplePitch      FABLA2_URI "#SamplePitch"
 #define FABLA2_SampleLoad       FABLA2_URI "#SampleLoad"
 #define FABLA2_SampleUnload     FABLA2_URI "#SampleUnload"
 #define FABLA2_SampleAudioData  FABLA2_URI "#SampleAudioData"
@@ -56,6 +58,7 @@
 #define FABLA2_pad              FABLA2_URI "#pad"
 #define FABLA2_layer            FABLA2_URI "#layer"
 #define FABLA2_velocity         FABLA2_URI "#velocity"
+#define FABLA2_value            FABLA2_URI "#value"
 
 
 typedef struct {
@@ -77,6 +80,8 @@ typedef struct {
   LV2_URID fabla2_PadPlay;
   LV2_URID fabla2_PadStop;
   
+  LV2_URID fabla2_SampleGain;
+  LV2_URID fabla2_SamplePitch;
   LV2_URID fabla2_SampleLoad;
   LV2_URID fabla2_SampleUnload;
   LV2_URID fabla2_SampleAudioData;
@@ -86,6 +91,7 @@ typedef struct {
   LV2_URID fabla2_bank;
   LV2_URID fabla2_pad;
   LV2_URID fabla2_layer;
+  LV2_URID fabla2_value;
 } URIs;
 
 static void mapUri( URIs* uris, LV2_URID_Map* map )
@@ -107,6 +113,8 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   
   uris->fabla2_PadPlay     = map->map(map->handle, FABLA2_PadPlay);
   
+  uris->fabla2_SampleGain  = map->map(map->handle, FABLA2_SampleGain);
+  uris->fabla2_SamplePitch = map->map(map->handle, FABLA2_SamplePitch);
   uris->fabla2_SampleLoad  = map->map(map->handle, FABLA2_SampleLoad);
   uris->fabla2_SampleUnload= map->map(map->handle, FABLA2_SampleUnload);
   uris->fabla2_SampleAudioData=map->map(map->handle,FABLA2_SampleAudioData);
@@ -116,6 +124,7 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->fabla2_bank        = map->map(map->handle, FABLA2_bank);
   uris->fabla2_pad         = map->map(map->handle, FABLA2_pad);
   uris->fabla2_layer       = map->map(map->handle, FABLA2_layer);
+  uris->fabla2_value       = map->map(map->handle, FABLA2_value);
 }
 
 #endif // OPENAV_FABLA2_SHARED_HXX

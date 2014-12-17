@@ -19,7 +19,8 @@ static void fabla2_widgetCB(Avtk::Widget* w, void* ud);
 TestUI::TestUI( PuglNativeWindow parent ):
   Avtk::UI( 780, 330, parent ),
   currentBank( 0 ),
-  currentPad( 0 )
+  currentPad( 0 ),
+  currentLayer(0)
 {
   themes.push_back( new Avtk::Theme( this, "orange.avtk" ) );
   themes.push_back( new Avtk::Theme( this, "green.avtk" ) );
@@ -43,6 +44,9 @@ TestUI::TestUI( PuglNativeWindow parent ):
   bankBtns[3] = new Avtk::Button( this, 5 + +s+6, 43 +s+6, s, s, "D" );
   bankBtns[3]->theme( theme( 3 ) );
   
+  for(int i = 0; i < 4; i++)
+    bankBtns[i]->clickMode( Avtk::Widget::CLICK_TOGGLE );
+  
   recordOverPad = new Avtk::Button( this, 5, 43+(s+6)*2, s * 2 + 6, s*2+6,  "X-REC" );
   recordOverPad->theme( theme( 4 ) );
   recordOverPad->clickMode( Avtk::Widget::CLICK_TOGGLE );
@@ -64,14 +68,18 @@ TestUI::TestUI( PuglNativeWindow parent ):
   bitcrusDist=new Avtk::Button( this, 573, 161, 59, 81, "Bit Cr,Dist" );
   eq        = new Avtk::Button( this, 573, 247, 59, 81, "Equalizer" );
   comp      = new Avtk::Button( this, 635, 161, 59, 81, "Comp" );
-  gainPitch = new Avtk::Button( this, 635, 247, 59, 81, "Gain/Ptc" );
+  
+  //gainPitch = new Avtk::Button( this, 635, 247, 59, 81, "Gain/Ptc" );
+  sampleGain = new Avtk::Dial( this, 635  -4 , 247+2, 40, 40, "Sample Gain" );
+  samplePitch= new Avtk::Dial( this, 635+30-2, 247+2, 40, 40, "Sample Pitch" );
+  
   padSends  = new Avtk::Button( this, 699, 161, 32, 166, "Snd" );
   padMaster = new Avtk::Button( this, 736, 160, 40, 166, "Mstr" );
   
   // pads
-  int xS = 60;
-  int yS = 60;
-  int border = 8;
+  int xS = 58;
+  int yS = 58;
+  int border = 10;
   
   int x = 82;
   int y = -18 + (yS+border) * 4;
@@ -83,14 +91,13 @@ TestUI::TestUI( PuglNativeWindow parent ):
       x = 82;
     }
     
-    pads[i] = new Avtk::Button( this, x, y, xS, yS, "-" );
+    pads[i] = new Avtk::Pad( this, x, y, xS, yS, "-" );
     
     x += xS + border;
   }
   
   // initial values
   bankBtns[0]->value( true );
-  
 }
 
 void TestUI::setBank( int bank )
@@ -107,26 +114,6 @@ void TestUI::setBank( int bank )
     pads[i]->theme( theme( bank ) );
   
   redraw();
-}
-
-static inline LV2_Atom*
-write_set_file(LV2_Atom_Forge*    forge,
-               const URIs*        uris,
-               const char*        filename,
-               const uint32_t     filename_len)
-{
-	LV2_Atom_Forge_Frame frame;
-	LV2_Atom* set = (LV2_Atom*)lv2_atom_forge_object(
-		forge, &frame, 0, uris->patch_Set);
-
-	lv2_atom_forge_key(forge, uris->patch_property);
-	lv2_atom_forge_urid(forge, uris->fabla2_PadPlay);
-	lv2_atom_forge_key(forge, uris->patch_value);
-	lv2_atom_forge_path(forge, filename, filename_len);
-
-	lv2_atom_forge_pop(forge, &frame);
-
-	return set;
 }
 
 void TestUI::writeAtom( int eventURI, float value )
@@ -148,58 +135,23 @@ void TestUI::writeAtom( int eventURI, float value )
   lv2_atom_forge_key(&forge, uris.fabla2_pad);
   lv2_atom_forge_int(&forge, currentPad );
   
+  lv2_atom_forge_key(&forge, uris.fabla2_layer);
+  lv2_atom_forge_int(&forge, currentLayer );
+  
+  lv2_atom_forge_key  (&forge, uris.fabla2_value);
+  lv2_atom_forge_float(&forge, value );
+  
   lv2_atom_forge_pop(&forge, &frame);
   
   // send it
   write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
-  
-/*
-#define OBJ_BUF_SIZE 1024
-	uint8_t obj_buf[OBJ_BUF_SIZE];
-	lv2_atom_forge_set_buffer(&forge, obj_buf, OBJ_BUF_SIZE);
-  
-  LV2_Atom_Forge_Frame notify_frame;
-  lv2_atom_forge_sequence_head(&forge, &notify_frame, 0);
-  
-  LV2_Atom_Forge_Frame frame;
-  lv2_atom_forge_frame_time( &forge, 0 );
-  LV2_Atom* msg = (LV2_Atom*)lv2_atom_forge_object( &forge, &frame, 0, uris.fabla2_PadPlay );
-  
-  // Add UI state as properties
-  lv2_atom_forge_key(&forge, uris.fabla2_bank);
-  lv2_atom_forge_int(&forge, currentBank );
-  /*
-  lv2_atom_forge_key(&forge, uris.fabla2_pad);
-  lv2_atom_forge_int(&forge, currentPad );
-  
-  lv2_atom_forge_key(&forge, uris.fabla2_velocity);
-  lv2_atom_forge_int(&forge, 0 );
-  /
-  
-  lv2_atom_forge_pop(&forge, &frame);
-  
-  
-  printf("Lv2Atom MSG: size = %li, eventTransfer = %i\n", (long)lv2_atom_total_size(msg), uris.atom_eventTransfer ); 
-  write_function( controller, Fabla2::ATOM_IN, lv2_atom_total_size(msg), uris.atom_eventTransfer, &msg );
-*/
-
-
-
-  /*
-   // OLD CODE, probably useless
-    fabla2_setBank( this, 3 );
-    const char* f = "/usr/local/lib/lv2/fabla2.lv2/drum_loop.wav";
-    LV2_Atom* msg = fabla2_writeSampleLoadUnload( &forge, &uris, true, f, strlen(f) );
-    printf("Lv2Atom MSG: size = %li, eventTransfer = %i\n", (long)lv2_atom_total_size(msg), uris.atom_eventTransfer ); 
-    write_function( controller, Fabla2::ATOM_IN, lv2_atom_total_size(msg), uris.atom_eventTransfer, &msg );
-  */
 }
 
 void TestUI::widgetValueCB( Avtk::Widget* w)
 {
   float tmp = w->value();
   
-  //printf("widgetCB : %s\n", w->label() );
+  printf("widgetCB : %s\n", w->label() );
   
   if( w == recordOverPad )
   {
@@ -209,6 +161,14 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   {
     float scaleVal = tmp * 24 - 12;
     write_function( controller, Fabla2::MASTER_PITCH, sizeof(float), 0, &scaleVal );
+  }
+  else if( w == sampleGain )
+  {
+    writeAtom( uris.fabla2_SampleGain, w->value() );
+  }
+  else if( w == samplePitch )
+  {
+    writeAtom( uris.fabla2_SamplePitch, w->value() );
   }
   else if( w == masterVolume )
   {

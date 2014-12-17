@@ -5,6 +5,7 @@
 #include "avtk.hxx"
 
 #include "../shared.hxx"
+#include "pad.hxx"
 
 // for write_function and controller
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
@@ -44,6 +45,9 @@ class TestUI : public Avtk::UI
     Avtk::Widget* eq;
     Avtk::Widget* comp;
     Avtk::Widget* gainPitch;
+    Avtk::Dial* sampleGain;
+    Avtk::Dial* samplePitch;
+    
     Avtk::Widget* padSends;
     Avtk::Widget* padMaster;
     
@@ -59,7 +63,7 @@ class TestUI : public Avtk::UI
     Avtk::Widget* loadSampleBtn;
     
     
-    Avtk::Widget* pads[16];
+    Avtk::Pad* pads[16];
     
     // LV2 ports
     LV2UI_Controller controller;
@@ -73,6 +77,7 @@ class TestUI : public Avtk::UI
   private:
     int currentBank;
     int currentPad;
+    int currentLayer;
     /// updates the UI to a specifc bank
     void setBank( int bank );
     /// writes event/value identified by eventURI using currentBank / currentPad
