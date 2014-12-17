@@ -20,8 +20,8 @@ class TestUI : public Avtk::UI
     /// Set a NativeWindow for embedding: ignore for standalone 
     TestUI(PuglNativeWindow parent = 0);
     
-    /// demo function, changes all widgets to value
-    void setAllWidgets( Avtk::Widget* w, float value );
+    /// widget value callback
+    void widgetValueCB( Avtk::Widget* widget);
     
     
     // always visible widgets
@@ -69,6 +69,8 @@ class TestUI : public Avtk::UI
     URIs uris;
     LV2_URID_Map* map;
     LV2_Atom_Forge forge;
+    
+    
 };
 
 
