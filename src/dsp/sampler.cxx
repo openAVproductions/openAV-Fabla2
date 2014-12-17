@@ -21,6 +21,8 @@
 #include "sampler.hxx"
 
 #include "pad.hxx"
+#include "fabla2.hxx"
+#include "ports.hxx"
 #include "sample.hxx"
 #include <stdio.h>
 
@@ -34,6 +36,7 @@ Sampler::Sampler( Fabla2DSP* d, int rate ) :
   pad( 0 ),
   sample( 0 ),
   
+  playheadDelta(2),
   playIndex(0)
 {
 }
@@ -71,13 +74,19 @@ int Sampler::process(int nframes, float* L, float* R)
   if( playIndex > frames * chans )
     return 1;
   
+  // playheadDelta with master-pitch offset: can be +- 12.
+  float mstr = *dsp->controlPorts[Fabla2::MASTER_PITCH];
+  float pd = playheadDelta + mstr / 12.f; // 1 -> 2 range (double pitch)
+  if( mstr < 0.000 )
+    pd = playheadDelta + mstr / 24.f; // 1 -> 0.5 range (half pitch)
   
   if( chans == 1 )
   {
     for(int i = 0; i < nframes; i++ )
     {
-      *L++ = audio[playIndex  ];
-      *R++ = audio[playIndex++];
+      *L++ = audio[(int)playIndex];
+      *R++ = audio[(int)playIndex];
+      playIndex += pd;
       
       if( playIndex > frames * chans )
         return 1;
@@ -87,8 +96,11 @@ int Sampler::process(int nframes, float* L, float* R)
   {
     for(int i = 0; i < nframes; i++ )
     {
-      *L++ = audio[playIndex++];
-      *R++ = audio[playIndex++];
+      *L++ = audio[(int)playIndex];
+      playIndex +=pd;
+      
+      *R++ = audio[(int)playIndex];
+      playIndex += pd;
       
       if( playIndex > frames * chans)
       {

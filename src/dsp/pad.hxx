@@ -53,7 +53,9 @@ class Pad
     
     enum PAD_CONTROLS {
       FILTER_CUTOFF,
-      CONTROLS_COUNT,
+      
+      
+      CONTROLS_COUNT, // always last
     };
     
     float controls[CONTROLS_COUNT];

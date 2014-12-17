@@ -61,10 +61,11 @@ class Sampler
     /// Sample pointer, retrieved from Pad when the note started playing
     Sample* sample;
     
+    /// playback-speed: 2x is a double in pitch, 0.5 is half the pitch
+    float playheadDelta;
+    
     /// audio playback variables
-    long playIndex;
-    
-    
+    float playIndex;
 };
 
 };

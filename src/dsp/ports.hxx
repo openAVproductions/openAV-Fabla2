@@ -37,6 +37,7 @@ typedef enum
   OUTPUT_R,
   
   MASTER_VOL,
+  MASTER_PITCH,
   RECORD_OVER_LAST_PLAYED_PAD,
   
   PORT_COUNT
