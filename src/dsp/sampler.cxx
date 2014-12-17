@@ -84,8 +84,16 @@ int Sampler::process(int nframes, float* L, float* R)
   {
     for(int i = 0; i < nframes; i++ )
     {
-      *L++ = audio[(int)playIndex];
-      *R++ = audio[(int)playIndex];
+      // linear interpolation between samples
+      float x0 = playIndex - int(playIndex);
+      int x1 = int(playIndex);
+      int x2 = x1 + 1; // next sample
+      float y1 = audio[x1];
+      float y2 = audio[x2];
+      float out = y1 + ( y2 - y1 ) * x0;
+      
+      *L++ = out;
+      *R++ = out;
       playIndex += pd;
       
       if( playIndex > frames * chans )
@@ -96,13 +104,33 @@ int Sampler::process(int nframes, float* L, float* R)
   {
     for(int i = 0; i < nframes; i++ )
     {
-      *L++ = audio[(int)playIndex];
-      playIndex +=pd;
+      // stereo linear interpolatation between samples
+      float x0 = playIndex - int(playIndex);
       
-      *R++ = audio[(int)playIndex];
-      playIndex += pd;
+      int l1 = int(playIndex);
+      int r1 = int(playIndex);
       
-      if( playIndex > frames * chans)
+      int l2 = l1 + 2; // next sample
+      int r2 = r1 + 2; // and after sample
+      
+      // FIXME: Optimize this
+      float ly1 = audio[l1];
+      float ly2 = audio[l2];
+      
+      float ry1 = audio[r1];
+      float ry2 = audio[r2];
+      
+      float lOut = ly1 + ( ly2 - ly1 ) * x0;
+      float rOut = ry1 + ( ry2 - ry1 ) * x0;
+      
+      *L++ = lOut;//audio[(int)playIndex];
+      *R++ = rOut;//audio[(int)playIndex];
+      
+      //playIndex += pd;
+      //playIndex +=pd;
+      playIndex += pd * 2; // move to next frame
+      
+      if( playIndex + 4 > frames * chans)
       {
         return 1;
       }
