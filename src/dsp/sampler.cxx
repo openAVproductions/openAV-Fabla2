@@ -74,8 +74,8 @@ int Sampler::process(int nframes, float* L, float* R)
   if( playIndex > frames * chans )
     return 1;
   
-  // playheadDelta with master-pitch offset: can be +- 12.
-  float mstr = *dsp->controlPorts[Fabla2::MASTER_PITCH];
+  // playheadDelta with sample and master pitch offset: can be +- 12.
+  float mstr = sample->pitch * 24 -12 + *dsp->controlPorts[Fabla2::MASTER_PITCH];
   float pd = playheadDelta + mstr / 12.f; // 1 -> 2 range (double pitch)
   if( mstr < 0.000 )
     pd = playheadDelta + mstr / 24.f; // 1 -> 0.5 range (half pitch)
