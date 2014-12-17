@@ -138,7 +138,7 @@ namespace QUnit {
           if ( openFileOnFail )
           {
             std::stringstream s;
-            s << "geany" << file << " --line " << line;
+            s << "geany " << file << " --line " << line;
             system( s.str().c_str() );
           }
         }

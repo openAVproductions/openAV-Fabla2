@@ -178,7 +178,7 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
   switch( lv2_midi_message_type( msg ) )
   {
     case LV2_MIDI_MSG_NOTE_ON:
-        //printf("MIDI : Note On received\n");
+        printf("MIDI : Note On received\n");
         // valid MIDI note on for a sampler
         if( msg[1] >= 36 && msg[1] < 36 + 16 )
         {
@@ -220,10 +220,11 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
         break;
     
     case LV2_MIDI_MSG_NOTE_OFF:
-        //printf("MIDI : Note Off received\n");
+        printf("MIDI : Note Off received\n");
         for(int i = 0; i < voices.size(); i++)
         {
           Voice* v = voices.at(i);
+          
           if( v->active() )
           {
             int chnl = (msg[0] & 0x0F);
@@ -234,15 +235,16 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
             
             if ( v->getPad() == p );
             {
+              printf("Note off, stopping voice %i, pad %i\n", i, p->ID() );
               voices.at(i)->stop();
-              return;
+              break;
             }
           }
         }
         break;
     
     case LV2_MIDI_MSG_CONTROLLER:
-        printf("MIDI : Controller received\n");
+        //printf("MIDI : Controller received\n");
         if( msg[1] == 119 ) 
         {
           startRecordToPad( recordBank, recordPad );
@@ -254,7 +256,7 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
         break;
     
     case LV2_MIDI_MSG_PGM_CHANGE:
-        printf("MIDI : Program Change received\n");
+        //printf("MIDI : Program Change received\n");
         break;
     
   }
@@ -352,7 +354,7 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
 
 void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 {
-  printf("Fabla2:uiMessage bank %i, pad %i, layer %i: %f\n", b, p, l, v );
+  //printf("Fabla2:uiMessage bank %i, pad %i, layer %i: %f\n", b, p, l, v );
   
   Sample* s = library->bank( b )->pad( p )->layer( l );
   if( !s )

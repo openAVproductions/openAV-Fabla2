@@ -35,18 +35,38 @@ extern QUnit::UnitTest qunit;
 namespace Fabla2
 {
 
+static void fabla2_deinterleave( int size, const float* all, std::vector<float>& L, std::vector<float>& R )
+{
+  L.resize( size / 2 );
+  R.resize( size / 2 );
+  
+  float* l = &L[0];
+  float* r = &R[0];
+  
+  printf("deinterlacing... size = %i\n", size );
+  
+  // de-interleave samples
+  for( int i = 0; i + 1 < size; i++ )
+  {
+    *l++ = *all++;
+    *r++ = *all++;
+  }
+}
+
 Sample::Sample( Fabla2DSP* d, int rate, int size, float* data ) :
   dsp( d ),
   sr(rate),
   channels( 2 ),
   frames( size / 2 ),
   velLow( 0 ),
-  velHigh( 127 )
+  velHigh( 127 ),
+  pitch( 0 )
 {
-  audio.resize( size );
-  
-  memcpy( &audio[0], data, sizeof(float) * size );
-  
+#ifdef FABLA2_COMPONENT_TEST
+  printf("%s\n", __PRETTY_FUNCTION__ );
+#endif
+  //memcpy( &audioMono[0], data, sizeof(float) * size );
+  fabla2_deinterleave( size, data, audioMono, audioStereoRight );
 }
 
 Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
@@ -69,26 +89,51 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
   channels = info.channels;
   frames   = info.frames;
   
-  if( info.channels > 2 )
+  if( channels > 2 || channels < 0 )
   {
     printf("Error loading sample %s, channels >= 2\n", path.c_str() );
     return;
   }
   
-  audio.resize( frames * channels );
+  // tmp buffer for loading
+  std::vector<float> audio;
   
+  // used to load into from disk. If mono, load directly into this buffer
+  // if stereo, load into audio buffer, and then de-interleave samples into
+  // the two buffers
+  float* loadBuffer = 0;
+  
+  if( channels == 1 )
+  {
+    audioMono.resize( frames );
+    loadBuffer = &audioMono.at(0);
+  }
+  else if( channels == 2 )
+  {
+    audio.resize( frames * channels );
+    loadBuffer = &audio.at(0);
+  }
+  
+  // read from disk
   sf_seek(sndfile, 0ul, SEEK_SET);
-  sf_read_float( sndfile, &audio[0], info.frames *channels );
+  int samplRead = sf_read_float( sndfile, loadBuffer, info.frames *channels );
   sf_close(sndfile);
+  
+  if( channels == 2 )
+  {
+    audioMono.resize( frames );
+    audioStereoRight.resize( frames );
+    fabla2_deinterleave( frames, loadBuffer, audioMono, audioStereoRight );
+  }
   
 #ifdef FABLA2_COMPONENT_TEST
   if( false )
   {
-    Plotter::plot( path, frames * channels, &audio[0] );
+    Plotter::plot( path, frames * channels, loadBuffer );
     printf("Sample %s loaded OK: Channels = %i, Frames = %i\n", path.c_str(), channels, frames );
   }
   QUNIT_IS_TRUE( info.frames > 0 );
-  QUNIT_IS_TRUE( audio.size() == info.frames );
+  QUNIT_IS_TRUE( samplRead == info.frames * info.channels );
 #endif
 }
 
@@ -96,6 +141,16 @@ void Sample::velocity( int low, int high )
 {
   velLow  = low;
   velHigh = high;
+}
+
+const float* Sample::getAudio( int chnl )
+{
+  if( channels == 2 && chnl == 1 && audioStereoRight.size() > 0 )
+  {
+    printf("%s stereo returned, size() %i\n", __PRETTY_FUNCTION__, audioStereoRight.size() );
+    return &audioStereoRight[0];
+  }
+  return &audioMono[0];
 }
 
 bool Sample::velocity( int vel )

@@ -11,7 +11,7 @@ set(FABLA2_VERSION "${FABLA2_VERSION_MAJOR}.${FABLA2_VERSION_MINOR}.${FABLA2_VER
 
 option(FABLA2_RELEASE_BUILD   "Build for releasing"         OFF )
 option(FABLA2_DEBUG_PRINTS    "Build with debugging prints" ON  )
-option(FABLA2_TESTS           "Build component tests"       OFF )
+option(FABLA2_TESTS           "Build component tests"       ON )
 
 
 ################################################################################
@@ -42,7 +42,7 @@ pkg_check_modules(X11 x11 REQUIRED)
 include_directories( ${X11_INCLUDE_DIRS} )
 link_directories   ( ${X11_LIBRARY_DIRS} )
 
-SET(CMAKE_CXX_FLAGS "-g -trigraphs -Wl,-z,nodelete  -Wl,--no-undefined -fPIC -shared ")
+SET(CMAKE_CXX_FLAGS "-g -trigraphs -Wuninitialized -Wl,-z,nodelete  -Wl,--no-undefined -fPIC -shared ")
 
 
 
@@ -54,7 +54,7 @@ SET(CMAKE_CXX_FLAGS "-g -trigraphs -Wl,-z,nodelete  -Wl,--no-undefined -fPIC -sh
 IF( FABLA2_TESTS )
   
   ADD_DEFINITIONS( "-DFABLA2_COMPONENT_TEST" )
-  SET(CMAKE_CXX_FLAGS "-g -trigraphs -Wl,-z,nodelete  -Wl,--no-undefined")
+  SET(CMAKE_CXX_FLAGS "-g -trigraphs -fsanitize=address -Wl,-z,nodelete  -Wl,--no-undefined")
   FILE(GLOB srcDspTests src/dsp/tests/*.cxx src/dsp/*.cxx )
   ADD_EXECUTABLE( fabla2test ${srcDspTests} )
   target_link_libraries( fabla2test ${SNDFILE_LIBRARIES})

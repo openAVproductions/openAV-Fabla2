@@ -50,7 +50,8 @@ class Sample
     /// data get functions
     const int     getChannels() {return channels    ;}
     const long    getFrames()   {return frames      ;}
-    const float*  getAudio()    {return &audio[0]   ;}
+    /// returns the buffer for the provided channel
+    const float*  getAudio(int channel);
     
     /// velocity functions
     bool velocity( int vel );
@@ -70,7 +71,8 @@ class Sample
     /// audio variables
     int channels;
     long frames;
-    std::vector<float> audio;
+    std::vector<float> audioMono;
+    std::vector<float> audioStereoRight;
     
     /// velocity range
     int velLow;

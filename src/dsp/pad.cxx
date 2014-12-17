@@ -42,6 +42,9 @@ Pad::Pad( Fabla2DSP* d, int rate, int ID ) :
   sampleSwitchSystem( SS_NONE ),
   roundRobinCounter(0)
 {
+#ifdef FABLA2_COMPONENT_TEST
+  printf("%s\n", __PRETTY_FUNCTION__ );
+#endif
   // initialze to zero
   memset( controls, 0, sizeof(float) * CONTROLS_COUNT );
   

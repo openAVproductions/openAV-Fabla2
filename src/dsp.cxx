@@ -196,15 +196,8 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
     {
       midiMessagesIn++;
       
-      printf("MidiMessage IN %d\n", midiMessagesIn );
-      
-      if( midiMessagesIn > 1 )
-      {
-        //lv2_log_note(&self->logger, "MidiMessage IN %d\n", midiMessagesIn );
-      }
       const uint8_t* const msg = (const uint8_t*)(ev + 1);
       self->dsp->midi( ev->time.frames, msg );
-      
       
       bool send = ((msg[0] & 0xF0) == 0x90 || (msg[0] & 0xF0) == 0x80 );
       int chnl  =  (msg[0] & 0x0F);
@@ -212,23 +205,21 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
       if( send && chnl >= 0 && chnl < 4 )
       {
         int pad = msg[1] - 36;
-        printf("sending %i %i %i\n", msg[0], pad, msg[2] );
-        
         // write note on/off MIDI events to UI
         LV2_Atom_Forge_Frame frame;
         lv2_atom_forge_frame_time( &self->forge, ev->time.frames );
-        lv2_atom_forge_object( &self->forge, &frame, 0, self->uris.fabla2_PadPlay );
         
-        // Add UI state as properties
+        if( (msg[0] & 0xF0) == 0x90 )
+          lv2_atom_forge_object( &self->forge, &frame, 0, self->uris.fabla2_PadPlay );
+        else
+          lv2_atom_forge_object( &self->forge, &frame, 0, self->uris.fabla2_PadStop );
+        
         lv2_atom_forge_key(&self->forge, self->uris.fabla2_bank);
         lv2_atom_forge_int(&self->forge, 0 );
-        
         lv2_atom_forge_key(&self->forge, self->uris.fabla2_pad);
         lv2_atom_forge_int(&self->forge, pad );
-        
         lv2_atom_forge_key(&self->forge, self->uris.fabla2_velocity);
         lv2_atom_forge_int(&self->forge, msg[2] );
-        
         lv2_atom_forge_pop(&self->forge, &frame);
       }
       else if( (msg[0] & 0xF0) == 0xB0 ) // control change
@@ -275,7 +266,7 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
       else if (obj->body.otype == self->uris.patch_Set)
       {
         // Received a set message, send it to the worker.
-        printf("Queueing set message\n");
+        //printf("Queueing set message\n");
         lv2_log_trace(&self->logger, "Queueing set message\n");
         self->schedule->schedule_work(self->schedule->handle,
                                       lv2_atom_total_size(&ev->body),

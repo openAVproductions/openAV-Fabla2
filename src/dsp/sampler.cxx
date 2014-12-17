@@ -39,13 +39,22 @@ Sampler::Sampler( Fabla2DSP* d, int rate ) :
   playheadDelta(1),
   playIndex(0)
 {
+#ifdef FABLA2_COMPONENT_TEST
+  printf("%s\n", __PRETTY_FUNCTION__ );
+#endif
 }
 
 void Sampler::play( Pad* p, int velocity )
 {
+#ifdef FABLA2_COMPONENT_TEST
+  printf("%s : Pad ID %i\n", __PRETTY_FUNCTION__, p->ID() );
+#endif
   pad = p;
   
   sample = pad->getPlaySample( velocity );
+  
+  // trigger audio playback here
+  playIndex = 0.000f;
   
   if( !sample )
   {
@@ -54,9 +63,6 @@ void Sampler::play( Pad* p, int velocity )
 #endif
     return;
   }
-  
-  // trigger audio playback here
-  playIndex = 0;
 }
 
 int Sampler::process(int nframes, float* L, float* R)
@@ -68,72 +74,113 @@ int Sampler::process(int nframes, float* L, float* R)
   }
   const int    chans = sample->getChannels();
   const int    frames= sample->getFrames();
-  const float* audio = sample->getAudio();
   
   // return immidiatly if we are finished playing the sample
-  if( playIndex > frames * chans )
+  if( playIndex >= frames )
+  {
     return 1;
+  }
   
   // playheadDelta with sample and master pitch offset: can be +- 12.
-  float mstr = sample->pitch * 24 -12 + *dsp->controlPorts[Fabla2::MASTER_PITCH];
-  float pd = playheadDelta + mstr / 12.f; // 1 -> 2 range (double pitch)
+#ifdef FABLA2_COMPONENT_TEST
+  float mstr = sample->pitch * 24.f - 12; // ignore DSP, for testing it is 0x0
+#else
+  float mstr = sample->pitch * 24.f - 12 + *dsp->controlPorts[Fabla2::MASTER_PITCH];
+#endif 
+  float pd = playheadDelta + mstr / 24.f; // 1 -> 2 range (double pitch)
   if( mstr < 0.000 )
-    pd = playheadDelta + mstr / 24.f; // 1 -> 0.5 range (half pitch)
+    pd = playheadDelta + mstr / 48.f; // 1 -> 0.5 range (half pitch)
   
   if( chans == 1 )
   {
+    const float* audio = sample->getAudio(0);
     for(int i = 0; i < nframes; i++ )
     {
-      // linear interpolation between samples
-      float x0 = playIndex - int(playIndex);
-      int x1 = int(playIndex);
-      int x2 = x1 + 1; // next sample
-      float y1 = audio[x1];
-      float y2 = audio[x2];
-      float out = y1 + ( y2 - y1 ) * x0;
+      // cubic 4-point Hermite-curve interpolation:
+      // http://musicdsp.org/showone.php?id=49
+      
+      int inpos = playIndex;
+      float finpos = playIndex - (int)playIndex;
+      float xm1 = audio[inpos    ];
+      float x0  = audio[inpos + 1];
+      float x1  = audio[inpos + 2];
+      float x2  = audio[inpos + 3];
+      float a = (3 * (x0-x1) - xm1 + x2) / 2;
+      float b = 2*x1 + xm1 - (5*x0 + x2) / 2;
+      float c = (x1 - xm1) / 2;
+      float out = (((a * finpos) + b) * finpos + c) * finpos + x0;
       
       *L++ = out;
       *R++ = out;
       playIndex += pd;
       
-      if( playIndex > frames * chans )
+      if( playIndex + 4 > frames )
         return 1;
     }
   }
   else if( chans == 2 )
   {
+    const float* audioL = sample->getAudio(0);
+    //const float* audioR = sample->getAudio(1);
+    
     for(int i = 0; i < nframes; i++ )
     {
-      // stereo linear interpolatation between samples
-      float x0 = playIndex - int(playIndex);
+      // cubic 4-point Hermite-curve interpolation:
+      // http://musicdsp.org/showone.php?id=49
       
-      int l1 = int(playIndex);
-      int r1 = int(playIndex);
+      int inpos = playIndex;
+      float finpos = playIndex - (int)playIndex;
+      float xm1 = audioL[inpos    ];
+      float x0  = audioL[inpos + 1];
+      float x1  = audioL[inpos + 2];
+      float x2  = audioL[inpos + 3];
+      float a = (3 * (x0-x1) - xm1 + x2) / 2;
+      float b = 2*x1 + xm1 - (5*x0 + x2) / 2;
+      float c = (x1 - xm1) / 2;
+      float out = (((a * finpos) + b) * finpos + c) * finpos + x0;
       
-      int l2 = l1 + 2; // next sample
-      int r2 = r1 + 2; // and after sample
+      *L++ = out;
+      *R++ = out;
+      playIndex += pd;
       
-      // FIXME: Optimize this
-      float ly1 = audio[l1];
-      float ly2 = audio[l2];
-      
-      float ry1 = audio[r1];
-      float ry2 = audio[r2];
-      
-      float lOut = ly1 + ( ly2 - ly1 ) * x0;
-      float rOut = ry1 + ( ry2 - ry1 ) * x0;
-      
-      *L++ = lOut;//audio[(int)playIndex];
-      *R++ = rOut;//audio[(int)playIndex];
-      
-      //playIndex += pd;
-      //playIndex +=pd;
-      playIndex += pd * 2; // move to next frame
-      
-      if( playIndex + 4 > frames * chans)
+      if( playIndex + 4 > frames )
       {
         return 1;
       }
+      
+      
+      
+      
+      /*
+      int inpos = (int)playIndex;
+      float finpos = playIndex - inpos;
+      
+      // Left channel
+      {
+        float xm1 = audioL[inpos + 0];
+        float x0  = audioL[inpos + 1];
+        float x1  = audioL[inpos + 2];
+        float x2  = audioL[inpos + 3];
+        float a = (3 * (x0-x1) - xm1 + x2) / 2;
+        float b = 2*x1 + xm1 - (5*x0 + x2) / 2;
+        float c = (x1 - xm1) / 2;
+        *L++ = (((a * finpos) + b) * finpos + c) * finpos + x0;
+      }
+      // right channel
+      {
+        float xm1 = audioR[inpos + 0];
+        float x0  = audioR[inpos + 1];
+        float x1  = audioR[inpos + 2];
+        float x2  = audioR[inpos + 3];
+        float a = (3 * (x0-x1) - xm1 + x2) / 2;
+        float b = 2*x1 + xm1 - (5*x0 + x2) / 2;
+        float c = (x1 - xm1) / 2;
+        *L++ = (((a * finpos) + b) * finpos + c) * finpos + x0;
+      }
+      
+      // move forward 2 frames
+      playIndex += pd;
+      */
     }
   }
   else

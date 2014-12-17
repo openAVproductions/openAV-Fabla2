@@ -96,7 +96,8 @@ static void fabla2_port_event(LV2UI_Handle handle,
   
     const LV2_Atom_Object* obj = (const LV2_Atom_Object*)atom;
     
-    if (obj->body.otype == ui->uris.fabla2_PadPlay)
+    bool padStop = (obj->body.otype == ui->uris.fabla2_PadStop);
+    if (obj->body.otype == ui->uris.fabla2_PadPlay || padStop)
     {
       //printf("UI: Fabla Pad Event\n");
       const LV2_Atom* pad  = NULL;
@@ -114,10 +115,14 @@ static void fabla2_port_event(LV2UI_Handle handle,
       else
       {
         const int32_t p  = ((const LV2_Atom_Int*)pad)->body;
-        const int32_t v  = ((const LV2_Atom_Int*)vel)->body;
+        int32_t v  = ((const LV2_Atom_Int*)vel)->body;
         //printf("UI Fabla Pad %i, Vel %i\n", p, v );
         if( p >= 0 && p < 16 )
+        {
+          if( padStop )
+            v = 0;
           ui->pads[p]->value( v );
+        }
         else
           printf("Fabla2:UI, Pad %i out of bounds\n", p, v );
         
