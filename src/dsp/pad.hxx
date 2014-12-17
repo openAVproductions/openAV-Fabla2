@@ -67,6 +67,10 @@ class Pad
     void muteGroup( int mg ){muteGroup_ = mg;}
     int  muteGroup(){return muteGroup_;}
     
+    /// get a layer: wether its velocity or Round-robin doesn't matter: this
+    /// is for UI interaction
+    Sample* getLayer( int id );
+    
     /// playback functions
     Sample* getPlaySample( int velocity );
     

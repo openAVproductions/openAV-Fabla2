@@ -34,8 +34,9 @@
 namespace Fabla2
 {
 
-Fabla2DSP::Fabla2DSP( int rate ) :
+Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
   sr( rate ),
+  uris( u ),
   recordEnable( false ),
   recordBank( 0 ),
   recordPad( 0 )
@@ -360,9 +361,15 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
   
 }
 
-void Fabla2DSP::uiMessage(int bank, int pad, int layer, int URI, float value)
+void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 {
-  
+  printf("Fabla2:uiMessage bank %i, pad %i, layer %i: %f\n", b, p, l, v );
+  /*
+  switch( URI )
+  {
+    //case 
+  }
+  */
 }
 
 void Fabla2DSP::startRecordToPad( int b, int p )

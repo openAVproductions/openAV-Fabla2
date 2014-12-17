@@ -82,16 +82,19 @@ LV2_Handle FablaLV2::instantiate( const LV2_Descriptor* descriptor,
   lv2_atom_forge_init( &tmp->forge, map);
   lv2_log_logger_init( &tmp->logger, tmp->map, tmp->log);
   
+  tmp->dsp = new Fabla2::Fabla2DSP( samplerate, &tmp->uris );
+  if( !tmp->dsp )
+  {
+    printf("Fabla2DSP() failed in FablaLV2::instantiate() Aborting.\n");
+    delete tmp;
+    return 0;
+  }
+  
   return (LV2_Handle)tmp;
 }
 
 FablaLV2::FablaLV2(int rate)
 {
-  dsp = new Fabla2::Fabla2DSP( rate );
-  if( !dsp )
-  {
-    printf("Fabla2DSP() failed in FablaLV2::instantiate() Aborting.\n");
-  }
 }
 
 FablaLV2::~FablaLV2()

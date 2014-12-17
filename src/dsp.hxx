@@ -43,8 +43,6 @@ class FablaLV2
     static void run(LV2_Handle instance, uint32_t n_samples);
     static void cleanup(LV2_Handle instance);
     static const void* extension_data(const char* uri);
-  
-    Fabla2::Fabla2DSP* dsp;
     
     // LV2 Atom Ports
     const LV2_Atom_Sequence* in_port;
@@ -68,6 +66,9 @@ class FablaLV2
     URIs uris;
   
   private:
+    /// the actual DSP instance
+    Fabla2::Fabla2DSP* dsp;
+    
     /// convienience functions to extract bank/pad info from an Atom
     /// @return 0 on success, non-zero on error
     int atomBankPadLayer( const LV2_Atom_Object* obj,

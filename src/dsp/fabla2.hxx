@@ -22,6 +22,7 @@
 #define OPENAV_FABLA2_HXX
 
 #include "ports.hxx"
+#include "../shared.hxx"
 
 #include "midi.hxx"
 #include "yasper.hxx"
@@ -45,7 +46,8 @@ class Library;
 class Fabla2DSP
 {
   public:
-    Fabla2DSP( int rate );
+    /// URIs pointer for understanding messages sent in from UI
+    Fabla2DSP( int rate, URIs* uris );
     ~Fabla2DSP();
     
     /// Play a pad, with options for trigger-type etc
@@ -70,6 +72,7 @@ class Fabla2DSP
     
   private:
     int sr;
+    URIs* uris;
     
     /// voices store all the voices available for use
     std::vector< yasper::ptr<Voice> > voices;
