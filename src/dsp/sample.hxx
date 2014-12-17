@@ -55,6 +55,11 @@ class Sample
     /// velocity functions
     bool velocity( int vel );
     void velocity( int low, int high );
+    
+    /// playback controls
+    bool dirty;           ///< Set to true when the cache is invalid
+    float gain;           ///< Gain of this sample
+    float pitch;          ///< Pitch of the sample (playback speed)
   
   private:
     Fabla2DSP* dsp;
@@ -62,6 +67,7 @@ class Sample
     
     std::string name;
     
+    /// audio variables
     int channels;
     long frames;
     std::vector<float> audio;

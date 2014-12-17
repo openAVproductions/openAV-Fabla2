@@ -55,6 +55,13 @@ void Pad::add( Sample* s )
   //printf( "Pad::add() #samples = %i\n", samples.size() );
 }
 
+Sample* Pad::layer( int id )
+{
+  if( id < samples.size() && id >= 0 )
+    return samples.at(id);
+  return 0;
+}
+
 Sample* Pad::getPlaySample( int velocity )
 {
 #ifdef FABLA2_COMPONENT_TEST

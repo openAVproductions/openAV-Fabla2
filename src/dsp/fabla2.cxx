@@ -364,12 +364,22 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
 void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 {
   printf("Fabla2:uiMessage bank %i, pad %i, layer %i: %f\n", b, p, l, v );
-  /*
-  switch( URI )
+  
+  Sample* s = library->bank( b )->pad( p )->layer( l );
+  if( !s )
   {
-    //case 
+    printf("Fabla2:uiMessage *ERROR* bank %i, pad %i, layer %i, sample == NULL\n", b, p, l );
+    return;
   }
-  */
+  
+  if(       URI == uris->fabla2_SampleGain )
+  {
+    s->dirty = true; s->pitch = v;
+  }
+  else if(  URI == uris->fabla2_SampleGain )
+  {
+    Sample* s = library->bank( b )->pad( p )->layer( l );
+  }
 }
 
 void Fabla2DSP::startRecordToPad( int b, int p )

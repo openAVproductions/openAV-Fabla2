@@ -69,7 +69,7 @@ class Pad
     
     /// get a layer: wether its velocity or Round-robin doesn't matter: this
     /// is for UI interaction
-    Sample* getLayer( int id );
+    Sample* layer( int id );
     
     /// playback functions
     Sample* getPlaySample( int velocity );
