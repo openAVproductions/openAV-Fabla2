@@ -22,19 +22,43 @@ class TestUI : public Avtk::UI
     
     /// demo function, changes all widgets to value
     void setAllWidgets( Avtk::Widget* w, float value );
-  
-    Avtk::Widget* masterVolume;
-    Avtk::Widget* recordOverPad;
     
+    
+    // always visible widgets
+    // L
+    Avtk::Widget* bankBtns[4];
+    Avtk::Widget* recordOverPad;
     Avtk::Dial* masterPitch;
     
+    // R
+    Avtk::Widget* masterVolume;
+    
+    
+    // sample edit view
+    Avtk::Widget* muteGroup;
+    Avtk::Widget* layers;
+    Avtk::Widget* adsr;
+    Avtk::Widget* filt1;
+    Avtk::Widget* filt2;
+    Avtk::Widget* bitcrusDist;
+    Avtk::Widget* eq;
+    Avtk::Widget* comp;
+    Avtk::Widget* gainPitch;
+    Avtk::Widget* padSends;
+    Avtk::Widget* padMaster;
+    
+    // Preset loading screen
+    /*
     Avtk::List* list;
     Avtk::List* list2;
+    */
+    
+    // shared between views!
     Avtk::Waveform* waveform;
     
     Avtk::Widget* loadSampleBtn;
     
-    Avtk::Widget* bankBtns[4];
+    
     Avtk::Widget* pads[16];
     
     // LV2 ports

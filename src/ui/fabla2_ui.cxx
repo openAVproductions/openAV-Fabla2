@@ -73,13 +73,34 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waveform->show( tmp );
   add( waveform );
   
-  
+  /*
   Avtk::Widget* sampleCtrls = new Avtk::Button( this, 446, 160, 332, 167, "Sample Controls" );
   add( sampleCtrls );
+  */
   
-  Avtk::Widget* layers = new Avtk::Button( this, 355, 160, 85, 167, "Layers" );
+  // sample edit view
+  muteGroup = new Avtk::Button( this, 355, 161, 85, 52, "Mute Group" );
+  add( muteGroup );
+  layers    = new Avtk::Button( this, 355, 218, 85, 109, "Layers" );
   add( layers );
-  
+  adsr      = new Avtk::Button( this, 446, 161, 59, 166, "ADSR" );
+  add( adsr );
+  filt1     = new Avtk::Button( this, 510, 161, 59, 81, "Filter 1" );
+  add( filt1 );
+  filt2     = new Avtk::Button( this, 510, 246, 59, 81, "Filter 2" );
+  add( filt2 );
+  bitcrusDist=new Avtk::Button( this, 573, 161, 59, 81, "Bit Cr,Dist" );
+  add( bitcrusDist );
+  eq        = new Avtk::Button( this, 573, 247, 59, 81, "Equalizer" );
+  add( eq );
+  comp      = new Avtk::Button( this, 635, 161, 59, 81, "Comp" );
+  add( comp );
+  gainPitch = new Avtk::Button( this, 635, 247, 59, 81, "Gain/Ptc" );
+  add( gainPitch );
+  padSends  = new Avtk::Button( this, 699, 161, 32, 166, "Pad Sends" );
+  add( padSends );
+  padMaster = new Avtk::Button( this, 736, 160, 40, 166, "Pad Master" );
+  add( padMaster );
   
   // pads
   int xS = 60;
