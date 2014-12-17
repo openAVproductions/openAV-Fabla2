@@ -116,9 +116,11 @@ static void fabla2_port_event(LV2UI_Handle handle,
         const int32_t p  = ((const LV2_Atom_Int*)pad)->body;
         const int32_t v  = ((const LV2_Atom_Int*)vel)->body;
         //printf("UI Fabla Pad %i, Vel %i\n", p, v );
+        if( p >= 0 && p < 16 )
+          ui->pads[p]->value( v );
+        else
+          printf("Fabla2:UI, Pad %i out of bounds\n", p, v );
         
-        // update UI grid here
-        ui->pads[p]->value( v );
       }
     }
 
