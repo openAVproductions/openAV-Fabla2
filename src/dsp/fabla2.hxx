@@ -65,6 +65,9 @@ class Fabla2DSP
     /// plugin format wrapper calls this for each MIDI event that arrives
     void midi( int frame, const uint8_t* );
     
+    /// called with UI Atom data
+    void uiMessage( int bank, int pad, int layer, int URI, float value );
+    
   private:
     int sr;
     

@@ -129,16 +129,22 @@ void FablaLV2::connect_port(LV2_Handle instance, uint32_t port, void *data)
   }
 }
 
-int FablaLV2::atomBankPad( const LV2_Atom_Object* obj, int& b, int& p )
+int FablaLV2::atomBankPadLayer( const LV2_Atom_Object* obj, int& b, int& p, int& l, float& v )
 {
   const LV2_Atom* bank = 0;
   const LV2_Atom* pad  = 0;
-  lv2_atom_object_get(obj,uris.fabla2_bank, &bank,
-                          uris.fabla2_pad , &pad, 0);
-  if( bank && pad )
+  const LV2_Atom* lay  = 0;
+  const LV2_Atom* fl   = 0;
+  lv2_atom_object_get(obj,uris.fabla2_bank , &bank,
+                          uris.fabla2_pad  , &pad,
+                          uris.fabla2_layer, &lay,
+                          uris.fabla2_value, &fl, 0);
+  if( bank && pad && lay && fl )
   {
     b = ((const LV2_Atom_Int*)bank)->body;
     p = ((const LV2_Atom_Int*)pad )->body;
+    l = ((const LV2_Atom_Int*)lay )->body;
+    v = ((const LV2_Atom_Float*)fl)->body;
     return 0;
   }
   return -1;
@@ -229,33 +235,53 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
     }
     else if (lv2_atom_forge_is_object_type(&self->forge, ev->body.type))
     {
-        const LV2_Atom_Object* obj = (const LV2_Atom_Object*)&ev->body;
-        if (obj->body.otype == self->uris.fabla2_PadPlay )
+      const LV2_Atom_Object* obj = (const LV2_Atom_Object*)&ev->body;
+      
+      // deal with Atoms from UI
+      bool noteOn  = (obj->body.otype == self->uris.fabla2_PadPlay);
+      bool noteOff = (obj->body.otype == self->uris.fabla2_PadStop);
+      if ( noteOn || noteOff )
+      {
+        int bank, pad, layer; float v;
+        // convienience func to get bank, pad, and check OK
+        if( self->atomBankPadLayer( obj, bank, pad, layer, v ) == 0 )
         {
-          int bank, pad;
-          // convienience func to get bank, pad, and check OK
-          if( self->atomBankPad( obj, bank, pad ) == 0 )
-          {
-            uint8_t msg[3];
+          uint8_t msg[3];
+          if( noteOn )
             msg[0] = 0x90 + bank;
-            msg[1] = 36 + pad;
-            msg[2] = 90;
-            self->dsp->midi( 0, msg );
-          }
+          if( noteOff )
+            msg[0] = 0x80 + bank;
+          msg[1] = 36 + pad;
+          msg[2] = 90;
+          // use normal MIDI function for playing notes
+          self->dsp->midi( 0, msg );
         }
-        else if (obj->body.otype == self->uris.patch_Set)
+      }
+      // handle *ALL* UI message types here!
+      else if (obj->body.otype == self->uris.fabla2_SampleGain    ||
+               obj->body.otype == self->uris.fabla2_SamplePitch   ||
+               obj->body.otype == self->uris.fabla2_SamplePitch     )
+      {
+        int bank, pad, layer;
+        float value;
+        if( self->atomBankPadLayer( obj, bank, pad, layer, value ) == 0 )
         {
-          // Received a set message, send it to the worker.
-          printf("Queueing set message\n");
-          lv2_log_trace(&self->logger, "Queueing set message\n");
-          self->schedule->schedule_work(self->schedule->handle,
-                                        lv2_atom_total_size(&ev->body),
-                                        &ev->body);
+          self->dsp->uiMessage( bank, pad, layer, obj->body.otype, value );
         }
-        else
-        {
-          lv2_log_trace(&self->logger, "Unknown object type %d\n", self->unmap->unmap( self->unmap->handle, obj->body.otype) );
-        }
+      }
+      else if (obj->body.otype == self->uris.patch_Set)
+      {
+        // Received a set message, send it to the worker.
+        printf("Queueing set message\n");
+        lv2_log_trace(&self->logger, "Queueing set message\n");
+        self->schedule->schedule_work(self->schedule->handle,
+                                      lv2_atom_total_size(&ev->body),
+                                      &ev->body);
+      }
+      else
+      {
+        lv2_log_trace(&self->logger, "Unknown object type %d\n", self->unmap->unmap( self->unmap->handle, obj->body.otype) );
+      }
     }
     else
     {

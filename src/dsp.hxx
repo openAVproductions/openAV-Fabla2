@@ -70,7 +70,11 @@ class FablaLV2
   private:
     /// convienience functions to extract bank/pad info from an Atom
     /// @return 0 on success, non-zero on error
-    int atomBankPad( const LV2_Atom_Object* obj, int& bank, int& pad );
+    int atomBankPadLayer( const LV2_Atom_Object* obj,
+                          int& bank,
+                          int& pad,
+                          int& layer,
+                          float& value );
     
 };
 

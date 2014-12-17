@@ -360,6 +360,11 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
   
 }
 
+void Fabla2DSP::uiMessage(int bank, int pad, int layer, int URI, float value)
+{
+  
+}
+
 void Fabla2DSP::startRecordToPad( int b, int p )
 {
   recordBank  = b;
