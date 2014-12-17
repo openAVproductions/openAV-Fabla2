@@ -20,6 +20,8 @@
 
 #include "fabla2.hxx"
 
+#include <sstream>
+
 #include <stdio.h>
 #include <string.h>
 
@@ -62,14 +64,27 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
     
     Pad* tmpPad = new Pad( this, rate, i % 16 );
     
+    if( i < 8 )
+    {
+      std::stringstream s;
+      s << i << ".wav";
+      
+      std::stringstream path;
+      path << "/usr/local/lib/lv2/fabla2.lv2/" << i << ".wav";
+      
+      Sample* tmp = new Sample( this, rate, s.str(), path.str() );
+      tmp->velocity( 0, 128 );
+      tmpPad->add( tmp );
+    }
+    
     // TODO: Fixme to use Library & RT-safe loading
     // hack code load sample for now
-    if ( i == 0 )
+    if ( i == 16 )
     {
       Sample* tmp = new Sample( this, rate, "One", "/usr/local/lib/lv2/fabla2.lv2/test.wav");
       tmp->velocity( 0, 32 );
       tmpPad->add( tmp );
-      /*
+      
       tmp = new Sample( this, rate, "Two", "/usr/local/lib/lv2/fabla2.lv2/test2.wav");
       tmp->velocity( 32, 64 );
       tmpPad->add( tmp );
@@ -80,35 +95,6 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
       
       tmp = new Sample( this, rate, "Four", "/usr/local/lib/lv2/fabla2.lv2/test4.wav");
       tmp->velocity( 96, 128 );
-      tmpPad->add( tmp );
-      */
-    }
-    if ( i == 1 )
-    {
-      Sample* tmp = new Sample( this, rate, "Two", "/usr/local/lib/lv2/fabla2.lv2/test2.wav");
-      tmpPad->add( tmp );
-      tmpPad->muteGroup( 1 );
-    }
-    if ( i == 2 )
-    {
-      Sample* tmp = new Sample( this, rate, "Three", "/usr/local/lib/lv2/fabla2.lv2/test3.wav");
-      tmpPad->add( tmp );
-      tmpPad->muteGroup( 1 );
-    }
-    if ( i == 3 )
-    {
-      Sample* tmp = new Sample( this, rate, "Four", "/usr/local/lib/lv2/fabla2.lv2/test4.wav");
-      tmpPad->add( tmp );
-      tmpPad->muteGroup( 1 );
-    }
-    if ( i == 4 )
-    {
-      Sample* tmp = new Sample( this, rate, "Kick", "/usr/local/lib/lv2/fabla2.lv2/kick.wav");
-      tmpPad->add( tmp );
-    }
-    if ( i == 16 )
-    {
-      Sample* tmp = new Sample( this, rate, "Kick", "/usr/local/lib/lv2/fabla2.lv2/kick.wav");
       tmpPad->add( tmp );
     }
     
