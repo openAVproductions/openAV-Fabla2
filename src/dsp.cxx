@@ -191,10 +191,9 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
         printf("sending %i %i %i\n", msg[0], pad, msg[2] );
         
         // write note on/off MIDI events to UI
-        
         LV2_Atom_Forge_Frame frame;
         lv2_atom_forge_frame_time( &self->forge, ev->time.frames );
-        lv2_atom_forge_object( &self->forge, &frame, 0, self->uris.fabla2_PadEvent );
+        lv2_atom_forge_object( &self->forge, &frame, 0, self->uris.fabla2_PadPlay );
         
         // Add UI state as properties
         lv2_atom_forge_key(&self->forge, self->uris.fabla2_bank);

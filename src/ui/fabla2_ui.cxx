@@ -111,28 +111,46 @@ void TestUI::setBank( int bank )
 
 void TestUI::writeAtom( int eventURI, float value )
 {
+  printf("Fabla2:UI writeAtom %i, %f\n", eventURI, value );
+#define OBJ_BUF_SIZE 1024
+	uint8_t obj_buf[OBJ_BUF_SIZE];
+	lv2_atom_forge_set_buffer(&forge, obj_buf, OBJ_BUF_SIZE);
+  
   LV2_Atom_Forge_Frame frame;
   lv2_atom_forge_frame_time( &forge, 0 );
-  lv2_atom_forge_object( &forge, &frame, 0, uris.fabla2_PadEvent );
+  LV2_Atom* msg = (LV2_Atom*)lv2_atom_forge_object( &forge, &frame, 0, uris.fabla2_PadPlay );
   
   // Add UI state as properties
   lv2_atom_forge_key(&forge, uris.fabla2_bank);
   lv2_atom_forge_int(&forge, currentBank );
-  
+  /*
   lv2_atom_forge_key(&forge, uris.fabla2_pad);
   lv2_atom_forge_int(&forge, currentPad );
   
   lv2_atom_forge_key(&forge, uris.fabla2_velocity);
   lv2_atom_forge_int(&forge, 0 );
+  */
   
   lv2_atom_forge_pop(&forge, &frame);
+  
+  printf("Lv2Atom MSG: size = %li, eventTransfer = %i\n", (long)lv2_atom_total_size(msg), uris.atom_eventTransfer ); 
+  write_function( controller, Fabla2::ATOM_IN, lv2_atom_total_size(msg), uris.atom_eventTransfer, &msg );
+  
+  /*
+   // OLD CODE, probably useless
+    fabla2_setBank( this, 3 );
+    const char* f = "/usr/local/lib/lv2/fabla2.lv2/drum_loop.wav";
+    LV2_Atom* msg = fabla2_writeSampleLoadUnload( &forge, &uris, true, f, strlen(f) );
+    printf("Lv2Atom MSG: size = %li, eventTransfer = %i\n", (long)lv2_atom_total_size(msg), uris.atom_eventTransfer ); 
+    write_function( controller, Fabla2::ATOM_IN, lv2_atom_total_size(msg), uris.atom_eventTransfer, &msg );
+  */
 }
 
 void TestUI::widgetValueCB( Avtk::Widget* w)
 {
   float tmp = w->value();
   
-  printf("widgetCB : %s\n", w->label() );
+  //printf("widgetCB : %s\n", w->label() );
   
   if( w == recordOverPad )
   {
@@ -147,28 +165,6 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   {
     write_function( controller, Fabla2::MASTER_VOL, sizeof(float), 0, &tmp );
   }
-  /*
-  else if( w == bankBtns[0] )
-  {
-    fabla2_setBank( this, 0 );
-  }
-  else if( w == bankBtns[1] )
-  {
-    fabla2_setBank( this, 1 );
-  }
-  else if( w == bankBtns[2] )
-  {
-    setBank(
-  }
-  else if( w == bankBtns[3] )
-  {
-    fabla2_setBank( this, 3 );
-    const char* f = "/usr/local/lib/lv2/fabla2.lv2/drum_loop.wav";
-    LV2_Atom* msg = fabla2_writeSampleLoadUnload( &forge, &uris, true, f, strlen(f) );
-    printf("Lv2Atom MSG: size = %li, eventTransfer = %i\n", (long)lv2_atom_total_size(msg), uris.atom_eventTransfer ); 
-    write_function( controller, Fabla2::ATOM_IN, lv2_atom_total_size(msg), uris.atom_eventTransfer, &msg );
-  }
-  */
   else if( w == loadSampleBtn )
   {
     printf("load clicked\n");
@@ -191,7 +187,10 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     for(int i = 0; i < 4; i++)
     {
       if( w == bankBtns[i] )
+      {
         setBank( i );
+        return;
+      }
     }
     
     // check all the pads
@@ -199,6 +198,8 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     {
       if( w == pads[i] )
       {
+        writeAtom( uris.fabla2_PadPlay, w->value() );
+        return;
       }
     }
   }

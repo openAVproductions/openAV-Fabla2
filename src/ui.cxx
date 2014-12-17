@@ -96,7 +96,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
   
     const LV2_Atom_Object* obj = (const LV2_Atom_Object*)atom;
     
-    if (obj->body.otype == ui->uris.fabla2_PadEvent)
+    if (obj->body.otype == ui->uris.fabla2_PadPlay)
     {
       //printf("UI: Fabla Pad Event\n");
       const LV2_Atom* pad  = NULL;

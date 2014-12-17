@@ -43,7 +43,9 @@
 //#define EG_SAMPLER__sample      EG_SAMPLER_URI "#sample"
 
 /// Atom Event types
-#define FABLA2_PadEvent         FABLA2_URI "#PadEvent"
+#define FABLA2_PadPlay          FABLA2_URI "#PadPlay"
+#define FABLA2_PadStop          FABLA2_URI "#PadStop"
+
 #define FABLA2_SampleLoad       FABLA2_URI "#SampleLoad"
 #define FABLA2_SampleUnload     FABLA2_URI "#SampleUnload"
 #define FABLA2_SampleAudioData  FABLA2_URI "#SampleAudioData"
@@ -72,7 +74,9 @@ typedef struct {
   LV2_URID patch_property;
   LV2_URID patch_value;
   
-  LV2_URID fabla2_PadEvent;
+  LV2_URID fabla2_PadPlay;
+  LV2_URID fabla2_PadStop;
+  
   LV2_URID fabla2_SampleLoad;
   LV2_URID fabla2_SampleUnload;
   LV2_URID fabla2_SampleAudioData;
@@ -101,7 +105,8 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->patch_property     = map->map(map->handle, LV2_PATCH__property);
   uris->patch_value        = map->map(map->handle, LV2_PATCH__value);
   
-  uris->fabla2_PadEvent    = map->map(map->handle, FABLA2_PadEvent);
+  uris->fabla2_PadPlay     = map->map(map->handle, FABLA2_PadPlay);
+  
   uris->fabla2_SampleLoad  = map->map(map->handle, FABLA2_SampleLoad);
   uris->fabla2_SampleUnload= map->map(map->handle, FABLA2_SampleUnload);
   uris->fabla2_SampleAudioData=map->map(map->handle,FABLA2_SampleAudioData);
