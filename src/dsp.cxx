@@ -211,12 +211,29 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
       {
         
       }
-      
     }
     else if (lv2_atom_forge_is_object_type(&self->forge, ev->body.type))
     {
         const LV2_Atom_Object* obj = (const LV2_Atom_Object*)&ev->body;
-        if (obj->body.otype == self->uris.patch_Set)
+        if (obj->body.otype == self->uris.fabla2_PadPlay )
+        {
+          printf("Pad play recieved!\n");
+          const LV2_Atom* bank = 0;
+          const LV2_Atom* pad  = 0;
+          lv2_atom_object_get(obj,self->uris.fabla2_bank, &bank,
+                                  self->uris.fabla2_pad , &pad, 0);
+          if( bank && pad )
+          {
+            int b = ((const LV2_Atom_Int*)bank)->body;
+            int p = ((const LV2_Atom_Int*)pad )->body;
+            uint8_t msg[3];
+            msg[0] = 0x90 + b;
+            msg[1] = 36 + p;
+            msg[2] = 90;
+            self->dsp->midi( ev->time.frames, msg );
+          }
+        }
+        else if (obj->body.otype == self->uris.patch_Set)
         {
           // Received a set message, send it to the worker.
           printf("Queueing set message\n");

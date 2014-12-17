@@ -109,12 +109,57 @@ void TestUI::setBank( int bank )
   redraw();
 }
 
+static inline LV2_Atom*
+write_set_file(LV2_Atom_Forge*    forge,
+               const URIs*        uris,
+               const char*        filename,
+               const uint32_t     filename_len)
+{
+	LV2_Atom_Forge_Frame frame;
+	LV2_Atom* set = (LV2_Atom*)lv2_atom_forge_object(
+		forge, &frame, 0, uris->patch_Set);
+
+	lv2_atom_forge_key(forge, uris->patch_property);
+	lv2_atom_forge_urid(forge, uris->fabla2_PadPlay);
+	lv2_atom_forge_key(forge, uris->patch_value);
+	lv2_atom_forge_path(forge, filename, filename_len);
+
+	lv2_atom_forge_pop(forge, &frame);
+
+	return set;
+}
+
 void TestUI::writeAtom( int eventURI, float value )
 {
-  printf("Fabla2:UI writeAtom %i, %f\n", eventURI, value );
+  //printf("Fabla2:UI writeAtom %i, %f\n", eventURI, value );
+  
+  // create buffer for UI forge
+#define UI_ATOM_BUF_SIZE 128
+  uint8_t obj_buf[UI_ATOM_BUF_SIZE];
+  lv2_atom_forge_set_buffer(&forge, obj_buf, UI_ATOM_BUF_SIZE);
+  
+  // write message
+  LV2_Atom_Forge_Frame frame;
+  LV2_Atom* msg = (LV2_Atom*)lv2_atom_forge_object( &forge, &frame, 0, eventURI);
+  
+  lv2_atom_forge_key(&forge, uris.fabla2_bank);
+  lv2_atom_forge_int(&forge, currentBank );
+  
+  lv2_atom_forge_key(&forge, uris.fabla2_pad);
+  lv2_atom_forge_int(&forge, currentPad );
+  
+  lv2_atom_forge_pop(&forge, &frame);
+  
+  // send it
+  write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
+  
+/*
 #define OBJ_BUF_SIZE 1024
 	uint8_t obj_buf[OBJ_BUF_SIZE];
 	lv2_atom_forge_set_buffer(&forge, obj_buf, OBJ_BUF_SIZE);
+  
+  LV2_Atom_Forge_Frame notify_frame;
+  lv2_atom_forge_sequence_head(&forge, &notify_frame, 0);
   
   LV2_Atom_Forge_Frame frame;
   lv2_atom_forge_frame_time( &forge, 0 );
@@ -129,13 +174,17 @@ void TestUI::writeAtom( int eventURI, float value )
   
   lv2_atom_forge_key(&forge, uris.fabla2_velocity);
   lv2_atom_forge_int(&forge, 0 );
-  */
+  /
   
   lv2_atom_forge_pop(&forge, &frame);
   
+  
   printf("Lv2Atom MSG: size = %li, eventTransfer = %i\n", (long)lv2_atom_total_size(msg), uris.atom_eventTransfer ); 
   write_function( controller, Fabla2::ATOM_IN, lv2_atom_total_size(msg), uris.atom_eventTransfer, &msg );
-  
+*/
+
+
+
   /*
    // OLD CODE, probably useless
     fabla2_setBank( this, 3 );
@@ -198,6 +247,7 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     {
       if( w == pads[i] )
       {
+        currentPad = i;
         writeAtom( uris.fabla2_PadPlay, w->value() );
         return;
       }
