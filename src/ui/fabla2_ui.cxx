@@ -17,7 +17,9 @@
 static void fabla2_widgetCB(Avtk::Widget* w, void* ud);
 
 TestUI::TestUI( PuglNativeWindow parent ):
-  Avtk::UI( 780, 330, parent )
+  Avtk::UI( 780, 330, parent ),
+  currentBank( 0 ),
+  currentPad( 0 )
 {
   themes.push_back( new Avtk::Theme( this, "orange.avtk" ) );
   themes.push_back( new Avtk::Theme( this, "green.avtk" ) );
@@ -63,8 +65,8 @@ TestUI::TestUI( PuglNativeWindow parent ):
   eq        = new Avtk::Button( this, 573, 247, 59, 81, "Equalizer" );
   comp      = new Avtk::Button( this, 635, 161, 59, 81, "Comp" );
   gainPitch = new Avtk::Button( this, 635, 247, 59, 81, "Gain/Ptc" );
-  padSends  = new Avtk::Button( this, 699, 161, 32, 166, "Pad Sends" );
-  padMaster = new Avtk::Button( this, 736, 160, 40, 166, "Pad Master" );
+  padSends  = new Avtk::Button( this, 699, 161, 32, 166, "Snd" );
+  padMaster = new Avtk::Button( this, 736, 160, 40, 166, "Mstr" );
   
   // pads
   int xS = 60;
@@ -91,22 +93,39 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
 }
 
-static void fabla2_setBank( TestUI* ui, int bank )
+void TestUI::setBank( int bank )
 {
-  // bank buttons highlight
-  for(int i = 0; i < 4; i++ )
-  {
-    if( i == bank )
-      ui->bankBtns[i]->value( true  );
-    else
-      ui->bankBtns[i]->value( false );
-  }
+  // turn off light
+  bankBtns[currentBank]->value( false );
+  // update
+  currentBank = bank;
+  // turn on
+  bankBtns[currentBank]->value( true );
   
   // pad theme set
   for(int i = 0; i < 16; i++)
-    ui->pads[i]->theme( ui->theme( bank ) );
+    pads[i]->theme( theme( bank ) );
   
-  ui->redraw();
+  redraw();
+}
+
+void TestUI::writeAtom( int eventURI, float value )
+{
+  LV2_Atom_Forge_Frame frame;
+  lv2_atom_forge_frame_time( &forge, 0 );
+  lv2_atom_forge_object( &forge, &frame, 0, uris.fabla2_PadEvent );
+  
+  // Add UI state as properties
+  lv2_atom_forge_key(&forge, uris.fabla2_bank);
+  lv2_atom_forge_int(&forge, currentBank );
+  
+  lv2_atom_forge_key(&forge, uris.fabla2_pad);
+  lv2_atom_forge_int(&forge, currentPad );
+  
+  lv2_atom_forge_key(&forge, uris.fabla2_velocity);
+  lv2_atom_forge_int(&forge, 0 );
+  
+  lv2_atom_forge_pop(&forge, &frame);
 }
 
 void TestUI::widgetValueCB( Avtk::Widget* w)
@@ -128,6 +147,7 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   {
     write_function( controller, Fabla2::MASTER_VOL, sizeof(float), 0, &tmp );
   }
+  /*
   else if( w == bankBtns[0] )
   {
     fabla2_setBank( this, 0 );
@@ -138,18 +158,17 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   }
   else if( w == bankBtns[2] )
   {
-    fabla2_setBank( this, 2 );
+    setBank(
   }
   else if( w == bankBtns[3] )
   {
     fabla2_setBank( this, 3 );
-    /*
     const char* f = "/usr/local/lib/lv2/fabla2.lv2/drum_loop.wav";
     LV2_Atom* msg = fabla2_writeSampleLoadUnload( &forge, &uris, true, f, strlen(f) );
     printf("Lv2Atom MSG: size = %li, eventTransfer = %i\n", (long)lv2_atom_total_size(msg), uris.atom_eventTransfer ); 
     write_function( controller, Fabla2::ATOM_IN, lv2_atom_total_size(msg), uris.atom_eventTransfer, &msg );
-    */
   }
+  */
   else if( w == loadSampleBtn )
   {
     printf("load clicked\n");
@@ -165,6 +184,22 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     write_function(controller, 0, lv2_atom_total_size(msg),
               uris.atom_eventTransfer,
               msg);
+  }
+  else
+  {
+    // check bank buttons
+    for(int i = 0; i < 4; i++)
+    {
+      if( w == bankBtns[i] )
+        setBank( i );
+    }
     
+    // check all the pads
+    for(int i = 0; i < 16; i++)
+    {
+      if( w == pads[i] )
+      {
+      }
+    }
   }
 }

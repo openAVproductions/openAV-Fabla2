@@ -69,8 +69,14 @@ class TestUI : public Avtk::UI
     URIs uris;
     LV2_URID_Map* map;
     LV2_Atom_Forge forge;
-    
-    
+  
+  private:
+    int currentBank;
+    int currentPad;
+    /// updates the UI to a specifc bank
+    void setBank( int bank );
+    /// writes event/value identified by eventURI using currentBank / currentPad
+    void writeAtom( int eventURI, float value );
 };
 
 
