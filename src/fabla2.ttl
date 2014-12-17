@@ -73,6 +73,7 @@
       a lv2:OutputPort ,
           atom:AtomPort ;
           atom:bufferType atom:Sequence ;
+          atom:supports patch:Message ;
           lv2:index 1 ;
           lv2:symbol "notify" ;
           lv2:name "notify"

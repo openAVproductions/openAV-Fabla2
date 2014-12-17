@@ -137,15 +137,22 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
 {
   FablaLV2* self = (FablaLV2*) instance;
   
-  /*
-   * fifths.c example from book
+  // fifths.c example from book
   // Get the capacity
   const uint32_t notify_capacity = self->notify->atom.size;
   // Write an empty Sequence header to the output
   lv2_atom_sequence_clear(self->notify);
   self->notify->atom.type = self->control->atom.type;
-  */
   
+  printf("notify capacity %i\n", notify_capacity );
+  
+  lv2_atom_forge_set_buffer(&self->forge,
+                            (uint8_t*)self->notify,
+                            notify_capacity);
+  
+  //LV2_Atom_Forge_Frame notify_frame;
+  lv2_atom_forge_sequence_head(&self->forge, &self->notify_frame, 0);
+  /*
   // sampler.c example from /book
   // Set up forge to write directly to notify output port.
   const uint32_t notify_capacity = self->notify->atom.size;
@@ -156,6 +163,8 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
   // Start a sequence in the notify output port.
   LV2_Atom_Forge_Frame notify_frame;
   lv2_atom_forge_sequence_head(&self->forge, &notify_frame, 0);
+  */
+  
   
   /*
    * MY OLD CODE
@@ -236,6 +245,18 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
       lv2_log_trace(&self->logger, "Unknown event type %d\n", ev->body.type);
     }
   }
+  
+  /*
+  for(int i = 0; i < 5; i++)
+  {
+    LV2_Atom_Forge_Frame& frame = self->notify_frame;
+    lv2_atom_forge_frame_time( &self->forge, 0 ); // frame time of 0
+    lv2_atom_forge_object( &self->forge, &frame, 0, self->uris.fabla2_SampleAudioData );
+    
+    lv2_atom_forge_key(&self->forge, self->uris.fabla2_pad);
+    lv2_atom_forge_int(&self->forge, -1 );
+  }
+  */
   
   self->dsp->process( nframes );
 }
