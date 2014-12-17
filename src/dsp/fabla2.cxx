@@ -222,8 +222,11 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
               Pad* vp = voices.at(i)->getPad();
               if( vp && vp->muteGroup() == p->muteGroup() )
               {
-                printf("Mute Group %i, stopped voice #%i\n", p->muteGroup(), i );
-                voices.at(i)->stop();
+                if( p->muteGroup() != 0 )
+                {
+                  printf("Mute Group %i, stopped voice #%i\n", p->muteGroup(), i );
+                  voices.at(i)->stop();
+                }
               }
             }
           }
