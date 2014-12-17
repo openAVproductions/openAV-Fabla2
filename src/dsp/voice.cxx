@@ -43,7 +43,7 @@ Voice::Voice( Fabla2DSP* d, int r ) :
   ID( privateID++ ),
   dsp( d ),
   sr ( r ),
-  pad( 0 ),
+  pad_( 0 ),
   active_( false )
 {
   adsr = new ADSR();
@@ -61,11 +61,11 @@ Voice::Voice( Fabla2DSP* d, int r ) :
 
 void Voice::play( Pad* p, int velocity )
 {
-  pad = p;
+  pad_ = p;
   active_ = true;
   phase = 0;
   
-  sampler->play( pad, velocity );
+  sampler->play( pad_, velocity );
   
   Sample* samp = sampler->getSample();
   if( samp )
@@ -131,8 +131,8 @@ void Voice::process()
   //for(int i = 0; i < dsp->nframes - 1; i++)
   
   float adsrVal = adsr->process();
-  filterL->setValue( (pad->controls[Pad::FILTER_CUTOFF]+0.3) );//* adsrVal );
-  filterR->setValue( (pad->controls[Pad::FILTER_CUTOFF]+0.3) );//* adsrVal );
+  filterL->setValue( (pad_->controls[Pad::FILTER_CUTOFF]+0.3) );//* adsrVal );
+  filterR->setValue( (pad_->controls[Pad::FILTER_CUTOFF]+0.3) );//* adsrVal );
   
   bool filterOn = true;
   if( filterOn )
@@ -157,7 +157,7 @@ void Voice::process()
   {
     //printf("Voice done\n");
     active_ = false;
-    pad = 0;
+    pad_ = 0;
   }
 }
 

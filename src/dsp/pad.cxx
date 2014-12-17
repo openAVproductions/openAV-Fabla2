@@ -37,6 +37,7 @@ Pad::Pad( Fabla2DSP* d, int rate, int ID ) :
   dsp( d ),
   sr(rate),
   ID_( ID ),
+  muteGroup_( 0 ),
   
   sampleSwitchSystem( SS_NONE ),
   roundRobinCounter(0)

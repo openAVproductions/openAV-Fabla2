@@ -62,6 +62,9 @@ class Pad
     void add( Sample* );
     void clearAllSamples();
     
+    void muteGroup( int mg ){muteGroup_ = mg;}
+    int  muteGroup(){return muteGroup_;}
+    
     /// playback functions
     Sample* getPlaySample( int velocity );
     
@@ -77,6 +80,7 @@ class Pad
     Fabla2DSP* dsp;
     int sr;
     int ID_; // pad place within Bank
+    int muteGroup_;
     
     SAMPLE_SWITCH_SYSTEM sampleSwitchSystem;
     int roundRobinCounter;

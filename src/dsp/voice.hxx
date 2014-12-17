@@ -65,7 +65,7 @@ class Voice
     /// audio buffers etc from there: no need to pass them around.
     void process();
     
-    Pad* getPad(){return pad;}
+    Pad* getPad(){return pad_;}
     
     //ADSR* getADSR(){return adsr.GetRawPointer();}
     //Sampler* getSampler(){return sampler.GetRawPointer();}
@@ -80,7 +80,7 @@ class Voice
     Fabla2DSP* dsp;
     int sr;
     
-    Pad* pad;
+    Pad* pad_;
     
     bool active_;
     

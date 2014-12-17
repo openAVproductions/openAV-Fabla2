@@ -86,16 +86,19 @@ Fabla2DSP::Fabla2DSP( int rate ) :
     {
       Sample* tmp = new Sample( this, rate, "Two", "/usr/local/lib/lv2/fabla2.lv2/test2.wav");
       tmpPad->add( tmp );
+      tmpPad->muteGroup( 1 );
     }
     if ( i == 2 )
     {
       Sample* tmp = new Sample( this, rate, "Three", "/usr/local/lib/lv2/fabla2.lv2/test3.wav");
       tmpPad->add( tmp );
+      tmpPad->muteGroup( 1 );
     }
     if ( i == 3 )
     {
       Sample* tmp = new Sample( this, rate, "Four", "/usr/local/lib/lv2/fabla2.lv2/test4.wav");
       tmpPad->add( tmp );
+      tmpPad->muteGroup( 1 );
     }
     if ( i == 4 )
     {
@@ -202,12 +205,25 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
           // get pad, and push to a voice
           Pad* p = library->bank( chnl )->pad( msg[1] - 36 );
           
+          bool allocd = false;
           for(int i = 0; i < voices.size(); i++)
           {
-            if( !voices.at(i)->active() )
+            if( !voices.at(i)->active() && !allocd )
             {
               voices.at(i)->play( p, msg[2] );
-              return;
+              allocd = true; // don't set more voices to play the pad
+              // don't return: scan all voices for mute-groups!
+              continue;
+            }
+            
+            if( voices.at(i)->active() )
+            {
+              Pad* vp = voices.at(i)->getPad();
+              if( vp && vp->muteGroup() == p->muteGroup() )
+              {
+                printf("Mute Group %i, stopped voice #%i\n", p->muteGroup(), i );
+                voices.at(i)->stop();
+              }
             }
           }
         }
