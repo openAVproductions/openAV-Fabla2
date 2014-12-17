@@ -72,9 +72,6 @@ LV2_Handle FablaLV2::instantiate( const LV2_Descriptor* descriptor,
     printf("Fabla2: the host does not support Work:schedule, so Fabla2 cannot load samples without glitches! Please ask your host developers to implement Work:schedule!\n");
   }
   
-  if (!map)
-    return 0;
-  
   FablaLV2* tmp = new FablaLV2( samplerate );
   tmp->log      = log;
   tmp->map      = map;
@@ -116,77 +113,69 @@ void FablaLV2::connect_port(LV2_Handle instance, uint32_t port, void *data)
   
   switch (port)
   {
-      // handle Atom ports gracefully here
-      case ATOM_IN:
-          self->control = (const LV2_Atom_Sequence*)data;
-          break;
+    // handle Atom ports gracefully here
+    case ATOM_IN:
+        self->in_port = (const LV2_Atom_Sequence*)data;
+        break;
+    case ATOM_OUT:
+        self->out_port = (LV2_Atom_Sequence*)data;
+        break;
       
-      case ATOM_OUT:
-          self->notify  = (LV2_Atom_Sequence*)data;
-          break;
-      
-      // and push all other float*s for audio / control into the controlPorts
-      // array. They can be retrieved using enum in ports.hxx
-      default:
-          self->dsp->controlPorts[port]     = (float*)data;
-          break;
+    // and push all other float*s for audio / control into the controlPorts
+    // array. They can be retrieved using enum in ports.hxx
+    default:
+        self->dsp->controlPorts[port]     = (float*)data;
+        break;
   }
+}
+
+static void
+tx_rawaudio(LV2_Atom_Forge* forge,
+            URIs*           uris,
+            const int32_t   channel,
+            const size_t    n_samples,
+            const float*    data)
+{
+	LV2_Atom_Forge_Frame frame;
+
+	// Forge container object of type 'RawAudio'
+	lv2_atom_forge_frame_time(forge, 0);
+	lv2_atom_forge_object(forge, &frame, 0, uris->fabla2_SampleAudioData);
+
+	// Add vector of floats 'audioData' property
+	lv2_atom_forge_key(forge, uris->fabla2_pad);
+	lv2_atom_forge_vector( forge, sizeof(float), uris->atom_Float, n_samples, data);
+
+	// Close off object
+	lv2_atom_forge_pop(forge, &frame);
 }
 
 void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
 {
   FablaLV2* self = (FablaLV2*) instance;
   
-  // fifths.c example from book
-  // Get the capacity
-  const uint32_t notify_capacity = self->notify->atom.size;
-  // Write an empty Sequence header to the output
-  lv2_atom_sequence_clear(self->notify);
-  self->notify->atom.type = self->control->atom.type;
+  const uint32_t space = self->out_port->atom.size;
+  //printf("Atom space = %i\n", space );
   
-  printf("notify capacity %i\n", notify_capacity );
-  
-  lv2_atom_forge_set_buffer(&self->forge,
-                            (uint8_t*)self->notify,
-                            notify_capacity);
-  
-  //LV2_Atom_Forge_Frame notify_frame;
+  // Prepare forge buffer and initialize atom-sequence
+  lv2_atom_forge_set_buffer(&self->forge, (uint8_t*)self->out_port, space);
   lv2_atom_forge_sequence_head(&self->forge, &self->notify_frame, 0);
-  /*
-  // sampler.c example from /book
-  // Set up forge to write directly to notify output port.
-  const uint32_t notify_capacity = self->notify->atom.size;
-  lv2_atom_forge_set_buffer(&self->forge,
-                            (uint8_t*)self->notify,
-                            notify_capacity);
-
-  // Start a sequence in the notify output port.
-  LV2_Atom_Forge_Frame notify_frame;
-  lv2_atom_forge_sequence_head(&self->forge, &notify_frame, 0);
-  */
   
-  
-  /*
-   * MY OLD CODE
-   * 
-  // setup Forge for Atom output (to UI)
-  const uint32_t notify_capacity = self->notify->atom.size;
-  lv2_atom_forge_set_buffer(&self->forge, (uint8_t*)self->notify, notify_capacity);
-  lv2_atom_sequence_clear(self->notify);
-  // Start a sequence in the notify output port.
-  lv2_atom_forge_sequence_head(&self->forge, &self->notify_frame, 0);
-  */
+  //float audio[10];
+  //tx_rawaudio( &self->forge, &self->uris, 0, 1024, &audio[0]);
   
   int midiMessagesIn = 0;
   // handle incoming MIDI
-  LV2_ATOM_SEQUENCE_FOREACH(self->control, ev)
+  LV2_ATOM_SEQUENCE_FOREACH(self->in_port, ev)
   {
     if (ev->body.type == self->uris.midi_MidiEvent)
     {
       midiMessagesIn++;
+      
+      printf("MidiMessage IN %d\n", midiMessagesIn );
+      
       if( midiMessagesIn > 1 )
       {
-        printf("MidiMessage IN %d\n", midiMessagesIn );
         //lv2_log_note(&self->logger, "MidiMessage IN %d\n", midiMessagesIn );
       }
       const uint8_t* const msg = (const uint8_t*)(ev + 1);
@@ -216,6 +205,8 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
         
         lv2_atom_forge_key(&self->forge, self->uris.fabla2_velocity);
         lv2_atom_forge_int(&self->forge, msg[2] );
+        
+        lv2_atom_forge_pop(&self->forge, &frame);
       }
       else if( (msg[0] & 0xF0) == 0xB0 ) // control change
       {
@@ -246,19 +237,10 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
     }
   }
   
-  /*
-  for(int i = 0; i < 5; i++)
-  {
-    LV2_Atom_Forge_Frame& frame = self->notify_frame;
-    lv2_atom_forge_frame_time( &self->forge, 0 ); // frame time of 0
-    lv2_atom_forge_object( &self->forge, &frame, 0, self->uris.fabla2_SampleAudioData );
-    
-    lv2_atom_forge_key(&self->forge, self->uris.fabla2_pad);
-    lv2_atom_forge_int(&self->forge, -1 );
-  }
-  */
   
   self->dsp->process( nframes );
+  
+  return;
 }
 
 void FablaLV2::cleanup(LV2_Handle instance)

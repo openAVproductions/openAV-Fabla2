@@ -47,8 +47,8 @@ class FablaLV2
     Fabla2::Fabla2DSP* dsp;
     
     // LV2 Atom Ports
-    const LV2_Atom_Sequence* control;
-    LV2_Atom_Sequence*       notify;
+    const LV2_Atom_Sequence* in_port;
+    LV2_Atom_Sequence*       out_port;
     
     // Forge for Atoms
     LV2_Atom_Forge forge;

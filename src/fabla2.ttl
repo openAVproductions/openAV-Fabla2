@@ -6,11 +6,12 @@
 @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix units: <http://lv2plug.in/ns/extensions/units#> .
-@prefix ui: <http://lv2plug.in/ns/extensions/ui#>.
-@prefix urid: <http://lv2plug.in/ns/ext/urid#> .
-@prefix midi: <http://lv2plug.in/ns/ext/midi#> .
+@prefix ui:    <http://lv2plug.in/ns/extensions/ui#>.
+@prefix urid:  <http://lv2plug.in/ns/ext/urid#> .
+@prefix midi:  <http://lv2plug.in/ns/ext/midi#> .
 @prefix patch: <http://lv2plug.in/ns/ext/patch#> .
 @prefix work:  <http://lv2plug.in/ns/ext/worker#> .
+@prefix rsz:   <http://lv2plug.in/ns/ext/resize-port#> .
 
 <http://www.openavproductions.com/fabla2#gui>
   a ui:X11UI;
@@ -70,13 +71,15 @@
           lv2:symbol "midi_in" ;
           lv2:name "MIDI Input"
   ] , [
-      a lv2:OutputPort ,
-          atom:AtomPort ;
-          atom:bufferType atom:Sequence ;
-          atom:supports patch:Message ;
-          lv2:index 1 ;
-          lv2:symbol "notify" ;
-          lv2:name "notify"
+      a atom:AtomPort ,
+        lv2:OutputPort ;
+        atom:bufferType atom:Sequence ;
+        lv2:designation lv2:control ;
+        lv2:index 1 ;
+        lv2:symbol "notify" ;
+        lv2:name "Notify" ;
+        # 8192 * sizeof(float) + LV2-Atoms
+        rsz:minimumSize 32832;
   ]
   
   ,

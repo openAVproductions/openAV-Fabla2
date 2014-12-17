@@ -60,6 +60,7 @@ typedef struct {
   LV2_URID atom_Blank;
   LV2_URID atom_Path;
   LV2_URID atom_Int;
+  LV2_URID atom_Float;
   LV2_URID atom_Resource;
   LV2_URID atom_Sequence;
   LV2_URID atom_URID;
@@ -88,6 +89,7 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->atom_Blank         = map->map(map->handle, LV2_ATOM__Blank);
   uris->atom_Path          = map->map(map->handle, LV2_ATOM__Path);
   uris->atom_Int           = map->map(map->handle, LV2_ATOM__Int);
+  uris->atom_Float         = map->map(map->handle, LV2_ATOM__Float);
   uris->atom_Resource      = map->map(map->handle, LV2_ATOM__Resource);
   uris->atom_Sequence      = map->map(map->handle, LV2_ATOM__Sequence);
   uris->atom_URID          = map->map(map->handle, LV2_ATOM__URID);
