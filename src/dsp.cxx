@@ -122,7 +122,7 @@ void FablaLV2::connect_port(LV2_Handle instance, uint32_t port, void *data)
           break;
       
       case ATOM_OUT:
-          self->notify  = (const LV2_Atom_Sequence*)data;
+          self->notify  = (LV2_Atom_Sequence*)data;
           break;
       
       // and push all other float*s for audio / control into the controlPorts
@@ -137,12 +137,36 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
 {
   FablaLV2* self = (FablaLV2*) instance;
   
+  /*
+   * fifths.c example from book
+  // Get the capacity
+  const uint32_t notify_capacity = self->notify->atom.size;
+  // Write an empty Sequence header to the output
+  lv2_atom_sequence_clear(self->notify);
+  self->notify->atom.type = self->control->atom.type;
+  */
+  
+  // sampler.c example from /book
+  // Set up forge to write directly to notify output port.
+  const uint32_t notify_capacity = self->notify->atom.size;
+  lv2_atom_forge_set_buffer(&self->forge,
+                            (uint8_t*)self->notify,
+                            notify_capacity);
+
+  // Start a sequence in the notify output port.
+  LV2_Atom_Forge_Frame notify_frame;
+  lv2_atom_forge_sequence_head(&self->forge, &notify_frame, 0);
+  
+  /*
+   * MY OLD CODE
+   * 
   // setup Forge for Atom output (to UI)
   const uint32_t notify_capacity = self->notify->atom.size;
   lv2_atom_forge_set_buffer(&self->forge, (uint8_t*)self->notify, notify_capacity);
-  
+  lv2_atom_sequence_clear(self->notify);
   // Start a sequence in the notify output port.
   lv2_atom_forge_sequence_head(&self->forge, &self->notify_frame, 0);
+  */
   
   int midiMessagesIn = 0;
   // handle incoming MIDI
@@ -159,13 +183,17 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
       const uint8_t* const msg = (const uint8_t*)(ev + 1);
       self->dsp->midi( ev->time.frames, msg );
       
-      if( midiMessagesIn > 1 )
-        printf("past dsp->midi()\n" );
       
-      /*
-      if( msg[0] == 144 || msg[0] == 128 )
+      bool send = ((msg[0] & 0xF0) == 0x90 || (msg[0] & 0xF0) == 0x80 );
+      int chnl  =  (msg[0] & 0x0F);
+      
+      if( send && chnl >= 0 && chnl < 4 )
       {
+        int pad = msg[1] - 36;
+        printf("sending %i %i %i\n", msg[0], pad, msg[2] );
+        
         // write note on/off MIDI events to UI
+        
         LV2_Atom_Forge_Frame frame;
         lv2_atom_forge_frame_time( &self->forge, ev->time.frames );
         lv2_atom_forge_object( &self->forge, &frame, 0, self->uris.fabla2_PadEvent );
@@ -175,12 +203,15 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
         lv2_atom_forge_int(&self->forge, 0 );
         
         lv2_atom_forge_key(&self->forge, self->uris.fabla2_pad);
-        lv2_atom_forge_int(&self->forge, msg[1] );
+        lv2_atom_forge_int(&self->forge, pad );
         
         lv2_atom_forge_key(&self->forge, self->uris.fabla2_velocity);
         lv2_atom_forge_int(&self->forge, msg[2] );
       }
-      */
+      else if( (msg[0] & 0xF0) == 0xB0 ) // control change
+      {
+        
+      }
       
     }
     else if (lv2_atom_forge_is_object_type(&self->forge, ev->body.type))

@@ -58,6 +58,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   recordOverPad->callback = fabla2_widgetCB;
   recordOverPad->callbackUD = this;
   recordOverPad->theme( theme( 4 ) );
+  recordOverPad->clickMode( Avtk::Widget::CLICK_TOGGLE );
   add( recordOverPad );
   
   waveform = new Avtk::Waveform( this, 355, 42, 422, 113, "Waveform" );

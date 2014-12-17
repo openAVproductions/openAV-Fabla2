@@ -74,6 +74,7 @@ typedef struct {
   LV2_URID fabla2_PadEvent;
   LV2_URID fabla2_SampleLoad;
   LV2_URID fabla2_SampleUnload;
+  LV2_URID fabla2_SampleAudioData;
   
   LV2_URID fabla2_sample;
   LV2_URID fabla2_velocity;
@@ -101,6 +102,7 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->fabla2_PadEvent    = map->map(map->handle, FABLA2_PadEvent);
   uris->fabla2_SampleLoad  = map->map(map->handle, FABLA2_SampleLoad);
   uris->fabla2_SampleUnload= map->map(map->handle, FABLA2_SampleUnload);
+  uris->fabla2_SampleAudioData=map->map(map->handle,FABLA2_SampleAudioData);
   
   uris->fabla2_sample      = map->map(map->handle, FABLA2_sample);
   uris->fabla2_velocity    = map->map(map->handle, FABLA2_velocity);

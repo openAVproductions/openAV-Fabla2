@@ -85,45 +85,43 @@ static void fabla2_port_event(LV2UI_Handle handle,
 {
   TestUI* ui = (TestUI*)handle;
   
+  /* Check type of data received
+   *  - format == 0: Control port event (float)
+   *  - format > 0:  Message (atom)
+   */
+   
   if (format == ui->uris.atom_eventTransfer)
   {
     const LV2_Atom* atom = (const LV2_Atom*)buffer;
+  
+    const LV2_Atom_Object* obj = (const LV2_Atom_Object*)atom;
     
-    /* Check type of data received
-     *  - format == 0: Control port event (float)
-     *  - format > 0:  Message (atom)
-     */
-    if( format     == ui->uris.atom_eventTransfer )
+    if (obj->body.otype == ui->uris.fabla2_PadEvent)
     {
-      const LV2_Atom_Object* obj = (const LV2_Atom_Object*)atom;
+      //printf("UI: Fabla Pad Event\n");
+      const LV2_Atom* pad  = NULL;
+      const LV2_Atom* vel  = NULL;
+      const int n_props  = lv2_atom_object_get( obj,
+          ui->uris.fabla2_pad     , &pad,
+          ui->uris.fabla2_velocity, &vel,
+          NULL);
       
-      if (obj->body.otype == ui->uris.fabla2_PadEvent)
+      if (n_props != 2 || pad->type != ui->uris.atom_Int || vel->type != ui->uris.atom_Int )
       {
-        //printf("UI: Fabla Pad Event\n");
-        const LV2_Atom* pad  = NULL;
-        const LV2_Atom* vel  = NULL;
-        const int n_props  = lv2_atom_object_get( obj,
-            ui->uris.fabla2_pad     , &pad,
-            ui->uris.fabla2_velocity, &vel,
-            NULL);
-        
-        if (n_props != 2 || pad->type != ui->uris.atom_Int || vel->type != ui->uris.atom_Int )
-        {
-          printf("Fabla2::port_event() error: Corrupt state message\n");
-          return;
-        }
-        else
-        {
-          const int32_t p  = ((const LV2_Atom_Int*)pad)->body;
-          const int32_t v  = ((const LV2_Atom_Int*)vel)->body;
-          //printf("UI Fabla Pad %i, Vel %i\n", p, v );
-          
-          // update UI grid here
-          ui->pads[p-36]->value( v );
-        }
+        printf("Fabla2::port_event() error: Corrupt state message\n");
+        return;
       }
-      
+      else
+      {
+        const int32_t p  = ((const LV2_Atom_Int*)pad)->body;
+        const int32_t v  = ((const LV2_Atom_Int*)vel)->body;
+        //printf("UI Fabla Pad %i, Vel %i\n", p, v );
+        
+        // update UI grid here
+        ui->pads[p]->value( v );
+      }
     }
+
     else
     {
       fprintf(stderr, "Unknown message type.\n");

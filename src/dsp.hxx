@@ -48,7 +48,7 @@ class FablaLV2
     
     // LV2 Atom Ports
     const LV2_Atom_Sequence* control;
-    const LV2_Atom_Sequence* notify;
+    LV2_Atom_Sequence*       notify;
     
     // Forge for Atoms
     LV2_Atom_Forge forge;

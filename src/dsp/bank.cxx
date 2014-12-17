@@ -42,7 +42,7 @@ void Bank::name( const char* name )
 void Bank::pad( Pad* p )
 {
 #ifdef FABLA2_DEBUG
-  printf("%s : %i : Adding pad %i\n", __PRETTY_FUNCTION__, ID_, p->ID() );
+  //printf("%s : %i : Adding pad %i\n", __PRETTY_FUNCTION__, ID_, p->ID() );
 #endif // FABLA2_DEBUG
   pads.push_back( p );
 }
