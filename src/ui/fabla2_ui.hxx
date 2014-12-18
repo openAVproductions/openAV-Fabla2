@@ -37,7 +37,7 @@ class TestUI : public Avtk::UI
     
     // sample edit view
     Avtk::Widget* muteGroup;
-    Avtk::Widget* layers;
+    Avtk::List* layers;
     Avtk::Widget* adsr;
     Avtk::Widget* filt1;
     Avtk::Widget* filt2;
@@ -48,6 +48,7 @@ class TestUI : public Avtk::UI
     Avtk::Dial* sampleGain;
     Avtk::Dial* samplePan;
     Avtk::Dial* samplePitch;
+    Avtk::Dial* sampleStartPoint;
     
     Avtk::Widget* padSends;
     Avtk::Widget* padMaster;

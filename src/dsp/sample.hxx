@@ -62,6 +62,7 @@ class Sample
     float gain;           ///< Gain of this sample
     float pitch;          ///< Pitch of the sample (playback speed)
     float pan;            ///< Panning of the sample (amplitude based)
+    float startPoint;     ///< Starting point of the sample playback
   
   private:
     Fabla2DSP* dsp;

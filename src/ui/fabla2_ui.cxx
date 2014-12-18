@@ -61,7 +61,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   // sample edit view
   muteGroup = new Avtk::Button( this, 355, 161, 85, 52, "Mute Group" );
-  layers    = new Avtk::Button( this, 355, 218, 85, 109, "Layers" );
+  layers    = new Avtk::List( this, 355, 218, 85, 109, "Layers" );
   adsr      = new Avtk::Button( this, 446, 161, 59, 166, "ADSR" );
   filt1     = new Avtk::Button( this, 510, 161, 59, 81, "Filter 1" );
   filt2     = new Avtk::Button( this, 510, 246, 59, 81, "Filter 2" );
@@ -70,9 +70,10 @@ TestUI::TestUI( PuglNativeWindow parent ):
   comp      = new Avtk::Button( this, 635, 161, 59, 81, "Comp" );
   
   //gainPitch = new Avtk::Button( this, 635, 247, 59, 81, "Gain/Ptc" );
-  sampleGain = new Avtk::Dial( this, 635  -4 , 247+2, 40, 40, "Sample Gain" );
+  sampleGain = new Avtk::Dial( this, 635  -4 , 247+2, 40,  40, "Sample Gain" );
   samplePan  = new Avtk::Dial( this, 635  -4 , 247+42, 40, 40, "Sample Pan" );
-  samplePitch= new Avtk::Dial( this, 635+30-2, 247+2, 40, 40, "Sample Pitch" );
+  samplePitch= new Avtk::Dial( this, 635+30-2, 247+2, 40,  40, "Sample Pitch" );
+  sampleStartPoint=new Avtk::Dial(this,635+30-2,247+42,40, 40, "Sample Start Point" );
   
   padSends  = new Avtk::Button( this, 699, 161, 32, 166, "Snd" );
   padMaster = new Avtk::Button( this, 736, 160, 40, 166, "Mstr" );
@@ -152,7 +153,7 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
 {
   float tmp = w->value();
   
-  printf("widgetCB : %s\n", w->label() );
+  printf("widgetCB : %s, value: %f\n", w->label(), tmp );
   
   if( w == recordOverPad )
   {
@@ -163,17 +164,25 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     float scaleVal = tmp * 24 - 12;
     write_function( controller, Fabla2::MASTER_PITCH, sizeof(float), 0, &scaleVal );
   }
+  else if( w == layers )
+  {
+    currentLayer = tmp;
+  }
   else if( w == sampleGain )
   {
-    writeAtom( uris.fabla2_SampleGain, w->value() );
+    writeAtom( uris.fabla2_SampleGain, tmp );
   }
   else if( w == samplePitch )
   {
-    writeAtom( uris.fabla2_SamplePitch, w->value() );
+    writeAtom( uris.fabla2_SamplePitch, tmp );
   }
   else if( w == samplePan )
   {
-    writeAtom( uris.fabla2_SamplePan, w->value() );
+    writeAtom( uris.fabla2_SamplePan, tmp );
+  }
+  else if( w == sampleStartPoint )
+  {
+    writeAtom( uris.fabla2_SampleStartPoint, tmp );
   }
   else if( w == masterVolume )
   {

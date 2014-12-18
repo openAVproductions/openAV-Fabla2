@@ -53,6 +53,7 @@
 #define FABLA2_SampleGain         FABLA2_URI "#SampleGain"
 #define FABLA2_SamplePan          FABLA2_URI "#SamplePan"
 #define FABLA2_SamplePitch        FABLA2_URI "#SamplePitch"
+#define FABLA2_SampleStartPoint   FABLA2_URI "#SampleStartPoint"
 #define FABLA2_SampleLoad         FABLA2_URI "#SampleLoad"
 #define FABLA2_SampleUnload       FABLA2_URI "#SampleUnload"
 #define FABLA2_SampleAudioData    FABLA2_URI "#SampleAudioData"
@@ -92,6 +93,7 @@ typedef struct {
   LV2_URID fabla2_SampleGain;
   LV2_URID fabla2_SamplePan;
   LV2_URID fabla2_SamplePitch;
+  LV2_URID fabla2_SampleStartPoint;
   LV2_URID fabla2_SampleLoad;
   LV2_URID fabla2_SampleUnload;
   LV2_URID fabla2_SampleAudioData;
@@ -106,41 +108,42 @@ typedef struct {
 
 static void mapUri( URIs* uris, LV2_URID_Map* map )
 {
-  uris->atom_Blank         = map->map(map->handle, LV2_ATOM__Blank);
-  uris->atom_Path          = map->map(map->handle, LV2_ATOM__Path);
-  uris->atom_Int           = map->map(map->handle, LV2_ATOM__Int);
-  uris->atom_Float         = map->map(map->handle, LV2_ATOM__Float);
-  uris->atom_Resource      = map->map(map->handle, LV2_ATOM__Resource);
-  uris->atom_Sequence      = map->map(map->handle, LV2_ATOM__Sequence);
-  uris->atom_URID          = map->map(map->handle, LV2_ATOM__URID);
-  uris->atom_eventTransfer = map->map(map->handle, LV2_ATOM__eventTransfer);
+  uris->atom_Blank                  = map->map(map->handle, LV2_ATOM__Blank);
+  uris->atom_Path                   = map->map(map->handle, LV2_ATOM__Path);
+  uris->atom_Int                    = map->map(map->handle, LV2_ATOM__Int);
+  uris->atom_Float                  = map->map(map->handle, LV2_ATOM__Float);
+  uris->atom_Resource               = map->map(map->handle, LV2_ATOM__Resource);
+  uris->atom_Sequence               = map->map(map->handle, LV2_ATOM__Sequence);
+  uris->atom_URID                   = map->map(map->handle, LV2_ATOM__URID);
+  uris->atom_eventTransfer          = map->map(map->handle, LV2_ATOM__eventTransfer);
   
-  uris->midi_MidiEvent     = map->map(map->handle, LV2_MIDI__MidiEvent);
+  uris->midi_MidiEvent              = map->map(map->handle, LV2_MIDI__MidiEvent);
   
-  uris->patch_Set          = map->map(map->handle, LV2_PATCH__Set);
-  uris->patch_property     = map->map(map->handle, LV2_PATCH__property);
-  uris->patch_value        = map->map(map->handle, LV2_PATCH__value);
+  uris->patch_Set                   = map->map(map->handle, LV2_PATCH__Set);
+  uris->patch_property              = map->map(map->handle, LV2_PATCH__property);
+  uris->patch_value                 = map->map(map->handle, LV2_PATCH__value);
   
-  uris->fabla2_PadPlay     = map->map(map->handle, FABLA2_PadPlay);
+  uris->fabla2_PadPlay              = map->map(map->handle, FABLA2_PadPlay);
   
-  uris->fabla2_SampleAdsrAttack  = map->map(map->handle, FABLA2_SampleAdsrAttack);
-  uris->fabla2_SampleAdsrDecay   = map->map(map->handle, FABLA2_SampleAdsrDecay);
-  uris->fabla2_SampleAdsrSustain = map->map(map->handle, FABLA2_SampleAdsrSustain);
-  uris->fabla2_SampleAdsrRelease = map->map(map->handle, FABLA2_SampleAdsrRelease);
+  uris->fabla2_SampleAdsrAttack     = map->map(map->handle, FABLA2_SampleAdsrAttack);
+  uris->fabla2_SampleAdsrDecay      = map->map(map->handle, FABLA2_SampleAdsrDecay);
+  uris->fabla2_SampleAdsrSustain    = map->map(map->handle, FABLA2_SampleAdsrSustain);
+  uris->fabla2_SampleAdsrRelease    = map->map(map->handle, FABLA2_SampleAdsrRelease);
   
-  uris->fabla2_SampleGain  = map->map(map->handle, FABLA2_SampleGain);
-  uris->fabla2_SamplePan   = map->map(map->handle, FABLA2_SamplePan );
-  uris->fabla2_SamplePitch = map->map(map->handle, FABLA2_SamplePitch);
-  uris->fabla2_SampleLoad  = map->map(map->handle, FABLA2_SampleLoad);
-  uris->fabla2_SampleUnload= map->map(map->handle, FABLA2_SampleUnload);
-  uris->fabla2_SampleAudioData=map->map(map->handle,FABLA2_SampleAudioData);
+  uris->fabla2_SampleGain           = map->map(map->handle, FABLA2_SampleGain);
+  uris->fabla2_SamplePan            = map->map(map->handle, FABLA2_SamplePan );
+  uris->fabla2_SamplePitch          = map->map(map->handle, FABLA2_SamplePitch);
+  uris->fabla2_SampleStartPoint     = map->map(map->handle, FABLA2_SampleStartPoint);
+  uris->fabla2_SampleLoad           = map->map(map->handle, FABLA2_SampleLoad);
+  uris->fabla2_SampleUnload         = map->map(map->handle, FABLA2_SampleUnload);
+  uris->fabla2_SampleAudioData      =map->map(map->handle,FABLA2_SampleAudioData);
   
-  uris->fabla2_sample      = map->map(map->handle, FABLA2_sample);
-  uris->fabla2_velocity    = map->map(map->handle, FABLA2_velocity);
-  uris->fabla2_bank        = map->map(map->handle, FABLA2_bank);
-  uris->fabla2_pad         = map->map(map->handle, FABLA2_pad);
-  uris->fabla2_layer       = map->map(map->handle, FABLA2_layer);
-  uris->fabla2_value       = map->map(map->handle, FABLA2_value);
+  uris->fabla2_sample               = map->map(map->handle, FABLA2_sample);
+  uris->fabla2_velocity             = map->map(map->handle, FABLA2_velocity);
+  uris->fabla2_bank                 = map->map(map->handle, FABLA2_bank);
+  uris->fabla2_pad                  = map->map(map->handle, FABLA2_pad);
+  uris->fabla2_layer                = map->map(map->handle, FABLA2_layer);
+  uris->fabla2_value                = map->map(map->handle, FABLA2_value);
 }
 
 #endif // OPENAV_FABLA2_SHARED_HXX

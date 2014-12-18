@@ -56,7 +56,7 @@ void Sampler::play( Pad* p, int velocity )
   sample = pad->getPlaySample( velocity );
   
   // trigger audio playback here
-  playIndex = 0.000f;
+  playIndex = sample->startPoint;
   
   if( !sample )
   {
