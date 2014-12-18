@@ -44,7 +44,9 @@ Voice::Voice( Fabla2DSP* d, int r ) :
   dsp( d ),
   sr ( r ),
   pad_( 0 ),
-  active_( false )
+  active_( false ),
+  bankInt_( -1 ),
+  padInt_( -1 )
 {
   adsr = new ADSR();
   sampler = new Sampler( d, r );
@@ -59,8 +61,17 @@ Voice::Voice( Fabla2DSP* d, int r ) :
   adsr->setReleaseRate ( 0.05 * r );
 }
 
-void Voice::play( Pad* p, int velocity )
+bool Voice::matches( int bank, int pad )
 {
+  return ( bank == bankInt_ && pad == padInt_ );
+}
+
+void Voice::play( int bankInt, int padInt, Pad* p, int velocity )
+{
+  // useful for mute groups etc
+  bankInt_ = bankInt;
+  padInt_ = padInt;
+  
   pad_ = p;
   active_ = true;
   

@@ -192,52 +192,33 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
         // valid MIDI note on for a sampler
         if( msg[1] >= 36 && msg[1] < 36 + 16 )
         {
-          int chnl = (msg[0] & 0x0F);
-          if( chnl < 0 && chnl >= 4 ) { return; }
-          
+          int bank = (msg[0] & 0x0F);
+          if( bank < 0 || bank >= 4 ) { return; }
           int pad = msg[1] - 36;
           
-          recordBank = chnl;
-          recordPad  = pad; // 0 - 15 based Pad num
+          // update the recording pad
+          recordBank = bank;
+          recordPad  = pad;
           
-          //printf("midi channel %i\n", chnl );
-          // get pad, and push to a voice
-          Pad* p = library->bank( chnl )->pad( pad );
           
-          if( !p )
-          {
-            printf("Fabla2: ERROR library()-bank() pad() returned 0x0\n" );
-            return;
-          }
           
           bool allocd = false;
           for(int i = 0; i < voices.size(); i++)
           {
+            Voice* v = voices.at(i);
+            
             // scane for mute-groups first
-            if( voices.at(i)->active() )
+            if( v->active() )
             {
-              Pad* vp = voices.at(i)->getPad();
               
-              if( !vp )
-              {
-                printf("%s : ERRROOOOOR\n", __PRETTY_FUNCTION__ );
-                return;
-              }
               
-              if( vp && vp->muteGroup() == p->muteGroup() )
-              {
-                if( p->muteGroup() != 0 )
-                {
-                  printf("Mute Group %i, stopped voice #%i\n", p->muteGroup(), i );
-                  voices.at(i)->stop();
-                }
-              }
             }
             
             // then check if we can play the sample on this voice
             if( !voices.at(i)->active() && !allocd )
             {
-              voices.at(i)->play( p, msg[2] );
+              Pad* p = library->bank( bank )->pad( pad );
+              voices.at(i)->play( bank, pad, p, msg[2] );
               allocd = true; // don't set more voices to play the pad
               // don't return: scan all voices for mute-groups!
               continue;
@@ -247,6 +228,12 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
         break;
     
     case LV2_MIDI_MSG_NOTE_OFF:
+      {
+        int bank = (msg[0] & 0x0F);
+        if( bank < 0 || bank >= 4 ) { return; }
+        int pad = msg[1] - 36;
+        if( pad < 0 || pad >= 16 ) { return; }
+        
         //printf("MIDI : Note Off received\n");
         for(int i = 0; i < voices.size(); i++)
         {
@@ -254,28 +241,17 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
           
           if( v->active() )
           {
-            int pad = msg[1] - 36;
-            int chnl = (msg[0] & 0x0F);
-            
-            if( chnl < 0 || chnl >=  4 ){ return; }
-            if( pad  < 0 || pad  >= 16 ){ return; }
-            
-            printf("Note off, msg 1 : %i,  chnl %i, pad %i\n", msg[1], chnl, pad );
-            
-            Pad* p = library->bank( chnl )->pad( pad );
-            
-            if ( p )
+            if( v->matches( bank, pad ) )
             {
-              if( v->getPad()->muteGroup() == p->muteGroup() );
-              {
-                printf("Note off, stopping voice %i, pad %i\n", i, p->ID() );
-                voices.at(i)->stop();
-                //break;
-              }
+              // this voice was started by the Pad that now sent corresponding
+              // note off event: so stop() the voice
+              printf("Voice.matces() NOTE_OFF -> Stop()\n" );
+              v->stop();
             }
           }
         }
-        break;
+      }
+      break;
     
     case LV2_MIDI_MSG_CONTROLLER:
         //printf("MIDI : Controller received\n");

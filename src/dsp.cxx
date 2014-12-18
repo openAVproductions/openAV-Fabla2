@@ -270,7 +270,7 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
     }
     else
     {
-      lv2_log_trace(&self->logger, "Unknown event type %d\n", ev->body.type);
+      lv2_log_trace(&self->logger, "Fabla2DSP: Unknown event type %d\n", self->unmap->unmap( self->unmap->handle, ev->body.type) );
     }
   }
   
