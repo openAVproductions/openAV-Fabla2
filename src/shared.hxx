@@ -43,28 +43,30 @@
 //#define EG_SAMPLER__sample      EG_SAMPLER_URI "#sample"
 
 /// Atom Event types
-#define FABLA2_PadPlay            FABLA2_URI "#PadPlay"
-#define FABLA2_PadStop            FABLA2_URI "#PadStop"
+#define FABLA2_requestUiSampleState FABLA2_URI "#RequestUiSampleState"
 
-#define FABLA2_SampleAdsrAttack   FABLA2_URI "#SampleAdsrAttack"
-#define FABLA2_SampleAdsrDecay    FABLA2_URI "#SampleAdsrDecay"
-#define FABLA2_SampleAdsrSustain  FABLA2_URI "#SampleAdsrSustain"
-#define FABLA2_SampleAdsrRelease  FABLA2_URI "#SampleAdsrRelease"
-#define FABLA2_SampleGain         FABLA2_URI "#SampleGain"
-#define FABLA2_SamplePan          FABLA2_URI "#SamplePan"
-#define FABLA2_SamplePitch        FABLA2_URI "#SamplePitch"
-#define FABLA2_SampleStartPoint   FABLA2_URI "#SampleStartPoint"
-#define FABLA2_SampleLoad         FABLA2_URI "#SampleLoad"
-#define FABLA2_SampleUnload       FABLA2_URI "#SampleUnload"
-#define FABLA2_SampleAudioData    FABLA2_URI "#SampleAudioData"
+#define FABLA2_PadPlay              FABLA2_URI "#PadPlay"
+#define FABLA2_PadStop              FABLA2_URI "#PadStop"
+
+#define FABLA2_SampleAdsrAttack     FABLA2_URI "#SampleAdsrAttack"
+#define FABLA2_SampleAdsrDecay      FABLA2_URI "#SampleAdsrDecay"
+#define FABLA2_SampleAdsrSustain    FABLA2_URI "#SampleAdsrSustain"
+#define FABLA2_SampleAdsrRelease    FABLA2_URI "#SampleAdsrRelease"
+#define FABLA2_SampleGain           FABLA2_URI "#SampleGain"
+#define FABLA2_SamplePan            FABLA2_URI "#SamplePan"
+#define FABLA2_SamplePitch          FABLA2_URI "#SamplePitch"
+#define FABLA2_SampleStartPoint     FABLA2_URI "#SampleStartPoint"
+#define FABLA2_SampleLoad           FABLA2_URI "#SampleLoad"
+#define FABLA2_SampleUnload         FABLA2_URI "#SampleUnload"
+#define FABLA2_SampleAudioData      FABLA2_URI "#SampleAudioData"
 
 /// "Inside Atoms" data types
-#define FABLA2_sample             FABLA2_URI "#sample"
-#define FABLA2_bank               FABLA2_URI "#bank"
-#define FABLA2_pad                FABLA2_URI "#pad"
-#define FABLA2_layer              FABLA2_URI "#layer"
-#define FABLA2_velocity           FABLA2_URI "#velocity"
-#define FABLA2_value              FABLA2_URI "#value"
+#define FABLA2_sample               FABLA2_URI "#sample"
+#define FABLA2_bank                 FABLA2_URI "#bank"
+#define FABLA2_pad                  FABLA2_URI "#pad"
+#define FABLA2_layer                FABLA2_URI "#layer"
+#define FABLA2_velocity             FABLA2_URI "#velocity"
+#define FABLA2_value                FABLA2_URI "#value"
 
 
 typedef struct {
@@ -83,6 +85,7 @@ typedef struct {
   LV2_URID patch_property;
   LV2_URID patch_value;
   
+  LV2_URID fabla2_RequestUiSampleState;
   LV2_URID fabla2_PadPlay;
   LV2_URID fabla2_PadStop;
   
@@ -122,6 +125,8 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->patch_Set                   = map->map(map->handle, LV2_PATCH__Set);
   uris->patch_property              = map->map(map->handle, LV2_PATCH__property);
   uris->patch_value                 = map->map(map->handle, LV2_PATCH__value);
+  
+  uris->fabla2_RequestUiSampleState = map->map(map->handle, FABLA2_requestUiSampleState);
   
   uris->fabla2_PadPlay              = map->map(map->handle, FABLA2_PadPlay);
   uris->fabla2_PadStop              = map->map(map->handle, FABLA2_PadStop);

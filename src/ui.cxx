@@ -69,6 +69,8 @@ static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descript
     printf("Your host does not support LV2:Resize, please ask the developers to implement it!\n");
   }
   
+  t->init();
+  
   return t;
 }
 
@@ -122,7 +124,8 @@ static void fabla2_port_event(LV2UI_Handle handle,
         const int32_t b  = ((const LV2_Atom_Int*)bank)->body;
         const int32_t p  = ((const LV2_Atom_Int*)pad)->body;
         int32_t v  = ((const LV2_Atom_Int*)vel)->body;
-        ui->padEvent( b, p, !padStop, v );
+        int layer = 0;
+        ui->padEvent( b, p, layer, !padStop, v );
       }
     }
 

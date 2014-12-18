@@ -15,11 +15,20 @@ namespace Avtk
   class Widget;
 };
 
+#define UI_ATOM_BUF_SIZE 128
+
 class TestUI : public Avtk::UI
 {
   public:
     /// Set a NativeWindow for embedding: ignore for standalone 
     TestUI(PuglNativeWindow parent = 0);
+    
+    /// init function, called by LV2 UI wrapper after setting map, forge etc
+    void init()
+    {
+      setBank( 0 );
+      requestSampleState( 0, 0, 0 );
+    }
     
     /// widget value callback
     void widgetValueCB( Avtk::Widget* widget);
@@ -64,7 +73,7 @@ class TestUI : public Avtk::UI
     
     Avtk::Widget* loadSampleBtn;
     
-    void padEvent( int bank, int pad, bool noteOn, int velocity );
+    void padEvent( int bank, int pad, int layer, bool noteOn, int velocity );
     
     Avtk::Pad* pads[16];
     
@@ -88,6 +97,8 @@ class TestUI : public Avtk::UI
     void setBank( int bank );
     /// writes event/value identified by eventURI using currentBank / currentPad
     void writeAtom( int eventURI, float value );
+    /// request the state of a sample from the DSP, to show in the UI
+    void requestSampleState( int bank, int pad, int layer );
 };
 
 

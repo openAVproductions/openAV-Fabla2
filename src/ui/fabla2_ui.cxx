@@ -103,7 +103,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   bankBtns[0]->value( true );
 }
 
-void TestUI::padEvent( int bank, int pad, bool noteOn, int velocity )
+void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
 {
   if( pad < 0 || pad >= 16 )
   {
@@ -115,15 +115,41 @@ void TestUI::padEvent( int bank, int pad, bool noteOn, int velocity )
     if( currentBank != bank )
       setBank( bank );
     
-    currentPad  = pad;
-    // request update for state from DSP
+    currentLayer = layer;
     
+    pads[currentPad]->theme( theme(bank) );
+    currentPad  = pad;
+    pads[currentPad]->theme( theme(bank+1%4) );
+    // request update for state from DSP
+    requestSampleState( bank, pad, layer );
   }
   
-  
   pads[pad]-> value( noteOn );
+}
+
+
+void TestUI::requestSampleState( int bank, int pad, int layer )
+{
+  uint8_t obj_buf[UI_ATOM_BUF_SIZE];
+  lv2_atom_forge_set_buffer(&forge, obj_buf, UI_ATOM_BUF_SIZE);
   
+  // write message
+  LV2_Atom_Forge_Frame frame;
+  LV2_Atom* msg = (LV2_Atom*)lv2_atom_forge_object( &forge, &frame, 0, uris.fabla2_RequestUiSampleState);
   
+  lv2_atom_forge_key(&forge, uris.fabla2_bank);
+  lv2_atom_forge_int(&forge, currentBank );
+  
+  lv2_atom_forge_key(&forge, uris.fabla2_pad);
+  lv2_atom_forge_int(&forge, currentPad );
+  
+  lv2_atom_forge_key(&forge, uris.fabla2_layer);
+  lv2_atom_forge_int(&forge, currentLayer );
+  
+  lv2_atom_forge_pop(&forge, &frame);
+  
+  // send it
+  write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 }
 
 void TestUI::setBank( int bank )
@@ -146,14 +172,13 @@ void TestUI::setBank( int bank )
 
 void TestUI::writeAtom( int eventURI, float value )
 {
-  //printf("Fabla2:UI writeAtom %i, %f\n", eventURI, value );
-  
-  // create buffer for UI forge
-#define UI_ATOM_BUF_SIZE 128
   uint8_t obj_buf[UI_ATOM_BUF_SIZE];
   lv2_atom_forge_set_buffer(&forge, obj_buf, UI_ATOM_BUF_SIZE);
   
-  // write message
+  // set atom buffer at start
+  lv2_atom_forge_set_buffer(&forge, obj_buf, UI_ATOM_BUF_SIZE);
+  
+  //printf("Fabla2:UI writeAtom %i, %f\n", eventURI, value );
   LV2_Atom_Forge_Frame frame;
   LV2_Atom* msg = (LV2_Atom*)lv2_atom_forge_object( &forge, &frame, 0, eventURI);
   
