@@ -56,7 +56,15 @@ class Sample
     const float*  getAudio(int channel);
     
     /// returns the waveform buffer, a mono-mixdown resampled to fit the window
-    const float* getWaveform(){return waveformData;}
+    const float* getWaveform()
+    {
+      if( dirty )
+      {
+        recacheWaveform();
+        dirty = false;
+      }
+      return &waveformData[0];
+    }
     
     /// velocity functions
     bool velocity( int vel );
@@ -86,7 +94,7 @@ class Sample
     
     /// a low-resolution re-sample of the audio data in this Sample
     void recacheWaveform();
-    float waveformData[FABLA2_UI_WAVEFORM_PX];
+    std::vector<float> waveformData;
     
     /// velocity range
     int velLow;

@@ -76,12 +76,17 @@ void Sample::recacheWaveform()
       {
         tmp += audioStereoRight[tmpIndex];
       }
-      
     }
     average =(average / sampsPerPix);
     
-    waveformData[waveformPixCtr] = average;
+    waveformData[waveformPixCtr++] = average;
   }
+  
+  // hack test
+  memcpy( &waveformData[0], &audioMono[0], FABLA2_UI_WAVEFORM_PX * sizeof(float) );
+  
+  Plotter::plot( "recacheLeft", frames, &audioMono[0] );
+  Plotter::plot( "recacheWaveform", FABLA2_UI_WAVEFORM_PX, &waveformData[0] );
 }
 
 void Sample::init()
@@ -91,9 +96,10 @@ void Sample::init()
   pan   = 0.5;
   startPoint = 0.0;
   
-  memset( waveformData, 0, sizeof(float)*FABLA2_UI_WAVEFORM_PX);
+  waveformData.resize(FABLA2_UI_WAVEFORM_PX);
   
-  recacheWaveform();
+  // set to true so we recacheWaveform() when requested for it
+  dirty = true;
 }
 
 Sample::Sample( Fabla2DSP* d, int rate, int size, float* data ) :
@@ -107,6 +113,8 @@ Sample::Sample( Fabla2DSP* d, int rate, int size, float* data ) :
   gain ( 0.5 ),
   pan  ( 0 )
 {
+  //memset( waveformData, 0, sizeof(float)*FABLA2_UI_WAVEFORM_PX);
+  
 #ifdef FABLA2_COMPONENT_TEST
   printf("%s\n", __PRETTY_FUNCTION__ );
 #endif

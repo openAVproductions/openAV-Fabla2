@@ -8,6 +8,8 @@
 
 #include "ui/fabla2_ui.hxx"
 
+#include "plotter.hxx"
+
 static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descriptor,
                               const char * plugin_uri,
                               const char * bundle_path,
@@ -144,6 +146,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
       // Get the values we need from the body of the property value atoms
       const LV2_Atom_Vector* vec = (const LV2_Atom_Vector*)data_val;
       if (vec->body.child_type != ui->uris.atom_Float) {
+        fprintf(stderr, "eg-scope.lv2 UI error: Corrupt audio message, incorrect element type!\n");
               return;  // Vector has incorrect element type
       }
       
@@ -154,8 +157,12 @@ static void fabla2_port_event(LV2UI_Handle handle,
       // Float elements immediately follow the vector body header
       const float* data = (const float*)(&vec->body + 1);
       
-      std::vector<float> vecData( *data, FABLA2_UI_WAVEFORM_PX );
-      ui->waveform->show( vecData );
+      Plotter::plot( "waveformArrived.dat", FABLA2_UI_WAVEFORM_PX, data );
+      
+      ui->waveform->show( FABLA2_UI_WAVEFORM_PX, data );
+      
+      //std::vector<float> vecData( FABLA2_UI_WAVEFORM_PX, *data );
+      //ui->waveform->show( vecData );
       ui->redraw();
       fprintf(stderr, "wavefor OK, drawing OK, done!\n");
     }
