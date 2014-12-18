@@ -152,7 +152,6 @@ const float* Sample::getAudio( int chnl )
 {
   if( channels == 2 && chnl == 1 && audioStereoRight.size() > 0 )
   {
-    printf("%s stereo returned, size() %i\n", __PRETTY_FUNCTION__, audioStereoRight.size() );
     return &audioStereoRight[0];
   }
   return &audioMono[0];

@@ -49,7 +49,12 @@ void Bank::pad( Pad* p )
 
 Pad* Bank::pad( int n )
 {
-  return pads.at(n);
+  if( n < pads.size() && n >= 0 )
+  {
+    return pads.at(n);
+  }
+  
+  return 0;
 }
 
 Bank::~Bank()

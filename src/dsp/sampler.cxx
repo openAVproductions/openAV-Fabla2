@@ -103,7 +103,7 @@ int Sampler::process(int nframes, float* L, float* R)
   panL *= volMultiply;
   panR *= volMultiply;
   
-  printf("%f, %f, volMultiply = %f\n", panL, panR, volMultiply );
+  //printf("%f, %f, volMultiply = %f\n", panL, panR, volMultiply );
   
   if( chans == 1 )
   {
@@ -135,26 +135,37 @@ int Sampler::process(int nframes, float* L, float* R)
   else if( chans == 2 )
   {
     const float* audioL = sample->getAudio(0);
-    //const float* audioR = sample->getAudio(1);
+    const float* audioR = sample->getAudio(1);
     
     for(int i = 0; i < nframes; i++ )
     {
       // cubic 4-point Hermite-curve interpolation:
       // http://musicdsp.org/showone.php?id=49
+      {
+        int inpos = playIndex;
+        float finpos = playIndex - (int)playIndex;
+        float xm1 = audioL[inpos    ];
+        float x0  = audioL[inpos + 1];
+        float x1  = audioL[inpos + 2];
+        float x2  = audioL[inpos + 3];
+        float a = (3 * (x0-x1) - xm1 + x2) / 2;
+        float b = 2*x1 + xm1 - (5*x0 + x2) / 2;
+        float c = (x1 - xm1) / 2;
+        *L++ = ((((a * finpos) + b) * finpos + c) * finpos + x0) * panL;
+      }
+      {
+        int inpos = playIndex;
+        float finpos = playIndex - (int)playIndex;
+        float xm1 = audioR[inpos    ];
+        float x0  = audioR[inpos + 1];
+        float x1  = audioR[inpos + 2];
+        float x2  = audioR[inpos + 3];
+        float a = (3 * (x0-x1) - xm1 + x2) / 2;
+        float b = 2*x1 + xm1 - (5*x0 + x2) / 2;
+        float c = (x1 - xm1) / 2;
+        *R++ = ((((a * finpos) + b) * finpos + c) * finpos + x0) * panR;
+      }
       
-      int inpos = playIndex;
-      float finpos = playIndex - (int)playIndex;
-      float xm1 = audioL[inpos    ];
-      float x0  = audioL[inpos + 1];
-      float x1  = audioL[inpos + 2];
-      float x2  = audioL[inpos + 3];
-      float a = (3 * (x0-x1) - xm1 + x2) / 2;
-      float b = 2*x1 + xm1 - (5*x0 + x2) / 2;
-      float c = (x1 - xm1) / 2;
-      float out = ((((a * finpos) + b) * finpos + c) * finpos + x0);
-      
-      *L++ = out * panL;
-      *R++ = out * panR;
       playIndex += pd;
       
       if( playIndex + 4 > frames )

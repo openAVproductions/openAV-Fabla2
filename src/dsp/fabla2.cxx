@@ -64,6 +64,12 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
     
     Pad* tmpPad = new Pad( this, rate, i % 16 );
     
+    if ( i == 9 )
+    {
+      Sample* tmp = new Sample( this, rate, "One", "/usr/local/lib/lv2/fabla2.lv2/stereoTest.wav");
+      tmpPad->add( tmp );
+    }
+    
     if( i < 16 )
     {
       std::stringstream s;
@@ -233,11 +239,14 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
             
             Pad* p = library->bank( chnl )->pad( msg[1] - 36 );
             
-            if ( v->getPad() == p );
+            if ( p )
             {
-              printf("Note off, stopping voice %i, pad %i\n", i, p->ID() );
-              voices.at(i)->stop();
-              break;
+              if( v->getPad() == p );
+              {
+                printf("Note off, stopping voice %i, pad %i\n", i, p->ID() );
+                voices.at(i)->stop();
+                break;
+              }
             }
           }
         }
@@ -376,7 +385,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
   }
   else if(  URI == uris->fabla2_SampleStartPoint ) {
     printf("setting start point to %f\n", v );
-    s->dirty = 1; s->startPoint = v * (s->getFrames() / 4.f);
+    s->dirty = 1; s->startPoint = v * s->getFrames();
   }
 }
 
