@@ -45,6 +45,9 @@ class Library
     void bank( Bank* b );
     Bank* bank( int ID );
     
+    /// testing function, to see if there are null pointers in the system
+    void checkAll();
+    
   private:
     Fabla2DSP* dsp;
     std::list< yasper::ptr<Bank> > banks;

@@ -108,6 +108,9 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
     
     library->bank( bankID )->pad( tmpPad );
   }
+  
+  library->checkAll();
+  
 }
 
 void Fabla2DSP::process( int nf )
@@ -186,7 +189,6 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
   switch( lv2_midi_message_type( msg ) )
   {
     case LV2_MIDI_MSG_NOTE_ON:
-        printf("MIDI : Note On received\n");
         // valid MIDI note on for a sampler
         if( msg[1] >= 36 && msg[1] < 36 + 16 )
         {
@@ -196,9 +198,16 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
           recordBank = chnl;
           recordPad  = msg[1] - 36; // 0 - 15 based Pad num
           
+          printf("MIDI : Note On : %i %i\n", chnl, recordPad );
+          
           //printf("midi channel %i\n", chnl );
           // get pad, and push to a voice
           Pad* p = library->bank( chnl )->pad( msg[1] - 36 );
+          
+          if( !p )
+          {
+            printf("Fabla2: ERROR library()-bank() pad() returned 0x0\n" );
+          }
           
           bool allocd = false;
           for(int i = 0; i < voices.size(); i++)

@@ -65,6 +65,25 @@ Sample* Pad::layer( int id )
   return 0;
 }
 
+void Pad::checkAll()
+{
+  printf("%s : Starting...\n", __PRETTY_FUNCTION__ );
+  for(int bi = 0; bi < 8; bi++ )
+  {
+    Sample* s = layer( bi );
+    if( !s )
+    {
+      printf("%s : Pad::layer( %i ) returns NULL sample\n", __PRETTY_FUNCTION__, bi );
+      return;
+    }
+    else
+    {
+      printf("%s : Pad::layer( %i ) has Sample %s\n", __PRETTY_FUNCTION__, bi, s->getName() );
+    }
+  }
+  printf("%s : Done.\n", __PRETTY_FUNCTION__ );
+}
+
 Sample* Pad::getPlaySample( int velocity )
 {
 #ifdef FABLA2_COMPONENT_TEST

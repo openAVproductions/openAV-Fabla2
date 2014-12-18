@@ -21,6 +21,7 @@
 #include "library.hxx"
 
 #include "bank.hxx"
+#include <stdio.h>
 
 namespace Fabla2
 {
@@ -38,6 +39,24 @@ Library::Library( Fabla2DSP* d, int rate ) :
 void Library::bank( Bank* b )
 {
   banks.push_back( b );
+}
+
+void Library::checkAll()
+{
+  printf("%s : Starting...\n", __PRETTY_FUNCTION__ );
+  for(int bi = 0; bi < 4; bi++ )
+  {
+    Bank* b = bank( bi );
+    if( !b )
+    {
+      printf("%s : Bank %i == 0\n", __PRETTY_FUNCTION__, bi );
+    }
+    else
+    {
+      b->checkAll();
+    }
+  }
+  printf("%s : Done.\n", __PRETTY_FUNCTION__ );
 }
 
 Bank* Library::bank( int id )

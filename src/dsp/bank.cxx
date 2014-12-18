@@ -47,6 +47,24 @@ void Bank::pad( Pad* p )
   pads.push_back( p );
 }
 
+void Bank::checkAll()
+{
+  printf("%s : Starting...\n", __PRETTY_FUNCTION__ );
+  for(int bi = 0; bi < 4; bi++ )
+  {
+    Pad* p = pad( bi );
+    if( !p )
+    {
+      printf("%s : Pad %i == 0\n", __PRETTY_FUNCTION__, bi );
+    }
+    else
+    {
+      
+    }
+  }
+  printf("%s : Done.\n", __PRETTY_FUNCTION__ );
+}
+
 Pad* Bank::pad( int n )
 {
   if( n < pads.size() && n >= 0 )

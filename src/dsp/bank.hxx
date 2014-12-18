@@ -50,6 +50,9 @@ class Bank
     
     void name( const char* name );
     
+    /// testing function, to see if there are null pointers in the system
+    void checkAll();
+    
   private:
     Fabla2DSP* dsp;
     int ID_; ///< Bank ABCD id

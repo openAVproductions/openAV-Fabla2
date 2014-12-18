@@ -81,6 +81,9 @@ class Pad
       SS_VELOCITY_LAYERS, /// takes velocity into account, and plays a sample
     };
     void switchSystem( SAMPLE_SWITCH_SYSTEM sss );
+    
+    /// testing func
+    void checkAll();
   
   private:
     Fabla2DSP* dsp;
