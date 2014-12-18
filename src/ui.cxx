@@ -128,7 +128,22 @@ static void fabla2_port_event(LV2UI_Handle handle,
         ui->padEvent( b, p, layer, !padStop, v );
       }
     }
-
+    else if( obj->body.otype == ui->uris.fabla2_ReplyUiSampleState )
+    {
+      const LV2_Atom* bank = NULL;
+      const LV2_Atom* pad  = NULL;
+      const LV2_Atom* layer= NULL;
+      
+      const int n_props  = lv2_atom_object_get( obj,
+            ui->uris.fabla2_bank , &bank,
+            ui->uris.fabla2_pad  , &pad,
+            ui->uris.fabla2_layer, &layer,
+            NULL);
+      if( bank && pad && layer )
+      {
+      }
+      
+    }
     else
     {
       fprintf(stderr, "Unknown message type.\n");

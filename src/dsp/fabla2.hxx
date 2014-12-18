@@ -22,6 +22,7 @@
 #define OPENAV_FABLA2_HXX
 
 #include "ports.hxx"
+#include "../dsp.hxx"
 #include "../shared.hxx"
 
 #include "midi.hxx"
@@ -30,11 +31,15 @@
 #include <map>
 #include <vector>
 
+// for accessing forge to write ports
+class FablaLV2;
+
 namespace Fabla2
 {
 
 class Pad;
 class Voice;
+class Sample;
 class Library;
 
 /** Fabla2DSP
@@ -50,14 +55,13 @@ class Fabla2DSP
     Fabla2DSP( int rate, URIs* uris );
     ~Fabla2DSP();
     
-    /// Play a pad, with options for trigger-type etc
-    
-    /// Record a pad, with duration option?
-    
+    // set by DSP
+    FablaLV2* lv2;
     
     /// public read / write, plugin format wrapper writes audio port pointers
     /// while each voice can access incoming audio
     int nframes;
+    
     /// control values
     float* controlPorts[PORT_COUNT];
     
@@ -92,6 +96,9 @@ class Fabla2DSP
     int  recordPad;
     long recordIndex;
     std::vector<float> recordBuffer;
+    
+    /// lv2 convienience function to write a samples state to the UI
+    void writeSampleState( int b, int p, int l, Sample* );
 };
 
 }; // Fabla2

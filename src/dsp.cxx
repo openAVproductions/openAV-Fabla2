@@ -29,8 +29,6 @@
 
 #include "dsp/ports.hxx"
 #include "dsp/fabla2.hxx"
-using namespace Fabla2;
-
 
 LV2_Handle FablaLV2::instantiate( const LV2_Descriptor* descriptor,
                                   double samplerate,
@@ -90,6 +88,10 @@ LV2_Handle FablaLV2::instantiate( const LV2_Descriptor* descriptor,
     return 0;
   }
   
+  // a "return" pointer for the DSP to access this instance
+  // needed to use forge etc
+  tmp->dsp->lv2 = tmp;
+  
   return (LV2_Handle)tmp;
 }
 
@@ -117,10 +119,10 @@ void FablaLV2::connect_port(LV2_Handle instance, uint32_t port, void *data)
   switch (port)
   {
     // handle Atom ports gracefully here
-    case ATOM_IN:
+    case Fabla2::ATOM_IN:
         self->in_port = (const LV2_Atom_Sequence*)data;
         break;
-    case ATOM_OUT:
+    case Fabla2::ATOM_OUT:
         self->out_port = (LV2_Atom_Sequence*)data;
         break;
       
@@ -142,12 +144,16 @@ int FablaLV2::atomBankPadLayer( const LV2_Atom_Object* obj, int& b, int& p, int&
                           uris.fabla2_pad  , &pad,
                           uris.fabla2_layer, &lay,
                           uris.fabla2_value, &fl, 0);
-  if( bank && pad && lay && fl )
+  if( bank && pad && lay )
   {
     b = ((const LV2_Atom_Int*)bank)->body;
     p = ((const LV2_Atom_Int*)pad )->body;
     l = ((const LV2_Atom_Int*)lay )->body;
-    v = ((const LV2_Atom_Float*)fl)->body;
+    
+    // not all messages have a float, so just leave its value alone
+    if( fl )
+      v = ((const LV2_Atom_Float*)fl)->body;
+    
     return 0;
   }
   return -1;
@@ -255,10 +261,11 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
         }
       }
       // handle *ALL* UI message types here!
-      else if (obj->body.otype == self->uris.fabla2_SampleGain        ||
-               obj->body.otype == self->uris.fabla2_SamplePitch       ||
-               obj->body.otype == self->uris.fabla2_SamplePan         ||
-               obj->body.otype == self->uris.fabla2_SampleStartPoint  ||
+      else if (obj->body.otype == self->uris.fabla2_SampleGain            ||
+               obj->body.otype == self->uris.fabla2_SamplePitch           ||
+               obj->body.otype == self->uris.fabla2_SamplePan             ||
+               obj->body.otype == self->uris.fabla2_SampleStartPoint      ||
+               obj->body.otype == self->uris.fabla2_RequestUiSampleState  ||
                false )
       {
         int bank, pad, layer;

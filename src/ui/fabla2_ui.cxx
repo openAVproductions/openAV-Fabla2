@@ -110,7 +110,7 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
     return; // invalid pad number
   }
   
-  if( followPad )
+  if( followPad && noteOn )
   {
     if( currentBank != bank )
       setBank( bank );
@@ -121,6 +121,7 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
     currentPad  = pad;
     pads[currentPad]->theme( theme(bank+1%4) );
     // request update for state from DSP
+    
     requestSampleState( bank, pad, layer );
   }
   

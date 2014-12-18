@@ -20,6 +20,8 @@
 
 #include "fabla2.hxx"
 
+#include "../dsp.hxx"
+
 #include <sstream>
 
 #include <stdio.h>
@@ -361,6 +363,37 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
   
 }
 
+void Fabla2DSP::writeSampleState( int b, int p, int l, Sample* s )
+{
+  LV2_Atom_Forge_Frame frame;
+  lv2_atom_forge_frame_time( &lv2->forge, 0 );
+  
+  lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_ReplyUiSampleState );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_bank);
+  lv2_atom_forge_int(&lv2->forge, b );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_pad);
+  lv2_atom_forge_int(&lv2->forge, p );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_layer);
+  lv2_atom_forge_int(&lv2->forge, l );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleGain);
+  lv2_atom_forge_float(&lv2->forge, s->gain );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_SamplePitch);
+  lv2_atom_forge_float(&lv2->forge, s->pitch );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_SamplePan );
+  lv2_atom_forge_float(&lv2->forge, s->pan );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleStartPoint );
+  lv2_atom_forge_float(&lv2->forge, s->startPoint );
+  
+  lv2_atom_forge_pop(&lv2->forge, &frame);
+}
+
 void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 {
   //printf("Fabla2:uiMessage bank %i, pad %i, layer %i: %f\n", b, p, l, v );
@@ -386,6 +419,12 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
   else if(  URI == uris->fabla2_SampleStartPoint ) {
     printf("setting start point to %f\n", v );
     s->dirty = 1; s->startPoint = v * s->getFrames();
+  }
+  else if(  URI == uris->fabla2_RequestUiSampleState ) {
+    printf("UI requested %i, %i, %i\n", b, p, l );
+    {
+      writeSampleState( b, p, l, s );
+    }
   }
 }
 
