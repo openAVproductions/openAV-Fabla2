@@ -64,6 +64,7 @@ class TestUI : public Avtk::UI
     
     Avtk::Widget* loadSampleBtn;
     
+    void padEvent( int bank, int pad, bool noteOn, int velocity );
     
     Avtk::Pad* pads[16];
     
@@ -77,6 +78,9 @@ class TestUI : public Avtk::UI
     LV2_Atom_Forge forge;
   
   private:
+    /// followPad allows the UI to update to the last played PAD.
+    bool followPad;
+    
     int currentBank;
     int currentPad;
     int currentLayer;

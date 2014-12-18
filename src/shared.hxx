@@ -124,6 +124,7 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->patch_value                 = map->map(map->handle, LV2_PATCH__value);
   
   uris->fabla2_PadPlay              = map->map(map->handle, FABLA2_PadPlay);
+  uris->fabla2_PadStop              = map->map(map->handle, FABLA2_PadStop);
   
   uris->fabla2_SampleAdsrAttack     = map->map(map->handle, FABLA2_SampleAdsrAttack);
   uris->fabla2_SampleAdsrDecay      = map->map(map->handle, FABLA2_SampleAdsrDecay);

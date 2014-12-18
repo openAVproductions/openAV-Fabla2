@@ -20,7 +20,8 @@ TestUI::TestUI( PuglNativeWindow parent ):
   Avtk::UI( 780, 330, parent ),
   currentBank( 0 ),
   currentPad( 0 ),
-  currentLayer(0)
+  currentLayer(0),
+  followPad( true )
 {
   themes.push_back( new Avtk::Theme( this, "orange.avtk" ) );
   themes.push_back( new Avtk::Theme( this, "green.avtk" ) );
@@ -100,6 +101,29 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   // initial values
   bankBtns[0]->value( true );
+}
+
+void TestUI::padEvent( int bank, int pad, bool noteOn, int velocity )
+{
+  if( pad < 0 || pad >= 16 )
+  {
+    return; // invalid pad number
+  }
+  
+  if( followPad )
+  {
+    if( currentBank != bank )
+      setBank( bank );
+    
+    currentPad  = pad;
+    // request update for state from DSP
+    
+  }
+  
+  
+  pads[pad]-> value( noteOn );
+  
+  
 }
 
 void TestUI::setBank( int bank )

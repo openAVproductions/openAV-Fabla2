@@ -209,10 +209,12 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
         LV2_Atom_Forge_Frame frame;
         lv2_atom_forge_frame_time( &self->forge, ev->time.frames );
         
+        int msgType = self->uris.fabla2_PadStop;
         if( (msg[0] & 0xF0) == 0x90 )
-          lv2_atom_forge_object( &self->forge, &frame, 0, self->uris.fabla2_PadPlay );
-        else
-          lv2_atom_forge_object( &self->forge, &frame, 0, self->uris.fabla2_PadStop );
+        {
+          msgType = self->uris.fabla2_PadPlay;
+        }
+        lv2_atom_forge_object( &self->forge, &frame, 0, msgType );
         
         lv2_atom_forge_key(&self->forge, self->uris.fabla2_bank);
         lv2_atom_forge_int(&self->forge, 0 );
@@ -220,6 +222,7 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
         lv2_atom_forge_int(&self->forge, pad );
         lv2_atom_forge_key(&self->forge, self->uris.fabla2_velocity);
         lv2_atom_forge_int(&self->forge, msg[2] );
+        
         lv2_atom_forge_pop(&self->forge, &frame);
       }
       else if( (msg[0] & 0xF0) == 0xB0 ) // control change

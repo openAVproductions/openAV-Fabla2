@@ -100,32 +100,29 @@ static void fabla2_port_event(LV2UI_Handle handle,
     if (obj->body.otype == ui->uris.fabla2_PadPlay || padStop)
     {
       //printf("UI: Fabla Pad Event\n");
+      const LV2_Atom* bank = NULL;
       const LV2_Atom* pad  = NULL;
       const LV2_Atom* vel  = NULL;
       const int n_props  = lv2_atom_object_get( obj,
+          ui->uris.fabla2_bank    , &bank,
           ui->uris.fabla2_pad     , &pad,
           ui->uris.fabla2_velocity, &vel,
           NULL);
       
-      if (n_props != 2 || pad->type != ui->uris.atom_Int || vel->type != ui->uris.atom_Int )
+      if (n_props != 3 ||
+          bank->type != ui->uris.atom_Int ||
+          pad->type != ui->uris.atom_Int  ||
+          vel->type != ui->uris.atom_Int )
       {
         printf("Fabla2::port_event() error: Corrupt state message\n");
         return;
       }
       else
       {
+        const int32_t b  = ((const LV2_Atom_Int*)bank)->body;
         const int32_t p  = ((const LV2_Atom_Int*)pad)->body;
         int32_t v  = ((const LV2_Atom_Int*)vel)->body;
-        //printf("UI Fabla Pad %i, Vel %i\n", p, v );
-        if( p >= 0 && p < 16 )
-        {
-          if( padStop )
-            v = 0;
-          ui->pads[p]->value( v );
-        }
-        else
-          printf("Fabla2:UI, Pad %i out of bounds\n", p, v );
-        
+        ui->padEvent( b, p, !padStop, v );
       }
     }
 
