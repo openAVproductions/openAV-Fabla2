@@ -128,6 +128,37 @@ static void fabla2_port_event(LV2UI_Handle handle,
         ui->padEvent( b, p, layer, !padStop, v );
       }
     }
+    else if( obj->body.otype == ui->uris.fabla2_SampleAudioData )
+    {
+      
+      const LV2_Atom* data_val = NULL;
+      const int n_props  = lv2_atom_object_get( obj,
+                ui->uris.fabla2_audioData, &data_val, NULL);
+
+      if (data_val->type != ui->uris.atom_Vector) {
+        // Object does not have the required properties with correct types
+        fprintf(stderr, "eg-scope.lv2 UI error: Corrupt audio message\n");
+        return;
+      }
+      
+      // Get the values we need from the body of the property value atoms
+      const LV2_Atom_Vector* vec = (const LV2_Atom_Vector*)data_val;
+      if (vec->body.child_type != ui->uris.atom_Float) {
+              return;  // Vector has incorrect element type
+      }
+      
+      // Number of elements = (total size - header size) / element size
+      const size_t n_elem = ((data_val->size - sizeof(LV2_Atom_Vector_Body))
+                             / sizeof(float));
+
+      // Float elements immediately follow the vector body header
+      const float* data = (const float*)(&vec->body + 1);
+      
+      std::vector<float> vecData( *data, FABLA2_UI_WAVEFORM_PX );
+      ui->waveform->show( vecData );
+      ui->redraw();
+      fprintf(stderr, "wavefor OK, drawing OK, done!\n");
+    }
     else if( obj->body.otype == ui->uris.fabla2_ReplyUiSampleState )
     {
       // atoms to represent the data

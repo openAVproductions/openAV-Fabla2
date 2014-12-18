@@ -55,7 +55,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   masterPitch = new Avtk::Dial( this, 5, 43+(s+6)*4+6, s * 2 + 6, s*2+6,  "Pitch" );
   masterPitch->theme( theme( 2 ) );
   
-  waveform = new Avtk::Waveform( this, 355, 42, 422, 113, "Waveform" );
+  waveform = new Avtk::Waveform( this, 355, 42, FABLA2_UI_WAVEFORM_PX, 113, "Waveform" );
   std::vector<float> tmp;
   Avtk::loadSample("/usr/local/lib/lv2/fabla2.lv2/0.wav", tmp);
   waveform->show( tmp );
@@ -110,7 +110,11 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
     return; // invalid pad number
   }
   
-  if( followPad && noteOn )
+  bool newPad = ( pad   != currentPad   ||
+                  layer != currentLayer ||
+                  bank  != currentBank  );
+  
+  if( followPad && noteOn && newPad )
   {
     pads[currentPad]-> value( false );
     

@@ -21,6 +21,8 @@
 #ifndef OPENAV_FABLA2_SAMPLE_HXX
 #define OPENAV_FABLA2_SAMPLE_HXX
 
+#include "../shared.hxx"
+
 #include <string>
 #include <vector>
 
@@ -53,6 +55,9 @@ class Sample
     /// returns the buffer for the provided channel
     const float*  getAudio(int channel);
     
+    /// returns the waveform buffer, a mono-mixdown resampled to fit the window
+    const float* getWaveform(){return waveformData;}
+    
     /// velocity functions
     bool velocity( int vel );
     void velocity( int low, int high );
@@ -78,6 +83,10 @@ class Sample
     long frames;
     std::vector<float> audioMono;
     std::vector<float> audioStereoRight;
+    
+    /// a low-resolution re-sample of the audio data in this Sample
+    void recacheWaveform();
+    float waveformData[FABLA2_UI_WAVEFORM_PX];
     
     /// velocity range
     int velLow;

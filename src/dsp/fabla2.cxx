@@ -305,6 +305,30 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Sample* s )
   lv2_atom_forge_pop(&lv2->forge, &frame);
 }
 
+void Fabla2DSP::tx_waveform( int b, int p, int l, const float* data )
+{
+  LV2_Atom_Forge_Frame frame;
+  
+  lv2_atom_forge_frame_time(&lv2->forge, 0);
+  lv2_atom_forge_object(&lv2->forge, &frame, 0, uris->fabla2_SampleAudioData);
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_bank);
+  lv2_atom_forge_int(&lv2->forge, b );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_pad);
+  lv2_atom_forge_int(&lv2->forge, p );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_layer);
+  lv2_atom_forge_int(&lv2->forge, l );
+  
+  // Add vector of floats 'audioData' property
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_audioData);
+  lv2_atom_forge_vector( &lv2->forge, sizeof(float), uris->atom_Float, FABLA2_UI_WAVEFORM_PX, data);
+  
+  // Close off object
+  lv2_atom_forge_pop(&lv2->forge, &frame);
+}
+
 void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 {
   //printf("Fabla2:uiMessage bank %i, pad %i, layer %i: %f\n", b, p, l, v );
@@ -335,6 +359,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
     printf("UI requested %i, %i, %i\n", b, p, l );
     {
       writeSampleState( b, p, l, s );
+      tx_waveform( b, p, l, s->getWaveform() );
     }
   }
 }

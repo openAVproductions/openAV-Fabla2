@@ -39,8 +39,7 @@
 #define FABLA2_URI    "http://www.openavproductions.com/fabla2"
 #define FABLA2_UI_URI "http://www.openavproductions.com/fabla2#gui"
 
-//#define EG_SAMPLER_URI          "http://lv2plug.in/plugins/eg-sampler"
-//#define EG_SAMPLER__sample      EG_SAMPLER_URI "#sample"
+#define FABLA2_UI_WAVEFORM_PX 422
 
 /// Atom Event types
 #define FABLA2_requestUiSampleState FABLA2_URI "#RequestUiSampleState"
@@ -68,6 +67,7 @@
 #define FABLA2_layer                FABLA2_URI "#layer"
 #define FABLA2_velocity             FABLA2_URI "#velocity"
 #define FABLA2_value                FABLA2_URI "#value"
+#define FABLA2_audioData            FABLA2_URI "#audioData"
 
 
 typedef struct {
@@ -75,6 +75,7 @@ typedef struct {
   LV2_URID atom_Path;
   LV2_URID atom_Int;
   LV2_URID atom_Float;
+  LV2_URID atom_Vector;
   LV2_URID atom_Resource;
   LV2_URID atom_Sequence;
   LV2_URID atom_URID;
@@ -110,6 +111,7 @@ typedef struct {
   LV2_URID fabla2_pad;
   LV2_URID fabla2_layer;
   LV2_URID fabla2_value;
+  LV2_URID fabla2_audioData;
 } URIs;
 
 static void mapUri( URIs* uris, LV2_URID_Map* map )
@@ -118,6 +120,7 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->atom_Path                   = map->map(map->handle, LV2_ATOM__Path);
   uris->atom_Int                    = map->map(map->handle, LV2_ATOM__Int);
   uris->atom_Float                  = map->map(map->handle, LV2_ATOM__Float);
+  uris->atom_Vector                 = map->map(map->handle, LV2_ATOM__Vector);
   uris->atom_Resource               = map->map(map->handle, LV2_ATOM__Resource);
   uris->atom_Sequence               = map->map(map->handle, LV2_ATOM__Sequence);
   uris->atom_URID                   = map->map(map->handle, LV2_ATOM__URID);
@@ -154,6 +157,7 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->fabla2_pad                  = map->map(map->handle, FABLA2_pad);
   uris->fabla2_layer                = map->map(map->handle, FABLA2_layer);
   uris->fabla2_value                = map->map(map->handle, FABLA2_value);
+  uris->fabla2_audioData            = map->map(map->handle, FABLA2_audioData);
 }
 
 #endif // OPENAV_FABLA2_SHARED_HXX

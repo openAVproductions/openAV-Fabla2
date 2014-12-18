@@ -159,27 +159,6 @@ int FablaLV2::atomBankPadLayer( const LV2_Atom_Object* obj, int& b, int& p, int&
   return -1;
 }
 
-static void
-tx_rawaudio(LV2_Atom_Forge* forge,
-            URIs*           uris,
-            const int32_t   channel,
-            const size_t    n_samples,
-            const float*    data)
-{
-	LV2_Atom_Forge_Frame frame;
-
-	// Forge container object of type 'RawAudio'
-	lv2_atom_forge_frame_time(forge, 0);
-	lv2_atom_forge_object(forge, &frame, 0, uris->fabla2_SampleAudioData);
-
-	// Add vector of floats 'audioData' property
-	lv2_atom_forge_key(forge, uris->fabla2_pad);
-	lv2_atom_forge_vector( forge, sizeof(float), uris->atom_Float, n_samples, data);
-
-	// Close off object
-	lv2_atom_forge_pop(forge, &frame);
-}
-
 void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
 {
   FablaLV2* self = (FablaLV2*) instance;

@@ -53,12 +53,47 @@ static void fabla2_deinterleave( int size, const float* all, std::vector<float>&
   }
 }
 
+void Sample::recacheWaveform()
+{
+  printf("recaching waveform... \n" );
+  int sampsPerPix = frames / FABLA2_UI_WAVEFORM_PX;
+  
+  int waveformPixCtr = 0;
+  
+  // loop over each pixel value we need
+  for( int p = 0; p < frames/sampsPerPix; p++ )
+  {
+    float average = 0.f;
+    
+    // calc value for this pixel
+    for( int i = 0; i < sampsPerPix; i++ )
+    {
+      int tmpIndex = (p * sampsPerPix) + i;
+      
+      float tmp = audioMono[tmpIndex];
+      
+      if ( channels == 2 )
+      {
+        tmp += audioStereoRight[tmpIndex];
+      }
+      
+    }
+    average =(average / sampsPerPix);
+    
+    waveformData[waveformPixCtr] = average;
+  }
+}
+
 void Sample::init()
 {
   gain  = 0.5;
   pitch = 0.5;
   pan   = 0.5;
   startPoint = 0.0;
+  
+  memset( waveformData, 0, sizeof(float)*FABLA2_UI_WAVEFORM_PX);
+  
+  recacheWaveform();
 }
 
 Sample::Sample( Fabla2DSP* d, int rate, int size, float* data ) :
@@ -72,12 +107,13 @@ Sample::Sample( Fabla2DSP* d, int rate, int size, float* data ) :
   gain ( 0.5 ),
   pan  ( 0 )
 {
-  init();
 #ifdef FABLA2_COMPONENT_TEST
   printf("%s\n", __PRETTY_FUNCTION__ );
 #endif
   //memcpy( &audioMono[0], data, sizeof(float) * size );
   fabla2_deinterleave( size, data, audioMono, audioStereoRight );
+  
+  init();
 }
 
 Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
@@ -92,7 +128,6 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
   gain ( 0.5 ),
   pan  ( 0.5 )
 {
-  init();
   SF_INFO info;
   SNDFILE* const sndfile = sf_open( path.c_str(), SFM_READ, &info);
   if ( !sndfile )
@@ -140,6 +175,8 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
     audioStereoRight.resize( frames );
     fabla2_deinterleave( frames, loadBuffer, audioMono, audioStereoRight );
   }
+  
+  init();
   
 #ifdef FABLA2_COMPONENT_TEST
   if( false )
