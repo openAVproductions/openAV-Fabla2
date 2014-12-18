@@ -217,6 +217,7 @@ void Widget::value( float v )
   if( v < 0.0 ) v = 0.0;
   
   value_ = v;
+  ui->redraw();
 }
 
 bool Widget::touches( int inx, int iny )

@@ -130,20 +130,6 @@ static void fabla2_port_event(LV2UI_Handle handle,
     }
     else if( obj->body.otype == ui->uris.fabla2_ReplyUiSampleState )
     {
-      /*
-      const LV2_Atom* bank = NULL;
-      const LV2_Atom* pad  = NULL;
-      const LV2_Atom* layer= NULL;
-      
-      const int n_props  = lv2_atom_object_get( obj,
-            ui->uris.fabla2_bank , &bank,
-            ui->uris.fabla2_pad  , &pad,
-            ui->uris.fabla2_layer, &layer,
-            NULL);
-      if( bank && pad && layer )
-      {
-      }
-      */
       // atoms to represent the data
       const LV2_Atom* aGain       = 0;
       const LV2_Atom* aPitch      = 0;
@@ -155,14 +141,15 @@ static void fabla2_port_event(LV2UI_Handle handle,
             ui->uris.fabla2_SamplePitch       , &aPitch,
             ui->uris.fabla2_SamplePan         , &aPan,
             ui->uris.fabla2_SampleStartPoint  , &aStartPoint,
-            //ui->uris.fabla2_Sample  , &pad,
+            //ui->uris.fabla2_Sample  , &,
             0 );
       if( aGain && aPan && aPitch && aStartPoint )
       {
         ui->sampleGain      ->value( ((const LV2_Atom_Float*)aGain)->body );
         ui->samplePan       ->value( ((const LV2_Atom_Float*)aPan )->body );
         ui->samplePitch     ->value( ((const LV2_Atom_Float*)aPitch)->body);
-        ui->sampleStartPoint->value( ((const LV2_Atom_Float*)aStartPoint)->body);
+        ui->sampleStartPoint->value( ((const LV2_Atom_Float*)aStartPoint)->body*2); // 2* as dial offsets on write too!
+        ui->waveform->setStartPoint( ((const LV2_Atom_Float*)aStartPoint)->body);
       }
     }
     else

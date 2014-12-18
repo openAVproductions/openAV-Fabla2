@@ -68,6 +68,9 @@ class Sample
     Fabla2DSP* dsp;
     int sr;
     
+    // convienience for setting defaults after constructor
+    void init();
+    
     std::string name;
     
     /// audio variables

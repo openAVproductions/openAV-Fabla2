@@ -272,95 +272,6 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
     
   }
   
-  /// OLD midi handling code, doesn't use Library. Fixing
-  /*
-  if( msg[0] == 144 )
-  {
-    if( recordEnable && recordPad == -1 )
-    {
-      recordPad = msg[1] - 36;
-      recordIndex = 0;
-    }
-    
-    if( !recordEnable )
-    {
-      /// Logic for incoming MIDI -> Pad mapping
-      for (std::map< int, yasper::ptr<Pad> >::iterator it= midiToPad.begin(); it != midiToPad.end(); ++it)
-      {
-        if( it->first == msg[1] )
-        {
-          for(int i = 0; i < voices.size(); i++)
-          {
-            if( !voices.at(i)->active() )
-            {
-              voices.at(i)->play( it->second, msg[2] );
-              break;
-            }
-          }
-        }
-      }
-    }
-    
-  }
-  else if ( msg[0] == 128 )
-  {
-    if( recordEnable )
-    {
-      
-    }
-    else
-    {
-      // lookup which Pad* gets *played* when a note on arrives
-      Pad* padOnPtr = 0;
-      for (std::map< int, yasper::ptr<Pad> >::iterator it= midiToPad.begin(); it != midiToPad.end(); ++it)
-      {
-        if( it->first == msg[1] )
-        {
-          padOnPtr = it->second;
-        }
-      }
-      
-      if( padOnPtr )
-      {
-        // normal note off event, so kill voice
-        for(int i = 0; i < voices.size(); i++)
-        {
-          if( voices.at(i)->getPad() == padOnPtr )
-          {
-            voices.at(i)->stop();
-            break;
-          }
-        }
-      }
-    }
-  }
-  
-  else if( msg[0] == 176 )
-  {
-    // STOP on MPD32 "ctrl" mode for transport
-    if( msg[1] == 117 )
-    {
-      recordEnable = false;
-      recordIndex = 0;
-      recordPad = -1;
-      printf("record disabled!\n");
-    }
-    if( msg[1] == 119 ) // record
-    {
-      recordEnable = true;
-      recordIndex = 0;
-      recordPad = -1;
-      printf("record enabled!\n");
-    }
-    
-    if( midiToPad.find( 36 + msg[1] ) != midiToPad.end() )
-    {
-      midiToPad[ 36 + msg[1] - 1 ]->controls[Pad::FILTER_CUTOFF] = msg[2] / 127.f;
-    }
-    
-  }
-  **/
-  
 }
 
 void Fabla2DSP::writeSampleState( int b, int p, int l, Sample* s )
@@ -389,7 +300,7 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Sample* s )
   lv2_atom_forge_float(&lv2->forge, s->pan );
   
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleStartPoint );
-  lv2_atom_forge_float(&lv2->forge, s->startPoint );
+  lv2_atom_forge_float(&lv2->forge, s->startPoint / s->getFrames() );
   
   lv2_atom_forge_pop(&lv2->forge, &frame);
 }

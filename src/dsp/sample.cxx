@@ -53,6 +53,14 @@ static void fabla2_deinterleave( int size, const float* all, std::vector<float>&
   }
 }
 
+void Sample::init()
+{
+  gain  = 0.5;
+  pitch = 0.5;
+  pan   = 0.5;
+  startPoint = 0.0;
+}
+
 Sample::Sample( Fabla2DSP* d, int rate, int size, float* data ) :
   dsp( d ),
   sr(rate),
@@ -64,6 +72,7 @@ Sample::Sample( Fabla2DSP* d, int rate, int size, float* data ) :
   gain ( 0.5 ),
   pan  ( 0 )
 {
+  init();
 #ifdef FABLA2_COMPONENT_TEST
   printf("%s\n", __PRETTY_FUNCTION__ );
 #endif
@@ -83,6 +92,7 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
   gain ( 0.5 ),
   pan  ( 0.5 )
 {
+  init();
   SF_INFO info;
   SNDFILE* const sndfile = sf_open( path.c_str(), SFM_READ, &info);
   if ( !sndfile )
