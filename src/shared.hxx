@@ -43,22 +43,27 @@
 //#define EG_SAMPLER__sample      EG_SAMPLER_URI "#sample"
 
 /// Atom Event types
-#define FABLA2_PadPlay          FABLA2_URI "#PadPlay"
-#define FABLA2_PadStop          FABLA2_URI "#PadStop"
+#define FABLA2_PadPlay            FABLA2_URI "#PadPlay"
+#define FABLA2_PadStop            FABLA2_URI "#PadStop"
 
-#define FABLA2_SampleGain       FABLA2_URI "#SampleGain"
-#define FABLA2_SamplePitch      FABLA2_URI "#SamplePitch"
-#define FABLA2_SampleLoad       FABLA2_URI "#SampleLoad"
-#define FABLA2_SampleUnload     FABLA2_URI "#SampleUnload"
-#define FABLA2_SampleAudioData  FABLA2_URI "#SampleAudioData"
+#define FABLA2_SampleAdsrAttack   FABLA2_URI "#SampleAdsrAttack"
+#define FABLA2_SampleAdsrDecay    FABLA2_URI "#SampleAdsrDecay"
+#define FABLA2_SampleAdsrSustain  FABLA2_URI "#SampleAdsrSustain"
+#define FABLA2_SampleAdsrRelease  FABLA2_URI "#SampleAdsrRelease"
+#define FABLA2_SampleGain         FABLA2_URI "#SampleGain"
+#define FABLA2_SamplePan          FABLA2_URI "#SamplePan"
+#define FABLA2_SamplePitch        FABLA2_URI "#SamplePitch"
+#define FABLA2_SampleLoad         FABLA2_URI "#SampleLoad"
+#define FABLA2_SampleUnload       FABLA2_URI "#SampleUnload"
+#define FABLA2_SampleAudioData    FABLA2_URI "#SampleAudioData"
 
 /// "Inside Atoms" data types
-#define FABLA2_sample           FABLA2_URI "#sample"
-#define FABLA2_bank             FABLA2_URI "#bank"
-#define FABLA2_pad              FABLA2_URI "#pad"
-#define FABLA2_layer            FABLA2_URI "#layer"
-#define FABLA2_velocity         FABLA2_URI "#velocity"
-#define FABLA2_value            FABLA2_URI "#value"
+#define FABLA2_sample             FABLA2_URI "#sample"
+#define FABLA2_bank               FABLA2_URI "#bank"
+#define FABLA2_pad                FABLA2_URI "#pad"
+#define FABLA2_layer              FABLA2_URI "#layer"
+#define FABLA2_velocity           FABLA2_URI "#velocity"
+#define FABLA2_value              FABLA2_URI "#value"
 
 
 typedef struct {
@@ -80,7 +85,12 @@ typedef struct {
   LV2_URID fabla2_PadPlay;
   LV2_URID fabla2_PadStop;
   
+  LV2_URID fabla2_SampleAdsrAttack;
+  LV2_URID fabla2_SampleAdsrDecay;
+  LV2_URID fabla2_SampleAdsrSustain;
+  LV2_URID fabla2_SampleAdsrRelease;
   LV2_URID fabla2_SampleGain;
+  LV2_URID fabla2_SamplePan;
   LV2_URID fabla2_SamplePitch;
   LV2_URID fabla2_SampleLoad;
   LV2_URID fabla2_SampleUnload;
@@ -113,7 +123,13 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   
   uris->fabla2_PadPlay     = map->map(map->handle, FABLA2_PadPlay);
   
+  uris->fabla2_SampleAdsrAttack  = map->map(map->handle, FABLA2_SampleAdsrAttack);
+  uris->fabla2_SampleAdsrDecay   = map->map(map->handle, FABLA2_SampleAdsrDecay);
+  uris->fabla2_SampleAdsrSustain = map->map(map->handle, FABLA2_SampleAdsrSustain);
+  uris->fabla2_SampleAdsrRelease = map->map(map->handle, FABLA2_SampleAdsrRelease);
+  
   uris->fabla2_SampleGain  = map->map(map->handle, FABLA2_SampleGain);
+  uris->fabla2_SamplePan   = map->map(map->handle, FABLA2_SamplePan );
   uris->fabla2_SamplePitch = map->map(map->handle, FABLA2_SamplePitch);
   uris->fabla2_SampleLoad  = map->map(map->handle, FABLA2_SampleLoad);
   uris->fabla2_SampleUnload= map->map(map->handle, FABLA2_SampleUnload);

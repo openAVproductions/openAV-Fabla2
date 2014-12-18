@@ -64,7 +64,7 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
     
     Pad* tmpPad = new Pad( this, rate, i % 16 );
     
-    if( i < 8 )
+    if( i < 16 )
     {
       std::stringstream s;
       s << i << ".wav";
@@ -363,13 +363,16 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
     return;
   }
   
-  if(       URI == uris->fabla2_SampleGain )
-  {
-    s->dirty = true; s->pitch = v;
+  if(       URI == uris->fabla2_SamplePitch ) {
+    s->dirty = 1; s->pitch = v;
   }
-  else if(  URI == uris->fabla2_SampleGain )
-  {
-    Sample* s = library->bank( b )->pad( p )->layer( l );
+  else if(  URI == uris->fabla2_SampleGain ) {
+    printf("setting gain to %f\n", v );
+    s->dirty = 1; s->gain = v;
+  }
+  else if(  URI == uris->fabla2_SamplePan ) {
+    printf("setting pan to %f\n", v );
+    s->dirty = 1; s->pan = v;
   }
 }
 

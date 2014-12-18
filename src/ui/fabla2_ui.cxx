@@ -71,6 +71,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   //gainPitch = new Avtk::Button( this, 635, 247, 59, 81, "Gain/Ptc" );
   sampleGain = new Avtk::Dial( this, 635  -4 , 247+2, 40, 40, "Sample Gain" );
+  samplePan  = new Avtk::Dial( this, 635  -4 , 247+42, 40, 40, "Sample Pan" );
   samplePitch= new Avtk::Dial( this, 635+30-2, 247+2, 40, 40, "Sample Pitch" );
   
   padSends  = new Avtk::Button( this, 699, 161, 32, 166, "Snd" );
@@ -169,6 +170,10 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   else if( w == samplePitch )
   {
     writeAtom( uris.fabla2_SamplePitch, w->value() );
+  }
+  else if( w == samplePan )
+  {
+    writeAtom( uris.fabla2_SamplePan, w->value() );
   }
   else if( w == masterVolume )
   {

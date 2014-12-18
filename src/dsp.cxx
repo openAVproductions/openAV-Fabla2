@@ -254,7 +254,8 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
       // handle *ALL* UI message types here!
       else if (obj->body.otype == self->uris.fabla2_SampleGain    ||
                obj->body.otype == self->uris.fabla2_SamplePitch   ||
-               obj->body.otype == self->uris.fabla2_SamplePitch     )
+               obj->body.otype == self->uris.fabla2_SamplePan
+              )
       {
         int bank, pad, layer;
         float value;

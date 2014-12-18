@@ -61,6 +61,7 @@ class Sample
     bool dirty;           ///< Set to true when the cache is invalid
     float gain;           ///< Gain of this sample
     float pitch;          ///< Pitch of the sample (playback speed)
+    float pan;            ///< Panning of the sample (amplitude based)
   
   private:
     Fabla2DSP* dsp;

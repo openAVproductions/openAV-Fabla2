@@ -46,6 +46,7 @@ class TestUI : public Avtk::UI
     Avtk::Widget* comp;
     Avtk::Widget* gainPitch;
     Avtk::Dial* sampleGain;
+    Avtk::Dial* samplePan;
     Avtk::Dial* samplePitch;
     
     Avtk::Widget* padSends;

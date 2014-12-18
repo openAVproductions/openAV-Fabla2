@@ -24,6 +24,8 @@
 #include "fabla2.hxx"
 #include "ports.hxx"
 #include "sample.hxx"
+
+#include <math.h>
 #include <stdio.h>
 
 namespace Fabla2
@@ -90,6 +92,18 @@ int Sampler::process(int nframes, float* L, float* R)
   float pd = playheadDelta + mstr / 24.f; // 1 -> 2 range (double pitch)
   if( mstr < 0.000 )
     pd = playheadDelta + mstr / 48.f; // 1 -> 0.5 range (half pitch)
+
+//#define DB_CO(g) ((g) > -90.0f ? powf(10.0f, (g) * 0.05f) : 0.0f)
+  //const float volMultiply = DB_CO(sample->gain);
+  float volMultiply = pow( sample->gain, 3 );
+  
+  float panL = cos(sample->pan * 3.14/2.f);
+  float panR = sin(sample->pan * 3.14/2.f);
+  
+  panL *= volMultiply;
+  panR *= volMultiply;
+  
+  printf("%f, %f, volMultiply = %f\n", panL, panR, volMultiply );
   
   if( chans == 1 )
   {
@@ -110,8 +124,8 @@ int Sampler::process(int nframes, float* L, float* R)
       float c = (x1 - xm1) / 2;
       float out = (((a * finpos) + b) * finpos + c) * finpos + x0;
       
-      *L++ = out;
-      *R++ = out;
+      *L++ = out * panL;
+      *R++ = out * panR;
       playIndex += pd;
       
       if( playIndex + 4 > frames )
@@ -137,10 +151,10 @@ int Sampler::process(int nframes, float* L, float* R)
       float a = (3 * (x0-x1) - xm1 + x2) / 2;
       float b = 2*x1 + xm1 - (5*x0 + x2) / 2;
       float c = (x1 - xm1) / 2;
-      float out = (((a * finpos) + b) * finpos + c) * finpos + x0;
+      float out = ((((a * finpos) + b) * finpos + c) * finpos + x0);
       
-      *L++ = out;
-      *R++ = out;
+      *L++ = out * panL;
+      *R++ = out * panR;
       playIndex += pd;
       
       if( playIndex + 4 > frames )
