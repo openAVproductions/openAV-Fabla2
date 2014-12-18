@@ -50,12 +50,15 @@ Pad::Pad( Fabla2DSP* d, int rate, int ID ) :
   
   // individual controls to init values
   controls[FILTER_CUTOFF] = 1.0;
+  
+  //samples.clear();
+  //samples.reserve( 10 );
 }
 
 void Pad::add( Sample* s )
 {
   samples.push_back( s );
-  //printf( "Pad::add() #samples = %i\n", samples.size() );
+  printf( "Pad::add() #samples = %i\n", samples.size() );
 }
 
 Sample* Pad::layer( int id )

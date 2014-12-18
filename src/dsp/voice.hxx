@@ -84,8 +84,6 @@ class Voice
     
     bool active_;
     
-    float phase;
-    
     yasper::ptr<ADSR> adsr;
     yasper::ptr<Sampler> sampler;
     yasper::ptr<FiltersSVF> filterL;

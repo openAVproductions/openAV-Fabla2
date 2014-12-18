@@ -58,6 +58,8 @@ void Sample::recacheWaveform()
   printf("recaching waveform... \n" );
   int sampsPerPix = frames / FABLA2_UI_WAVEFORM_PX;
   
+  waveformData.resize(FABLA2_UI_WAVEFORM_PX);
+  
   // loop over each pixel value we need
   for( int p = 0; p < frames/sampsPerPix; p++ )
   {
@@ -77,6 +79,10 @@ void Sample::recacheWaveform()
       average += tmp;
     }
     
+    // downscale by the number of samples, and if stereo
+    if( channels == 2 )
+      average /= 2;
+    
     waveformData[p] = (average / sampsPerPix);
   }
 }
@@ -88,7 +94,7 @@ void Sample::init()
   pan   = 0.5;
   startPoint = 0.0;
   
-  waveformData.resize(FABLA2_UI_WAVEFORM_PX);
+  //waveformData.resize(FABLA2_UI_WAVEFORM_PX);
   
   // set to true so we recacheWaveform() when requested for it
   dirty = true;

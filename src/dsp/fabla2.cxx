@@ -184,7 +184,7 @@ void Fabla2DSP::process( int nf )
 
 void Fabla2DSP::midi( int f, const uint8_t* msg )
 {
-  printf("MIDI: %i, %i, %i\n", (int)msg[0], (int)msg[1], (int)msg[2] );
+  //printf("MIDI: %i, %i, %i\n", (int)msg[0], (int)msg[1], (int)msg[2] );
   
   switch( lv2_midi_message_type( msg ) )
   {
@@ -195,34 +195,35 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
           int chnl = (msg[0] & 0x0F);
           if( chnl < 0 && chnl >= 4 ) { return; }
           
-          recordBank = chnl;
-          recordPad  = msg[1] - 36; // 0 - 15 based Pad num
+          int pad = msg[1] - 36;
           
-          printf("MIDI : Note On : %i %i\n", chnl, recordPad );
+          recordBank = chnl;
+          recordPad  = pad; // 0 - 15 based Pad num
           
           //printf("midi channel %i\n", chnl );
           // get pad, and push to a voice
-          Pad* p = library->bank( chnl )->pad( msg[1] - 36 );
+          Pad* p = library->bank( chnl )->pad( pad );
           
           if( !p )
           {
             printf("Fabla2: ERROR library()-bank() pad() returned 0x0\n" );
+            return;
           }
           
           bool allocd = false;
           for(int i = 0; i < voices.size(); i++)
           {
-            if( !voices.at(i)->active() && !allocd )
-            {
-              voices.at(i)->play( p, msg[2] );
-              allocd = true; // don't set more voices to play the pad
-              // don't return: scan all voices for mute-groups!
-              continue;
-            }
-            
+            // scane for mute-groups first
             if( voices.at(i)->active() )
             {
               Pad* vp = voices.at(i)->getPad();
+              
+              if( !vp )
+              {
+                printf("%s : ERRROOOOOR\n", __PRETTY_FUNCTION__ );
+                return;
+              }
+              
               if( vp && vp->muteGroup() == p->muteGroup() )
               {
                 if( p->muteGroup() != 0 )
@@ -232,31 +233,44 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
                 }
               }
             }
+            
+            // then check if we can play the sample on this voice
+            if( !voices.at(i)->active() && !allocd )
+            {
+              voices.at(i)->play( p, msg[2] );
+              allocd = true; // don't set more voices to play the pad
+              // don't return: scan all voices for mute-groups!
+              continue;
+            }
           }
         }
         break;
     
     case LV2_MIDI_MSG_NOTE_OFF:
-        printf("MIDI : Note Off received\n");
+        //printf("MIDI : Note Off received\n");
         for(int i = 0; i < voices.size(); i++)
         {
           Voice* v = voices.at(i);
           
           if( v->active() )
           {
+            int pad = msg[1] - 36;
             int chnl = (msg[0] & 0x0F);
-            if( chnl < 0 && chnl >= 4 ) { return; }
-            if( msg[1] < 36 && msg[1] >= 36 + 16 ){ return; }
             
-            Pad* p = library->bank( chnl )->pad( msg[1] - 36 );
+            if( chnl < 0 || chnl >=  4 ){ return; }
+            if( pad  < 0 || pad  >= 16 ){ return; }
+            
+            printf("Note off, msg 1 : %i,  chnl %i, pad %i\n", msg[1], chnl, pad );
+            
+            Pad* p = library->bank( chnl )->pad( pad );
             
             if ( p )
             {
-              if( v->getPad() == p );
+              if( v->getPad()->muteGroup() == p->muteGroup() );
               {
                 printf("Note off, stopping voice %i, pad %i\n", i, p->ID() );
                 voices.at(i)->stop();
-                break;
+                //break;
               }
             }
           }
@@ -368,7 +382,9 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
     printf("UI requested %i, %i, %i\n", b, p, l );
     {
       writeSampleState( b, p, l, s );
-      tx_waveform( b, p, l, s->getWaveform() );
+      
+      // causes double-frees / corruption somewhere
+      //tx_waveform( b, p, l, s->getWaveform() );
     }
   }
 }

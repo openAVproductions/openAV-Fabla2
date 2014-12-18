@@ -9,15 +9,34 @@ QUnit::UnitTest qunit = QUnit::UnitTest( QUnit::normal, true );
 #include "../sampler.hxx"
 #include "../pad.hxx"
 #include "../sample.hxx"
+#include "../yasper.hxx"
 
 using namespace Fabla2;
+
+class Tmp
+{
+  public:
+    Tmp(){}
+    
+    void add( Sample* sptr )
+    {
+      samples.push_back(sptr);
+    }
+    
+    //yasper::ptr<Sample> s;
+    std::vector< yasper::ptr<Sample> > samples;
+};
 
 int main()
 {
   printf("Fabla Testing Suite: %s\n", FABLA2_VERSION_STRING );
   
-  Sample* samp = new Sample( 0, 44100, "Test", "test.wav");
+  {
+    Tmp c;
+    c.add( new Sample( 0, 44100, "Test", "test.wav") );
+  }
   
+  /*
   QUNIT_IS_TRUE( 2 == 2 );
   
   Pad* p = new Pad( 0, 44100, 0);
@@ -42,6 +61,7 @@ int main()
   }
   delete s;
   delete p;
+  */
   
   return 0;
 }

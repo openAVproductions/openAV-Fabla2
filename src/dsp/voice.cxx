@@ -63,7 +63,6 @@ void Voice::play( Pad* p, int velocity )
 {
   pad_ = p;
   active_ = true;
-  phase = 0;
   
   sampler->play( pad_, velocity );
   
@@ -77,6 +76,7 @@ void Voice::play( Pad* p, int velocity )
     printf("Voice::play() %i, sampler->play() returns NULL sample! Setting active to false\n", ID );
     // *hard* set the sample to not play: we don't have a sample!
     active_ = false;
+    return;
   }
   
   adsr->reset();
@@ -155,7 +155,7 @@ void Voice::process()
   
   if( done || adsr->getState() == ADSR::ENV_IDLE )
   {
-    //printf("Voice done\n");
+    printf("Voice done\n");
     active_ = false;
     pad_ = 0;
   }

@@ -53,8 +53,6 @@ class Pad
     
     enum PAD_CONTROLS {
       FILTER_CUTOFF,
-      
-      
       CONTROLS_COUNT, // always last
     };
     

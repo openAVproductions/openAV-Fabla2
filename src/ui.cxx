@@ -157,14 +157,9 @@ static void fabla2_port_event(LV2UI_Handle handle,
       // Float elements immediately follow the vector body header
       const float* data = (const float*)(&vec->body + 1);
       
-      Plotter::plot( "waveformArrived.dat", FABLA2_UI_WAVEFORM_PX, data );
-      
+      //Plotter::plot( "waveformArrived.dat", FABLA2_UI_WAVEFORM_PX, data );
       ui->waveform->show( FABLA2_UI_WAVEFORM_PX, data );
-      
-      //std::vector<float> vecData( FABLA2_UI_WAVEFORM_PX, *data );
-      //ui->waveform->show( vecData );
       ui->redraw();
-      fprintf(stderr, "wavefor OK, drawing OK, done!\n");
     }
     else if( obj->body.otype == ui->uris.fabla2_ReplyUiSampleState )
     {
