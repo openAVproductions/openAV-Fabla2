@@ -58,8 +58,6 @@ void Sample::recacheWaveform()
   printf("recaching waveform... \n" );
   int sampsPerPix = frames / FABLA2_UI_WAVEFORM_PX;
   
-  int waveformPixCtr = 0;
-  
   // loop over each pixel value we need
   for( int p = 0; p < frames/sampsPerPix; p++ )
   {
@@ -76,17 +74,11 @@ void Sample::recacheWaveform()
       {
         tmp += audioStereoRight[tmpIndex];
       }
+      average += tmp;
     }
-    average =(average / sampsPerPix);
     
-    waveformData[waveformPixCtr++] = average;
+    waveformData[p] = (average / sampsPerPix);
   }
-  
-  // hack test
-  memcpy( &waveformData[0], &audioMono[0], FABLA2_UI_WAVEFORM_PX * sizeof(float) );
-  
-  Plotter::plot( "recacheLeft", frames, &audioMono[0] );
-  Plotter::plot( "recacheWaveform", FABLA2_UI_WAVEFORM_PX, &waveformData[0] );
 }
 
 void Sample::init()
