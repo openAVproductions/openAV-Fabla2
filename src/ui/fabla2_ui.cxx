@@ -112,6 +112,8 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
   
   if( followPad && noteOn )
   {
+    pads[currentPad]-> value( false );
+    
     if( currentBank != bank )
       setBank( bank );
     
@@ -119,13 +121,18 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
     
     pads[currentPad]->theme( theme(bank) );
     currentPad  = pad;
-    pads[currentPad]->theme( theme(bank+1%4) );
+    
     // request update for state from DSP
     
     requestSampleState( bank, pad, layer );
+    pads[pad]-> value( noteOn );
   }
   
-  pads[pad]-> value( noteOn );
+  if( followPad && !noteOn )
+  {
+    // note no longer pressed, so highlight as selected
+    pads[currentPad]->theme( theme(bank+1%4) );
+  }
 }
 
 
