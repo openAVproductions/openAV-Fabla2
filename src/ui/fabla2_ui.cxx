@@ -56,7 +56,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   waveform = new Avtk::Waveform( this, 355, 42, 422, 113, "Waveform" );
   std::vector<float> tmp;
-  Avtk::loadSample("/usr/local/lib/lv2/fabla2.lv2/kick.wav", tmp);
+  Avtk::loadSample("/usr/local/lib/lv2/fabla2.lv2/0.wav", tmp);
   waveform->show( tmp );
   
   // sample edit view
@@ -114,6 +114,8 @@ void TestUI::setBank( int bank )
   // pad theme set
   for(int i = 0; i < 16; i++)
     pads[i]->theme( theme( bank ) );
+  
+  waveform->theme( theme( bank ) );
   
   redraw();
 }
@@ -182,7 +184,9 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   }
   else if( w == sampleStartPoint )
   {
-    writeAtom( uris.fabla2_SampleStartPoint, tmp );
+    float fin = tmp * 0.5;
+    waveform->setStartPoint( fin );
+    writeAtom( uris.fabla2_SampleStartPoint, fin );
   }
   else if( w == masterVolume )
   {
