@@ -110,33 +110,60 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
     return; // invalid pad number
   }
   
+  if( noteOn )
+  {
+    pads[pad]->value( true );
+    pads[pad]->theme( theme( bank ) );
+    
+    if( pad == currentPad && bank == currentBank )
+    {
+      pads[pad]->theme( theme( bank ) );
+    }
+    else
+    {
+      pads[currentPad]->theme( theme( bank ) );
+    }
+  }
+  else
+  {
+    pads[pad]-> value( false );
+    
+    // if the current note-off event is *also* the current pad:
+    // then highlight it as the selected pad
+    if( pad == currentPad && bank == currentBank )
+    {
+      pads[pad]-> value( 0.78900 );
+      pads[pad]->theme( theme( bank+1%4 ) );
+    }
+  }
+  
+  
   bool newPad = ( pad   != currentPad   ||
                   layer != currentLayer ||
                   bank  != currentBank  );
   
   if( followPad && noteOn && newPad )
   {
-    pads[currentPad]-> value( false );
-    
-    if( currentBank != bank )
-      setBank( bank );
+    setBank( bank );
     
     currentLayer = layer;
     
-    pads[currentPad]->theme( theme(bank) );
+    // if currentPad is highlighted, turn it off
+    if( int(pads[currentPad]->value() * 1000) == 789 )
+    {
+      pads[currentPad]->value( false );
+      pads[currentPad]->theme( theme(bank) );
+    }
+    
     currentPad  = pad;
+    pads[currentPad]->theme( theme(bank) );
     
     // request update for state from DSP
-    
     requestSampleState( bank, pad, layer );
-    pads[pad]-> value( noteOn );
+    
   }
   
-  if( followPad && !noteOn )
-  {
-    // note no longer pressed, so highlight as selected
-    pads[currentPad]->theme( theme(bank+1%4) );
-  }
+  
 }
 
 
