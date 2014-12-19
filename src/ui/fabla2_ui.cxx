@@ -52,8 +52,12 @@ TestUI::TestUI( PuglNativeWindow parent ):
   recordOverPad->theme( theme( 4 ) );
   recordOverPad->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
-  masterPitch = new Avtk::Dial( this, 5, 43+(s+6)*4+6, s * 2 + 6, s*2+6,  "Pitch" );
+  followPadBtn = new Avtk::Button( this, 5, 43+(s+6)*2 + 78, s * 2 + 6, 22,  "Follow Pad" );
+  followPadBtn->clickMode( Avtk::Widget::CLICK_TOGGLE );
+  
+  masterPitch = new Avtk::Dial( this, 5, 43+(s+6)*4+6 +26, s * 2 + 6, s*2+6,  "Pitch" );
   masterPitch->theme( theme( 2 ) );
+  masterPitch->value( 0.5 );
   
   waveform = new Avtk::Waveform( this, 355, 42, FABLA2_UI_WAVEFORM_PX, 113, "Waveform" );
   std::vector<float> tmp;
@@ -72,8 +76,11 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   //gainPitch = new Avtk::Button( this, 635, 247, 59, 81, "Gain/Ptc" );
   sampleGain = new Avtk::Dial( this, 635  -4 , 247+2, 40,  40, "Sample Gain" );
+  sampleGain->value( 0.5 );
   samplePan  = new Avtk::Dial( this, 635  -4 , 247+42, 40, 40, "Sample Pan" );
+  samplePan->value( 0.5 );
   samplePitch= new Avtk::Dial( this, 635+30-2, 247+2, 40,  40, "Sample Pitch" );
+  samplePitch->value( 0.5 );
   sampleStartPoint=new Avtk::Dial(this,635+30-2,247+42,40, 40, "Sample Start Point" );
   
   padSends  = new Avtk::Button( this, 699, 161, 32, 166, "Snd" );
@@ -110,7 +117,7 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
     return; // invalid pad number
   }
   
-  if( noteOn )
+  if( noteOn && bank == currentBank )
   {
     pads[pad]->value( true );
     pads[pad]->theme( theme( bank ) );
@@ -148,13 +155,14 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
       bankBtns[currentBank]->value( false );
       currentBank = bank;
       bankBtns[currentBank]->value( true );
-      
+      /*
       // all pads off if we're going to a new bank
       for(int i = 0; i < 16; i++)
       {
         if( i != pad ) // except current pad
           pads[i]->value( false );
       }
+      */
       waveform->theme( theme( bank ) );
     }
     
@@ -284,6 +292,10 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   else if( w == masterVolume )
   {
     write_function( controller, Fabla2::MASTER_VOL, sizeof(float), 0, &tmp );
+  }
+  else if( w == followPadBtn )
+  {
+    followPad = (int)tmp;
   }
   else if( w == loadSampleBtn )
   {

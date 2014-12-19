@@ -38,6 +38,9 @@ class TestUI : public Avtk::UI
     // L
     Avtk::Widget* bankBtns[4];
     Avtk::Widget* recordOverPad;
+    
+    Avtk::Button* followPadBtn;
+    
     Avtk::Dial* masterPitch;
     
     // R
