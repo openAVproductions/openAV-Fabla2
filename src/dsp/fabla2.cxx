@@ -66,6 +66,8 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
     
     Pad* tmpPad = new Pad( this, rate, i % 16 );
     
+    tmpPad->muteGroup( 1 );
+    
     if ( i == 9 )
     {
       Sample* tmp = new Sample( this, rate, "One", "/usr/local/lib/lv2/fabla2.lv2/stereoTest.wav");
@@ -205,23 +207,32 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
           bool allocd = false;
           for(int i = 0; i < voices.size(); i++)
           {
+            // current voice pointer
             Voice* v = voices.at(i);
+            // the pad that's going to be allocated to play
+            Pad* p = library->bank( bank )->pad( pad );
             
-            // scane for mute-groups first
+            // check mute-group to stop the voice first
             if( v->active() )
             {
-              
-              
+              // current voice mutegroup = pad-to-play muteGroup, stop it.
+              if( v->getPad()->muteGroup() == p->muteGroup() )
+              {
+                // note that this triggers ADSR off, so we can *NOT* re-purpose
+                // the voice right away to play the new note.
+                v->stop();
+              }
             }
-            
-            // then check if we can play the sample on this voice
-            if( !voices.at(i)->active() && !allocd )
+            else
             {
-              Pad* p = library->bank( bank )->pad( pad );
-              voices.at(i)->play( bank, pad, p, msg[2] );
-              allocd = true; // don't set more voices to play the pad
-              // don't return: scan all voices for mute-groups!
-              continue;
+              // only allocate voice if we haven't already done so
+              if( !allocd )
+              {
+                voices.at(i)->play( bank, pad, p, msg[2] );
+                allocd = true;
+                // don't return: scan all voices for mute-groups!
+                continue;
+              }
             }
           }
         }
