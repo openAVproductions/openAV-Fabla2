@@ -244,7 +244,10 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
                obj->body.otype == self->uris.fabla2_SamplePitch           ||
                obj->body.otype == self->uris.fabla2_SamplePan             ||
                obj->body.otype == self->uris.fabla2_SampleStartPoint      ||
+               
                obj->body.otype == self->uris.fabla2_RequestUiSampleState  ||
+               
+               obj->body.otype == self->uris.fabla2_PadMuteGroup          ||
                false )
       {
         int bank, pad, layer;

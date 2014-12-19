@@ -45,7 +45,7 @@ class TestUI : public Avtk::UI
     
     
     // sample edit view
-    Avtk::Widget* muteGroup;
+    Avtk::Dial* muteGroup;
     Avtk::List* layers;
     Avtk::Widget* adsr;
     Avtk::Widget* filt1;

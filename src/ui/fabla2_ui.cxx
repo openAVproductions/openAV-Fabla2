@@ -61,7 +61,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waveform->show( tmp );
   
   // sample edit view
-  muteGroup = new Avtk::Button( this, 355, 161, 85, 52, "Mute Group" );
+  muteGroup = new Avtk::Dial( this, 355, 161, 85, 52, "Mute Group" );
   layers    = new Avtk::List( this, 355, 218, 85, 109, "Layers" );
   adsr      = new Avtk::Button( this, 446, 161, 59, 166, "ADSR" );
   filt1     = new Avtk::Button( this, 510, 161, 59, 81, "Filter 1" );
@@ -230,6 +230,12 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   else if( w == layers )
   {
     currentLayer = tmp;
+  }
+  else if( w == muteGroup )
+  {
+    float fin = tmp * 8;
+    //printf("MuteGroup %i\n", (int)fin);
+    writeAtom( uris.fabla2_PadMuteGroup, fin );
   }
   else if( w == sampleGain )
   {

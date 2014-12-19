@@ -66,8 +66,6 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
     
     Pad* tmpPad = new Pad( this, rate, i % 16 );
     
-    tmpPad->muteGroup( 1 );
-    
     if ( i == 9 )
     {
       Sample* tmp = new Sample( this, rate, "One", "/usr/local/lib/lv2/fabla2.lv2/stereoTest.wav");
@@ -216,7 +214,8 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
             if( v->active() )
             {
               // current voice mutegroup = pad-to-play muteGroup, stop it.
-              if( v->getPad()->muteGroup() == p->muteGroup() )
+              if( v->getPad()->muteGroup() != 0 &&
+                  v->getPad()->muteGroup() == p->muteGroup() )
               {
                 // note that this triggers ADSR off, so we can *NOT* re-purpose
                 // the voice right away to play the new note.
@@ -343,7 +342,8 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 {
   //printf("Fabla2:uiMessage bank %i, pad %i, layer %i: %f\n", b, p, l, v );
   
-  Sample* s = library->bank( b )->pad( p )->layer( l );
+  Pad* pad = library->bank( b )->pad( p );
+  Sample* s = pad->layer( l );
   if( !s )
   {
     printf("Fabla2:uiMessage *ERROR* bank %i, pad %i, layer %i, sample == NULL\n", b, p, l );
@@ -364,6 +364,10 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
   else if(  URI == uris->fabla2_SampleStartPoint ) {
     //printf("setting start point to %f\n", v );
     s->dirty = 1; s->startPoint = v * s->getFrames();
+  }
+  else if(  URI == uris->fabla2_PadMuteGroup ) {
+    //printf("setting start point to %f\n", v );
+    pad->muteGroup( int(v) );
   }
   else if(  URI == uris->fabla2_RequestUiSampleState ) {
     //printf("UI requested %i, %i, %i\n", b, p, l );
