@@ -104,6 +104,8 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
       tmp = new Sample( this, rate, "Four", "/usr/local/lib/lv2/fabla2.lv2/test4.wav");
       tmp->velocity( 96, 128 );
       tmpPad->add( tmp );
+      
+      tmpPad->switchSystem( Pad::SS_ROUND_ROBIN );
     }
     
     library->bank( bankID )->pad( tmpPad );
@@ -182,7 +184,7 @@ void Fabla2DSP::process( int nf )
   
 }
 
-void Fabla2DSP::midi( int f, const uint8_t* msg )
+void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
 {
   //printf("MIDI: %i, %i, %i\n", (int)msg[0], (int)msg[1], (int)msg[2] );
   
@@ -199,8 +201,6 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
           // update the recording pad
           recordBank = bank;
           recordPad  = pad;
-          
-          
           
           bool allocd = false;
           for(int i = 0; i < voices.size(); i++)
@@ -227,7 +227,25 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
               // only allocate voice if we haven't already done so
               if( !allocd )
               {
+                // play pad
                 voices.at(i)->play( bank, pad, p, msg[2] );
+                
+                // write note on/off MIDI events to UI
+                LV2_Atom_Forge_Frame frame;
+                lv2_atom_forge_frame_time( &lv2->forge, eventTime );
+                lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_PadPlay );
+                
+                lv2_atom_forge_key(&lv2->forge, uris->fabla2_bank);
+                lv2_atom_forge_int(&lv2->forge, 0 );
+                lv2_atom_forge_key(&lv2->forge, uris->fabla2_pad);
+                lv2_atom_forge_int(&lv2->forge, pad );
+                lv2_atom_forge_key(&lv2->forge, uris->fabla2_layer);
+                lv2_atom_forge_int(&lv2->forge, p->lastPlayedLayer() );
+                lv2_atom_forge_key(&lv2->forge, uris->fabla2_velocity);
+                lv2_atom_forge_int(&lv2->forge, msg[2] );
+                
+                lv2_atom_forge_pop(&lv2->forge, &frame);
+                
                 allocd = true;
                 // don't return: scan all voices for mute-groups!
                 continue;

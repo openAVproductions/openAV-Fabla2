@@ -70,6 +70,7 @@ class Pad
     Sample* layer( int id );
     
     /// playback functions
+    int lastPlayedLayer();
     Sample* getPlaySample( int velocity );
     
     /// Sets the switch system between samples
@@ -90,7 +91,7 @@ class Pad
     int muteGroup_;
     
     SAMPLE_SWITCH_SYSTEM sampleSwitchSystem;
-    int roundRobinCounter;
+    int sampleLayerCounter;
     
     /// shared pointer to each of the samples available on this pad
     std::vector< yasper::ptr<Sample> > samples;

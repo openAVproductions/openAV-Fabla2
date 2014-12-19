@@ -145,9 +145,6 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
   if( followPad && noteOn && newPad )
   {
     setBank( bank );
-    
-    currentLayer = layer;
-    
     // if currentPad is highlighted, turn it off
     if( int(pads[currentPad]->value() * 1000) == 789 )
     {
@@ -155,14 +152,15 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
       pads[currentPad]->theme( theme(bank) );
     }
     
+    currentLayer = layer;
+    printf("UI currentLayer %i\n", currentLayer );
+    
     currentPad  = pad;
     pads[currentPad]->theme( theme(bank) );
     
     // request update for state from DSP
     requestSampleState( bank, pad, layer );
-    
   }
-  
   
 }
 

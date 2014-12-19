@@ -55,9 +55,6 @@ void Sampler::play( Pad* p, int velocity )
   
   sample = pad->getPlaySample( velocity );
   
-  // trigger audio playback here
-  playIndex = sample->startPoint;
-  
   if( !sample )
   {
 #ifdef FABLA2_COMPONENT_TEST
@@ -65,6 +62,9 @@ void Sampler::play( Pad* p, int velocity )
 #endif
     return;
   }
+  
+  // trigger audio playback here
+  playIndex = sample->startPoint;
 }
 
 int Sampler::process(int nframes, float* L, float* R)

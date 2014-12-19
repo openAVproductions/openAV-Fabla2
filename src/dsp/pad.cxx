@@ -40,7 +40,7 @@ Pad::Pad( Fabla2DSP* d, int rate, int ID ) :
   muteGroup_( 0 ),
   
   sampleSwitchSystem( SS_NONE ),
-  roundRobinCounter(0)
+  sampleLayerCounter(0)
 {
 #ifdef FABLA2_COMPONENT_TEST
   printf("%s\n", __PRETTY_FUNCTION__ );
@@ -66,6 +66,11 @@ Sample* Pad::layer( int id )
   if( id < samples.size() && id >= 0 )
     return samples.at(id);
   return 0;
+}
+
+int Pad::lastPlayedLayer()
+{
+  return sampleLayerCounter;
 }
 
 void Pad::checkAll()
@@ -96,15 +101,24 @@ Sample* Pad::getPlaySample( int velocity )
   /// Logic to do round-robin / velocity mapping here
   if( samples.size() > 0 )
   {
+    // first update the sample-counter, wrap it if needed. Later we play the
+    // sample we just updated to, and its stored in sampleLayerCounter for UI
+    sampleLayerCounter++;
+    if( sampleLayerCounter >= samples.size() )
+        sampleLayerCounter = 0;
+    
     if( sampleSwitchSystem == SS_NONE )
     {
+      sampleLayerCounter = 0;
       return samples.at( 0 );
     }
     else if( sampleSwitchSystem == SS_ROUND_ROBIN )
     {
-      Sample* tmp = samples.at(roundRobinCounter++);
-      if( roundRobinCounter >= samples.size() )
-        roundRobinCounter = 0;
+      Sample* tmp = samples.at( sampleLayerCounter );
+      
+      if( sampleLayerCounter >= samples.size() )
+        sampleLayerCounter = 0;
+      
       return tmp;
     }
     else if( sampleSwitchSystem == SS_VELOCITY_LAYERS )
@@ -114,12 +128,12 @@ Sample* Pad::getPlaySample( int velocity )
       {
         if( samples.at(i)->velocity( velocity ) )
         {
+          // remember last played layer, for UI updates
+          sampleLayerCounter = i;
           return samples.at(i);
         }
       }
-      Sample* tmp = samples.at(roundRobinCounter++);
-      if( roundRobinCounter >= samples.size() )
-        roundRobinCounter = 0;
+      Sample* tmp = samples.at( sampleLayerCounter );
       return tmp;
     }
   }
