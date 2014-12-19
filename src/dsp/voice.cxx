@@ -80,7 +80,7 @@ void Voice::play( int bankInt, int padInt, Pad* p, int velocity )
   Sample* samp = sampler->getSample();
   if( samp )
   {
-    printf("Voice::play() %i, on Sample %s\n", ID, samp->getName() );
+    //printf("Voice::play() %i, on Sample %s\n", ID, samp->getName() );
   }
   else
   {
@@ -166,7 +166,7 @@ void Voice::process()
   
   if( done || adsr->getState() == ADSR::ENV_IDLE )
   {
-    printf("Voice done\n");
+    //printf("Voice done\n");
     active_ = false;
     pad_ = 0;
   }

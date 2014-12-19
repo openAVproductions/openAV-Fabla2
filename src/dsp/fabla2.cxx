@@ -256,7 +256,7 @@ void Fabla2DSP::midi( int f, const uint8_t* msg )
             {
               // this voice was started by the Pad that now sent corresponding
               // note off event: so stop() the voice
-              printf("Voice.matces() NOTE_OFF -> Stop()\n" );
+              //printf("Voice.matces() NOTE_OFF -> Stop()\n" );
               v->stop();
             }
           }
@@ -354,19 +354,19 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
     s->dirty = 1; s->pitch = v;
   }
   else if(  URI == uris->fabla2_SampleGain ) {
-    printf("setting gain to %f\n", v );
+    //printf("setting gain to %f\n", v );
     s->dirty = 1; s->gain = v;
   }
   else if(  URI == uris->fabla2_SamplePan ) {
-    printf("setting pan to %f\n", v );
+    //printf("setting pan to %f\n", v );
     s->dirty = 1; s->pan = v;
   }
   else if(  URI == uris->fabla2_SampleStartPoint ) {
-    printf("setting start point to %f\n", v );
+    //printf("setting start point to %f\n", v );
     s->dirty = 1; s->startPoint = v * s->getFrames();
   }
   else if(  URI == uris->fabla2_RequestUiSampleState ) {
-    printf("UI requested %i, %i, %i\n", b, p, l );
+    //printf("UI requested %i, %i, %i\n", b, p, l );
     {
       writeSampleState( b, p, l, s );
       
