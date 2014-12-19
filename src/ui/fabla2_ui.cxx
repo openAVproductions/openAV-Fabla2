@@ -133,18 +133,31 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
     if( pad == currentPad && bank == currentBank )
     {
       pads[pad]-> value( 0.78900 );
-      pads[pad]->theme( theme( bank+1%4 ) );
+      pads[pad]->theme( theme( bank+1%3 ) );
     }
   }
   
   
   bool newPad = ( pad   != currentPad   ||
-                  layer != currentLayer ||
-                  bank  != currentBank  );
+                  layer != currentLayer  );
   
   if( followPad && noteOn && newPad )
   {
-    setBank( bank );
+    if( bank != currentBank )
+    {
+      bankBtns[currentBank]->value( false );
+      currentBank = bank;
+      bankBtns[currentBank]->value( true );
+      
+      // all pads off if we're going to a new bank
+      for(int i = 0; i < 16; i++)
+      {
+        if( i != pad ) // except current pad
+          pads[i]->value( false );
+      }
+      waveform->theme( theme( bank ) );
+    }
+    
     // if currentPad is highlighted, turn it off
     if( int(pads[currentPad]->value() * 1000) == 789 )
     {
@@ -162,6 +175,7 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
     requestSampleState( bank, pad, layer );
   }
   
+  redraw();
 }
 
 
@@ -191,20 +205,7 @@ void TestUI::requestSampleState( int bank, int pad, int layer )
 
 void TestUI::setBank( int bank )
 {
-  // turn off light
-  bankBtns[currentBank]->value( false );
-  // update
-  currentBank = bank;
-  // turn on
-  bankBtns[currentBank]->value( true );
   
-  // pad theme set
-  for(int i = 0; i < 16; i++)
-    pads[i]->theme( theme( bank ) );
-  
-  waveform->theme( theme( bank ) );
-  
-  redraw();
 }
 
 void TestUI::writeAtom( int eventURI, float value )

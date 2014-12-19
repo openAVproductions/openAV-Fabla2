@@ -184,6 +184,27 @@ void Fabla2DSP::process( int nf )
   
 }
 
+static void fabla2_dsp_getDetailsFromNote( const uint8_t* msg, int& bank, int& pad )
+{
+  // check MIDI note is valid in downwards direction
+  if( msg[1] < 36 )
+    return;
+  
+  // get midi bank (from message, or from MIDI note num?)
+  bank = 0; //(msg[0] & 0x0F);
+  
+  // select pad number from midi note (0-15)
+  pad = (msg[1] - 36) % 16;
+  
+  // convert higher midi notes ( > 36 + 16, aka first bank) to next bank
+  if( msg[1] >= 36 + 16 )
+  {
+    int nMoreBanks = (msg[1] - 36) / 16;
+    //printf( "more banks %i\n", nMoreBanks );
+    bank += nMoreBanks;
+  }
+}
+
 void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
 {
   //printf("MIDI: %i, %i, %i\n", (int)msg[0], (int)msg[1], (int)msg[2] );
@@ -191,12 +212,16 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
   switch( lv2_midi_message_type( msg ) )
   {
     case LV2_MIDI_MSG_NOTE_ON:
-        // valid MIDI note on for a sampler
-        if( msg[1] >= 36 && msg[1] < 36 + 16 )
         {
-          int bank = (msg[0] & 0x0F);
-          if( bank < 0 || bank >= 4 ) { return; }
-          int pad = msg[1] - 36;
+          // check MIDI note is valid in downwards direction
+          if( msg[1] < 36 )
+            return;
+          
+          int bank = 0;
+          int pad  = 0;
+          fabla2_dsp_getDetailsFromNote( msg, bank, pad );
+          if( bank < 0 || bank >=  4 ) { return; }
+          if( pad  < 0 || pad  >= 16 ) { return; }
           
           // update the recording pad
           recordBank = bank;
@@ -236,7 +261,7 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
                 lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_PadPlay );
                 
                 lv2_atom_forge_key(&lv2->forge, uris->fabla2_bank);
-                lv2_atom_forge_int(&lv2->forge, 0 );
+                lv2_atom_forge_int(&lv2->forge, bank );
                 lv2_atom_forge_key(&lv2->forge, uris->fabla2_pad);
                 lv2_atom_forge_int(&lv2->forge, pad );
                 lv2_atom_forge_key(&lv2->forge, uris->fabla2_layer);
@@ -257,10 +282,11 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
     
     case LV2_MIDI_MSG_NOTE_OFF:
       {
-        int bank = (msg[0] & 0x0F);
-        if( bank < 0 || bank >= 4 ) { return; }
-        int pad = msg[1] - 36;
-        if( pad < 0 || pad >= 16 ) { return; }
+        int bank = 0;
+        int pad  = 0;
+        fabla2_dsp_getDetailsFromNote( msg, bank, pad );
+        if( bank < 0 || bank >=  4 ) { return; }
+        if( pad  < 0 || pad  >= 16 ) { return; }
         
         // write note on MIDI events to UI
         LV2_Atom_Forge_Frame frame;
@@ -268,7 +294,7 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
         lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_PadStop );
         
         lv2_atom_forge_key(&lv2->forge, uris->fabla2_bank);
-        lv2_atom_forge_int(&lv2->forge, 0 );
+        lv2_atom_forge_int(&lv2->forge, bank );
         lv2_atom_forge_key(&lv2->forge, uris->fabla2_pad);
         lv2_atom_forge_int(&lv2->forge, pad );
         lv2_atom_forge_key(&lv2->forge, uris->fabla2_layer);

@@ -135,7 +135,6 @@ static void fabla2_port_event(LV2UI_Handle handle,
     }
     else if( obj->body.otype == ui->uris.fabla2_SampleAudioData )
     {
-      
       const LV2_Atom* data_val = NULL;
       const int n_props  = lv2_atom_object_get( obj,
                 ui->uris.fabla2_audioData, &data_val, NULL);
@@ -193,8 +192,6 @@ static void fabla2_port_event(LV2UI_Handle handle,
       fprintf(stderr, "Unknown message type.\n");
     }
   }
-  
-  ui->redraw();
 }
 
 static int fabla2_idle(LV2UI_Handle handle)
