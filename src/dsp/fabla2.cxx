@@ -230,7 +230,7 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
                 // play pad
                 voices.at(i)->play( bank, pad, p, msg[2] );
                 
-                // write note on/off MIDI events to UI
+                // write note on MIDI events to UI
                 LV2_Atom_Forge_Frame frame;
                 lv2_atom_forge_frame_time( &lv2->forge, eventTime );
                 lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_PadPlay );
@@ -262,7 +262,22 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
         int pad = msg[1] - 36;
         if( pad < 0 || pad >= 16 ) { return; }
         
-        //printf("MIDI : Note Off received\n");
+        // write note on MIDI events to UI
+        LV2_Atom_Forge_Frame frame;
+        lv2_atom_forge_frame_time( &lv2->forge, eventTime );
+        lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_PadStop );
+        
+        lv2_atom_forge_key(&lv2->forge, uris->fabla2_bank);
+        lv2_atom_forge_int(&lv2->forge, 0 );
+        lv2_atom_forge_key(&lv2->forge, uris->fabla2_pad);
+        lv2_atom_forge_int(&lv2->forge, pad );
+        lv2_atom_forge_key(&lv2->forge, uris->fabla2_layer);
+        lv2_atom_forge_int(&lv2->forge, -1 );
+        lv2_atom_forge_key(&lv2->forge, uris->fabla2_velocity);
+        lv2_atom_forge_int(&lv2->forge, msg[2] );
+        
+        lv2_atom_forge_pop(&lv2->forge, &frame);
+        
         for(int i = 0; i < voices.size(); i++)
         {
           Voice* v = voices.at(i);
@@ -275,6 +290,7 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
               // note off event: so stop() the voice
               //printf("Voice.matces() NOTE_OFF -> Stop()\n" );
               v->stop();
+              return;
             }
           }
         }
