@@ -28,6 +28,8 @@ TestUI::TestUI( PuglNativeWindow parent ):
   themes.push_back( new Avtk::Theme( this, "yellow.avtk" ) );
   themes.push_back( new Avtk::Theme( this, "red.avtk" ) );
   
+  masterVolume = 0;
+  
   // slider vert
   Avtk::Image* headerImage = new Avtk::Image( this, 0, 0, 780, 36, "Header Image" );
   headerImage->load( header.pixel_data );
@@ -178,12 +180,12 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
     }
     
     currentLayer = layer;
-    printf("UI currentLayer %i\n", currentLayer );
     
     currentPad  = pad;
     pads[currentPad]->theme( theme(bank) );
     
     // request update for state from DSP
+    printf("UI requesting %i %i %i\n", bank, pad, layer );
     requestSampleState( bank, pad, layer );
   }
   
@@ -336,6 +338,12 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
       {
         currentPad = i;
         writeAtom( uris.fabla2_PadPlay, w->value() );
+        
+        if( currentPad != i )
+        {
+          printf("UI requesting %i %i %i\n", currentBank, currentPad );
+          requestSampleState( currentBank, currentPad, 0 ); // layer == 0?
+        }
         return;
       }
     }

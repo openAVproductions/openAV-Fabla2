@@ -58,10 +58,10 @@ void Sample::recacheWaveform()
   printf("recaching waveform... \n" );
   int sampsPerPix = frames / FABLA2_UI_WAVEFORM_PX;
   
-  waveformData.resize(FABLA2_UI_WAVEFORM_PX);
+  //waveformData.resize(FABLA2_UI_WAVEFORM_PX);
   
   // loop over each pixel value we need
-  for( int p = 0; p < frames/sampsPerPix; p++ )
+  for( int p = 0; p < FABLA2_UI_WAVEFORM_PX; p++ )
   {
     float average = 0.f;
     
@@ -94,7 +94,15 @@ void Sample::init()
   pan   = 0.5;
   startPoint = 0.0;
   
+  
+  //std::vector<float> tmp(FABLA2_UI_WAVEFORM_PX);
+  //waveformData.swap( tmp );
   //waveformData.resize(FABLA2_UI_WAVEFORM_PX);
+  
+  memset( waveformData, 0 , sizeof(float) * FABLA2_UI_WAVEFORM_PX );
+  
+  printf("last: %f\n",waveformData[ FABLA2_UI_WAVEFORM_PX - 1 ] );
+  //printf("last: %f\n",waveformData.at( FABLA2_UI_WAVEFORM_PX - 1 ) );
   
   // set to true so we recacheWaveform() when requested for it
   dirty = true;
@@ -116,6 +124,7 @@ Sample::Sample( Fabla2DSP* d, int rate, int size, float* data ) :
 #ifdef FABLA2_COMPONENT_TEST
   printf("%s\n", __PRETTY_FUNCTION__ );
 #endif
+  
   //memcpy( &audioMono[0], data, sizeof(float) * size );
   fabla2_deinterleave( size, data, audioMono, audioStereoRight );
   
@@ -135,6 +144,7 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
   pan  ( 0.5 )
 {
   SF_INFO info;
+  memset( &info, 0, sizeof( SF_INFO ) );
   SNDFILE* const sndfile = sf_open( path.c_str(), SFM_READ, &info);
   if ( !sndfile )
   {

@@ -54,7 +54,7 @@ SET(CMAKE_CXX_FLAGS "-g -trigraphs -Wuninitialized -Wl,-z,nodelete  -Wl,--no-und
 IF( FABLA2_TESTS )
   
   ADD_DEFINITIONS( "-DFABLA2_COMPONENT_TEST" )
-  SET(CMAKE_CXX_FLAGS "-g -trigraphs -fsanitize=address -Wl,-z,nodelete  -Wl,--no-undefined")
+  SET(CMAKE_CXX_FLAGS "-g -trigraphs -fsanitize=address -fbounds-checking -Wl,-z,nodelete  -Wl,--no-undefined")
   FILE(GLOB srcDspTests src/dsp/tests/*.cxx src/dsp/*.cxx )
   ADD_EXECUTABLE( fabla2test ${srcDspTests} )
   target_link_libraries( fabla2test ${SNDFILE_LIBRARIES})

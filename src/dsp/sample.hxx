@@ -94,7 +94,7 @@ class Sample
     
     /// a low-resolution re-sample of the audio data in this Sample
     void recacheWaveform();
-    std::vector<float> waveformData;
+    float waveformData[FABLA2_UI_WAVEFORM_PX];
     
     /// velocity range
     int velLow;
