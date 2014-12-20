@@ -138,8 +138,11 @@ void Voice::process()
   int done = sampler->process( dsp->nframes, &voiceBuffer[0], &voiceBuffer[dsp->nframes] );
   
   float adsrVal = adsr->process();
-  filterL->setValue( (pad_->controls[Pad::FILTER_CUTOFF]+0.3) );//* adsrVal );
-  filterR->setValue( (pad_->controls[Pad::FILTER_CUTOFF]+0.3) );//* adsrVal );
+  
+  /// set filter state
+  Sample* s = pad_->layer( pad_->lastPlayedLayer() );
+  filterL->setValue( ( s->filterFrequency + 0.3) );//* adsrVal );
+  filterR->setValue( ( s->filterFrequency + 0.3) );//* adsrVal );
   
   bool filterOn = true;
   if( filterOn )

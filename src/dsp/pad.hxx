@@ -51,13 +51,6 @@ class Pad
     
     int ID(){return ID_;}
     
-    enum PAD_CONTROLS {
-      FILTER_CUTOFF,
-      CONTROLS_COUNT, // always last
-    };
-    
-    float controls[CONTROLS_COUNT];
-    
     /// library functions
     void add( Sample* );
     void clearAllSamples();

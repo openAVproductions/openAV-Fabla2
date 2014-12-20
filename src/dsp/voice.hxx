@@ -71,11 +71,7 @@ class Voice
     
     Pad* getPad(){return pad_;}
     
-    //ADSR* getADSR(){return adsr.GetRawPointer();}
-    //Sampler* getSampler(){return sampler.GetRawPointer();}
-    
     float* getVoiceBuffer(){return &voiceBuffer[0];}
-    
   
   private:
     static int privateID;

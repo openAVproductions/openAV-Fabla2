@@ -94,6 +94,10 @@ void Sample::init()
   pan   = 0.5;
   startPoint = 0.0;
   
+  filterType = 0;
+  filterFrequency = 1.0;
+  filterResonance = 0.4;
+  
   memset( waveformData, 0 , sizeof(float) * FABLA2_UI_WAVEFORM_PX );
   
   // set to true so we recacheWaveform() when requested for it

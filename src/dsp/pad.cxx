@@ -45,14 +45,8 @@ Pad::Pad( Fabla2DSP* d, int rate, int ID ) :
 #ifdef FABLA2_COMPONENT_TEST
   printf("%s\n", __PRETTY_FUNCTION__ );
 #endif
-  // initialze to zero
-  memset( controls, 0, sizeof(float) * CONTROLS_COUNT );
   
-  // individual controls to init values
-  controls[FILTER_CUTOFF] = 1.0;
-  
-  //samples.clear();
-  //samples.reserve( 10 );
+  samples.reserve( 4 );
 }
 
 void Pad::add( Sample* s )
