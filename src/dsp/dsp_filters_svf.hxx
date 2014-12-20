@@ -47,6 +47,7 @@ class FiltersSVF
       init();
       active = false;
       setValue( 1 );
+      type = 0;
     }
     
     /** Sets the type of filter use
@@ -57,6 +58,7 @@ class FiltersSVF
      **/
     void setType(int t)
     {
+      type = t;
       // turn off all
       volLowpass = volHighpass = volBandpass = volNotch = 0;
            if( t == 0 ) volLowpass  = 1;
@@ -64,6 +66,11 @@ class FiltersSVF
       else if( t == 2 ) volBandpass = 1;
       else if( t == 3 ) volNotch    = 1;
       else volLowpass = 1; // default, lowpass if bad selection made
+    }
+    
+    int getType()
+    {
+      return type;
     }
     
     /// get functions for state
@@ -154,6 +161,9 @@ class FiltersSVF
     
     /// sets the drive
     float drive;
+    
+    /// used to compare updated type with current type, for reset() or not 
+    int type;
     
     /// choose (or combine) filter characteristics using volume levels.
     float volLowpass;

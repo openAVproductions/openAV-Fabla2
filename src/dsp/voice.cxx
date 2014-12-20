@@ -144,14 +144,27 @@ void Voice::process()
   
   /// set filter state
   Sample* s = pad_->layer( pad_->lastPlayedLayer() );
-  filterL->setResonance( ( s->filterResonance) );
-  filterL->setResonance( ( s->filterResonance) );
-  filterL->setValue( ( s->filterFrequency + 0.3) );
-  filterR->setValue( ( s->filterFrequency + 0.3) );
   
-  bool filterOn = true;
-  if( filterOn )
+  //if( int( s->filterType * 4 ) != 0 )
+  if( false )
   {
+    int targetType = s->filterType * 4;
+    //if( 
+    
+    if( filterL->getType() != targetType )
+    {
+      
+      filterL->setType( targetType );
+      filterR->setType( targetType );
+      printf("SVF: in %f, target type %i, filter has %i\n", s->filterType, targetType, filterL->getType() );
+    }
+    
+    filterL->setResonance( ( s->filterResonance) );
+    filterR->setResonance( ( s->filterResonance) );
+    
+    filterL->setValue( ( s->filterFrequency + 0.3) );
+    filterR->setValue( ( s->filterFrequency + 0.3) );
+    
     filterL->process( dsp->nframes, &voiceBuffer[           0], &voiceBuffer[           0] );
     filterR->process( dsp->nframes, &voiceBuffer[dsp->nframes], &voiceBuffer[dsp->nframes] );
   }

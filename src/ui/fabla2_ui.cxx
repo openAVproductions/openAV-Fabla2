@@ -80,6 +80,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   divider = 40;
   waste = new Avtk::Button( this, 450+divider, 161, 90 - divider, 20, "F-Type" );
   filterType = new Avtk::Number( this, 450, 161, divider, 20, "Filter Type" );
+  filterType->setRange( 0, 3 );
   filterFrequency = new Avtk::Dial( this, 455, 185, 40, 40, "Filter Frequency" );
   filterResonance = new Avtk::Dial( this, 494, 185, 40, 40, "Filter Resonance" );
   
@@ -305,6 +306,10 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     float fin = tmp * 0.5;
     waveform->setStartPoint( fin );
     writeAtom( uris.fabla2_SampleStartPoint, fin );
+  }
+  else if( w == filterType )
+  {
+    writeAtom( uris.fabla2_SampleFilterType, tmp );
   }
   else if( w == filterFrequency )
   {

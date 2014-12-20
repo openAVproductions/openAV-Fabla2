@@ -456,7 +456,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
       writeSampleState( b, p, l, pad, s );
       
       // causes double-frees / corruption somewhere
-      //tx_waveform( b, p, l, s->getWaveform() );
+      tx_waveform( b, p, l, s->getWaveform() );
     }
   }
 }
