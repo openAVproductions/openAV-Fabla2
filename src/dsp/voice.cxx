@@ -135,11 +135,7 @@ void Voice::process()
     return;
   }
   
-  
   int done = sampler->process( dsp->nframes, &voiceBuffer[0], &voiceBuffer[dsp->nframes] );
-  
-  // fast forward the ADSR to the after nframes-value, to respond faster
-  //for(int i = 0; i < dsp->nframes - 1; i++)
   
   float adsrVal = adsr->process();
   filterL->setValue( (pad_->controls[Pad::FILTER_CUTOFF]+0.3) );//* adsrVal );

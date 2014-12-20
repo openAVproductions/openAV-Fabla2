@@ -42,9 +42,9 @@ static void fabla2_deinterleave( int size, const float* all, std::vector<float>&
   
   float* l = &L[0];
   float* r = &R[0];
-  
+#ifdef FABLA2_COMPONENT_TEST
   printf("deinterlacing... size = %i\n", size );
-  
+#endif
   // de-interleave samples
   for( int i = 0; i + 1 < size; i++ )
   {
@@ -55,10 +55,10 @@ static void fabla2_deinterleave( int size, const float* all, std::vector<float>&
 
 void Sample::recacheWaveform()
 {
+#ifdef FABLA2_COMPONENT_TEST
   printf("recaching waveform... \n" );
+#endif
   int sampsPerPix = frames / FABLA2_UI_WAVEFORM_PX;
-  
-  //waveformData.resize(FABLA2_UI_WAVEFORM_PX);
   
   // loop over each pixel value we need
   for( int p = 0; p < FABLA2_UI_WAVEFORM_PX; p++ )
@@ -94,15 +94,7 @@ void Sample::init()
   pan   = 0.5;
   startPoint = 0.0;
   
-  
-  //std::vector<float> tmp(FABLA2_UI_WAVEFORM_PX);
-  //waveformData.swap( tmp );
-  //waveformData.resize(FABLA2_UI_WAVEFORM_PX);
-  
   memset( waveformData, 0 , sizeof(float) * FABLA2_UI_WAVEFORM_PX );
-  
-  printf("last: %f\n",waveformData[ FABLA2_UI_WAVEFORM_PX - 1 ] );
-  //printf("last: %f\n",waveformData.at( FABLA2_UI_WAVEFORM_PX - 1 ) );
   
   // set to true so we recacheWaveform() when requested for it
   dirty = true;

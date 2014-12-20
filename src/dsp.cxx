@@ -215,6 +215,10 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
                obj->body.otype == self->uris.fabla2_SamplePan             ||
                obj->body.otype == self->uris.fabla2_SampleStartPoint      ||
                
+               obj->body.otype == self->uris.fabla2_SampleFilterType      ||
+               obj->body.otype == self->uris.fabla2_SampleFilterFrequency ||
+               obj->body.otype == self->uris.fabla2_SampleFilterResonance ||
+               
                obj->body.otype == self->uris.fabla2_RequestUiSampleState  ||
                
                obj->body.otype == self->uris.fabla2_PadMuteGroup          ||

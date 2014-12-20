@@ -76,6 +76,10 @@ class Sample
     float pitch;          ///< Pitch of the sample (playback speed)
     float pan;            ///< Panning of the sample (amplitude based)
     float startPoint;     ///< Starting point of the sample playback
+    
+    float filterType;     ///< Filter high/low/band-pass setting
+    float filterFrequency;///< Filter cutoff/center frequency
+    float filterResonance;///< Filter resonance ( Q-factor )
   
   private:
     Fabla2DSP* dsp;
