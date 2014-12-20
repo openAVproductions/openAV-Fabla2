@@ -89,7 +89,7 @@ void Sample::recacheWaveform()
 
 void Sample::init()
 {
-  gain  = 0.5;
+  gain  = 0.75;
   pitch = 0.5;
   pan   = 0.5;
   startPoint = 0.0;
@@ -108,7 +108,7 @@ Sample::Sample( Fabla2DSP* d, int rate, int size, float* data ) :
   velLow( 0 ),
   velHigh( 127 ),
   pitch( 0 ),
-  gain ( 0.5 ),
+  gain ( 0.75 ),
   pan  ( 0 )
 {
   //memset( waveformData, 0, sizeof(float)*FABLA2_UI_WAVEFORM_PX);
