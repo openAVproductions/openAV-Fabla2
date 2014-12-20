@@ -65,7 +65,11 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waveform->show( tmp );
   
   // sample edit view
-  muteGroup = new Avtk::Dial( this, 355, 161, 85, 52, "Mute Group" );
+  int divider = 40; // x location of divider between number / label
+  Avtk::Widget* waste = new Avtk::Button( this, 355+divider, 161, 85 - divider, 20, "Mute" );
+  muteGroup = new Avtk::Number( this, 355, 161, divider, 20, "Mute Group" );
+  muteGroup->setRange( 0, 8 );
+  
   layers    = new Avtk::List( this, 355, 218, 85, 109, "Layers" );
   adsr      = new Avtk::Button( this, 446, 161, 59, 166, "ADSR" );
   filt1     = new Avtk::Button( this, 510, 161, 59, 81, "Filter 1" );
