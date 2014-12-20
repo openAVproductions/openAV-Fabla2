@@ -96,7 +96,8 @@ class FiltersSVF
       if ( r > 1.0 ) r = 1.0;
       if ( r < 0.0 ) r = 0.0;
       resonance = r;
-      damping = min(2.0*(1.0 - pow(resonance, 0.25)), min(1.5, 2.0/impFreq - impFreq*0.5));
+      float tmpRes = r * 0.9;
+      damping = min(2.0*(1.0 - pow(tmpRes, 0.25)), min(1.5, 2.0/impFreq - impFreq*0.5));
     }
     
     /// set drive / distrotion of filter, range 0 - 1

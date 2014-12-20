@@ -27,6 +27,7 @@ class TestUI : public Avtk::UI
     void init()
     {
       setBank( 0 );
+      currentLayer = -1; // invalidate, so request updates
       requestSampleState( 0, 0, 0 );
     }
     
@@ -51,7 +52,13 @@ class TestUI : public Avtk::UI
     Avtk::Number* muteGroup;
     Avtk::List* layers;
     Avtk::Widget* adsr;
+    
     Avtk::Widget* filt1;
+    Avtk::Widget* filterType;
+    Avtk::Widget* filterFrequency;
+    Avtk::Widget* filterResonance;
+    
+    
     Avtk::Widget* filt2;
     Avtk::Widget* bitcrusDist;
     Avtk::Widget* eq;

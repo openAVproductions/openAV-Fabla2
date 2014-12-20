@@ -171,23 +171,38 @@ static void fabla2_port_event(LV2UI_Handle handle,
       const LV2_Atom* aPitch      = 0;
       const LV2_Atom* aPan        = 0;
       const LV2_Atom* aStartPoint = 0;
+      const LV2_Atom* aFiltType   = 0;
+      const LV2_Atom* aFiltFreq   = 0;
+      const LV2_Atom* aFiltReso   = 0;
       
       const int n_props  = lv2_atom_object_get( obj,
             ui->uris.fabla2_PadMuteGroup      , &aPadMuteGrp,
             ui->uris.fabla2_SampleGain        , &aGain,
             ui->uris.fabla2_SamplePitch       , &aPitch,
-            ui->uris.fabla2_SamplePan         , &aPan,
             ui->uris.fabla2_SampleStartPoint  , &aStartPoint,
-            //ui->uris.fabla2_Sample  , &,
+            ui->uris.fabla2_SamplePan         , &aPan,
+            ui->uris.fabla2_SampleFilterType  , &aFiltType,
+            ui->uris.fabla2_SampleFilterFrequency,&aFiltFreq,
+            ui->uris.fabla2_SampleFilterResonance,&aFiltReso,
             0 );
+      
       if( aGain && aPan && aPitch && aStartPoint )
       {
+        printf("setting UI from DSP ReplyUiSampleState\n");
         ui->muteGroup       ->value( ((const LV2_Atom_Float*)aPadMuteGrp)->body );
         ui->sampleGain      ->value( ((const LV2_Atom_Float*)aGain)->body );
         ui->samplePan       ->value( ((const LV2_Atom_Float*)aPan )->body );
         ui->samplePitch     ->value( ((const LV2_Atom_Float*)aPitch)->body);
         ui->sampleStartPoint->value( ((const LV2_Atom_Float*)aStartPoint)->body*2); // 2* as dial offsets on write too!
         ui->waveform->setStartPoint( ((const LV2_Atom_Float*)aStartPoint)->body);
+        
+        ui->filterType      ->value( ((const LV2_Atom_Float*)aFiltType)->body);
+        ui->filterFrequency ->value( ((const LV2_Atom_Float*)aFiltFreq)->body);
+        ui->filterResonance ->value( ((const LV2_Atom_Float*)aFiltReso)->body);
+      }
+      else
+      {
+        printf("NOT setting UI from DSP ReplyUiSampleState, %i, %i, %i, %i\n", aGain, aPan, aPitch, aStartPoint );
       }
     }
     else

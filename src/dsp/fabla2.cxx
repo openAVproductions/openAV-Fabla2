@@ -374,6 +374,15 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleStartPoint );
   lv2_atom_forge_float(&lv2->forge, s->startPoint / s->getFrames() );
   
+    lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleFilterType );
+  lv2_atom_forge_float(&lv2->forge, s->filterType );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleFilterFrequency );
+  lv2_atom_forge_float(&lv2->forge, s->filterFrequency );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleFilterResonance );
+  lv2_atom_forge_float(&lv2->forge, s->filterResonance );
+  
   lv2_atom_forge_pop(&lv2->forge, &frame);
 }
 
@@ -429,7 +438,13 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
     s->dirty = 1; s->startPoint = v * s->getFrames();
   }
   else if(  URI == uris->fabla2_SampleFilterType ) {
-    s->dirty = 1; s->startPoint = v * s->getFrames();
+    s->dirty = 1; s->filterType = v;
+  }
+  else if(  URI == uris->fabla2_SampleFilterFrequency ) {
+    s->dirty = 1; s->filterFrequency = v;
+  }
+  else if(  URI == uris->fabla2_SampleFilterResonance ) {
+    s->dirty = 1; s->filterResonance = v;
   }
   else if(  URI == uris->fabla2_PadMuteGroup ) {
     //printf("setting start point to %f\n", v );
@@ -441,7 +456,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
       writeSampleState( b, p, l, pad, s );
       
       // causes double-frees / corruption somewhere
-      tx_waveform( b, p, l, s->getWaveform() );
+      //tx_waveform( b, p, l, s->getWaveform() );
     }
   }
 }

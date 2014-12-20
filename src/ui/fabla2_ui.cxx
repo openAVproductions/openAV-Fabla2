@@ -67,16 +67,27 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waveform->show( tmp );
   
   // sample edit view
-  int divider = 40; // x location of divider between number / label
-  Avtk::Widget* waste = new Avtk::Button( this, 355+divider, 161, 85 - divider, 20, "Mute" );
+  int divider = 40;
+  Avtk::Widget* waste = new Avtk::Button( this, 355+divider, 161, 90 - divider, 20, "Mute" );
   muteGroup = new Avtk::Number( this, 355, 161, divider, 20, "Mute Group" );
   muteGroup->setRange( 0, 8 );
   
-  layers    = new Avtk::List( this, 355, 218, 85, 109, "Layers" );
-  adsr      = new Avtk::Button( this, 446, 161, 59, 166, "ADSR" );
-  filt1     = new Avtk::Button( this, 510, 161, 59, 81, "Filter 1" );
-  filt2     = new Avtk::Button( this, 510, 246, 59, 81, "Filter 2" );
-  bitcrusDist=new Avtk::Button( this, 573, 161, 59, 81, "Bit Cr,Dist" );
+  layers    = new Avtk::List( this, 355, 218, 90, 109, "Layers" );
+  adsr      = new Avtk::Button( this, 450, 218, 90, 109, "ADSR" );
+  
+  // Filters
+  //filt1     = new Avtk::Button( this, 510, 161, 59, 81, "Filter 1" );
+  divider = 40;
+  waste = new Avtk::Button( this, 450+divider, 161, 90 - divider, 20, "F-Type" );
+  filterType = new Avtk::Number( this, 450, 161, divider, 20, "Filter Type" );
+  filterFrequency = new Avtk::Dial( this, 455, 185, 40, 40, "Filter Frequency" );
+  filterResonance = new Avtk::Dial( this, 494, 185, 40, 40, "Filter Resonance" );
+  
+  //filterFrequency= new Avtk::Button( this, 510, 161, 59, 81, "Filter 1" );
+  
+  
+  //filt2     = new Avtk::Button( this, 510, 246, 59, 81, "Filter 2" );
+  //bitcrusDist=new Avtk::Button( this, 573, 161, 59, 81, "Bit Cr,Dist" );
   eq        = new Avtk::Button( this, 573, 247, 59, 81, "Equalizer" );
   comp      = new Avtk::Button( this, 635, 161, 59, 81, "Comp" );
   
@@ -294,6 +305,14 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     float fin = tmp * 0.5;
     waveform->setStartPoint( fin );
     writeAtom( uris.fabla2_SampleStartPoint, fin );
+  }
+  else if( w == filterFrequency )
+  {
+    writeAtom( uris.fabla2_SampleFilterFrequency, tmp );
+  }
+  else if( w == filterResonance )
+  {
+    writeAtom( uris.fabla2_SampleFilterResonance, tmp );
   }
   else if( w == masterVolume )
   {

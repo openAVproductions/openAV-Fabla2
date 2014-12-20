@@ -139,10 +139,15 @@ void Voice::process()
   
   float adsrVal = adsr->process();
   
+  // adsr -> freq / reso / etc, we need to multiply by the adsrVal * routingAmount
+  //* adsrVal );
+  
   /// set filter state
   Sample* s = pad_->layer( pad_->lastPlayedLayer() );
-  filterL->setValue( ( s->filterFrequency + 0.3) );//* adsrVal );
-  filterR->setValue( ( s->filterFrequency + 0.3) );//* adsrVal );
+  filterL->setResonance( ( s->filterResonance) );
+  filterL->setResonance( ( s->filterResonance) );
+  filterL->setValue( ( s->filterFrequency + 0.3) );
+  filterR->setValue( ( s->filterFrequency + 0.3) );
   
   bool filterOn = true;
   if( filterOn )
