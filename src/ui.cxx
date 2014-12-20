@@ -166,12 +166,14 @@ static void fabla2_port_event(LV2UI_Handle handle,
     else if( obj->body.otype == ui->uris.fabla2_ReplyUiSampleState )
     {
       // atoms to represent the data
+      const LV2_Atom* aPadMuteGrp = 0;
       const LV2_Atom* aGain       = 0;
       const LV2_Atom* aPitch      = 0;
       const LV2_Atom* aPan        = 0;
       const LV2_Atom* aStartPoint = 0;
       
       const int n_props  = lv2_atom_object_get( obj,
+            ui->uris.fabla2_PadMuteGroup      , &aPadMuteGrp,
             ui->uris.fabla2_SampleGain        , &aGain,
             ui->uris.fabla2_SamplePitch       , &aPitch,
             ui->uris.fabla2_SamplePan         , &aPan,
@@ -180,6 +182,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
             0 );
       if( aGain && aPan && aPitch && aStartPoint )
       {
+        ui->muteGroup       ->value( ((const LV2_Atom_Float*)aPadMuteGrp)->body );
         ui->sampleGain      ->value( ((const LV2_Atom_Float*)aGain)->body );
         ui->samplePan       ->value( ((const LV2_Atom_Float*)aPan )->body );
         ui->samplePitch     ->value( ((const LV2_Atom_Float*)aPitch)->body);

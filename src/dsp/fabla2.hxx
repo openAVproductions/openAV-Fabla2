@@ -98,7 +98,7 @@ class Fabla2DSP
     std::vector<float> recordBuffer;
     
     /// lv2 convienience function to write a samples state to the UI
-    void writeSampleState( int b, int p, int l, Sample* );
+    void writeSampleState( int b, int p, int l, Pad* pad, Sample* );
     
     void tx_waveform( int bank, int pad, int layer, const float* data );
 };

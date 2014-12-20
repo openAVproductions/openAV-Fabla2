@@ -343,7 +343,7 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
   
 }
 
-void Fabla2DSP::writeSampleState( int b, int p, int l, Sample* s )
+void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
 {
   LV2_Atom_Forge_Frame frame;
   lv2_atom_forge_frame_time( &lv2->forge, 0 );
@@ -358,6 +358,9 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Sample* s )
   
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_layer);
   lv2_atom_forge_int(&lv2->forge, l );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadMuteGroup);
+  lv2_atom_forge_float(&lv2->forge, pad->muteGroup() );
   
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleGain);
   lv2_atom_forge_float(&lv2->forge, s->gain );
@@ -432,7 +435,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
   else if(  URI == uris->fabla2_RequestUiSampleState ) {
     //printf("UI requested %i, %i, %i\n", b, p, l );
     {
-      writeSampleState( b, p, l, s );
+      writeSampleState( b, p, l, pad, s );
       
       // causes double-frees / corruption somewhere
       //tx_waveform( b, p, l, s->getWaveform() );
