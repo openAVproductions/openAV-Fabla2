@@ -46,6 +46,7 @@
 #define FABLA2_replyUiSampleState   FABLA2_URI "#ReplyUiSampleState"
 
 #define FABLA2_PadMuteGroup         FABLA2_URI "#PadMuteGroup"
+#define FABLA2_PadRefreshLayers     FABLA2_URI "#PadRefreshLayers"
 #define FABLA2_PadPlay              FABLA2_URI "#PadPlay"
 #define FABLA2_PadStop              FABLA2_URI "#PadStop"
 
@@ -65,6 +66,7 @@
 #define FABLA2_SampleAudioData      FABLA2_URI "#SampleAudioData"
 
 /// "Inside Atoms" data types
+#define FABLA2_name                 FABLA2_URI "#name"
 #define FABLA2_sample               FABLA2_URI "#sample"
 #define FABLA2_bank                 FABLA2_URI "#bank"
 #define FABLA2_pad                  FABLA2_URI "#pad"
@@ -95,6 +97,7 @@ typedef struct {
   LV2_URID fabla2_ReplyUiSampleState;
   
   LV2_URID fabla2_PadMuteGroup;
+  LV2_URID fabla2_PadRefreshLayers;
   LV2_URID fabla2_PadPlay;
   LV2_URID fabla2_PadStop;
   
@@ -106,6 +109,7 @@ typedef struct {
   LV2_URID fabla2_SampleAdsrDecay;
   LV2_URID fabla2_SampleAdsrSustain;
   LV2_URID fabla2_SampleAdsrRelease;
+  
   LV2_URID fabla2_SampleGain;
   LV2_URID fabla2_SamplePan;
   LV2_URID fabla2_SamplePitch;
@@ -114,6 +118,7 @@ typedef struct {
   LV2_URID fabla2_SampleUnload;
   LV2_URID fabla2_SampleAudioData;
   
+  LV2_URID fabla2_name;
   LV2_URID fabla2_sample;
   LV2_URID fabla2_velocity;
   LV2_URID fabla2_bank;
@@ -145,6 +150,7 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->fabla2_ReplyUiSampleState   = map->map(map->handle, FABLA2_replyUiSampleState);
   
   uris->fabla2_PadMuteGroup         = map->map(map->handle, FABLA2_PadMuteGroup);
+  uris->fabla2_PadRefreshLayers     = map->map(map->handle, FABLA2_PadRefreshLayers);
   uris->fabla2_PadPlay              = map->map(map->handle, FABLA2_PadPlay);
   uris->fabla2_PadStop              = map->map(map->handle, FABLA2_PadStop);
   
@@ -166,6 +172,7 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->fabla2_SampleAudioData      =map->map(map->handle,FABLA2_SampleAudioData);
   
   uris->fabla2_sample               = map->map(map->handle, FABLA2_sample);
+  uris->fabla2_name                 = map->map(map->handle, FABLA2_name);
   uris->fabla2_velocity             = map->map(map->handle, FABLA2_velocity);
   uris->fabla2_bank                 = map->map(map->handle, FABLA2_bank);
   uris->fabla2_pad                  = map->map(map->handle, FABLA2_pad);

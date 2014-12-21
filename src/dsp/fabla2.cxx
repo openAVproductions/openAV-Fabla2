@@ -65,7 +65,7 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
     }
     
     Pad* tmpPad = new Pad( this, rate, i % 16 );
-    
+    tmpPad->bank( i / 16 );
     /*
     if ( i == 9 )
     {
@@ -386,6 +386,38 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
   lv2_atom_forge_float(&lv2->forge, s->filterResonance );
   
   lv2_atom_forge_pop(&lv2->forge, &frame);
+}
+
+void Fabla2DSP::padRefreshLayers( int bank, int pad )
+{
+  Pad* p = library->bank( bank )->pad( pad );
+  printf("%s, p = %i\n", __PRETTY_FUNCTION__, p );
+  
+  for(int i = 0; i < p->nLayers(); i++)
+  {
+    LV2_Atom_Forge_Frame frame;
+  
+    lv2_atom_forge_frame_time(&lv2->forge, 0);
+    lv2_atom_forge_object(&lv2->forge, &frame, 0, uris->fabla2_PadRefreshLayers);
+    
+    lv2_atom_forge_key(&lv2->forge, uris->fabla2_bank);
+    lv2_atom_forge_int(&lv2->forge, bank );
+    
+    lv2_atom_forge_key(&lv2->forge, uris->fabla2_pad);
+    lv2_atom_forge_int(&lv2->forge, pad );
+    
+    lv2_atom_forge_key(&lv2->forge, uris->fabla2_layer);
+    lv2_atom_forge_int(&lv2->forge, i );
+    
+    /// write this layers sample details:
+    /// 1. Name
+    /// 2. if Velocity layered mode: Velocity ranges
+    lv2_atom_forge_key(&lv2->forge, uris->fabla2_name);
+    lv2_atom_forge_int(&lv2->forge, i );
+    
+    // Close off object
+    lv2_atom_forge_pop(&lv2->forge, &frame);
+  }
 }
 
 void Fabla2DSP::tx_waveform( int b, int p, int l, const float* data )

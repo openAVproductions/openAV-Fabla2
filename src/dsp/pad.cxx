@@ -20,6 +20,7 @@
 
 #include "pad.hxx"
 
+#include "fabla2.hxx"
 #include "sample.hxx"
 #include <stdio.h>
 #include <string.h>
@@ -51,8 +52,12 @@ Pad::Pad( Fabla2DSP* d, int rate, int ID ) :
 
 void Pad::add( Sample* s )
 {
+  printf("%s, b %i, p %i, s = %i\n", __PRETTY_FUNCTION__, bank_, ID_, s );
   samples.push_back( s );
   //printf( "Pad::add() %s, total #samples on pad = %i\n", s->getName(), samples.size() );
+  
+  // request DSP to refresh UI layers for this pad
+  dsp->padRefreshLayers( bank_, ID_ );
 }
 
 Sample* Pad::layer( int id )

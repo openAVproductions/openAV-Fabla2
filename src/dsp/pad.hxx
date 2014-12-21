@@ -49,7 +49,12 @@ class Pad
     Pad( Fabla2DSP* dsp, int rate, int ID );
     ~Pad();
     
+    /// position of pad (0 - 15) drum pads layout where 0 is bottom left
     int ID(){return ID_;}
+    
+    /// the bank this Pad is on
+    void bank(int b){bank_ = b;}
+    int bank(){return bank_;}
     
     /// library functions
     void add( Sample* );
@@ -60,6 +65,7 @@ class Pad
     
     /// get a layer: wether its velocity or Round-robin doesn't matter: this
     /// is for UI interaction
+    int nLayers(){return samples.size();}
     Sample* layer( int id );
     
     /// playback functions
@@ -80,6 +86,7 @@ class Pad
   private:
     Fabla2DSP* dsp;
     int sr;
+    int bank_;// pad bank
     int ID_; // pad place within Bank
     int muteGroup_;
     
