@@ -139,7 +139,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   bankBtns[0]->value( true );
   
   showSampleBrowser( true );
-  //showSampleBrowser( false );
+  showSampleBrowser( false );
 }
 
 void TestUI::showSampleBrowser( bool show )
@@ -307,6 +307,11 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   else if( w == layers )
   {
     currentLayer = tmp;
+  }
+  else if( w == listSampleFiles )
+  {
+    //std::string selected = listSampleFiles->selectedString();
+    //printf("listSampleFiles : %s\n", selectedString);
   }
   else if( w == muteGroup )
   {
