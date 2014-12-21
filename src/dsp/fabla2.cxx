@@ -66,6 +66,7 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
     
     Pad* tmpPad = new Pad( this, rate, i % 16 );
     
+    /*
     if ( i == 9 )
     {
       Sample* tmp = new Sample( this, rate, "One", "/usr/local/lib/lv2/fabla2.lv2/stereoTest.wav");
@@ -107,6 +108,7 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
       
       tmpPad->switchSystem( Pad::SS_ROUND_ROBIN );
     }
+    */
     
     library->bank( bankID )->pad( tmpPad );
   }
