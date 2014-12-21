@@ -17,7 +17,7 @@ static inline const LV2_Atom* read_set_file(FablaLV2* self,
                                             const LV2_Atom_Object* obj)
 {
   if (obj->body.otype != uris->patch_Set) {
-    fprintf(stderr, "Ignoring unknown message type %d\n", obj->body.otype);
+    lv2_log_trace(&self->logger,"Ignoring unknown message type %d\n", obj->body.otype);
     return NULL;
   }
   
@@ -25,13 +25,13 @@ static inline const LV2_Atom* read_set_file(FablaLV2* self,
   const LV2_Atom* property = NULL;
   lv2_atom_object_get(obj, uris->patch_property, &property, 0);
   if (!property) {
-    fprintf(stderr, "Malformed set message has no body.\n");
+    lv2_log_trace(&self->logger,"Malformed set message has no body.\n");
     return NULL;
   } else if (property->type != uris->atom_URID) {
-    fprintf(stderr, "Malformed set message has non-URID property.\n");
+    lv2_log_trace(&self->logger,"Malformed set message has non-URID property.\n");
     return NULL;
   } else if (((const LV2_Atom_URID*)property)->body != uris->fabla2_sample) {
-    fprintf(stderr, "Set message for unknown property.\n");
+    lv2_log_trace(&self->logger,"Set message for unknown property.\n");
     printf("Unmapped: %s\n", self->unmap->unmap( self->unmap->handle, ((const LV2_Atom_URID*)property)->body ) );
     return NULL;
   }
@@ -40,10 +40,10 @@ static inline const LV2_Atom* read_set_file(FablaLV2* self,
   const LV2_Atom* file_path = NULL;
   lv2_atom_object_get(obj, uris->patch_value, &file_path, 0);
   if (!file_path) {
-    fprintf(stderr, "Malformed set message has no value.\n");
+    lv2_log_trace(&self->logger,"Malformed set message has no value.\n");
     return NULL;
   } else if (file_path->type != uris->atom_Path) {
-    fprintf(stderr, "Set message value is not a Path.\n");
+    lv2_log_trace(&self->logger,"Set message value is not a Path.\n");
     return NULL;
   }
   
@@ -67,7 +67,7 @@ fabla2_work( LV2_Handle                  instance,
   }
   else
   {
-    printf("Unmapped: %s\n", self->unmap->unmap( self->unmap->handle, atom->type ) );
+    //printf("Unmapped: %s\n", self->unmap->unmap( self->unmap->handle, atom->type ) );
     const LV2_Atom_Object* obj = (const LV2_Atom_Object*)data;
     
     const LV2_Atom* file_path = read_set_file( self, &self->uris, obj);
@@ -78,7 +78,7 @@ fabla2_work( LV2_Handle                  instance,
     
     std::string file = (const char*)LV2_ATOM_BODY_CONST(file_path);
     Fabla2::Sample* s = new Fabla2::Sample( 0x0, 44100, "LoadedSample", file );
-    printf("Work() - Sample() has %i frames\n", s->getFrames() );
+    //printf("Work() - Loading %s: Sample() has %i frames\n", file.c_str(), s->getFrames() );
     
     if ( s )
     {
@@ -108,7 +108,7 @@ fabla2_work_response(LV2_Handle  instance,
   
   const LV2_Atom* atom = (const LV2_Atom*)data;
   
-  printf("Work:resonse() Got type : %s\n", self->unmap->unmap( self->unmap->handle, atom->type ) );
+  //printf("Work:resonse() Got type : %s\n", self->unmap->unmap( self->unmap->handle, atom->type ) );
   
   if( atom->type == self->uris.fabla2_SampleLoad )
   {
@@ -117,7 +117,7 @@ fabla2_work_response(LV2_Handle  instance,
     //  2. send old sample to be free-d (using SampleLoadUnload* we just recieved)
     
     const SampleLoadUnload* msg = (const SampleLoadUnload*)data;
-    printf( "Work Response, sample load/unload. Name: %s. Frames: %i \n", msg->sample->getName(), msg->sample->getFrames() );
+    //printf( "Work Response, sample load/unload. Name: %s. Frames: %i \n", msg->sample->getName(), msg->sample->getFrames() );
     
     int bank = msg->bank;
     int pad  = msg->pad;
@@ -127,16 +127,6 @@ fabla2_work_response(LV2_Handle  instance,
     
     self->dsp->getLibrary()->bank( bank )->pad( pad )->add( msg->sample );
   }
-  
-  /*
-  if( false ) // currentlyLoadedSampleNeedsRemoval );
-  {
-    SampleLoadUnload msg = { { sizeof(SampleLoadUnload*), self->uris.fabla2_SampleUnload }, // Atom
-                              0, // target bank
-                              0, // target pad
-                              0x0 }; // data pointer
-  }
-  */
   
   
   return LV2_WORKER_SUCCESS;
