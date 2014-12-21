@@ -74,6 +74,8 @@ class Fabla2DSP
     /// called with UI Atom data
     void uiMessage( int bank, int pad, int layer, int URI, float value );
     
+    Library* getLibrary(){return library.GetRawPointer();}
+    
   private:
     int sr;
     URIs* uris;

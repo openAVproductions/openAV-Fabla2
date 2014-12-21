@@ -47,7 +47,6 @@ fabla2_work_response(LV2_Handle  instance,
 typedef struct
 {
   LV2_Atom atom;
-  bool load;
   int bank;
   int pad;
   Fabla2::Sample*  sample;

@@ -64,11 +64,11 @@ class FablaLV2
     LV2_URID_Unmap* unmap;
     
     URIs uris;
+    
+    /// the actual DSP instance: public for LV2 Work Response
+    Fabla2::Fabla2DSP* dsp;
   
   private:
-    /// the actual DSP instance
-    Fabla2::Fabla2DSP* dsp;
-    
     /// convienience functions to extract bank/pad info from an Atom
     /// @return 0 on success, non-zero on error
     int atomBankPadLayer( const LV2_Atom_Object* obj,
