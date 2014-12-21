@@ -234,7 +234,6 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
       else if (obj->body.otype == self->uris.patch_Set)
       {
         // Received a set message, send it to the worker.
-        //printf("Queueing set message\n");
         lv2_log_trace(&self->logger, "Queueing set message\n");
         self->schedule->schedule_work(self->schedule->handle,
                                       lv2_atom_total_size(&ev->body),

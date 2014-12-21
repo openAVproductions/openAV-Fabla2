@@ -353,7 +353,7 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
 #define OBJ_BUF_SIZE 1024
     uint8_t obj_buf[OBJ_BUF_SIZE];
     lv2_atom_forge_set_buffer(&forge, obj_buf, OBJ_BUF_SIZE);
-    LV2_Atom* msg = writeSetFile( &forge, &uris, s.str() );
+    LV2_Atom* msg = writeSetFile( &forge, &uris, currentBank, currentPad, s.str() );
     write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
   }
   else if( w == muteGroup )
@@ -402,8 +402,8 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   }
   else if( w == loadSampleBtn )
   {
-    printf("load clicked\n");
-    
+    printf("loadSampleBtn clicked\n");
+    /*
 #define OBJ_BUF_SIZE 1024
     uint8_t obj_buf[OBJ_BUF_SIZE];
     lv2_atom_forge_set_buffer(&forge, obj_buf, OBJ_BUF_SIZE);
@@ -415,6 +415,7 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     write_function(controller, 0, lv2_atom_total_size(msg),
               uris.atom_eventTransfer,
               msg);
+    */
   }
   else
   {
