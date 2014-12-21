@@ -12,6 +12,9 @@
 // the Theme class definition
 #include "theme.hxx"
 
+// container class
+#include "group.hxx"
+
 // widget headers
 #include "list.hxx"
 #include "dial.hxx"
@@ -21,5 +24,6 @@
 #include "slider.hxx"
 #include "envelope.hxx"
 #include "waveform.hxx"
+#include "listitem.hxx"
 
 #endif // OPENAV_AVTK_HXX
