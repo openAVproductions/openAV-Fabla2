@@ -54,10 +54,13 @@ TestUI::TestUI( PuglNativeWindow parent ):
   recordOverPad->theme( theme( 4 ) );
   recordOverPad->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
-  followPadBtn = new Avtk::Button( this, 5, 43+(s+6)*2 + 78, s * 2 + 6, 22,  "Follow Pad" );
+  followPadBtn = new Avtk::Button( this, 5, 43+(s+6)*2 + 78, s * 2 + 6, 22,  "Follow" );
   followPadBtn->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
-  masterPitch = new Avtk::Dial( this, 5, 43+(s+6)*4+6 +26, s * 2 + 6, s*2+6,  "Pitch" );
+  loadSample = new Avtk::Button( this, 5, 43+(s+6)*2 + 78+ 25, s * 2 + 6, 22,  "Load" );
+  loadSample->clickMode( Avtk::Widget::CLICK_TOGGLE );
+  
+  masterPitch = new Avtk::Dial( this, 5, 43+(s+6)*4+6 +26+28, s * 2 + 6, s*2+6,  "Pitch" );
   masterPitch->theme( theme( 2 ) );
   masterPitch->value( 0.5 );
   
@@ -135,7 +138,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   bankBtns[0]->value( true );
   
   showSampleBrowser( true );
-  //showSampleBrowser( false );
+  showSampleBrowser( false );
 }
 
 void TestUI::loadNewDir( std::string newDir )
@@ -167,10 +170,10 @@ void TestUI::showSampleBrowser( bool show )
   for(int i = 0; i < 16; i++)
     pads[i]->visible( !show );
   
+  loadNewDir( currentDir );
+  
   listSampleDirs ->visible( show );
   listSampleFiles->visible( show );
-  
-  loadNewDir( currentDir );
 }
 
 void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
@@ -327,6 +330,10 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   else if( w == layers )
   {
     currentLayer = tmp;
+  }
+  else if( w == loadSample )
+  {
+    showSampleBrowser( tmp );
   }
   else if( w == listSampleDirs )
   {
