@@ -107,12 +107,8 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   // list view
   listSampleDirs = new Avtk::List( this, 82, 43, 126, 366, "Folder" );
-  loadNewDir( defaultDir );
-  
   listSampleFiles = new Avtk::List( this, 218, 43, 126, 366, "Sample Files" );
-  std::vector< std::string > dirContents;
-  int error = Avtk::directoryContents( defaultDir, dirContents );
-  listSampleFiles->show( dirContents );
+  // load *only* after both lists are created!
   
   
   // pads
@@ -144,12 +140,25 @@ TestUI::TestUI( PuglNativeWindow parent ):
 
 void TestUI::loadNewDir( std::string newDir )
 {
-  printf("Fabla2UI::loadNewDir() new dir : %s\n", newDir.c_str() );
-  listSampleDirs->clear();
-  
   std::vector< std::string > tmp;
   int error = Avtk::directories( newDir, tmp );
-  listSampleDirs->show( tmp );
+  if( !error )
+  {
+    currentDir = newDir;
+    printf("Fabla2UI::loadNewDir() new dir : %s\n", newDir.c_str() );
+    listSampleDirs->clear();
+    listSampleDirs->show( tmp );
+    
+    tmp.clear();
+    listSampleFiles->clear();
+    error = Avtk::directoryContents( currentDir, tmp );
+    listSampleFiles->show( tmp );
+  }
+  else
+  {
+    printf("Fabla2UI: Error loading dir %s", newDir.c_str() );
+    return;
+  }
 }
 
 void TestUI::showSampleBrowser( bool show )
@@ -161,6 +170,7 @@ void TestUI::showSampleBrowser( bool show )
   listSampleDirs ->visible( show );
   listSampleFiles->visible( show );
   
+  loadNewDir( currentDir );
 }
 
 void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
@@ -322,7 +332,7 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   {
     std::string selected = listSampleDirs->selectedString();
     std::stringstream s;
-    s << currentDir << selected;
+    s << currentDir << "/" << selected;
     // load the new dir
     loadNewDir( s.str().c_str() );
   }
