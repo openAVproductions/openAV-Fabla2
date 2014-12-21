@@ -62,9 +62,6 @@ TestUI::TestUI( PuglNativeWindow parent ):
   masterPitch->value( 0.5 );
   
   waveform = new Avtk::Waveform( this, 355, 42, FABLA2_UI_WAVEFORM_PX, 113, "Waveform" );
-  std::vector<float> tmp;
-  Avtk::loadSample("/usr/local/lib/lv2/fabla2.lv2/0.wav", tmp);
-  waveform->show( tmp );
   
   // sample edit view
   int divider = 40;
@@ -106,9 +103,12 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   /// load defaults config dir
   loadConfigFile( defaultDir );
+  currentDir = defaultDir;
   
   // list view
   listSampleDirs = new Avtk::List( this, 82, 43, 126, 366, "Folder" );
+  loadNewDir( defaultDir );
+  
   listSampleFiles = new Avtk::List( this, 218, 43, 126, 366, "Sample Files" );
   std::vector< std::string > dirContents;
   int error = Avtk::directoryContents( defaultDir, dirContents );
@@ -139,7 +139,17 @@ TestUI::TestUI( PuglNativeWindow parent ):
   bankBtns[0]->value( true );
   
   showSampleBrowser( true );
-  showSampleBrowser( false );
+  //showSampleBrowser( false );
+}
+
+void TestUI::loadNewDir( std::string newDir )
+{
+  printf("Fabla2UI::loadNewDir() new dir : %s\n", newDir.c_str() );
+  listSampleDirs->clear();
+  
+  std::vector< std::string > tmp;
+  int error = Avtk::directories( newDir, tmp );
+  listSampleDirs->show( tmp );
 }
 
 void TestUI::showSampleBrowser( bool show )
@@ -308,10 +318,13 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   {
     currentLayer = tmp;
   }
-  else if( w == listSampleFiles )
+  else if( w == listSampleDirs )
   {
-    //std::string selected = listSampleFiles->selectedString();
-    //printf("listSampleFiles : %s\n", selectedString);
+    std::string selected = listSampleDirs->selectedString();
+    std::stringstream s;
+    s << currentDir << selected;
+    // load the new dir
+    loadNewDir( s.str().c_str() );
   }
   else if( w == muteGroup )
   {

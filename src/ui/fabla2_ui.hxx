@@ -97,6 +97,7 @@ class TestUI : public Avtk::UI
   private:
     /// default directories / file loading
     std::string defaultDir;
+    std::string currentDir;
     
     /// followPad allows the UI to update to the last played PAD.
     bool followPad;
@@ -114,6 +115,8 @@ class TestUI : public Avtk::UI
     void writeAtom( int eventURI, float value );
     /// request the state of a sample from the DSP, to show in the UI
     void requestSampleState( int bank, int pad, int layer );
+    /// list sample dirs
+    void loadNewDir( std::string newDir );
 };
 
 
