@@ -12,7 +12,7 @@
 #include "../lv2_messaging.hxx"
 
 // implementation of LV2 Atom writing
-#include "writer.hxx"
+#include "helper.hxx"
 
 static void fabla2_widgetCB(Avtk::Widget* w, void* ud);
 
@@ -104,6 +104,17 @@ TestUI::TestUI( PuglNativeWindow parent ):
   padSends  = new Avtk::Button( this, 699, 161, 32, 166, "Snd" );
   padMaster = new Avtk::Button( this, 736, 160, 40, 166, "Mstr" );
   
+  /// load defaults config dir
+  loadConfigFile( defaultDir );
+  
+  // list view
+  listSampleDirs = new Avtk::List( this, 82, 43, 126, 366, "Folder" );
+  listSampleFiles = new Avtk::List( this, 218, 43, 126, 366, "Sample Files" );
+  std::vector< std::string > dirContents;
+  int error = Avtk::directoryContents( defaultDir, dirContents );
+  listSampleFiles->show( dirContents );
+  
+  
   // pads
   int xS = 58;
   int yS = 58;
@@ -126,6 +137,20 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   // initial values
   bankBtns[0]->value( true );
+  
+  showSampleBrowser( true );
+  //showSampleBrowser( false );
+}
+
+void TestUI::showSampleBrowser( bool show )
+{
+  // toggle other widgets
+  for(int i = 0; i < 16; i++)
+    pads[i]->visible( !show );
+  
+  listSampleDirs ->visible( show );
+  listSampleFiles->visible( show );
+  
 }
 
 void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )

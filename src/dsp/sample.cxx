@@ -46,7 +46,7 @@ static void fabla2_deinterleave( int size, const float* all, std::vector<float>&
   printf("deinterlacing... size = %i\n", size );
 #endif
   // de-interleave samples
-  for( int i = 0; i + 1 < size; i++ )
+  for( int i = 0; i + 1 < size / 2; i++ )
   {
     *l++ = *all++;
     *r++ = *all++;

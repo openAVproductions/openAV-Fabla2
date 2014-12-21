@@ -73,10 +73,8 @@ class TestUI : public Avtk::UI
     Avtk::Widget* padMaster;
     
     // Preset loading screen
-    /*
-    Avtk::List* list;
-    Avtk::List* list2;
-    */
+    Avtk::List* listSampleDirs;
+    Avtk::List* listSampleFiles;
     
     // shared between views!
     Avtk::Waveform* waveform;
@@ -97,12 +95,19 @@ class TestUI : public Avtk::UI
     LV2_Atom_Forge forge;
   
   private:
+    /// default directories / file loading
+    std::string defaultDir;
+    
     /// followPad allows the UI to update to the last played PAD.
     bool followPad;
     
     int currentBank;
     int currentPad;
     int currentLayer;
+    
+    /// shows the sample browser window instead of the pads
+    void showSampleBrowser( bool show );
+    
     /// updates the UI to a specifc bank
     void setBank( int bank );
     /// writes event/value identified by eventURI using currentBank / currentPad

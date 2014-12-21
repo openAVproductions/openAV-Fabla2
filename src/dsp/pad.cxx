@@ -52,7 +52,7 @@ Pad::Pad( Fabla2DSP* d, int rate, int ID ) :
 void Pad::add( Sample* s )
 {
   samples.push_back( s );
-  printf( "Pad::add() #samples = %i\n", samples.size() );
+  //printf( "Pad::add() #samples = %i\n", samples.size() );
 }
 
 Sample* Pad::layer( int id )
