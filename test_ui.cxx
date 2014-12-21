@@ -11,17 +11,49 @@ static void widgetCB(Avtk::Widget* w, void* ud);
 static void zoomCB(Avtk::Widget* w, void* ud);
 static void zoomOffsetCB(Avtk::Widget* w, void* ud);
 static void listCB(Avtk::Widget* w, void* ud);
+static void listValueCB(Avtk::Widget* w, void* ud);
 
 TestUI::TestUI( PuglNativeWindow parent ):
-  Avtk::UI( 610, 430, parent )
+  Avtk::UI( 810, 430, parent )
 {
   themes.push_back( new Avtk::Theme( this, "orange.avtk" ) );
   themes.push_back( new Avtk::Theme( this, "green.avtk" ) );
   themes.push_back( new Avtk::Theme( this, "yellow.avtk" ) );
   
+  Avtk::Widget* w = 0;
+  
+  /*
+  // group testing
+  Avtk::Group* g = new Avtk::Group( this, 610, 43, 140, 400, "Group 1" );
+  g->mode( Avtk::Group::WIDTH_EQUAL );
+  w = new Avtk::ListItem( this, 7, 45, 90, 11, "Group Toggle 1" );
+  g->add( w );
+  w = new Avtk::ListItem( this, 7, 45, 90, 11, "Group Toggle 2" );
+  g->add( w );
+  w = new Avtk::ListItem( this, 7, 45, 90, 11, "Group Toggle 3" );
+  g->add( w );
+  w = new Avtk::ListItem( this, 7, 45, 90, 11, "Group Toggle 4" );
+  g->add( w );
+  w = new Avtk::ListItem( this, 7, 45, 90, 11, "Group Toggle 5" );
+  g->add( w );
+  
+  // group testing
+  g = new Avtk::Group( this, 610, 243, 140, 100, "HGroup 1" );
+  g->mode( Avtk::Group::HEIGHT_EQUAL );
+  w = new Avtk::ListItem( this, 7, 45, 30, 11, "H1" );
+  g->add( w );
+  w = new Avtk::ListItem( this, 7, 45, 30, 11, "H2" );
+  g->add( w );
+  w = new Avtk::ListItem( this, 7, 45, 30, 11, "H3" );
+  g->add( w );
+  w = new Avtk::ListItem( this, 7, 45, 30, 11, "H4" );
+  g->add( w );
+  w = new Avtk::ListItem( this, 7, 45, 30, 11, "H5" );
+  g->add( w );
+  */
   
   // slider vert
-  Avtk::Widget* w = new Avtk::Slider( this, 520, 40, 22, 220, "Vertical Slider" );
+  w = new Avtk::Slider( this, 520, 40, 22, 220, "Vertical Slider" );
   
   // button
   w = new Avtk::Button( this, 7, 45, 90, 22, "Momentary" );
@@ -41,8 +73,15 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   // list
   list = new Avtk::List( this, 345, 45, 75, 125, "List (Left)" );
-  
-  list2 = new Avtk::List( this, 425, 45, 75, 125, "List (Right)" );
+  std::vector<std::string> items;
+  items.push_back("One");
+  items.push_back("Two");
+  items.push_back("Three");
+  items.push_back("Four");
+  list->show( items );
+  //list->callback = listValueCB;
+  //list2 = new Avtk::List( this, 425, 45, 75, 125, "List (Right)" );
+  //list->callback = listValueCB;
   
   // waveform
   waveform = new Avtk::Waveform( this, 75, 175, 375, 125, "Waveform" );
@@ -66,6 +105,12 @@ TestUI::TestUI( PuglNativeWindow parent ):
 void TestUI::widgetValueCB( Avtk::Widget* w )
 {
   printf( "%s, value = %f\n", w->label(), w->value() );
+}
+
+static void listValueCB( Avtk::Widget* w, void* ud )
+{
+  Avtk::List* l = (Avtk::List*)w;
+  printf( "%s, value %f : %s\n", w->label(), w->value(), l->selectedString().c_str() );
 }
 
 /*

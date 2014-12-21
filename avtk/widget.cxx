@@ -11,6 +11,11 @@ Widget::Widget( Avtk::UI* ui_, int x_, int y_, int w_, int h_, std::string label
   ui(ui_),
   parent_( 0 ),
   theme_( ui->theme() ),
+  
+  noHandle_( false ),
+  groupChild( false ),
+  groupItemNumber_( -1 ),
+  
   x( x_ ),
   y( y_ ),
   w( w_ ),
@@ -30,7 +35,7 @@ Widget::Widget( Avtk::UI* ui_, int x_, int y_, int w_, int h_, std::string label
   dm( DM_NONE ),
   mX(0),
   mY(0),
-  scrollDisable( 0 ),
+  scrollDisable( 1 ),
   scrollInvert( 0 ),
   // actual scroll in PX / number == delta
   scrollDeltaAmount( 10 )
@@ -47,6 +52,10 @@ void Widget::theme( Theme* t )
 
 int Widget::handle( const PuglEvent* event )
 {
+  // eg: groups don't handle input
+  if( noHandle_ )
+    return 0;
+  
   switch (event->type)
   {
     case PUGL_BUTTON_PRESS:
@@ -130,12 +139,12 @@ int Widget::handle( const PuglEvent* event )
     case PUGL_SCROLL:
       {
         bool scTch = touches( event->scroll.x, event->scroll.y );
-        if( scTch )
+        if( scTch && !scrollDisable )
         {
 #ifdef AVTK_DEBUG
           printf("scroll touch %i, x %lf, y %lf\n", int(scTch), event->scroll.x, event->scroll.y );
 #endif // AVTK_DEBUG
-          float delta = event->scroll.dy / scrollDeltaAmount;
+          float delta = event->scroll.dy / float(scrollDeltaAmount);
           if( scrollInvert )
             delta = -delta;
           value( value_ + delta );
@@ -246,9 +255,11 @@ void Widget::visible( bool v )
   ui->redraw( this );
 }
 
-void Widget::parent( Group* p )
+void Widget::addToGroup( Group* p, int gin )
 {
+  groupChild = true;
   parent_ = p;
+  groupItemNumber_ = gin;
 }
 
 void Widget::dragMode( DragMode d )

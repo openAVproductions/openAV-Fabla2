@@ -29,6 +29,7 @@ class Widget
     
     /// sets the visibility
     void visible( bool visibile );
+    bool visible(){return visible_;}
     
     /// get the current value
     float value() { return value_; }
@@ -41,7 +42,7 @@ class Widget
     bool touches( int inx, int iny );
     
     /// called by the UI class on any event that occurs
-    int handle( const PuglEvent* event );
+    virtual int handle( const PuglEvent* event );
     
     /// called by the UI class when this widget has a mouse pressed
     void motion( int x, int y );
@@ -69,7 +70,13 @@ class Widget
     /// sets a theme for a Widget
     void theme( Theme* t );
     
-    void parent( Group* parent );
+    void addToGroup( Group* parent, int itemNumber );
+    int groupItemNumber(){return groupItemNumber_;}
+    
+    /// the callback and its userdata pointer. the user-data pointer is set to
+    /// the Avtk::UI* that is passed into the contstructor. The callback 
+    void (*callback)(Widget* , void*);
+    void* callbackUD;
   
   protected:
     Avtk::Group* parent_;
@@ -78,7 +85,12 @@ class Widget
     /// quitting, allowing for optimized redraws.
     Avtk::Theme* theme_;
     
+    /// widget doesn't take any input: UI passes it along to other widgets
+    bool noHandle_;
     
+    /// group item number: useful for radio buttons and lists of selectable items
+    bool groupChild;
+    int groupItemNumber_;
     
     /// enum defines the way in which mouse click / drag works
     enum DragMode {
@@ -109,11 +121,6 @@ class Widget
     
     /// widgets current value, to get/set use value() and value( float )
     float value_;
-    
-    /// the callback and its userdata pointer. the user-data pointer is set to
-    /// the Avtk::UI* that is passed into the contstructor. The callback 
-    void (*callback)(Widget* , void*);
-    void* callbackUD;
     
     /// holds the currently pressed mouse-button
     int mouseButtonPressed_;
