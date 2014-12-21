@@ -14,40 +14,60 @@
 
 static inline const LV2_Atom* read_set_file(FablaLV2* self,
                                             const URIs*     uris,
-                                            const LV2_Atom_Object* obj)
+                                            const LV2_Atom_Object* obj,
+                                            int& bank,
+                                            int& pad )
 {
   if (obj->body.otype != uris->patch_Set) {
-    lv2_log_trace(&self->logger,"Ignoring unknown message type %d\n", obj->body.otype);
+    lv2_log_note(&self->logger,"Ignoring unknown message type %d\n", obj->body.otype);
     return NULL;
   }
   
-  /* Get property URI. */
+  // get data from atom
+  const LV2_Atom* b = 0;
+  const LV2_Atom* p = 0;
   const LV2_Atom* property = NULL;
-  lv2_atom_object_get(obj, uris->patch_property, &property, 0);
-  if (!property) {
-    lv2_log_trace(&self->logger,"Malformed set message has no body.\n");
-    return NULL;
-  } else if (property->type != uris->atom_URID) {
-    lv2_log_trace(&self->logger,"Malformed set message has non-URID property.\n");
-    return NULL;
-  } else if (((const LV2_Atom_URID*)property)->body != uris->fabla2_sample) {
-    lv2_log_trace(&self->logger,"Set message for unknown property.\n");
+  
+  lv2_atom_object_get(obj,
+      uris->patch_property, &property,
+      uris->fabla2_bank   , &b,
+      uris->fabla2_pad    , &p,
+      0);
+  
+  printf(" %i, %i, %i\n", property, b, p );
+  
+  if( property && b && p )
+  {
+    lv2_log_note(&self->logger,"Work() : Getting Bank / Pad data from Atom.\n");
+    
+    bank = ((const LV2_Atom_Int*)b)->body;
+    printf("got bank %i\n", bank);
+    pad = ((const LV2_Atom_Int*)p)->body;
+    printf("got pad %i\n", pad );
+  
+    // get file path
+    const LV2_Atom* file_path = NULL;
+    lv2_atom_object_get(obj, uris->patch_value, &file_path, 0);
+    if (!file_path)
+    {
+      lv2_log_note(&self->logger,"Malformed set message has no value.\n");
+      return 0;
+    }
+    else if (file_path->type != uris->atom_Path)
+    {
+      lv2_log_note(&self->logger,"Set message value is not a Path.\n");
+      return 0;
+    }
+    return file_path;
+  }
+  else
+  {
+    lv2_log_error(&self->logger,"Fabla2: Work() sample-load: error parsting Atom: abort.\n");
     printf("Unmapped: %s\n", self->unmap->unmap( self->unmap->handle, ((const LV2_Atom_URID*)property)->body ) );
-    return NULL;
+    return 0;
   }
   
-  /* Get value. */
-  const LV2_Atom* file_path = NULL;
-  lv2_atom_object_get(obj, uris->patch_value, &file_path, 0);
-  if (!file_path) {
-    lv2_log_trace(&self->logger,"Malformed set message has no value.\n");
-    return NULL;
-  } else if (file_path->type != uris->atom_Path) {
-    lv2_log_trace(&self->logger,"Set message value is not a Path.\n");
-    return NULL;
-  }
-  
-  return file_path;
+  return 0;
 }
 
 // Offline thread, does not have to be RT safe
@@ -70,15 +90,21 @@ fabla2_work( LV2_Handle                  instance,
     //printf("Unmapped: %s\n", self->unmap->unmap( self->unmap->handle, atom->type ) );
     const LV2_Atom_Object* obj = (const LV2_Atom_Object*)data;
     
-    const LV2_Atom* file_path = read_set_file( self, &self->uris, obj);
+    int bank = 0;
+    int pad  = 0;
+    const LV2_Atom* file_path = read_set_file( self, &self->uris, obj, bank, pad );
     
-    if (!file_path) {
-            return LV2_WORKER_ERR_UNKNOWN;
+    if (!file_path || bank == -1 || pad == -1 )
+    {
+      lv2_log_note(&self->logger,"Fabla2: Work() !file_path || !bank || !pad: aborting sample load.\n" );
+      return LV2_WORKER_ERR_UNKNOWN;
     }
     
     std::string file = (const char*)LV2_ATOM_BODY_CONST(file_path);
     Fabla2::Sample* s = new Fabla2::Sample( 0x0, 44100, "LoadedSample", file );
-    //printf("Work() - Loading %s: Sample() has %i frames\n", file.c_str(), s->getFrames() );
+    
+    lv2_log_note(&self->logger,"Work() - B: %i, P %i: Loading %s: Sample() has %i frames\n",
+        bank, pad, file.c_str(), s->getFrames() );
     
     if ( s )
     {
@@ -86,8 +112,8 @@ fabla2_work( LV2_Handle                  instance,
       msg.atom.size = sizeof(SampleLoadUnload*);
       msg.atom.type = self->uris.fabla2_SampleLoad;
       
-      msg.bank   = 0;
-      msg.pad    = 0;
+      msg.bank   = bank;
+      msg.pad    = pad;
       msg.sample = s;
       
       // Loaded sample, send it to run() to be applied.
