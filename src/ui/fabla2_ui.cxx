@@ -54,7 +54,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   recordOverPad->theme( theme( 4 ) );
   recordOverPad->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
-  followPadBtn = new Avtk::Button( this, 5, 43+(s+6)*2 + 78, s * 2 + 6, 22,  "Follow" );
+  followPadBtn = new Avtk::Button( this, 5, 43+(s+6)*2 + 75, s * 2 + 6, 22,  "Follow" );
   followPadBtn->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
   loadSample = new Avtk::Button( this, 5, 43+(s+6)*2 + 78+ 25, s * 2 + 6, 22,  "Load" );
@@ -342,6 +342,19 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     s << currentDir << "/" << selected;
     // load the new dir
     loadNewDir( s.str().c_str() );
+  }
+  else if( w == listSampleFiles )
+  {
+    std::string selected = listSampleFiles->selectedString();
+    std::stringstream s;
+    s << currentDir << "/" << selected;
+    printf("UI sending sample load: %s\n", s.str().c_str() );
+
+#define OBJ_BUF_SIZE 1024
+    uint8_t obj_buf[OBJ_BUF_SIZE];
+    lv2_atom_forge_set_buffer(&forge, obj_buf, OBJ_BUF_SIZE);
+    LV2_Atom* msg = writeSetFile( &forge, &uris, s.str() );
+    write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
   }
   else if( w == muteGroup )
   {

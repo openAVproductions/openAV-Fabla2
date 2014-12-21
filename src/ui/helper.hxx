@@ -13,8 +13,7 @@
 static LV2_Atom* writeSetFile( LV2_Atom_Forge* forge, URIs* uris, std::string file )
 {
   LV2_Atom_Forge_Frame frame;
-  LV2_Atom* set = (LV2_Atom*)lv2_atom_forge_object(
-    forge, &frame, 0, uris->patch_Set);
+  LV2_Atom* set = (LV2_Atom*)lv2_atom_forge_object( forge, &frame, 0, uris->patch_Set);
 
   lv2_atom_forge_key(forge, uris->patch_property);
   lv2_atom_forge_urid(forge, uris->fabla2_sample);
