@@ -102,6 +102,7 @@ class TestUI : public Avtk::UI
     /// default directories / file loading
     std::string defaultDir;
     std::string currentDir;
+    std::string currentFilesDir;
     
     /// holds the stripped start of the filename, as presented in List. To build
     /// the loadable /path/filename, we do << currentDir << strippedFilenameStart;

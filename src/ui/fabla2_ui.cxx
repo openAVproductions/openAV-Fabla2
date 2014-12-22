@@ -81,7 +81,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   switchType = new Avtk::Number( this, 355, 208, divider, 20, "SwitchType" );
   switchType->setRange( 1, 2 );
   
-  layers    = new Avtk::List( this, 355, 218, 90, 109, "Layers" );
+  layers    = new Avtk::List( this, 355, 228, 90, 109, "Layers" );
   adsr      = new Avtk::Button( this, 450, 218, 90, 109, "ADSR" );
   
   // Filters
@@ -156,14 +156,19 @@ void TestUI::loadNewDir( std::string newDir )
   int error = Avtk::directories( newDir, tmp );
   if( !error )
   {
-    currentDir = newDir;
-    printf("Fabla2UI::loadNewDir() new dir : %s\n", newDir.c_str() );
-    listSampleDirs->clear();
-    listSampleDirs->show( tmp );
+    // don't navigate into a dir with only . and ..
+    if( tmp.size() > 2 )
+    {
+      currentDir = newDir;
+      printf("Fabla2UI::loadNewDir() new dir : %s\n", newDir.c_str() );
+      listSampleDirs->clear();
+      listSampleDirs->show( tmp );
+    }
     
+    currentFilesDir = newDir;
     tmp.clear();
     listSampleFiles->clear();
-    error = Avtk::directoryContents( currentDir, tmp, strippedFilenameStart );
+    error = Avtk::directoryContents( currentFilesDir, tmp, strippedFilenameStart );
     listSampleFiles->show( tmp );
   }
   else
@@ -356,7 +361,7 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   {
     std::string selected = listSampleFiles->selectedString();
     std::stringstream s;
-    s << currentDir << "/" << strippedFilenameStart << selected;
+    s << currentFilesDir << "/" << strippedFilenameStart << selected;
     printf("UI sending sample load: %s\n", s.str().c_str() );
 
 #define OBJ_BUF_SIZE 1024
