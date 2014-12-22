@@ -119,12 +119,15 @@ void Voice::stop()
 {
   if( active_ )
   {
-    /*
-    Sample* samp = sampler->getSample();
-    if( samp )
-      printf("Voice::stop() %i, on Sample %s\n", ID, samp->getName() );
-    */
-    adsr->gate( false );
+    if ( pad_->triggerMode() == Pad::TM_GATED )
+    {
+      printf("Voice::stop() %i, GATED\n", ID );
+      adsr->gate( false );
+    }
+    else
+    {
+      printf("Voice::stop() %i, ONE-SHOT, ignoring.\n", ID );
+    }
   }
 }
 

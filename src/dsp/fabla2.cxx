@@ -484,14 +484,16 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
     //printf("setting start point to %f\n", v );
     pad->muteGroup( int(v) );
   }
+  else if(  URI == uris->fabla2_PadTriggerMode ) {
+    printf("setting start point to %f\n", v );
+    if( v > 0.499999 )
+      pad->triggerMode( Pad::TM_ONE_SHOT );
+    else
+      pad->triggerMode( Pad::TM_GATED );
+  }
   else if(  URI == uris->fabla2_RequestUiSampleState ) {
-    //printf("UI requested %i, %i, %i\n", b, p, l );
-    {
-      writeSampleState( b, p, l, pad, s );
-      
-      // causes double-frees / corruption somewhere
-      tx_waveform( b, p, l, s->getWaveform() );
-    }
+    writeSampleState( b, p, l, pad, s );
+    tx_waveform( b, p, l, s->getWaveform() );
   }
 }
 

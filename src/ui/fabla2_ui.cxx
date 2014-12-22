@@ -72,6 +72,10 @@ TestUI::TestUI( PuglNativeWindow parent ):
   muteGroup = new Avtk::Number( this, 355, 161, divider, 20, "Mute Group" );
   muteGroup->setRange( 0, 8 );
   
+  waste = new Avtk::Button( this, 355+divider, 184, 90 - divider, 20, "Trigger" );
+  triggerMode = new Avtk::Number( this, 355, 184, divider, 20, "Trigger Mode" );
+  triggerMode->setRange( 1, 1 );
+  
   layers    = new Avtk::List( this, 355, 218, 90, 109, "Layers" );
   adsr      = new Avtk::Button( this, 450, 218, 90, 109, "ADSR" );
   
@@ -361,6 +365,12 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     float fin = tmp * 8;
     //printf("MuteGroup %i\n", (int)fin);
     writeAtom( uris.fabla2_PadMuteGroup, fin );
+  }
+  else if( w == triggerMode )
+  {
+    float fin = tmp;
+    //printf("TriggerMode %i\n", (int)fin);
+    writeAtom( uris.fabla2_PadTriggerMode, fin );
   }
   else if( w == sampleGain )
   {

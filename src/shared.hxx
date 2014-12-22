@@ -46,6 +46,7 @@
 #define FABLA2_replyUiSampleState   FABLA2_URI "#ReplyUiSampleState"
 
 #define FABLA2_PadMuteGroup         FABLA2_URI "#PadMuteGroup"
+#define FABLA2_PadTriggerMode       FABLA2_URI "#PadTriggerMode"
 #define FABLA2_PadRefreshLayers     FABLA2_URI "#PadRefreshLayers"
 #define FABLA2_PadPlay              FABLA2_URI "#PadPlay"
 #define FABLA2_PadStop              FABLA2_URI "#PadStop"
@@ -97,6 +98,7 @@ typedef struct {
   LV2_URID fabla2_ReplyUiSampleState;
   
   LV2_URID fabla2_PadMuteGroup;
+  LV2_URID fabla2_PadTriggerMode;
   LV2_URID fabla2_PadRefreshLayers;
   LV2_URID fabla2_PadPlay;
   LV2_URID fabla2_PadStop;
@@ -149,6 +151,7 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->fabla2_RequestUiSampleState = map->map(map->handle, FABLA2_requestUiSampleState);
   uris->fabla2_ReplyUiSampleState   = map->map(map->handle, FABLA2_replyUiSampleState);
   
+  uris->fabla2_PadTriggerMode       = map->map(map->handle, FABLA2_PadTriggerMode);
   uris->fabla2_PadMuteGroup         = map->map(map->handle, FABLA2_PadMuteGroup);
   uris->fabla2_PadRefreshLayers     = map->map(map->handle, FABLA2_PadRefreshLayers);
   uris->fabla2_PadPlay              = map->map(map->handle, FABLA2_PadPlay);

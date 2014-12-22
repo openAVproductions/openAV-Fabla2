@@ -63,6 +63,15 @@ class Pad
     void muteGroup( int mg ){muteGroup_ = mg;}
     int  muteGroup(){return muteGroup_;}
     
+    /// Sets play method for samples: gated or one-shot
+    enum TRIGGER_MODE {
+      TM_GATED = 0,       /// Note on starts, note off does ADSR->release()
+      TM_ONE_SHOT,        /// Always plays samples until end
+    };
+    
+    void triggerMode( TRIGGER_MODE tm ){ triggerMode_ = tm; }
+    int triggerMode(){ return triggerMode_; }
+    
     /// get a layer: wether its velocity or Round-robin doesn't matter: this
     /// is for UI interaction
     int nLayers(){return samples.size();}
@@ -79,6 +88,7 @@ class Pad
       SS_VELOCITY_LAYERS, /// takes velocity into account, and plays a sample
     };
     void switchSystem( SAMPLE_SWITCH_SYSTEM sss );
+    int switchSystem(){ return sampleSwitchSystem; }
     
     /// testing func
     void checkAll();
@@ -89,6 +99,7 @@ class Pad
     int bank_;// pad bank
     int ID_; // pad place within Bank
     int muteGroup_;
+    int triggerMode_;
     
     SAMPLE_SWITCH_SYSTEM sampleSwitchSystem;
     int sampleLayerCounter;

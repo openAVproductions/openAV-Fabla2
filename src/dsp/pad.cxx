@@ -39,6 +39,7 @@ Pad::Pad( Fabla2DSP* d, int rate, int ID ) :
   sr(rate),
   ID_( ID ),
   muteGroup_( 0 ),
+  triggerMode_( TM_GATED ),
   
   sampleSwitchSystem( SS_NONE ),
   sampleLayerCounter(0)
