@@ -106,7 +106,7 @@ fabla2_work( LV2_Handle                  instance,
     lv2_log_note(&self->logger,"Work() - B: %i, P %i: Loading %s: Sample() has %i frames\n",
         bank, pad, file.c_str(), s->getFrames() );
     
-    if ( s )
+    if ( s && s->getFrames() )
     {
       SampleLoadUnload msg;
       msg.atom.size = sizeof(SampleLoadUnload*);
@@ -118,6 +118,11 @@ fabla2_work( LV2_Handle                  instance,
       
       // Loaded sample, send it to run() to be applied.
       respond( handle, sizeof(msg), &msg );
+    }
+    else
+    {
+      lv2_log_error(&self->logger,"Work() - ERROR Loading %s: Sample has 0 frames? Check file path/name!\n", file.c_str());
+      delete s;
     }
   }
   

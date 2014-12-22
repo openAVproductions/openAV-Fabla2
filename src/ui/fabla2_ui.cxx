@@ -163,7 +163,7 @@ void TestUI::loadNewDir( std::string newDir )
     
     tmp.clear();
     listSampleFiles->clear();
-    error = Avtk::directoryContents( currentDir, tmp );
+    error = Avtk::directoryContents( currentDir, tmp, strippedFilenameStart );
     listSampleFiles->show( tmp );
   }
   else
@@ -356,7 +356,7 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   {
     std::string selected = listSampleFiles->selectedString();
     std::stringstream s;
-    s << currentDir << "/" << selected;
+    s << currentDir << "/" << strippedFilenameStart << selected;
     printf("UI sending sample load: %s\n", s.str().c_str() );
 
 #define OBJ_BUF_SIZE 1024

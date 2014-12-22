@@ -103,6 +103,10 @@ class TestUI : public Avtk::UI
     std::string defaultDir;
     std::string currentDir;
     
+    /// holds the stripped start of the filename, as presented in List. To build
+    /// the loadable /path/filename, we do << currentDir << strippedFilenameStart;
+    std::string strippedFilenameStart;
+    
     /// followPad allows the UI to update to the last played PAD.
     bool followPad;
     
