@@ -26,6 +26,9 @@
 #include <sndfile.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
+
+#include <samplerate.h>
 
 #ifdef FABLA2_COMPONENT_TEST
 #include "tests/qunit.hxx"
@@ -60,6 +63,8 @@ void Sample::recacheWaveform()
 #endif
   int sampsPerPix = frames / FABLA2_UI_WAVEFORM_PX;
   
+  float highestPeak = 0.f;
+  
   // loop over each pixel value we need
   for( int p = 0; p < FABLA2_UI_WAVEFORM_PX; p++ )
   {
@@ -83,9 +88,66 @@ void Sample::recacheWaveform()
     if( channels == 2 )
       average /= 2;
     
-    waveformData[p] = (average / sampsPerPix);
+    float tmp = (average / sampsPerPix);
+    
+    if( fabsf(tmp) > highestPeak )
+      highestPeak = fabsf(tmp);
+    
+    waveformData[p] = tmp;
+  }
+  
+  float normalizeFactor = 1;
+  if( highestPeak > 0.001 ) // avoid divide-by-zero
+    normalizeFactor = (1.f / highestPeak);
+  printf("normalizing with highestPeak %f: nomalizeFactor %f\n", highestPeak, normalizeFactor );
+  
+  
+  // loop over each pixel and normalize it
+  for( int p = 0; p < FABLA2_UI_WAVEFORM_PX; p++ )
+  {
+    waveformData[p] = waveformData[p] * normalizeFactor;
   }
 }
+
+
+void Sample::resample( int fromSr, std::vector<float>& buf )
+{
+  /// resample audio
+  printf("Resampling from %i to %i\n", fromSr, sr);
+  
+  float resampleRatio = float( sr ) / fromSr;
+  std::vector<float> resampled( buf.size() * resampleRatio );
+  
+  SRC_DATA data;
+  data.data_in  = &buf[0];
+  data.data_out = &resampled[0];
+  
+  data.input_frames = buf.size();
+  data.output_frames = buf.size() * resampleRatio;
+  
+  data.end_of_input = 0;
+  data.src_ratio = resampleRatio;
+  
+  int q = SRC_SINC_FASTEST;
+  /*
+  switch( resampleQuality )
+  {
+    case 0: q = SRC_LINEAR;             break;
+    case 1: q = SRC_SINC_FASTEST;       break;
+    case 2: q = SRC_SINC_BEST_QUALITY;  break;
+  }
+  */
+  // resample quality taken from config file, 
+  int ret = src_simple ( &data, q, 1 );
+  if ( ret == 0 )
+    printf("%s%i%s%i", "Resampling finished, from ", data.input_frames_used, " to ", data.output_frames_gen );
+  else
+    printf("%s%i%s%i", "Resampling finished, from ", data.input_frames_used, " to ", data.output_frames_gen );
+  
+  /// exchange buffers, so buf contains the resampled audio
+  buf.swap( resampled );
+}
+
 
 void Sample::init()
 {
@@ -178,8 +240,17 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
   
   // read from disk
   sf_seek(sndfile, 0ul, SEEK_SET);
-  int samplRead = sf_read_float( sndfile, loadBuffer, info.frames *channels );
+  int samplRead = sf_read_float( sndfile, loadBuffer, info.frames * channels );
   sf_close(sndfile);
+  
+  if( sr != info.samplerate )
+  {
+    // resample audio to current session sample-rate
+    resample( info.samplerate, audioMono );
+    
+    // store new re-sampled size
+    frames = audioMono.size() / channels;
+  }
   
   if( channels == 2 )
   {

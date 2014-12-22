@@ -33,6 +33,10 @@ pkg_check_modules(SNDFILE sndfile REQUIRED)
 include_directories( ${SNDFILE_INCLUDE_DIRS})
 link_directories   ( ${SNDFILE_LIBRARY_DIRS})
 
+pkg_check_modules(SAMPLERATE samplerate REQUIRED)
+include_directories( ${SAMPLERATE_INCLUDE_DIRS}  )
+link_directories   ( ${SAMPLERATE_LIBRARY_DIRS}  )
+
 ADD_DEFINITIONS( "-DPUGL_HAVE_CAIRO" )
 pkg_check_modules(CAIRO cairo REQUIRED)
 include_directories( ${CAIRO_INCLUDE_DIRS})
@@ -70,13 +74,13 @@ ELSE()
   set_target_properties(fabla2ui PROPERTIES PREFIX "")
 
 
-  target_link_libraries( fabla2 ${SNDFILE_LIBRARIES})
+  target_link_libraries( fabla2 ${SNDFILE_LIBRARIES}    )
+  target_link_libraries( fabla2 ${SAMPLERATE_LIBRARIES} )
 
   target_link_libraries( fabla2ui ${CAIRO_LIBRARIES}  )
   target_link_libraries( fabla2ui ${X11_LIBRARIES}    )
   target_link_libraries( fabla2ui ${SNDFILE_LIBRARIES})
-
-
+  
   # install CMake compiled files
   install (TARGETS fabla2   DESTINATION lib/lv2/fabla2.lv2/)
   install (TARGETS fabla2ui DESTINATION lib/lv2/fabla2.lv2/)

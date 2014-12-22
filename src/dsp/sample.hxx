@@ -87,6 +87,7 @@ class Sample
     
     // convienience for setting defaults after constructor
     void init();
+    void resample( int fromSr, std::vector<float>& inBuffer );
     
     std::string name;
     
