@@ -85,6 +85,7 @@ class Voice
     Pad* pad_;
     
     bool active_;
+    bool filterActive_;
     
     yasper::ptr<ADSR> adsr;
     yasper::ptr<Sampler> sampler;

@@ -77,8 +77,8 @@ void Voice::play( int bankInt, int padInt, Pad* p, int velocity )
   
   sampler->play( pad_, velocity );
   
-  Sample* samp = sampler->getSample();
-  if( samp )
+  Sample* s = sampler->getSample();
+  if( s )
   {
     //printf("Voice::play() %i, on Sample %s\n", ID, samp->getName() );
   }
@@ -91,6 +91,24 @@ void Voice::play( int bankInt, int padInt, Pad* p, int velocity )
     active_ = false;
     return;
   }
+  
+  filterActive_ = true;
+  
+  int filterType = 0; // lowpass
+  // check the value of the filter type to set voice params
+       if( s->filterType < 0.25 )
+    filterActive_ = false;
+  else if( s->filterType < 0.5 )
+    filterType = 0;
+  else if( s->filterType < 0.75 )
+    filterType = 1;
+  else if( s->filterType < 1.0 )
+    filterType = 1;
+  else
+    filterType = 0; // lowpass default
+  
+  filterL->setType( filterType );
+  filterR->setType( filterType );
   
   adsr->reset();
   adsr->gate( true );
@@ -150,19 +168,9 @@ void Voice::process()
   /// set filter state
   Sample* s = sampler->getSample();
   
-  //if( int( s->filterType * 4 ) != 0 )
-  if( false )
+  // filter details setup in play()
+  if( filterActive_ )
   {
-    int targetType = s->filterType * 4;
-    
-    if( filterL->getType() != targetType )
-    {
-      
-      filterL->setType( targetType );
-      filterR->setType( targetType );
-      //printf("SVF: in %f, target type %i, filter has %i\n", s->filterType, targetType, filterL->getType() );
-    }
-    
     filterL->setResonance( ( s->filterResonance) );
     filterR->setResonance( ( s->filterResonance) );
     

@@ -56,6 +56,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   followPadBtn = new Avtk::Button( this, 5, 43+(s+6)*2 + 75, s * 2 + 6, 22,  "Follow" );
   followPadBtn->clickMode( Avtk::Widget::CLICK_TOGGLE );
+  followPadBtn->value( 1 );
   
   loadSample = new Avtk::Button( this, 5, 43+(s+6)*2 + 78+ 25, s * 2 + 6, 22,  "Load" );
   loadSample->clickMode( Avtk::Widget::CLICK_TOGGLE );
