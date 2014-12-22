@@ -84,7 +84,9 @@ void Voice::play( int bankInt, int padInt, Pad* p, int velocity )
   }
   else
   {
+#ifdef FABLA2_COMPONENT_TEST
     printf("Voice::play() %i, sampler->play() returns NULL sample! Setting active to false\n", ID );
+#endif
     // *hard* set the sample to not play: we don't have a sample!
     active_ = false;
     return;
@@ -121,12 +123,12 @@ void Voice::stop()
   {
     if ( pad_->triggerMode() == Pad::TM_GATED )
     {
-      printf("Voice::stop() %i, GATED\n", ID );
+      //printf("Voice::stop() %i, GATED\n", ID );
       adsr->gate( false );
     }
     else
     {
-      printf("Voice::stop() %i, ONE-SHOT, ignoring.\n", ID );
+      //printf("Voice::stop() %i, ONE-SHOT, ignoring.\n", ID );
     }
   }
 }
@@ -146,20 +148,19 @@ void Voice::process()
   //* adsrVal );
   
   /// set filter state
-  Sample* s = pad_->layer( pad_->lastPlayedLayer() );
+  Sample* s = sampler->getSample();
   
   //if( int( s->filterType * 4 ) != 0 )
   if( false )
   {
     int targetType = s->filterType * 4;
-    //if( 
     
     if( filterL->getType() != targetType )
     {
       
       filterL->setType( targetType );
       filterR->setType( targetType );
-      printf("SVF: in %f, target type %i, filter has %i\n", s->filterType, targetType, filterL->getType() );
+      //printf("SVF: in %f, target type %i, filter has %i\n", s->filterType, targetType, filterL->getType() );
     }
     
     filterL->setResonance( ( s->filterResonance) );

@@ -101,24 +101,25 @@ Sample* Pad::getPlaySample( int velocity )
   /// Logic to do round-robin / velocity mapping here
   if( samples.size() > 0 )
   {
-    // first update the sample-counter, wrap it if needed. Later we play the
-    // sample we just updated to, and its stored in sampleLayerCounter for UI
-    sampleLayerCounter++;
-    if( sampleLayerCounter >= samples.size() )
-        sampleLayerCounter = 0;
+    printf("playing pad %i, with switch mode %i\n", ID_, int(sampleSwitchSystem) );
+    
+    printf("playing pad %i with sampleLayerCounter %i\n", ID_, sampleLayerCounter );
     
     if( sampleSwitchSystem == SS_NONE )
     {
-      sampleLayerCounter = 0;
-      return samples.at( 0 );
+      printf("playing pad SS_NONE, layer %i\n", sampleLayerCounter);
+      return samples.at( sampleLayerCounter );
     }
     else if( sampleSwitchSystem == SS_ROUND_ROBIN )
     {
-      Sample* tmp = samples.at( sampleLayerCounter );
-      
+      // first update the sample-counter, wrap it if needed. Later we play the
+      // sample we just updated to, and its stored in sampleLayerCounter for UI
+      sampleLayerCounter++;
       if( sampleLayerCounter >= samples.size() )
         sampleLayerCounter = 0;
       
+      printf("playing pad SS_ROUND_ROBIN %i\n", sampleLayerCounter);
+      Sample* tmp = samples.at( sampleLayerCounter );
       return tmp;
     }
     else if( sampleSwitchSystem == SS_VELOCITY_LAYERS )
@@ -130,11 +131,11 @@ Sample* Pad::getPlaySample( int velocity )
         {
           // remember last played layer, for UI updates
           sampleLayerCounter = i;
+          printf("playing pad SS_VELOCITY_LAYERS %i\n", sampleLayerCounter );
           return samples.at(i);
         }
       }
-      Sample* tmp = samples.at( sampleLayerCounter );
-      return tmp;
+      
     }
   }
   

@@ -76,6 +76,10 @@ TestUI::TestUI( PuglNativeWindow parent ):
   triggerMode = new Avtk::Number( this, 355, 184, divider, 20, "Trigger Mode" );
   triggerMode->setRange( 1, 1 );
   
+  waste = new Avtk::Button( this, 355+divider, 208, 90 - divider, 20, "Switch" );
+  switchType = new Avtk::Number( this, 355, 208, divider, 20, "SwitchType" );
+  switchType->setRange( 1, 2 );
+  
   layers    = new Avtk::List( this, 355, 218, 90, 109, "Layers" );
   adsr      = new Avtk::Button( this, 450, 218, 90, 109, "ADSR" );
   
@@ -371,6 +375,12 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     float fin = tmp;
     //printf("TriggerMode %i\n", (int)fin);
     writeAtom( uris.fabla2_PadTriggerMode, fin );
+  }
+  else if( w == switchType )
+  {
+    float fin = tmp * 2.99;
+    printf("switchType %f\n", fin);
+    writeAtom( uris.fabla2_PadSwitchType, fin );
   }
   else if( w == sampleGain )
   {
