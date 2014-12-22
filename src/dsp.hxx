@@ -65,7 +65,7 @@ class FablaLV2
     
     URIs uris;
     
-    /// the actual DSP instance: public for LV2 Work Response
+    /// the actual DSP instance: public for LV2 Work Response, LV2 State Save
     Fabla2::Fabla2DSP* dsp;
   
   private:

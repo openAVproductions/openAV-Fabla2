@@ -65,7 +65,7 @@ IF( FABLA2_TESTS )
   configure_file( "src/dsp/tests/test.wav" "test.wav" COPYONLY)
 
 ELSE()
-  FILE(GLOB srcDSP src/dsp.cxx src/lv2_work.cxx src/dsp/*.cxx )
+  FILE(GLOB srcDSP src/dsp.cxx src/lv2_work.cxx src/lv2_state.cxx src/dsp/*.cxx )
   FILE(GLOB srcUI  src/ui.cxx  src/ui/*.cxx src/ui/avtk/avtk/*.cxx src/ui/avtk/avtk/pugl/pugl_x11.c )
 
   ADD_LIBRARY( fabla2   SHARED ${srcDSP} )

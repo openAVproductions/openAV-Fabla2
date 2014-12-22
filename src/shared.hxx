@@ -42,6 +42,8 @@
 #define FABLA2_UI_WAVEFORM_PX 422
 
 /// Atom Event types
+#define FABLA2_StateStringJSON      FABLA2_URI "#StateStringJSON"
+
 #define FABLA2_requestUiSampleState FABLA2_URI "#RequestUiSampleState"
 #define FABLA2_replyUiSampleState   FABLA2_URI "#ReplyUiSampleState"
 
@@ -83,6 +85,7 @@ typedef struct {
   LV2_URID atom_Path;
   LV2_URID atom_Int;
   LV2_URID atom_Float;
+  LV2_URID atom_String;
   LV2_URID atom_Vector;
   LV2_URID atom_Resource;
   LV2_URID atom_Sequence;
@@ -94,6 +97,8 @@ typedef struct {
   LV2_URID patch_Set;
   LV2_URID patch_property;
   LV2_URID patch_value;
+  
+  LV2_URID fabla2_StateStringJSON;
   
   LV2_URID fabla2_RequestUiSampleState;
   LV2_URID fabla2_ReplyUiSampleState;
@@ -138,6 +143,7 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->atom_Path                   = map->map(map->handle, LV2_ATOM__Path);
   uris->atom_Int                    = map->map(map->handle, LV2_ATOM__Int);
   uris->atom_Float                  = map->map(map->handle, LV2_ATOM__Float);
+  uris->atom_String                 = map->map(map->handle, LV2_ATOM__String);
   uris->atom_Vector                 = map->map(map->handle, LV2_ATOM__Vector);
   uris->atom_Resource               = map->map(map->handle, LV2_ATOM__Resource);
   uris->atom_Sequence               = map->map(map->handle, LV2_ATOM__Sequence);
@@ -149,6 +155,8 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->patch_Set                   = map->map(map->handle, LV2_PATCH__Set);
   uris->patch_property              = map->map(map->handle, LV2_PATCH__property);
   uris->patch_value                 = map->map(map->handle, LV2_PATCH__value);
+  
+  uris->fabla2_StateStringJSON      = map->map(map->handle, FABLA2_StateStringJSON);
   
   uris->fabla2_RequestUiSampleState = map->map(map->handle, FABLA2_requestUiSampleState);
   uris->fabla2_ReplyUiSampleState   = map->map(map->handle, FABLA2_replyUiSampleState);

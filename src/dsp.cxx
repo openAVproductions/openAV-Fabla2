@@ -21,6 +21,7 @@
 #include "dsp.hxx"
 #include "shared.hxx"
 #include "lv2_work.hxx"
+#include "lv2_state.hxx"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -267,8 +268,14 @@ const void* FablaLV2::extension_data(const char* uri)
 {
   static const LV2_Worker_Interface worker = { fabla2_work, fabla2_work_response, NULL };
   if (!strcmp(uri, LV2_WORKER__interface)) {
-		return &worker;
-	}
+    return &worker;
+  }
+  
+  static const LV2_State_Interface state_iface = { fabla2_save, fabla2_restore };
+  if (!strcmp(uri, LV2_STATE__interface)) {
+      return &state_iface;
+  }
+  
   return NULL;
 }
 
