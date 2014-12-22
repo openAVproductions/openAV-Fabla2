@@ -80,6 +80,9 @@ class Sample
     float filterType;     ///< Filter high/low/band-pass setting
     float filterFrequency;///< Filter cutoff/center frequency
     float filterResonance;///< Filter resonance ( Q-factor )
+    
+    int velLow;           ///< Velocity low mark  (inclusive)
+    int velHigh;          ///< Velocity high mark (inclusive)
   
   private:
     Fabla2DSP* dsp;
@@ -100,10 +103,6 @@ class Sample
     /// a low-resolution re-sample of the audio data in this Sample
     void recacheWaveform();
     float waveformData[FABLA2_UI_WAVEFORM_PX];
-    
-    /// velocity range
-    int velLow;
-    int velHigh;
 };
 
 };

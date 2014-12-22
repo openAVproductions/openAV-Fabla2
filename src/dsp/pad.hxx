@@ -25,6 +25,7 @@
 
 #include <vector>
 #include <string>
+#include <stdio.h>
 
 namespace Fabla2
 {
@@ -60,8 +61,8 @@ class Pad
     void add( Sample* );
     void clearAllSamples();
     
-    void muteGroup( int mg ){muteGroup_ = mg;}
-    int  muteGroup(){return muteGroup_;}
+    void muteGroup( int mg ){muteGroup_ = mg; }
+    int  muteGroup(){ return muteGroup_;}
     
     /// Sets play method for samples: gated or one-shot
     enum TRIGGER_MODE {

@@ -289,7 +289,7 @@ const float* Sample::getAudio( int chnl )
 
 bool Sample::velocity( int vel )
 {
-  if( vel > velLow &&
+  if( vel >= velLow &&
       vel <= velHigh )
   {
     return true;

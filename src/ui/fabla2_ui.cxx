@@ -379,7 +379,7 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   else if( w == triggerMode )
   {
     float fin = tmp;
-    //printf("TriggerMode %i\n", (int)fin);
+    printf("TriggerMode %i\n", (int)fin);
     writeAtom( uris.fabla2_PadTriggerMode, fin );
   }
   else if( w == switchType )
