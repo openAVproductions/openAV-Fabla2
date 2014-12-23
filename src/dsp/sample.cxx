@@ -301,43 +301,25 @@ const float* Sample::getAudio( int chnl )
 bool Sample::write( const char* filename )
 {
   printf("%s Start: %s : %s\n", __PRETTY_FUNCTION__, __TIME__, filename );
-  /*
+  
   SndfileHandle outfile( filename, SFM_WRITE, SF_FORMAT_WAV | SF_FORMAT_FLOAT, channels, dsp->sr );
   if( channels == 1 )
   {
-    outfile.write( &audioMono[0], frames * channels );
+    int written = outfile.write( &audioMono[0], frames );
+    //printf(" wrote %i frames!\n", written );
   }
   else
   {
     // hack to write stereo interleaved channels
+    std::vector<float> tmp;
     for(int i = 0; i < frames; i++)
     {
-      outfile.write( &audioMono[i]       , 1 );
-      outfile.write( &audioStereoRight[i], 1 );
+      tmp.push_back( audioMono[i] );
+      tmp.push_back( audioStereoRight[i] );
     }
+    int wrtn = outfile.write( &tmp[0], frames * channels );
+    printf("Stere: wrote %i frames!\n", wrtn );
   }
-  */
-  SNDFILE* outfile;
-  SF_INFO info;
-  info.samplerate = dsp->sr;
-  info.channels   = channels;
-  info.format     = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
-  
-  if( !(outfile = sf_open(filename, SFM_WRITE, &info)) )
-  {
-    printf ("Not able to open output file %s.\n", "output.wav") ;
-    sf_perror (NULL) ;
-    return -1;
-  }
-  
-  for( int i = 0; i < frames; i++ )
-  {
-    sf_write_float(outfile, &audioMono[i], 1 );
-    if( channels == 2 )
-      sf_write_float(outfile, &audioStereoRight[i], 1 );
-  }
-  
-  sf_close (outfile);
   
   printf("%s Done: %s\n", __PRETTY_FUNCTION__, __TIME__ );
 }

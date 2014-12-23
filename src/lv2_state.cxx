@@ -276,6 +276,7 @@ fabla2_restore(LV2_Handle                  instance,
             std::string path = map_path->absolute_path(map_path->handle, filename.c_str() );
             // strip the file:// from the start
             path = path.substr( 7 );
+            printf("Loading %s\n", path.c_str() );
             Sample* s = new Sample( self->dsp, self->dsp->sr, padName.str().c_str(), path );
             if( s->getFrames() <= 0 )
             {
