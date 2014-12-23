@@ -101,7 +101,7 @@ fabla2_work( LV2_Handle                  instance,
     }
     
     std::string file = (const char*)LV2_ATOM_BODY_CONST(file_path);
-    Fabla2::Sample* s = new Fabla2::Sample( 0x0, 44100, "LoadedSample", file );
+    Fabla2::Sample* s = new Fabla2::Sample( self->dsp, 44100, "LoadedSample", file );
     
     lv2_log_note(&self->logger,"Work() - B: %i, P %i: Loading %s: Sample() has %i frames\n",
         bank, pad, file.c_str(), s->getFrames() );

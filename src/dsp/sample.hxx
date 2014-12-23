@@ -46,6 +46,9 @@ class Sample
     
     ~Sample();
     
+    /// writes this sample to disk: used by LV2 State save()
+    bool write( const char* filename );
+    
     /// gives the name of the sample
     const char*   getName()     {return name.c_str();}
     

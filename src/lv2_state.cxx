@@ -45,6 +45,33 @@ fabla2_save(LV2_Handle                 instance,
 {
   FablaLV2* self = (FablaLV2*)instance;
   
+  // Analyse new features, check for map path
+  LV2_State_Map_Path*  map_path  = 0;
+  LV2_State_Make_Path* make_path = 0;
+  
+  for (int i = 0; features[i]; ++i)
+  {
+    if (!strcmp(features[i]->URI, LV2_STATE__mapPath))
+    {
+      map_path = (LV2_State_Map_Path*)features[i]->data;
+    }
+    if (!strcmp(features[i]->URI, LV2_STATE__makePath))
+    {
+      make_path = (LV2_State_Make_Path*)features[i]->data;
+    }
+  }
+  
+  if ( !map_path )
+  {
+    printf("Error: map path not available! SAVE DID NOT COMPLETE!\n" );
+    return LV2_STATE_ERR_NO_FEATURE;
+  }
+  if ( !map_path )
+  {
+    printf("Error: Make path not available! SAVE DID NOT COMPLETE!\n" );
+    return LV2_STATE_ERR_NO_FEATURE;
+  }
+  
   Library* library = self->dsp->getLibrary();
   
   picojson::object pjAll;
@@ -80,6 +107,13 @@ fabla2_save(LV2_Handle                 instance,
         picojson::object pjLayer;
         Sample* s = pad->layer( i );
         
+        // save Sample audio data as <pad_num>_<layer_num>.wav
+        std::stringstream padName;
+        padName << "pad" << p << "_layer" << l << ".wav";
+        char* savePath = make_path->path(make_path->handle, padName.str().c_str() );
+        s->write( savePath );
+        free( savePath );
+        
         /// write Layer / Sample specific things
         pjLayer["name"            ] = picojson::value( s->getName() );
         
@@ -94,9 +128,6 @@ fabla2_save(LV2_Handle                 instance,
         
         pjLayer["velLow"          ] = picojson::value( (double)s->velLow );
         pjLayer["velHigh"         ] = picojson::value( (double)s->velHigh );
-        
-        // TODO: write the actual sample audio here!
-        
         
         std::stringstream layer;
         layer << "layer_" << l;
