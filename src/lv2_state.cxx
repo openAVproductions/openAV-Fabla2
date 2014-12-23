@@ -63,12 +63,12 @@ fabla2_save(LV2_Handle                 instance,
   
   if ( !map_path )
   {
-    printf("Error: map path not available! SAVE DID NOT COMPLETE!\n" );
+    printf("Fabla2::Save() Error: map path not available! SAVE DID NOT COMPLETE!\n" );
     return LV2_STATE_ERR_NO_FEATURE;
   }
   if ( !map_path )
   {
-    printf("Error: Make path not available! SAVE DID NOT COMPLETE!\n" );
+    printf("Fabla2::Save() Error: Make path not available! SAVE DID NOT COMPLETE!\n" );
     return LV2_STATE_ERR_NO_FEATURE;
   }
   
@@ -107,15 +107,17 @@ fabla2_save(LV2_Handle                 instance,
         picojson::object pjLayer;
         Sample* s = pad->layer( i );
         
+        /// write Layer / Sample specific things
+        pjLayer["name"            ] = picojson::value( s->getName() );
+        
         // save Sample audio data as <pad_num>_<layer_num>.wav
         std::stringstream padName;
         padName << "pad" << p << "_layer" << l << ".wav";
         char* savePath = make_path->path(make_path->handle, padName.str().c_str() );
         s->write( savePath );
         free( savePath );
-        
-        /// write Layer / Sample specific things
-        pjLayer["name"            ] = picojson::value( s->getName() );
+        // write the portable <padX_layerY.wav> form to the JSON
+        pjLayer["filename"        ] = picojson::value( padName.str().c_str() );
         
         pjLayer["gain"            ] = picojson::value( (double)s->gain );
         pjLayer["pan"             ] = picojson::value( (double)s->pan );
@@ -171,7 +173,32 @@ fabla2_restore(LV2_Handle                  instance,
 {
   FablaLV2* self = (FablaLV2*)instance;
   
-  printf("State Restore\n" );
+  // Analyse new features, check for map path
+  LV2_State_Map_Path*  map_path  = 0;
+  LV2_State_Make_Path* make_path = 0;
+  
+  for (int i = 0; features[i]; ++i)
+  {
+    if (!strcmp(features[i]->URI, LV2_STATE__mapPath))
+    {
+      map_path = (LV2_State_Map_Path*)features[i]->data;
+    }
+    if (!strcmp(features[i]->URI, LV2_STATE__makePath))
+    {
+      make_path = (LV2_State_Make_Path*)features[i]->data;
+    }
+  }
+  
+  if ( !map_path )
+  {
+    printf("Fabla2::restore() Error: map path not available! SAVE DID NOT COMPLETE!\n" );
+    return LV2_STATE_ERR_NO_FEATURE;
+  }
+  if ( !map_path )
+  {
+    printf("Fabla2::restore() Error: Make path not available! SAVE DID NOT COMPLETE!\n" );
+    return LV2_STATE_ERR_NO_FEATURE;
+  }
   
   Library* library = self->dsp->getLibrary();
   
@@ -197,7 +224,7 @@ fabla2_restore(LV2_Handle                  instance,
       return LV2_STATE_ERR_UNKNOWN;
     }
     
-    try
+    //try
     {
       for(int b = 0; b < 4; b++ )
       {
@@ -233,41 +260,65 @@ fabla2_restore(LV2_Handle                  instance,
             layerStr << "layer_" << i;
             picojson::value pjLayer = pjPad.get( layerStr.str() );
             
-            
             // create new audio sample from the file on disk here
-            float audio[1024];
-            Sample* s = new Sample( self->dsp, self->dsp->sr, 1024, audio );
+            // save Sample audio data as <pad_num>_<layer_num>.wav
+            std::stringstream padName;
+            padName << "pad" << p << "_layer" << i << ".wav";
+            /*
+            char* savePath = make_path->path(make_path->handle, padName.str().c_str() );
+            s->write( savePath );
+            free( savePath );
+            */
             
-            // write directly to Sample*
-            s->gain            = (float)pjLayer.get("gain").get<double>();
-            printf("pitch\n");
-            s->pitch           = (float)pjLayer.get("pitch").get<double>();
-            printf("pan\n");
-            s->pan             = (float)pjLayer.get("pan").get<double>();
-            printf("startPoint\n");
-            s->startPoint      = (float)pjLayer.get("startPoint").get<double>();
-            printf("filterType\n");
-            s->filterType      = (float)pjLayer.get("filterType").get<double>();
-            printf("filterFrequency\n");
-            s->filterFrequency = (float)pjLayer.get("filterFrequency").get<double>();
-            printf("filterResonance\n");
-            s->filterResonance = (float)pjLayer.get("filterResonance").get<double>();
+            std::string filename = pjLayer.get("filename").get<std::string>();
+            // map the short filename to the full path
             
-            printf("velLow\n");
-            s->velLow          = (int)pjLayer.get("velLow").get<double>();
-            printf("velHigh\n");
-            s->velHigh         = (int)pjLayer.get("velHigh").get<double>();
-            printf("done\n");
-            
+            std::string path = map_path->absolute_path(map_path->handle, filename.c_str() );
+            // strip the file:// from the start
+            path = path.substr( 7 );
+            Sample* s = new Sample( self->dsp, self->dsp->sr, padName.str().c_str(), path );
+            if( s->getFrames() <= 0 )
+            {
+              delete s;
+              // error loading this sample!
+              printf("Pad %i : Sample %i : Frames == 0, aborting!\n", p, i );
+              continue;
+            }
+            else
+            {
+              // write directly to Sample*
+              s->gain            = (float)pjLayer.get("gain").get<double>();
+              printf("pitch\n");
+              s->pitch           = (float)pjLayer.get("pitch").get<double>();
+              printf("pan\n");
+              s->pan             = (float)pjLayer.get("pan").get<double>();
+              printf("startPoint\n");
+              s->startPoint      = (float)pjLayer.get("startPoint").get<double>();
+              printf("filterType\n");
+              s->filterType      = (float)pjLayer.get("filterType").get<double>();
+              printf("filterFrequency\n");
+              s->filterFrequency = (float)pjLayer.get("filterFrequency").get<double>();
+              printf("filterResonance\n");
+              s->filterResonance = (float)pjLayer.get("filterResonance").get<double>();
+              
+              printf("velLow\n");
+              s->velLow          = (int)pjLayer.get("velLow").get<double>();
+              printf("velHigh\n");
+              s->velHigh         = (int)pjLayer.get("velHigh").get<double>();
+              printf("done\n");
+              
+              // add the sample to the Pad
+              pad->add( s );
+            }
           }
         }
         
       } // banks
     
     }
-    catch( std::exception& e )
+    //catch( std::exception& e )
     {
-      printf("PicoJSON : Runtime exception thrown! %s\n", e.what() );
+      //printf("PicoJSON : Runtime exception thrown! %s\n", e.what() );
     }
     
   }

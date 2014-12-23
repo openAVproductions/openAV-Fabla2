@@ -217,6 +217,13 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
   channels = info.channels;
   frames   = info.frames;
   
+  if( frames == 0 )
+  {
+    // bad file path?
+    printf("Error loading sample %s, frames == 0\n", path.c_str() );
+    return;
+  }
+  
   if( channels > 2 || channels < 0 )
   {
     printf("Error loading sample %s, channels >= 2\n", path.c_str() );
