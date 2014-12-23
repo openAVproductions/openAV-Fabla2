@@ -60,6 +60,7 @@ class Fabla2DSP
     
     /// public read / write, plugin format wrapper writes audio port pointers
     /// while each voice can access incoming audio
+    int sr;
     int nframes;
     
     /// control values
@@ -81,7 +82,6 @@ class Fabla2DSP
     Library* getLibrary(){return library.GetRawPointer();}
     
   private:
-    int sr;
     URIs* uris;
     
     /// voices store all the voices available for use

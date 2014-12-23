@@ -84,16 +84,19 @@ fabla2_save(LV2_Handle                 instance,
         pjLayer["name"            ] = picojson::value( s->getName() );
         
         pjLayer["gain"            ] = picojson::value( (double)s->gain );
+        pjLayer["pan"             ] = picojson::value( (double)s->pan );
         pjLayer["pitch"           ] = picojson::value( (double)s->pitch );
         pjLayer["startPoint"      ] = picojson::value( (double)s->startPoint );
         
         pjLayer["filterType"      ] = picojson::value( (double)s->filterType );
         pjLayer["filterFrequency" ] = picojson::value( (double)s->filterFrequency );
+        pjLayer["filterResonance" ] = picojson::value( (double)s->filterResonance );
         
         pjLayer["velLow"          ] = picojson::value( (double)s->velLow );
         pjLayer["velHigh"         ] = picojson::value( (double)s->velHigh );
         
         // TODO: write the actual sample audio here!
+        
         
         std::stringstream layer;
         layer << "layer_" << l;
@@ -180,6 +183,9 @@ fabla2_restore(LV2_Handle                  instance,
           Pad* pad = bank->pad( p );
           printf("Pad %i\n", p );
           
+          // kick all state out
+          pad->clearAllSamples();
+          
           std::stringstream padStr;
           padStr << "pad_" << p;
           picojson::value pjPad = pjBanks.get( padStr.str() );
@@ -190,35 +196,47 @@ fabla2_restore(LV2_Handle                  instance,
           
           for(int i = 0; i < nLayers; i++)
           {
-            Sample* s = pad->layer( i );
             printf("Sample %i\n", i );
             
             std::stringstream layerStr;
-            layerStr << "layer_" << p;
+            layerStr << "layer_" << i;
             picojson::value pjLayer = pjPad.get( layerStr.str() );
             
-            /*
-            float gain            = (float)pjLayer.get("gain").get<double>();
-            float pitch           = (float)pjLayer.get("pitch").get<double>();
-            float pan             = (float)pjLayer.get("pan").get<double>();
-            float startPoint      = (float)pjLayer.get("startPoint").get<double>();
             
-            float filterType      = (float)pjLayer.get("filterType").get<double>();
-            float filterFrequency = (float)pjLayer.get("filterFrequency").get<double>();
-            float filterResonance = (float)pjLayer.get("filterResonance").get<double>();
+            // create new audio sample from the file on disk here
+            float audio[1024];
+            Sample* s = new Sample( self->dsp, self->dsp->sr, 1024, audio );
             
-            int velLow            = (int)pjLayer.get("velLow").get<double>();
-            int velHigh           = (int)pjLayer.get("velHigh").get<double>();
-            */
+            // write directly to Sample*
+            s->gain            = (float)pjLayer.get("gain").get<double>();
+            printf("pitch\n");
+            s->pitch           = (float)pjLayer.get("pitch").get<double>();
+            printf("pan\n");
+            s->pan             = (float)pjLayer.get("pan").get<double>();
+            printf("startPoint\n");
+            s->startPoint      = (float)pjLayer.get("startPoint").get<double>();
+            printf("filterType\n");
+            s->filterType      = (float)pjLayer.get("filterType").get<double>();
+            printf("filterFrequency\n");
+            s->filterFrequency = (float)pjLayer.get("filterFrequency").get<double>();
+            printf("filterResonance\n");
+            s->filterResonance = (float)pjLayer.get("filterResonance").get<double>();
+            
+            printf("velLow\n");
+            s->velLow          = (int)pjLayer.get("velLow").get<double>();
+            printf("velHigh\n");
+            s->velHigh         = (int)pjLayer.get("velHigh").get<double>();
+            printf("done\n");
+            
           }
         }
         
       } // banks
     
     }
-    catch( ... )
+    catch( std::exception& e )
     {
-      printf("PicoJSON : Runtime exception thrown! (Bad JSON file?)\n");
+      printf("PicoJSON : Runtime exception thrown! %s\n", e.what() );
     }
     
   }
