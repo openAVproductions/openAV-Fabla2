@@ -163,10 +163,45 @@ static void fabla2_port_event(LV2UI_Handle handle,
       ui->waveform->show( FABLA2_UI_WAVEFORM_PX, data );
       ui->redraw();
     }
+    else if( obj->body.otype == ui->uris.fabla2_PadRefreshLayers )
+    {
+      const LV2_Atom* bank = 0;
+      const LV2_Atom* pad  = 0;
+      const LV2_Atom* lay  = 0;
+      const LV2_Atom* name = 0;
+      const int n_props  = lv2_atom_object_get( obj,
+          ui->uris.fabla2_bank    , &bank,
+          ui->uris.fabla2_pad     , &pad,
+          ui->uris.fabla2_layer   , &lay,
+          ui->uris.fabla2_name    , &name,
+          NULL);
+      
+      if (n_props != 4 ||
+          bank->type != ui->uris.atom_Int  ||
+          pad->type  != ui->uris.atom_Int  ||
+          lay->type  != ui->uris.atom_Int  )
+          //name->type != ui->uris.atom_String )
+      {
+        printf("Fabla2::port_event() error: Corrupt state message\n");
+        return;
+      }
+      else
+      {
+        const int32_t b  = ((const LV2_Atom_Int*)bank)->body;
+        const int32_t p  = ((const LV2_Atom_Int*)pad)->body;
+        int32_t layer    = ((const LV2_Atom_Int*)lay)->body;
+        //std::string n    = ((const LV2_Atom_String*)name)->body;
+        //ui->padEvent( b, p, layer, !padStop, v );
+        printf(" got PadRefresh in UI: layer = %i\n", layer );
+      }
+    }
     else if( obj->body.otype == ui->uris.fabla2_ReplyUiSampleState )
     {
       // atoms to represent the data
       const LV2_Atom* aPadMuteGrp = 0;
+      const LV2_Atom* aPadTrigMode= 0;
+      const LV2_Atom* aPadSwtchSys= 0;
+      const LV2_Atom* aName       = 0;
       const LV2_Atom* aGain       = 0;
       const LV2_Atom* aPitch      = 0;
       const LV2_Atom* aPan        = 0;
@@ -177,6 +212,9 @@ static void fabla2_port_event(LV2UI_Handle handle,
       
       const int n_props  = lv2_atom_object_get( obj,
             ui->uris.fabla2_PadMuteGroup      , &aPadMuteGrp,
+            ui->uris.fabla2_PadTriggerMode    , &aPadTrigMode,
+            ui->uris.fabla2_PadSwitchType     , &aPadSwtchSys,
+            ui->uris.fabla2_name              , &aName,
             ui->uris.fabla2_SampleGain        , &aGain,
             ui->uris.fabla2_SamplePitch       , &aPitch,
             ui->uris.fabla2_SampleStartPoint  , &aStartPoint,
@@ -190,7 +228,8 @@ static void fabla2_port_event(LV2UI_Handle handle,
       {
         printf("setting UI from DSP ReplyUiSampleState\n");
         ui->muteGroup       ->value( ((const LV2_Atom_Float*)aPadMuteGrp)->body );
-        ui->sampleGain      ->value( ((const LV2_Atom_Float*)aGain)->body );
+        ui->triggerMode     ->value( ((const LV2_Atom_Float*)aPadTrigMode)->body);
+        ui->switchType      ->value( ((const LV2_Atom_Float*)aPadSwtchSys)->body );
         ui->samplePan       ->value( ((const LV2_Atom_Float*)aPan )->body );
         ui->samplePitch     ->value( ((const LV2_Atom_Float*)aPitch)->body);
         ui->sampleStartPoint->value( ((const LV2_Atom_Float*)aStartPoint)->body*2); // 2* as dial offsets on write too!

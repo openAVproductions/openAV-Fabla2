@@ -39,7 +39,9 @@ Sampler::Sampler( Fabla2DSP* d, int rate ) :
   sample( 0 ),
   
   playheadDelta(1),
-  playIndex(0)
+  playIndex(0),
+  
+  frames( 0 )
 {
 #ifdef FABLA2_COMPONENT_TEST
   printf("%s\n", __PRETTY_FUNCTION__ );
@@ -52,6 +54,8 @@ void Sampler::play( Pad* p, int velocity )
   printf("%s : Pad ID %i\n", __PRETTY_FUNCTION__, p->ID() );
 #endif
   pad = p;
+  
+  frames = 0;
   
   sample = pad->getPlaySample( velocity );
   
@@ -75,10 +79,11 @@ int Sampler::process(int nframes, float* L, float* R)
     return 1;
   }
   const int    chans = sample->getChannels();
-  const int    frames= sample->getFrames();
+  frames = sample->getFrames();
   
   // return immidiatly if we are finished playing the sample
-  if( playIndex >= frames )
+  // (keeping within interpolation limits)
+  if( playIndex + 4 >= frames )
   {
     return 1;
   }
@@ -213,6 +218,9 @@ int Sampler::process(int nframes, float* L, float* R)
     // return if we don't know how to deal with this channel count
     return 1;
   }
+  
+  // send playhead to UI
+  
   
   // normal return path: not done, keep calling this
   return 0;

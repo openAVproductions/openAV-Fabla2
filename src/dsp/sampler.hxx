@@ -47,6 +47,7 @@ class Sampler
     /// process function, passing in the voice buffers for FX
     int process(int nframes, float* L, float* R);
     
+    long    getProgress(){return playIndex/frames;}
     Pad*    getPad()    {return pad   ;}
     Sample* getSample() {return sample;}
   
@@ -66,6 +67,7 @@ class Sampler
     
     /// audio playback variables
     float playIndex;
+    long  frames;
 };
 
 };

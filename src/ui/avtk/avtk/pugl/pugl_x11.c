@@ -351,6 +351,14 @@ translateEvent(PuglView* view, XEvent xevent)
     event.expose.width  = xevent.xexpose.width;
     event.expose.height = xevent.xexpose.height;
     event.expose.count  = xevent.xexpose.count;
+    {
+		// copy the backbuffer to the frontbuffer cairo context
+		cairo_save( view->impl->cr );
+		cairo_surface_flush( view->impl->surfaceBackBuffer );
+		cairo_set_source_surface( view->impl->cr, view->impl->surfaceBackBuffer, 0, 0 );
+		cairo_paint( view->impl->cr );
+		cairo_restore( view->impl->cr );
+		}
     break;
   case MotionNotify:
     event.type           = PUGL_MOTION_NOTIFY;
@@ -429,18 +437,25 @@ translateEvent(PuglView* view, XEvent xevent)
   default:
     break;
   }
-
-#ifdef AVTK_DEBUG
+  
+  /*
   if ( event.type == PUGL_EXPOSE )
   {
-    //printf("sending PUGL_EXPOSE...\n" );
+    // copy the backbuffer to the frontbuffer cairo context
+    cairo_save( view->impl->cr );
+    cairo_surface_flush( view->impl->surfaceBackBuffer );
+    cairo_set_source_surface( view->impl->cr, view->impl->surfaceBackBuffer, 0, 0 );
+    cairo_paint( view->impl->cr );
+    cairo_restore( view->impl->cr );
   }
+  */
+#ifdef AVTK_DEBUG
   else if ( event.type == PUGL_CONFIGURE )
   {
     //printf("sending PUGL_CONFIGURE...\n" );
   }
 #endif // AVTK_DEBUG
-
+  
   return event;
 }
 
@@ -455,7 +470,9 @@ PuglStatus
 puglProcessEvents(PuglView* view)
 {
   XEvent xevent;
-  while (XPending(view->impl->display) > 0) {
+  while (XPending(view->impl->display) > 0)
+  {
+    
     XNextEvent(view->impl->display, &xevent);
     bool ignore = false;
     if (xevent.type == ClientMessage) {
@@ -481,7 +498,7 @@ puglProcessEvents(PuglView* view)
         }
       }
     }
-
+    
     if (!ignore) {
       // Translate and dispatch event
       const PuglEvent event = translateEvent(view, xevent);
@@ -557,6 +574,7 @@ puglGetContext(PuglView* view)
 {
 #ifdef PUGL_HAVE_CAIRO
   if (view->ctx_type == PUGL_CAIRO) {
+    //return view->impl->cr;
     return view->impl->crBackBuffer;
   }
 #endif

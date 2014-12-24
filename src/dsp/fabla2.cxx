@@ -361,8 +361,17 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_layer);
   lv2_atom_forge_int(&lv2->forge, l );
   
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_name);
+  lv2_atom_forge_string(&lv2->forge, s->getName(), strlen( s->getName() ) );
+  
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadMuteGroup);
   lv2_atom_forge_float(&lv2->forge, pad->muteGroup() );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadTriggerMode);
+  lv2_atom_forge_float(&lv2->forge, pad->triggerMode() );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadSwitchType);
+  lv2_atom_forge_float(&lv2->forge, pad->switchSystem() );
   
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleGain);
   lv2_atom_forge_float(&lv2->forge, s->gain );
@@ -499,8 +508,8 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
       pad->triggerMode( Pad::TM_GATED );
   }
   else if(  URI == uris->fabla2_RequestUiSampleState ) {
-    writeSampleState( b, p, l, pad, s );
     tx_waveform( b, p, l, s->getWaveform() );
+    writeSampleState( b, p, l, pad, s );
   }
 }
 
