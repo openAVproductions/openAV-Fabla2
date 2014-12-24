@@ -224,7 +224,7 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
     return;
   }
   
-  if( channels > 2 || channels < 0 )
+  if( channels > 2 || channels <= 0 )
   {
     printf("Error loading sample %s, channels >= 2\n", path.c_str() );
     return;
