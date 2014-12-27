@@ -26,6 +26,10 @@
 #include <cstdlib>
 #include <iostream>
 
+// for profiny
+#include "fabla2.hxx"
+
+
 namespace Fabla2
 {
 

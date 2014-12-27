@@ -22,6 +22,10 @@
 
 #include "../dsp.hxx"
 
+#ifdef OPENAV_PROFILE
+#include "../profiny.hxx"
+#endif
+
 #include <sstream>
 
 #include <stdio.h>
@@ -119,6 +123,9 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
 
 void Fabla2DSP::process( int nf )
 {
+#ifdef OPENAV_PROFILE
+  PROFINY_SCOPE
+#endif
   nframes = nf;
   
   float recordOverLast = *controlPorts[RECORD_OVER_LAST_PLAYED_PAD];
@@ -229,13 +236,14 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
           recordBank = bank;
           recordPad  = pad;
           
+          // the pad that's going to be allocated to play
+          Pad* p = library->bank( bank )->pad( pad );
+          
           bool allocd = false;
           for(int i = 0; i < voices.size(); i++)
           {
             // current voice pointer
             Voice* v = voices.at(i);
-            // the pad that's going to be allocated to play
-            Pad* p = library->bank( bank )->pad( pad );
             
             // check mute-group to stop the voice first
             if( v->active() )
@@ -278,6 +286,11 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
                 continue;
               }
             }
+          }
+          /// if all voices are full, we steal the first one
+          if( allocd == false )
+          {
+            voices.at( 0 )->play( bank, pad, p, msg[2] );
           }
         }
         break;
