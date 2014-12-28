@@ -53,9 +53,11 @@ Pad::Pad( Fabla2DSP* d, int rate, int ID ) :
 
 void Pad::add( Sample* s )
 {
-  printf("%s, b %i, p %i, s = %i\n", __PRETTY_FUNCTION__, bank_, ID_, s );
-  samples.push_back( s );
+  loaded_ = true;
+  
+  //printf("%s, b %i, p %i, s = %i\n", __PRETTY_FUNCTION__, bank_, ID_, s );
   //printf( "Pad::add() %s, total #samples on pad = %i\n", s->getName(), samples.size() );
+  samples.push_back( s );
   
   // request DSP to refresh UI layers for this pad
   dsp->padRefreshLayers( bank_, ID_ );

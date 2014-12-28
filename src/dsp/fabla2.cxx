@@ -117,7 +117,8 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
     library->bank( bankID )->pad( tmpPad );
   }
   
-  library->checkAll();
+  // for debugging null pointers etc
+  //library->checkAll();
   
 }
 

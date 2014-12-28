@@ -101,6 +101,7 @@ class Pad
     int ID_; // pad place within Bank
     int muteGroup_;
     int triggerMode_;
+    bool loaded_;
     
     SAMPLE_SWITCH_SYSTEM sampleSwitchSystem;
     int sampleLayerCounter;

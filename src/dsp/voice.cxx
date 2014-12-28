@@ -189,7 +189,7 @@ void Voice::process()
     *outL++ += voiceBuffer[             i] * adsrVal;
     *outR++ += voiceBuffer[dsp->nframes+i] * adsrVal;
     
-    // ADSR processes first sample *before* the filter set section. 
+    // ADSR processes first sample *before* the filter set section.
     adsrVal = adsr->process();
   }
   
