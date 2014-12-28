@@ -30,6 +30,8 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   masterVolume = 0;
   
+  theme_ = themes.front();
+  
   // slider vert
   Avtk::Image* headerImage = new Avtk::Image( this, 0, 0, 780, 36, "Header Image" );
   headerImage->load( header.pixel_data );
