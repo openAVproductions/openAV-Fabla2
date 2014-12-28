@@ -190,9 +190,15 @@ static void fabla2_port_event(LV2UI_Handle handle,
         const int32_t b  = ((const LV2_Atom_Int*)bank)->body;
         const int32_t p  = ((const LV2_Atom_Int*)pad)->body;
         int32_t layer    = ((const LV2_Atom_Int*)lay)->body;
-        //std::string n    = ((const LV2_Atom_String*)name)->body;
+        std::string n    = (const char*) LV2_ATOM_BODY_CONST( name );
         //ui->padEvent( b, p, layer, !padStop, v );
-        printf(" got PadRefresh in UI: layer = %i\n", layer );
+        printf(" got PadRefresh in UI: layer = %i, name = %s\n", layer, n.c_str() );
+        
+        if( layer == 0 ) // starting from start: reset
+        {
+          ui->layers->clear();
+        }
+        ui->layers->addItem( n );
       }
     }
     else if( obj->body.otype == ui->uris.fabla2_ReplyUiSampleState )

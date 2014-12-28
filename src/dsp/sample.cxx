@@ -22,6 +22,9 @@
 
 #include "fabla2.hxx"
 
+// for basename
+#include <libgen.h>
+
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
@@ -213,6 +216,10 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
     printf("Failed to open sample '%s'\n", path.c_str() );
     return;
   }
+  
+  char* tmp = strdup( path.c_str() );
+  name = basename( tmp );
+  free( tmp );
   
   channels = info.channels;
   frames   = info.frames;

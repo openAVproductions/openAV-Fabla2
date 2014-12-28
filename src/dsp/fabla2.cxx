@@ -434,8 +434,11 @@ void Fabla2DSP::padRefreshLayers( int bank, int pad )
     /// write this layers sample details:
     /// 1. Name
     /// 2. if Velocity layered mode: Velocity ranges
+    const char* name = p->layer( i )->getName();
     lv2_atom_forge_key(&lv2->forge, uris->fabla2_name);
-    lv2_atom_forge_int(&lv2->forge, i );
+    lv2_atom_forge_string(&lv2->forge, name, strlen( name ) );
+    
+    printf("writing layer with name %s\n", name );
     
     // Close off object
     lv2_atom_forge_pop(&lv2->forge, &frame);
@@ -521,7 +524,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
       pad->triggerMode( Pad::TM_GATED );
   }
   else if(  URI == uris->fabla2_RequestUiSampleState ) {
-    tx_waveform( b, p, l, s->getWaveform() );
+    //tx_waveform( b, p, l, s->getWaveform() );
     writeSampleState( b, p, l, pad, s );
   }
 }
