@@ -224,6 +224,7 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
     }
   }
   
+  layers->value( layer );
   
   bool newPad = ( pad   != currentPad   ||
                   layer != currentLayer  );
