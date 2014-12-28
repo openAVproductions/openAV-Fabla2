@@ -60,6 +60,7 @@ class Pad
     /// library functions
     void add( Sample* );
     void clearAllSamples();
+    bool loaded(){return loaded_;}
     
     void muteGroup( int mg ){muteGroup_ = mg; }
     int  muteGroup(){ return muteGroup_;}

@@ -40,6 +40,7 @@ Pad::Pad( Fabla2DSP* d, int rate, int ID ) :
   ID_( ID ),
   muteGroup_( 0 ),
   triggerMode_( TM_GATED ),
+  loaded_( false ),
   
   sampleSwitchSystem( SS_NONE ),
   sampleLayerCounter(0)
@@ -148,6 +149,7 @@ Sample* Pad::getPlaySample( int velocity )
 void Pad::clearAllSamples()
 {
   samples.clear();
+  loaded_ = false;
 }
 
 void Pad::switchSystem( SAMPLE_SWITCH_SYSTEM ss )

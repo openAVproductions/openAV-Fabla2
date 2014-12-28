@@ -118,7 +118,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   currentDir = defaultDir;
   
   // list view
-  listSampleDirs = new Avtk::List( this, 82, 43, 126, 366, "Folder" );
+  listSampleDirs = new Avtk::List( this, 82, 73, 126, 216, "Folder" );
   listSampleFiles = new Avtk::List( this, 218, 43, 126, 366, "Sample Files" );
   // load *only* after both lists are created!
   
@@ -146,7 +146,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   // initial values
   bankBtns[0]->value( true );
   
-  showSampleBrowser( true );
+  //showSampleBrowser( true );
   showSampleBrowser( false );
 }
 
@@ -186,7 +186,7 @@ void TestUI::showSampleBrowser( bool show )
   
   loadNewDir( currentDir );
   
-  listSampleDirs ->visible( show );
+  listSampleDirs->visible( show );
   listSampleFiles->visible( show );
 }
 
