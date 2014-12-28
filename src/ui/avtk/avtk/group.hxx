@@ -37,7 +37,10 @@ class Group : public Widget
     void add    ( Widget* child );
     
     /// removes a Widget from this group: its parent pointer is set to 0.
-    //void remove ( Widget* child );
+    void remove ( Widget* child );
+    
+    /// handles an event, propagating it to all children
+    virtual int handle( const PuglEvent* event );
     
     virtual void clear();
     
@@ -57,6 +60,9 @@ class Group : public Widget
     virtual void valueCB( Widget* w );
   
   protected:
+    /// constructor for top-level UI only
+    Group( Avtk::UI* ui );
+    
     std::vector< Widget* > children;
     
     GROUP_MODE groupMode;

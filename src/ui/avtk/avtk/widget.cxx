@@ -7,6 +7,19 @@
 namespace Avtk
 {
 
+// constructor for top-level windows only
+Widget::Widget( Avtk::UI* ui_ ) :
+  ui( ui_ ),
+  noHandle_( false ),
+  x( -1 ),
+  y( -1 ),
+  w( -1 ),
+  h( -1 ),
+  visible_(true),
+  parent_( 0x0 ) // top levels don't have a parent
+{
+}
+
 Widget::Widget( Avtk::UI* ui_, int x_, int y_, int w_, int h_, std::string label__) :
   ui(ui_),
   parent_( 0 ),
@@ -52,8 +65,9 @@ void Widget::theme( Theme* t )
 
 int Widget::handle( const PuglEvent* event )
 {
-  // eg: groups don't handle input
-  if( noHandle_ )
+  // eg: noHandle means this widget doesn't take any input.
+  //     !visible_ implies the widget isn't shown: so a user can't interact with it
+  if( noHandle_ || !visible_ )
     return 0;
   
   switch (event->type)
@@ -87,7 +101,7 @@ int Widget::handle( const PuglEvent* event )
             value( tmp );
 #ifdef AVTK_DEBUG
             printf("Widget::handle() value from Y, %f\n", tmp);
-#endif // AVTK_DEBUG
+#endif
             callback( this, callbackUD );
             ui->redraw( this );
           }
@@ -127,8 +141,8 @@ int Widget::handle( const PuglEvent* event )
             value( 0 );
             ui->redraw();
 #ifdef AVTK_DEBUG
-            printf("Widget MOMENTARY, redrawn value\n");
-#endif // AVTK_DEBUG
+            //printf("Widget MOMENTARY, redrawn value\n");
+#endif
           }
           return 1;
         }
@@ -142,8 +156,8 @@ int Widget::handle( const PuglEvent* event )
         if( scTch && !scrollDisable )
         {
 #ifdef AVTK_DEBUG
-          printf("scroll touch %i, x %lf, y %lf\n", int(scTch), event->scroll.x, event->scroll.y );
-#endif // AVTK_DEBUG
+          //printf("scroll touch %i, x %lf, y %lf\n", int(scTch), event->scroll.x, event->scroll.y );
+#endif
           float delta = event->scroll.dy / float(scrollDeltaAmount);
           if( scrollInvert )
             delta = -delta;
@@ -203,16 +217,28 @@ void Widget::motion( int x, int y )
   }
   
   // handle value() on the widget
+  float delta = 0;
   float dragSpeed = float(h);
-  if( dragSpeed < 100 )
+  if ( dm == DM_DRAG_VERTICAL )
   {
-    dragSpeed = 100; // num of px for "full-scale" drag
-    //printf("dragspeed set to %f\n", dragSpeed);
+    if( dragSpeed < 100 )
+    {
+      dragSpeed = 100; // num of px for "full-scale" drag
+      //printf("dragspeed set to %f\n", dragSpeed);
+    }
+    
+    delta = ( mY - y ) / dragSpeed;
   }
-  
-  float delta = ( mY - y ) / dragSpeed;
-  if ( dm == DM_DRAG_HORIZONTAL )
+  else if ( dm == DM_DRAG_HORIZONTAL )
+  {
+    dragSpeed = float(w);
+    if( dragSpeed < 100 )
+    {
+      dragSpeed = 100; // num of px for "full-scale" drag
+      //printf("dragspeed set to %f\n", dragSpeed);
+    }
     delta = ( x - mX ) / dragSpeed;
+  }
   
   value( value_ + delta );
   //printf("drag(), delta %i, new value %\n", delta, value() );
