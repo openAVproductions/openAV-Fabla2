@@ -39,12 +39,25 @@ class Group : public Widget
     /// removes a Widget from this group: its parent pointer is set to 0.
     void remove ( Widget* child );
     
+    virtual int x(){return Widget::x();}
+    virtual int y(){return Widget::y();}
+    virtual int w(){return Widget::w();}
+    virtual int h(){return Widget::h();}
+    
+    virtual void x(int x);
+    virtual void y(int y);
+    virtual void w(int w);
+    virtual void h(int h);
+    
     /// handles an event, propagating it to all children
     virtual int handle( const PuglEvent* event );
     
     virtual void clear();
     
     void draw( cairo_t* cr );
+    
+    /// sets the space between widgets
+    void spacing( int s ) { spacing_ = s; }
     
     /// should the group all be the same width / height
     enum GROUP_MODE {
@@ -54,6 +67,16 @@ class Group : public Widget
     };
     
     void mode( GROUP_MODE gm );
+    
+    enum GROUP_VALUE {
+      VALUE_NORMAL,
+      VALUE_SINGLE_CHILD,
+    };
+    
+    void valueMode( GROUP_VALUE gv )
+    {
+      valueMode_ = gv;
+    }
     
     /// virtual so it can be overriden by List and other widgets that want to
     /// intercept callbacks from a range of widgets
@@ -65,7 +88,10 @@ class Group : public Widget
     
     std::vector< Widget* > children;
     
-    GROUP_MODE groupMode;
+    int spacing_;
+    
+    GROUP_MODE  groupMode;
+    GROUP_VALUE valueMode_;
     
     static void staticGroupCB( Widget* w, void* ud )
     {

@@ -10,16 +10,20 @@ namespace Avtk
 
 Group::Group( Avtk::UI* ui ) :
   Widget( ui ),
-  groupMode( NONE )
+  groupMode( NONE ),
+  valueMode_( VALUE_NORMAL ),
+  spacing_( 0 )
 {
   noHandle_ = true;
 }
 
 Group::Group( Avtk::UI* ui, int x, int y, int w, int h, std::string label ) :
   Widget( ui, x, y, w, h, label ),
-  groupMode( NONE )
+  groupMode( NONE ),
+  valueMode_( VALUE_NORMAL ),
+  spacing_( 1 )
 {
-  noHandle_ = true;
+  noHandle_ = false;
 }
 
 void Group::add( Widget* child )
@@ -40,29 +44,27 @@ void Group::add( Widget* child )
   child->callback   = staticGroupCB;
   child->callbackUD = this;
   
-  // set the child's co-ords 
-  const int border = 0;
-  
+  // set the child's co-ords
   if( groupMode == WIDTH_EQUAL )
   {
-    child->x = x;
-    child->w = w;
+    child->x( x_ );
+    child->w( w_ );
     
-    int childY = y;
+    int childY = y_;
     for(int i = 0; i < children.size(); i++ )
-      childY += children.at(i)->h + border;
+      childY += children.at(i)->h() + spacing_;
 
-    child->y = childY;
+    child->y( childY );
   }
   else if( groupMode == HEIGHT_EQUAL )
   {
-    child->y = y;
-    child->h = h;
+    child->y( y_ );
+    child->h( h_ );
     
-    int childX = x;
+    int childX = x_;
     for(int i = 0; i < children.size(); i++ )
-      childX += children.at(i)->w + border;
-    child->x = childX;
+      childX += children.at(i)->w() + spacing_;
+    child->x( childX );
   }
   
   children.push_back( child );
@@ -74,13 +76,15 @@ void Group::add( Widget* child )
   ui->redraw();
 }
 
-void Group::remove( Avtk::Widget* w )
+void Group::remove( Avtk::Widget* wid )
 {
   for(int i = 0; i < children.size(); i++ )
   {
-    if( children.at(i) == w )
+    if( children.at(i) == wid )
     {
+#ifdef AVTK_DEBUG
       printf("Group::remove() %s, widget# %i\n", label(), i );
+#endif
       children.erase( children.begin() + i );
     }
   }
@@ -131,7 +135,7 @@ void Group::mode( GROUP_MODE gm )
 void Group::valueCB( Widget* w )
 {
   // only one widget is value( true ) in a group at a time
-  if( false )
+  if( valueMode_ == VALUE_SINGLE_CHILD )
   {
 #ifdef AVTK_DEBUG
     printf("Group child # %i : value : %f\tNow into Normal CB\n", w->groupItemNumber(), w->value() );
@@ -151,6 +155,56 @@ void Group::valueCB( Widget* w )
   }
 }
 
+void Group::x(int x__)
+{
+  int d = x__ - x_;
+  x_ = x__;
+  for(int i = 0; i < children.size(); i++ )
+  {
+    Widget* c = children.at(i);
+    c->x( c->x() + d );
+  }
+}
+
+void Group::y(int y__)
+{
+  int d = y__ - y_;
+  y_ = y__;
+  for(int i = 0; i < children.size(); i++ )
+  {
+    Widget* c = children.at(i);
+    c->y( c->y() + d );
+  }
+}
+
+void Group::w(int w__)
+{
+  int d = w__ - w_;
+  w_ = w__;
+  if( groupMode == WIDTH_EQUAL )
+  {
+    for(int i = 0; i < children.size(); i++ )
+    {
+      Widget* c = children.at(i);
+      c->w( c->w() + d );
+    }
+  }
+}
+
+void Group::h(int h__)
+{
+  int d = h__ - h_;
+  h_ = h__;
+  if( groupMode == HEIGHT_EQUAL )
+  {
+    for(int i = 0; i < children.size(); i++ )
+    {
+      Widget* c = children.at(i);
+      c->h( c->h() + d );
+    }
+  }
+}
+
 void Group::draw( cairo_t* cr )
 {
   if( visible() )
@@ -159,6 +213,11 @@ void Group::draw( cairo_t* cr )
     {
       children.at( i )->draw( cr );
     }
+    
+    roundedBox(cr, x_, y_, w_, h_, theme_->cornerRadius_ );
+    theme_->color( cr, FG );
+    cairo_set_line_width(cr, 0.5);
+    cairo_stroke(cr);
   }
 }
 
@@ -166,8 +225,8 @@ int Group::handle( const PuglEvent* event )
 {
   if( visible() )
   {
-    // TODO: reverse iter here?
-    for(int i = 0; i < children.size(); i++ )
+    // reverse iter over the children: top first
+    for(int i = children.size() - 1; i >= 0 ; i-- )
     {
       int ret = children.at( i )->handle( event );
       if( ret )
@@ -175,6 +234,45 @@ int Group::handle( const PuglEvent* event )
         //printf("widget %i handle eventType %i ret\n", i, event->type );
         return ret; // child widget ate event: done :)
       }
+    }
+    
+    // if we haven't returned, the event was not consumed by the children, so we
+    // can check for a scroll event, and if yes, highlight the next item
+    if( event->type == PUGL_SCROLL && 
+        valueMode_ == VALUE_SINGLE_CHILD && 
+        touches( event->scroll.x, event->scroll.y ) )
+    {
+      // find value() widget
+      int vw = -1;
+      for(int i = children.size() - 1; i >= 0 ; i-- )
+      {
+        if( children.at(i)->value() > 0.4999 )
+          vw = i;
+      }
+      
+      int d = event->scroll.dy;
+      //printf("SCROLL: Value child %i, delta %i\n", vw, d );
+      
+      // no widget selected
+      if( vw == -1 )
+      {
+        children.at(0)->value( true );
+      }
+      // scroll up
+      else if( vw > 0 && d > 0 )
+      {
+        children.at(vw-1)->value( true  );
+        children.at(vw  )->value( false );
+      }
+      // scroll down
+      else if( vw < children.size()-1 && d < 0 )
+      {
+        children.at(vw  )->value( false );
+        children.at(vw+1)->value( true  );
+      }
+      
+      // handled scroll, so eat event
+      return 1;
     }
   }
   return 0;

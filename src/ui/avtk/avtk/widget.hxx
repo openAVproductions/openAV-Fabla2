@@ -50,8 +50,18 @@ class Widget
     /// called by the UI class when this widget has a mouse pressed
     void motion( int x, int y );
     
-    int x, y, w, h;         /// widget co-ords and size
-    std::string label_;      /// widget name - sometimes shown in UI
+    /// position of widget functions, and virtual set methods
+    virtual int x(){return x_;}
+    virtual int y(){return y_;}
+    virtual int w(){return w_;}
+    virtual int h(){return h_;}
+    
+    virtual void x(int x__){ x_ = x__; }
+    virtual void y(int y__){ y_ = y__; }
+    virtual void w(int w__){ w_ = w__; }
+    virtual void h(int h__){ h_ = h__; }
+    
+    std::string label_;     /// widget name - sometimes shown in UI
     bool  visible_;         /// widget visibility
     
     enum ClickMode {
@@ -86,6 +96,9 @@ class Widget
     Widget( Avtk::UI* ui );
     
     Avtk::Group* parent_;
+    
+    /// widget co-ords and size
+    int x_, y_, w_, h_;
     
     /// local Theme pointer: themes are loaded at startup, and maintained until
     /// quitting, allowing for optimized redraws.
