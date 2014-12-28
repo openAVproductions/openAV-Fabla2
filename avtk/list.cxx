@@ -13,6 +13,7 @@ List::List( Avtk::UI* ui, int x_, int y_, int w_, int h_, std::string label_) :
   Group( ui, x_, y_, w_, h_, label_ )
 {
   mode( Group::WIDTH_EQUAL );
+  valueMode( Group::VALUE_SINGLE_CHILD );
   lastClickedItem = -1;
 }
 
@@ -20,7 +21,7 @@ void List::addItem( std::string newItem )
 {
   items.push_back( newItem );
   
-  add( new Avtk::ListItem( ui, 0, 0, 11, 11, newItem ) );
+  add( new Avtk::ListItem( ui, 0, 0, 14, 14, newItem ) );
   
   ui->redraw();
 }
@@ -60,16 +61,20 @@ void List::clear()
 
 void List::draw( cairo_t* cr )
 {
-  cairo_save( cr );
-  
-  // have the group draw itself
-  Group::draw( cr );
-  
-  roundedBox(cr, x, y, w, h, theme_->cornerRadius_ );
-  theme_->color( cr, HIGHLIGHT );
-  cairo_stroke( cr );
-  
-  cairo_restore( cr );
+  if( Widget::visible() )
+  {
+    cairo_save( cr );
+    
+    // have the group draw itself
+    Group::draw( cr );
+    
+    roundedBox(cr, x_, y_, w_, h_, theme_->cornerRadius_ );
+    theme_->color( cr, FG );
+    cairo_set_line_width(cr, 0.5);
+    cairo_stroke( cr );
+    
+    cairo_restore( cr );
+  }
 }
 
 std::string List::selectedString()
