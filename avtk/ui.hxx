@@ -12,6 +12,10 @@
 #include <stdio.h>
 #include <unistd.h>
 
+// the AVTK UI is a group
+#include "group.hxx"
+
+
 namespace Avtk
 {
 
@@ -19,11 +23,12 @@ class Theme;
 class Widget;
 
 
-class UI
+class UI : public Avtk::Group
 {
   public:
     UI( int w, int h, PuglNativeWindow parent = 0 );
     
+    /*
     /// adds a widget to the UI, and memory manages it: AKA a smart pointer will
     /// clean up on close of the UI.
     void add( Avtk::Widget* w)
@@ -36,6 +41,7 @@ class UI
     {
       widgets.remove( w );
     }
+    */
     
     /// tells the UI a widget has captured a mouse-down event, and
     /// wants to be notified of mouse movement events
@@ -56,8 +62,6 @@ class UI
     
     /// performs the drag-drop action
     void dragDropComplete( Avtk::Widget* target );
-    
-    
     
     /// Widget value callback: when a widget is added to the UI, its value
     /// callback is set to this function: it can be set to a custom function if
