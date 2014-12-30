@@ -40,7 +40,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   bankBtns[0] = new Avtk::Button( this, 5, 43, s, s, "A" );
   
-  bankBtns[1] = new Avtk::Button( this, 5 + +s+6, 43, s, s, "B" );
+  bankBtns[1] = new Avtk::Button( this, 5 + s+6, 43, s, s, "B" );
   bankBtns[1]->theme( theme( 1 ) );
   
   bankBtns[2] = new Avtk::Button( this, 5, 43  + +s+6, s, s, "C" );
