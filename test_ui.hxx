@@ -24,10 +24,16 @@ class TestUI : public Avtk::UI
   
     Avtk::Button* groupToggler;
     Avtk::Button* momentary;
+    Avtk::Button* momentaryOut;
     
     Avtk::Group* group1;
     
+    Avtk::Scroll* scroll;
+    
     Avtk::Slider* vertSlider;
+    Avtk::Slider* horiSlider;
+    
+    Avtk::EventEditor* editor;
     
     Avtk::List* list;
     Avtk::List* list2;

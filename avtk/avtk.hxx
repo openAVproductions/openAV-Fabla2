@@ -14,6 +14,7 @@
 
 // container class
 #include "group.hxx"
+#include "scroll.hxx"
 
 // widget headers
 #include "list.hxx"
@@ -25,5 +26,6 @@
 #include "envelope.hxx"
 #include "waveform.hxx"
 #include "listitem.hxx"
+#include "eventeditor.hxx"
 
 #endif // OPENAV_AVTK_HXX

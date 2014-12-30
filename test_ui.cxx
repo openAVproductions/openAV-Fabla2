@@ -24,7 +24,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   Widget::theme_ = themes.front();
   
   Avtk::Widget* w = 0;
-  
+  /*
   // group testing
   group1 = new Avtk::Group( this, 610, 43, 140, 400, "Group 1" );
   group1->mode( Avtk::Group::WIDTH_EQUAL );
@@ -40,42 +40,48 @@ TestUI::TestUI( PuglNativeWindow parent ):
   group1->add( w );
   
   group1->valueMode( Group::VALUE_SINGLE_CHILD);
-  
-  /*
-  // group testing
-  g = new Avtk::Group( this, 610, 243, 140, 100, "HGroup 1" );
-  g->mode( Avtk::Group::HEIGHT_EQUAL );
-  w = new Avtk::ListItem( this, 7, 45, 30, 11, "H1" );
-  g->add( w );
-  w = new Avtk::ListItem( this, 7, 45, 30, 11, "H2" );
-  g->add( w );
-  w = new Avtk::ListItem( this, 7, 45, 30, 11, "H3" );
-  g->add( w );
-  w = new Avtk::ListItem( this, 7, 45, 30, 11, "H4" );
-  g->add( w );
-  w = new Avtk::ListItem( this, 7, 45, 30, 11, "H5" );
-  g->add( w );
   */
   
+  // scroller
+  scroll = new Avtk::Scroll( this, 130, 43, 620, 320, "Scroll 1" );
+  int scale = 4;
+  editor = new Avtk::EventEditor( this, 0, 0, 240*scale, 250*scale, "EventEditor" );
+  editor->value( true );
+  scroll->set( editor );
+  
   // slider vert
-  vertSlider = new Avtk::Slider( this, 520, 40, 22, 220, "Vertical Slider" );
+  vertSlider = new Avtk::Slider( this, 755,  40, 22, 320, "Vertical   Slider" );
+  horiSlider = new Avtk::Slider( this, 130, 365, 620, 22, "Horizontal Slider" );
+  
+  vertSlider->value ( 0.5 );
+  horiSlider->value ( 0.5 );
+  scroll->vertical  ( 0.5 );
+  scroll->horizontal( 0.5 );
   
   // button
-  momentary = new Avtk::Button( this, 7, 45, 90, 22, "Momentary" );
+  momentary = new Avtk::Button( this, 7, 45, 90, 22, "Zoom In" );
   momentary->theme( theme( 1 ) );
-  momentary->clickMode( Avtk::Widget::CLICK_MOMENTARY );
+  momentary->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
+  momentaryOut = new Avtk::Button( this, 7, 69, 90, 22, "Zoom Out" );
+  momentaryOut->theme( theme( 2 ) );
+  momentaryOut->clickMode( Avtk::Widget::CLICK_TOGGLE );
+  //momentary->clickMode( Avtk::Widget::CLICK_MOMENTARY );
+  
+  /*
   // button
   groupToggler = new Avtk::Button( this, 7 + 100, 45, 130, 22, "Group Toggler" );
   groupToggler->theme( theme( 2 ) );
   groupToggler->clickMode( Avtk::Widget::CLICK_TOGGLE );
+  */
   
   // dial
   w = new Avtk::Dial( this, 7, 85, 75, 75, "Dial 1" );
   
   // number
-  w = new Avtk::Number( this, 100, 85, 35, 25, "Number box" );
+  w = new Avtk::Number( this, 85, 85, 35, 25, "Number box" );
   
+  /*
   // list
   list = new Avtk::List( this, 345, 345, 105, 125, "List (Left)" );
   std::vector<std::string> items;
@@ -87,45 +93,58 @@ TestUI::TestUI( PuglNativeWindow parent ):
   Avtk::directoryContents(  "/root/openav/content/bips", items, stripped, true, true );
   list2 = new Avtk::List( this, 525, 345, 105, 125, "List (Right)" );
   list2->show( items );
+  */
   
   // waveform
-  waveform = new Avtk::Waveform( this, 15, 175, 250, 100, "Waveform" );
+  waveform = new Avtk::Waveform( this, 15, 415, 250, 100, "Waveform" );
   std::vector<float> tmp;
   int error = Avtk::loadSample( "test.wav", tmp );
   waveform->show( tmp );
   
-  w = new Avtk::Envelope( this, 215, 115, 60, 40, "Envelope" );
+  //w = new Avtk::Envelope( this, 215, 115, 60, 40, "Envelope" );
   
   // image
   Avtk::Image* i = new Avtk::Image( this, 0, 0, 610, 36, "Image" );
   i->load( header.pixel_data );
   
+  /*
   // slider horizontal
   w =  new Avtk::Slider( this,  15,350, 250, 22, "Zoom" );
-  
   w =  new Avtk::Slider( this,  15,374, 250, 22, "Vol" );
+  */
 }
 
 
 void TestUI::widgetValueCB( Avtk::Widget* w )
 {
-  printf( "%s, value = %f\n", w->label(), w->value() );
   if( w == groupToggler )
   {
-    group1->visible( groupToggler->value() );
-    list2->visible( groupToggler->value() );
+    //group1->visible( groupToggler->value() );
+    //list2->visible( groupToggler->value() );
   }
   else if( w == momentary )
   {
-    
+    editor->zoom( 1 );
+    ((Avtk::Scroll*)editor->parent())->childResize( editor );
+    redraw();
+  }
+  else if( w == momentaryOut )
+  {
+    editor->zoom( 0 );
+    ((Avtk::Scroll*)editor->parent())->childResize( editor );
+    redraw();
   }
   else if( w == vertSlider )
   {
-    waveform->y( w->value() * 500 );
-    group1->y( w->value() * 500 );
-    
-    printf( "%s, value %f : px %f\n", w->label(), w->value(), group1->y() );
-    redraw();
+    scroll->vertical( w->value() );
+  }
+  else if( w == horiSlider )
+  {
+    scroll->horizontal( w->value() );
+  }
+  else
+  {
+    printf( "%s, value = %f\n", w->label(), w->value() );
   }
 }
 
