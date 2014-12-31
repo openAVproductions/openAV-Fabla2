@@ -78,6 +78,7 @@ class TestUI : public Avtk::UI
     
     // Preset loading screen
     Avtk::List* listSampleDirs;
+    Avtk::Scroll* sampleFileScroll;
     Avtk::List* listSampleFiles;
     
     // shared between views!

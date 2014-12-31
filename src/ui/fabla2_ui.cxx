@@ -119,11 +119,12 @@ TestUI::TestUI( PuglNativeWindow parent ):
   loadConfigFile( defaultDir );
   currentDir = defaultDir;
   
-  // list view
-  listSampleDirs = new Avtk::List( this, 82, 73, 126, 216, "Folder" );
-  listSampleFiles = new Avtk::List( this, 218, 43, 126, 366, "Sample Files" );
-  // load *only* after both lists are created!
   
+  // list view
+  listSampleDirs = new Avtk::List( this, 82, 73, 106, 216, "Folder" );
+  sampleFileScroll = new Avtk::Scroll( this, 198, 43, 146, 266, "SampleFilesScroll" );
+  listSampleFiles = new Avtk::List( this, 0, 0, 126, 866, "Sample Files" );
+  // load *only* after both lists are created!
   
   // pads
   int xS = 58;
@@ -187,6 +188,8 @@ void TestUI::showSampleBrowser( bool show )
     pads[i]->visible( !show );
   
   loadNewDir( currentDir );
+  
+  sampleFileScroll->set( listSampleFiles );
   
   listSampleDirs->visible( show );
   listSampleFiles->visible( show );
