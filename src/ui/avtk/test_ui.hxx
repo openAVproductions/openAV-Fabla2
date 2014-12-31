@@ -38,12 +38,6 @@ class TestUI : public Avtk::UI
     Avtk::List* list;
     Avtk::List* list2;
     Avtk::Waveform* waveform;
-  
-  private:
-    // stores the origin widget, to avoid recusive calling
-    Avtk::Widget* originSetAllWidget;
-    
-    
 };
 
 
