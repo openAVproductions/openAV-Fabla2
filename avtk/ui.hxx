@@ -27,6 +27,7 @@ class UI : public Avtk::Group
 {
   public:
     UI( int w, int h, PuglNativeWindow parent = 0 );
+    virtual ~UI();
     
     /*
     /// adds a widget to the UI, and memory manages it: AKA a smart pointer will
@@ -101,11 +102,6 @@ class UI : public Avtk::Group
       return 0;
     }
     
-    ~UI()
-    {
-      puglDestroy( view );
-    }
-    
     /// get the theme requested: the themes have ID's defined in theme file.
     /// calling this without a parameter returns the default theme.
     Theme* theme( int id = 0 );
@@ -134,7 +130,6 @@ class UI : public Avtk::Group
     /// *must* be checked for 0 before *any* use.
     Avtk::Widget* dragDropOrigin;
     Avtk::Widget* motionUpdateWidget;
-    
     
     bool          dragDropTargetVerified;
     Avtk::Widget* dragDropTargetVerifiedWidget;

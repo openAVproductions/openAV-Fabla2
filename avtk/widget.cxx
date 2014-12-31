@@ -53,8 +53,8 @@ Widget::Widget( Avtk::UI* ui_, int x, int y, int w, int h, std::string label__) 
   // actual scroll in PX / number == delta
   scrollDeltaAmount( 10 )
 {
-  // FIXME: this will need to read the "parent" group from AVTK or so in order
-  // to implement groups
+  // when created, we register a widget to the top-level UI. Just add() it to a
+  // different Group, and the parent* will be updated
   ui_->add( this );
 }
 
@@ -68,8 +68,10 @@ int Widget::handle( const PuglEvent* event )
   // eg: noHandle means this widget doesn't take any input.
   //     !visible_ implies the widget isn't shown: so a user can't interact with it
   if( noHandle_ || !visible_ )
+  {
+    //printf("widget %s noHandle (%i) or visible (%i)\n", label(), int(noHandle_), int(visible_) );
     return 0;
-  
+  }
   switch (event->type)
   {
     case PUGL_BUTTON_PRESS:
@@ -285,7 +287,6 @@ void Widget::clickMode( ClickMode c )
 void Widget::visible( bool v )
 {
   visible_ = v;
-  ui->redraw( this );
 }
 
 void Widget::addToGroup( Group* p, int gin )
@@ -302,8 +303,8 @@ void Widget::dragMode( DragMode d )
 
 Widget::~Widget()
 {
-#ifdef AVTK_DEBUG
-  printf("%s, ~Widget()\n", __PRETTY_FUNCTION__ );
+#ifdef AVTK_DEBUG_DTOR
+  printf("%s %s\n", __PRETTY_FUNCTION__, label() );
 #endif // AVTK_DEBUG
 }
 

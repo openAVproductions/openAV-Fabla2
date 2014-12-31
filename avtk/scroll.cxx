@@ -3,11 +3,14 @@
 
 #include "ui.hxx"
 #include "theme.hxx"
+#include "slider.hxx"
 #include "listitem.hxx"
 
 #include <stdio.h>
 
 using namespace Avtk;
+
+#define AVTK_SCROLL_BAR_SIZE 15
 
 Scroll::Scroll( Avtk::UI* ui, int x_, int y_, int w_, int h_, std::string label_) :
   Group( ui, x_, y_, w_, h_, label_ ),
@@ -16,8 +19,32 @@ Scroll::Scroll( Avtk::UI* ui, int x_, int y_, int w_, int h_, std::string label_
   scrollX_( 0 ),
   scrollY_( 0 ),
   scrollV_( false ),
-  scrollH_( false )
+  scrollH_( false ),
+  
+  vSlider( new Avtk::Slider( ui, x_ + w_ - AVTK_SCROLL_BAR_SIZE, y_, AVTK_SCROLL_BAR_SIZE, h_, "Scroll VSlider") ),
+  hSlider( new Avtk::Slider( ui, x_, y_ - w_ - AVTK_SCROLL_BAR_SIZE, w_, AVTK_SCROLL_BAR_SIZE, "Scroll HSlider") )
 {
+  // deal with sliders: they're a unique case where they're owned by the scroll,
+  // but they are *not* part of the group. First remove the widget from the UI
+  vSlider->parent()->remove( vSlider );
+  hSlider->parent()->remove( hSlider );
+  // then set the callbacks to the scoll movement
+  vSlider->callback   = staticSliderCB;
+  vSlider->callbackUD = this;
+  hSlider->callback   = staticSliderCB;
+  hSlider->callbackUD = this;
+}
+
+void Scroll::sliderCB( Widget* w )
+{
+  if( w == vSlider )
+  {
+    vertical( w->value() );
+  }
+  if( w == hSlider )
+  {
+    horizontal( w->value() );
+  }
 }
 
 void Scroll::childResize( Widget* w )
@@ -34,11 +61,6 @@ void Scroll::set( Widget* child )
   child->x( 0 );
   child->y( 0 );
   
-  if( child->parent() == this )
-  {
-    printf("Scroll child->parent OK!\n");
-  }
-  
   redrawChild_ = true;
   
   if( child->h() > h_ )
@@ -50,7 +72,7 @@ void Scroll::set( Widget* child )
   else
   {
     // set the childs size to the scroll area
-    child->h( h_ );
+    child->h( h_ - AVTK_SCROLL_BAR_SIZE );
     scrollV_ = false;
     scrollY_ = 0;
   }
@@ -60,12 +82,14 @@ void Scroll::set( Widget* child )
     // child is bigger than our vertical size:
     scrollH_ = true;
     scrollHamount = child->w() - w_;
+    if( scrollV_ )
+      scrollHamount = child->w() - (w_ - 4);
     //printf("Scroll::set() scrollHamount %i\n",scrollHamount);
   }
   else
   {
     // set the childs size to the scroll area
-    child->w( w_ );
+    child->w( w_ - AVTK_SCROLL_BAR_SIZE );
     scrollH_ = false;
     scrollX_ = 0;
   }
@@ -132,6 +156,15 @@ void Scroll::draw( cairo_t* cr )
     cairo_set_line_width(cr, 0.5);
     cairo_stroke( cr );
     
+    if( scrollV_ )
+    {
+      vSlider->draw( cr );
+    }
+    if( scrollH_ )
+    {
+      //hSlider->draw( cr );
+    }
+    
     cairo_restore( cr );
   }
 }
@@ -141,6 +174,7 @@ void Scroll::vertical( float v )
   if( scrollV_ ) // child->h() > h()
   {
     scrollY_ = -( (1-v)*scrollVamount);
+    vSlider->value( v );
     ui->redraw();
   }
 }
@@ -153,6 +187,50 @@ void Scroll::horizontal( float v )
     ui->redraw();
     //printf("scrollH_ %i, value %f, scrollHamount %i\n",scrollX_,v, scrollHamount);
   }
+}
+
+int Scroll::handle( const PuglEvent* event )
+{
+  
+  int ret = vSlider->handle( event );
+  if( ret )
+  {
+    printf("vSlider returning from handle\n");
+    return ret;
+  }
+  
+  /*
+  bool handleThisEvent = false;
+  if( event->type == PUGL_BUTTON_PRESS ||
+      event->type == PUGL_BUTTON_RELEASE )
+  {
+    if( touches( event->button.x, event->button.y ) )
+      handleThisEvent = true;
+  }
+  if( event->type == PUGL_SCROLL )
+  {
+    if( touches( event->scroll.x, event->scroll.y ) )
+      handleThisEvent = true;
+  }
+  
+  if( handleThisEvent )
+  {
+    printf("Scroll handle(), type %i\n", event->type);
+    int ret = vSlider->handle( event );
+    if( ret )
+    {
+      printf("vSlider returning from handle\n");
+      return ret;
+    }
+    ret = hSlider->handle( event );
+    if( ret )
+    {
+      printf("hSlider returning from handle\n");
+      return ret;
+    }
+    return Group::handle( event );
+  }
+  */
 }
 
 void Scroll::redrawChild( cairo_t* cr )
@@ -173,4 +251,10 @@ void Scroll::redrawChild( cairo_t* cr )
   redrawChild_ = false;
   
   cairo_restore( cr );
+}
+
+Scroll::~Scroll()
+{
+  delete vSlider;
+  delete hSlider;
 }
