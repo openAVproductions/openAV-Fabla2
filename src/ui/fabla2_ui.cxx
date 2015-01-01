@@ -172,7 +172,11 @@ void TestUI::loadNewDir( std::string newDir )
     tmp.clear();
     listSampleFiles->clear();
     error = Avtk::directoryContents( currentFilesDir, tmp, strippedFilenameStart );
-    listSampleFiles->show( tmp );
+    if( !error )
+    {
+      listSampleFiles->show( tmp );
+      printf("%s error showing contents of %s\n", __PRETTY_FUNCTION__, currentFilesDir.c_str() );
+    }
   }
   else
   {
