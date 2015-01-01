@@ -88,8 +88,6 @@ class TestUI : public Avtk::UI
     // shared between views!
     Avtk::Waveform* waveform;
     
-    Avtk::Widget* loadSampleBtn;
-    
     void padEvent( int bank, int pad, int layer, bool noteOn, int velocity );
     
     Avtk::Pad* pads[16];

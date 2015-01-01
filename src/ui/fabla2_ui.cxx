@@ -293,7 +293,7 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
     pads[currentPad]->theme( theme(bank) );
     
     // request update for state from DSP
-    printf("UI requesting %i %i %i\n", bank, pad, layer );
+    //printf("UI requesting %i %i %i\n", bank, pad, layer );
     requestSampleState( bank, pad, layer );
   }
   
@@ -459,23 +459,6 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   else if( w == followPadBtn )
   {
     followPad = (int)tmp;
-  }
-  else if( w == loadSampleBtn )
-  {
-    printf("loadSampleBtn clicked\n");
-    /*
-#define OBJ_BUF_SIZE 1024
-    uint8_t obj_buf[OBJ_BUF_SIZE];
-    lv2_atom_forge_set_buffer(&forge, obj_buf, OBJ_BUF_SIZE);
-    
-    std::string filenameToLoad = "test.wav";
-    
-    LV2_Atom* msg = writeSetFile(&forge, &uris, filenameToLoad );
-    
-    write_function(controller, 0, lv2_atom_total_size(msg),
-              uris.atom_eventTransfer,
-              msg);
-    */
   }
   else
   {
