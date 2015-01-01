@@ -93,6 +93,10 @@ void Scroll::set( Widget* child )
     scrollH_ = false;
     scrollX_ = 0;
   }
+  
+  // show top left corner or scroll window
+  vertical  ( 1 );
+  horizontal( 0 );
 }
 
 void Scroll::draw( cairo_t* cr )
@@ -135,21 +139,23 @@ void Scroll::draw( cairo_t* cr )
       redrawChild_ = true;
     }
     
-    if( redrawChild_ )
+    if( childCr )
     {
-      //printf("cairo redrawing child in scroll group\n");
-      redrawChild( cr );
+      if( redrawChild_ )
+      {
+        //printf("cairo redrawing child in scroll group\n");
+        redrawChild( cr );
+      }
+      
+      // clip the Scroll context, to draw only what will be shown
+      cairo_rectangle( cr, x_, y_, w_, h_ );
+      cairo_clip( cr );
+      
+      // paint to the x_,y_ co-ord of the scroll window
+      cairo_surface_t* s = cairo_get_target( childCr );
+      cairo_set_source_surface( cr, s, x_ + scrollX_, y_ + scrollY_ );
+      cairo_paint( cr );
     }
-    
-    // clip the Scroll context, to draw only what will be shown
-    cairo_rectangle( cr, x_, y_, w_, h_ );
-    cairo_clip( cr );
-    
-    // paint to the x_,y_ co-ord of the scroll window
-    cairo_surface_t* s = cairo_get_target( childCr );
-    cairo_set_source_surface( cr, s, x_ + scrollX_, y_ + scrollY_ );
-    cairo_paint( cr );
-    
     // draw box / scroll bars
     roundedBox(cr, x_, y_, w_, h_, theme_->cornerRadius_ );
     theme_->color( cr, FG );
@@ -191,50 +197,59 @@ void Scroll::horizontal( float v )
 
 int Scroll::handle( const PuglEvent* event )
 {
+  // handle slider, so slider-click is responeded to
+  if( vSlider->handle( event ) )
+    return 1;
   
-  int ret = vSlider->handle( event );
-  if( ret )
+  // check if the scroll event is in scroll area; if yes scroll action
+  if( event->type == PUGL_SCROLL )
   {
-    printf("vSlider returning from handle\n");
-    return ret;
+    if( touches( event->scroll.x, event->scroll.y ) )
+    {
+      if( event->scroll.dy > 0 )
+        vSlider->value( vSlider->value() + 0.1 );
+      else
+        vSlider->value( vSlider->value() - 0.1 );
+      
+      vertical( vSlider->value() );
+      ui->redraw( this );
+      return 1;
+    }
   }
   
-  /*
-  bool handleThisEvent = false;
+  // create group event, so we can offset the mouse-click co-ord according to
+  // the scroll position. This might seem a lot of work, but it allows for easy
+  // mouse handling in the child widget, because the co-ords are normal
   if( event->type == PUGL_BUTTON_PRESS ||
       event->type == PUGL_BUTTON_RELEASE )
   {
     if( touches( event->button.x, event->button.y ) )
-      handleThisEvent = true;
-  }
-  if( event->type == PUGL_SCROLL )
-  {
-    if( touches( event->scroll.x, event->scroll.y ) )
-      handleThisEvent = true;
+    {
+      PuglEvent childEvent;
+      childEvent = *event;
+      childEvent.button.x += 0; // scroll position horizontal
+      childEvent.button.y -= ( y_ + scrollY_); // position + scroll px
+      
+      // pass event on to children
+      if( Group::handle( &childEvent ) )
+      {
+        newChildCr = true;
+        ui->redraw();
+        return 1;
+      }
+    }
   }
   
-  if( handleThisEvent )
-  {
-    printf("Scroll handle(), type %i\n", event->type);
-    int ret = vSlider->handle( event );
-    if( ret )
-    {
-      printf("vSlider returning from handle\n");
-      return ret;
-    }
-    ret = hSlider->handle( event );
-    if( ret )
-    {
-      printf("hSlider returning from handle\n");
-      return ret;
-    }
-    return Group::handle( event );
-  }
-  */
+  return 0;
 }
 
 void Scroll::redrawChild( cairo_t* cr )
 {
+  if( !childCr )
+  {
+    redrawChild_ = false;
+    return;
+  }
   cairo_save( cr );
   
   /// clear the screen
