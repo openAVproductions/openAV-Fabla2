@@ -29,7 +29,10 @@ class TestUI : public Avtk::UI
       setBank( 0 );
       currentLayer = 1; // invalidate, so request updates
       requestSampleState( 0, 0, 0 );
+      blankSampleState();
     }
+    
+    void blankSampleState();
     
     /// widget value callback
     void widgetValueCB( Avtk::Widget* widget);
@@ -77,6 +80,7 @@ class TestUI : public Avtk::UI
     Avtk::Widget* padMaster;
     
     // Preset loading screen
+    Avtk::Scroll* sampleDirScroll;
     Avtk::List* listSampleDirs;
     Avtk::Scroll* sampleFileScroll;
     Avtk::List* listSampleFiles;

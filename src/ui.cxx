@@ -236,6 +236,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
         ui->muteGroup       ->value( ((const LV2_Atom_Float*)aPadMuteGrp)->body );
         ui->triggerMode     ->value( ((const LV2_Atom_Float*)aPadTrigMode)->body);
         ui->switchType      ->value( ((const LV2_Atom_Float*)aPadSwtchSys)->body );
+        ui->sampleGain      ->value( ((const LV2_Atom_Float*)aGain)->body );
         ui->samplePan       ->value( ((const LV2_Atom_Float*)aPan )->body );
         ui->samplePitch     ->value( ((const LV2_Atom_Float*)aPitch)->body);
         ui->sampleStartPoint->value( ((const LV2_Atom_Float*)aStartPoint)->body*2); // 2* as dial offsets on write too!
@@ -248,6 +249,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
       else
       {
         printf("NOT setting UI from DSP ReplyUiSampleState, %i, %i, %i, %i\n", aGain, aPan, aPitch, aStartPoint );
+        ui->blankSampleState();
       }
     }
     else

@@ -122,9 +122,15 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   // list view
   listSampleDirs = new Avtk::List( this, 82, 73, 106, 216, "Folder" );
+  sampleDirScroll = new Avtk::Scroll( this, 198, 43, 146, 266, "SampleFilesScroll" );
+  sampleDirScroll->set( listSampleDirs );
+  
   sampleFileScroll = new Avtk::Scroll( this, 198, 43, 146, 266, "SampleFilesScroll" );
   listSampleFiles = new Avtk::List( this, 0, 0, 126, 866, "Sample Files" );
-  // load *only* after both lists are created!
+  listSampleFiles->mode      ( Group::WIDTH_EQUAL );
+  listSampleFiles->valueMode ( Group::VALUE_SINGLE_CHILD );
+  listSampleFiles->resizeMode( Group::RESIZE_FIT_TO_CHILDREN );
+  sampleFileScroll->set( listSampleFiles );
   
   // pads
   int xS = 58;
@@ -151,6 +157,24 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   //showSampleBrowser( true );
   showSampleBrowser( false );
+}
+
+void TestUI::blankSampleState()
+{
+  muteGroup       ->value( 0 );
+  triggerMode     ->value( 0 );
+  switchType      ->value( 0 );
+  sampleGain      ->value( 0 );
+  samplePan       ->value( 0 );
+  samplePitch     ->value( 0 );
+  sampleStartPoint->value( 0 );
+  waveform->setStartPoint( 0 );
+  
+  filterType      ->value( 0 );
+  filterFrequency ->value( 0 );
+  filterResonance ->value( 0 );
+  
+  layers->clear();
 }
 
 void TestUI::loadNewDir( std::string newDir )
@@ -195,8 +219,8 @@ void TestUI::showSampleBrowser( bool show )
   
   sampleFileScroll->set( listSampleFiles );
   
-  listSampleDirs->visible( show );
-  listSampleFiles->visible( show );
+  sampleDirScroll ->visible( show );
+  sampleFileScroll->visible( show );
 }
 
 void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )

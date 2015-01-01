@@ -79,6 +79,10 @@ class Fabla2DSP
     /// update the layer info
     void padRefreshLayers( int bank, int pad );
     
+    /// lv2 convienience function to write a samples state to the UI
+    void writeSampleState( int b, int p, int l, Pad* pad, Sample* );
+    void tx_waveform( int bank, int pad, int layer, const float* data );
+    
     Library* getLibrary(){return library.GetRawPointer();}
     
   private:
@@ -103,10 +107,7 @@ class Fabla2DSP
     long recordIndex;
     std::vector<float> recordBuffer;
     
-    /// lv2 convienience function to write a samples state to the UI
-    void writeSampleState( int b, int p, int l, Pad* pad, Sample* );
     
-    void tx_waveform( int bank, int pad, int layer, const float* data );
 };
 
 }; // Fabla2

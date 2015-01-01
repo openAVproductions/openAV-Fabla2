@@ -399,7 +399,7 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleStartPoint );
   lv2_atom_forge_float(&lv2->forge, s->startPoint / s->getFrames() );
   
-    lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleFilterType );
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleFilterType );
   lv2_atom_forge_float(&lv2->forge, s->filterType );
   
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleFilterFrequency );
@@ -414,7 +414,7 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
 void Fabla2DSP::padRefreshLayers( int bank, int pad )
 {
   Pad* p = library->bank( bank )->pad( pad );
-  printf("%s, p = %i\n", __PRETTY_FUNCTION__, p );
+  //printf("%s, p = %i\n", __PRETTY_FUNCTION__, p );
   
   for(int i = 0; i < p->nLayers(); i++)
   {
@@ -439,7 +439,7 @@ void Fabla2DSP::padRefreshLayers( int bank, int pad )
     lv2_atom_forge_key(&lv2->forge, uris->fabla2_name);
     lv2_atom_forge_string(&lv2->forge, name, strlen( name ) );
     
-    printf("writing layer with name %s\n", name );
+    //printf("writing layer with name %s\n", name );
     
     // Close off object
     lv2_atom_forge_pop(&lv2->forge, &frame);
@@ -478,7 +478,11 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
   Sample* s = pad->layer( l );
   if( !s )
   {
-    printf("Fabla2:uiMessage *ERROR* bank %i, pad %i, layer %i, sample == NULL\n", b, p, l );
+    // abuse the error handling in UI to blank the sample view of UI
+    LV2_Atom_Forge_Frame frame;
+    lv2_atom_forge_frame_time( &lv2->forge, 0 );
+    lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_ReplyUiSampleState );
+    lv2_atom_forge_pop(&lv2->forge, &frame);
     return;
   }
   
@@ -525,7 +529,8 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
       pad->triggerMode( Pad::TM_GATED );
   }
   else if(  URI == uris->fabla2_RequestUiSampleState ) {
-    //tx_waveform( b, p, l, s->getWaveform() );
+    tx_waveform( b, p, l, s->getWaveform() );
+    padRefreshLayers( b, p );
     writeSampleState( b, p, l, pad, s );
   }
 }

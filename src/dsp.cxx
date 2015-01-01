@@ -171,9 +171,6 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
   lv2_atom_forge_set_buffer(&self->forge, (uint8_t*)self->out_port, space);
   lv2_atom_forge_sequence_head(&self->forge, &self->notify_frame, 0);
   
-  //float audio[10];
-  //tx_rawaudio( &self->forge, &self->uris, 0, 1024, &audio[0]);
-  
   int midiMessagesIn = 0;
   // handle incoming MIDI
   LV2_ATOM_SEQUENCE_FOREACH(self->in_port, ev)

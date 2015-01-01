@@ -62,6 +62,9 @@ void Pad::add( Sample* s )
   
   // request DSP to refresh UI layers for this pad
   dsp->padRefreshLayers( bank_, ID_ );
+  
+  // update the sample state to the UI
+  dsp->writeSampleState( bank_, ID_, samples.size()-1, this, s );
 }
 
 Sample* Pad::layer( int id )
