@@ -91,7 +91,16 @@ void Group::add( Widget* child )
   //printf("Group after add: size %i\n", children.size() );
 #endif
   
+  // notify parent that the size of this widget has changed
+  if( resizeMode_ == RESIZE_FIT_TO_CHILDREN && parent() )
+    parent()->childResize( this );
+  
   ui->redraw();
+}
+
+void Group::childResize( Widget* w )
+{
+  
 }
 
 void Group::remove( Avtk::Widget* wid )
@@ -260,7 +269,7 @@ int Group::handle( const PuglEvent* event )
       int ret = children.at( i )->handle( event );
       if( ret )
       {
-        //printf("widget %i handle eventType %i ret\n", i, event->type );
+        printf("widget %s : handles eventType %i ret = 1\n", children.at(i)->label(), event->type );
         return ret; // child widget ate event: done :)
       }
     }
