@@ -30,17 +30,12 @@ class UI : public Avtk::Group
     virtual ~UI();
     
     /*
-    /// adds a widget to the UI, and memory manages it: AKA a smart pointer will
-    /// clean up on close of the UI.
-    void add( Avtk::Widget* w)
+    WIP: is the mods state passed around with events?
+    /// should only be called from event-handlers
+    bool ctrl()
     {
-      //printf("UI::add() pushing back w %i\n", w );
-      widgets.push_back( w );
-    }
-    
-    void remove( Avtk::Widget* w )
-    {
-      widgets.remove( w );
+      int mods = puglGetModifiers( view );
+      ( PUGL_MOD_CTRL );
     }
     */
     

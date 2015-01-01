@@ -20,9 +20,7 @@ UI::UI( int w__, int h__, PuglNativeWindow parent ) :
   puglInitWindowSize  (view, w_, h_ );
   puglInitResizable   (view, false );
   puglInitContextType (view, PUGL_CAIRO);
-  /*
-  puglIgnoreKeyRepeat (view, ignoreKeyRepeat);
-  */
+  puglIgnoreKeyRepeat (view, true );
   puglSetEventFunc    (view, UI::onEvent  );
   puglSetDisplayFunc  (view, UI::onDisplay);
   puglSetCloseFunc    (view, UI::onClose  );
@@ -101,16 +99,6 @@ void UI::event( const PuglEvent* event )
   {
     redraw();
   }
-  
-  /*
-  // reverse iter over widgets (aka starting on "top"), calling handle()
-  for (std::list< Avtk::Widget*>::iterator it = widgets.begin(); it != widgets.end(); it++ )
-  {
-    if( (*it)->visible() )
-      if( (*it)->handle( event ) )
-        return;
-  }
-  */
   
   // code is only reached if *none* of the widgets handled an event:
   // we can implement UI wide hotkeys here, handle unknown events
