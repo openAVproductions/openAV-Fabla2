@@ -70,38 +70,51 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waveform = new Avtk::Waveform( this, 355, 42, FABLA2_UI_WAVEFORM_PX, 113, "Waveform" );
   
   // sample edit view
-  int divider = 40;
-  Avtk::Widget* waste = new Avtk::Button( this, 355+divider, 161, 90 - divider, 20, "Mute" );
-  muteGroup = new Avtk::Number( this, 355, 161, divider, 20, "Mute Group" );
+  const int spacer = 4;
+  int wx = 355;
+  int wy = 161;
+  Avtk::Widget* waste = new Avtk::ListItem( this, wx, 161, 90, 14, "Layers" );
+  waste->value( true );
+  waste->clickMode( Widget::CLICK_NONE );
+  wy += 13;
+  layers    = new Avtk::List( this, wx, wy, 90, 166-13-spacer, "LayersList" );
+  wx += 109 + spacer;
+  
+  int divider = 25;
+  wy = 161;
+  waste = new Avtk::Button( this, wx+divider, wy, 90 - divider, 20, "Mute" );
+  muteGroup = new Avtk::Number( this, wx, wy, divider, 20, "Mute Group" );
   muteGroup->setRange( 0, 8 );
+  wy += 20 + spacer;
   
-  waste = new Avtk::Button( this, 355+divider, 184, 90 - divider, 20, "Trigger" );
-  triggerMode = new Avtk::Number( this, 355, 184, divider, 20, "Trigger Mode" );
+  waste = new Avtk::Button( this, wx+divider, wy+1, 90 - divider, 18, "Trigger" );
+  triggerMode = new Avtk::Number( this, wx, wy, divider, 20, "Trigger Mode" );
   triggerMode->setRange( 1, 1 );
+  wy += 20 + spacer;
   
-  waste = new Avtk::Button( this, 355+divider, 208, 90 - divider, 20, "Switch" );
-  switchType = new Avtk::Number( this, 355, 208, divider, 20, "SwitchType" );
+  waste = new Avtk::Button( this, wx+divider, wy, 90 - divider, 20, "Switch" );
+  switchType = new Avtk::Number( this, wx, wy, divider, 20, "SwitchType" );
   switchType->setRange( 1, 2 );
+  wy += 20 + spacer;
   
-  layers    = new Avtk::List( this, 355, 228, 90, 109, "Layers" );
-  adsr      = new Avtk::Button( this, 450, 218, 90, 109, "ADSR" );
+  //
+  //adsr      = new Avtk::Button( this, wx, 318, 90, 9, "ADSR" );
   
   // Filters
-  //filt1     = new Avtk::Button( this, 510, 161, 59, 81, "Filter 1" );
-  divider = 40;
-  waste = new Avtk::Button( this, 450+divider, 161, 90 - divider, 20, "F-Type" );
-  filterType = new Avtk::Number( this, 450, 161, divider, 20, "Filter Type" );
+  waste = new Avtk::Button( this, wx+divider, wy, 90 - divider, 20, "F-Type" );
+  filterType = new Avtk::Number( this, wx, wy, divider, 20, "Filter Type" );
   filterType->setRange( 0, 3 );
-  filterFrequency = new Avtk::Dial( this, 455, 185, 40, 40, "Filter Frequency" );
-  filterResonance = new Avtk::Dial( this, 494, 185, 40, 40, "Filter Resonance" );
+  wy += 20 + spacer;
+  filterFrequency = new Avtk::Dial( this, wx, wy, 40, 40, "Filter Frequency" );
+  filterResonance = new Avtk::Dial( this, wx + divider + 10, wy, 40, 40, "Filter Resonance" );
   
   //filterFrequency= new Avtk::Button( this, 510, 161, 59, 81, "Filter 1" );
   
   
   //filt2     = new Avtk::Button( this, 510, 246, 59, 81, "Filter 2" );
   //bitcrusDist=new Avtk::Button( this, 573, 161, 59, 81, "Bit Cr,Dist" );
-  eq        = new Avtk::Button( this, 573, 247, 59, 81, "Equalizer" );
-  comp      = new Avtk::Button( this, 635, 161, 59, 81, "Comp" );
+  //eq        = new Avtk::Button( this, 573, 247, 59, 81, "Equalizer" );
+  //comp      = new Avtk::Button( this, 635, 161, 59, 81, "Comp" );
   
   //gainPitch = new Avtk::Button( this, 635, 247, 59, 81, "Gain/Ptc" );
   sampleGain = new Avtk::Dial( this, 635  -4 , 247+2, 40,  40, "Sample Gain" );
@@ -112,24 +125,32 @@ TestUI::TestUI( PuglNativeWindow parent ):
   samplePitch->value( 0.5 );
   sampleStartPoint=new Avtk::Dial(this,635+30-2,247+42,40, 40, "Sample Start Point" );
   
-  padSends  = new Avtk::Button( this, 699, 161, 32, 166, "Snd" );
-  padMaster = new Avtk::Button( this, 736, 160, 40, 166, "Mstr" );
+  //padSends  = new Avtk::Button( this, 699, 161, 32, 166, "Snd" );
+  //padMaster = new Avtk::Button( this, 736, 160, 40, 166, "Mstr" );
   
   /// load defaults config dir
   loadConfigFile( defaultDir );
   currentDir = defaultDir;
   
   
-  // list view
-  listSampleDirs = new Avtk::List( this, 82, 73, 106, 216, "Folder" );
-  sampleDirScroll = new Avtk::Scroll( this, 198, 43, 146, 266, "SampleFilesScroll" );
+  // samples folder view
+  sampleDirScroll = new Avtk::Scroll( this, 82, 43, 110, 216, "SampleFilesScroll" );
+  
+  listSampleDirs = new Avtk::List( this, 82, 73, 110, 216, "Folder" );
+  listSampleDirs->mode      ( Group::WIDTH_EQUAL );
+  listSampleDirs->valueMode ( Group::VALUE_SINGLE_CHILD );
+  listSampleDirs->resizeMode( Group::RESIZE_FIT_TO_CHILDREN );
+  
   sampleDirScroll->set( listSampleDirs );
   
+  // samples view
   sampleFileScroll = new Avtk::Scroll( this, 198, 43, 146, 266, "SampleFilesScroll" );
+  
   listSampleFiles = new Avtk::List( this, 0, 0, 126, 866, "Sample Files" );
   listSampleFiles->mode      ( Group::WIDTH_EQUAL );
   listSampleFiles->valueMode ( Group::VALUE_SINGLE_CHILD );
   listSampleFiles->resizeMode( Group::RESIZE_FIT_TO_CHILDREN );
+  
   sampleFileScroll->set( listSampleFiles );
   
   // pads
@@ -378,6 +399,11 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   else if( w == layers )
   {
     currentLayer = tmp;
+    //if( w->mouseButton() == 3 )
+    {
+      // right click
+      printf("right click on %s, %i\n", w->label(), w->mouseButton() );
+    }
   }
   else if( w == loadSample )
   {

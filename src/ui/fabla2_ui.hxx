@@ -39,7 +39,6 @@ class TestUI : public Avtk::UI
     
     
     // always visible widgets
-    // L
     Avtk::Widget* bankBtns[4];
     Avtk::Widget* recordOverPad;
     
@@ -64,7 +63,6 @@ class TestUI : public Avtk::UI
     Avtk::Number* filterType;
     Avtk::Widget* filterFrequency;
     Avtk::Widget* filterResonance;
-    
     
     Avtk::Widget* filt2;
     Avtk::Widget* bitcrusDist;

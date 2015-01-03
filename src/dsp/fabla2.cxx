@@ -530,7 +530,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
   }
   else if(  URI == uris->fabla2_RequestUiSampleState ) {
     tx_waveform( b, p, l, s->getWaveform() );
-    padRefreshLayers( b, p );
+    //padRefreshLayers( b, p );
     writeSampleState( b, p, l, pad, s );
   }
 }
