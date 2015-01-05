@@ -52,6 +52,12 @@ class TestUI : public Avtk::UI
     Avtk::Widget* masterVolume;
     
     
+    // sample info
+    Avtk::Text* sampleName;
+    Avtk::Text* sampleChannels;
+    Avtk::Text* sampleFrames;
+    
+    
     // sample edit view
     Avtk::Number* muteGroup;
     Avtk::Number* triggerMode;
@@ -73,6 +79,10 @@ class TestUI : public Avtk::UI
     Avtk::Dial* samplePan;
     Avtk::Dial* samplePitch;
     Avtk::Dial* sampleStartPoint;
+    Avtk::Dial* sampleEndPoint;
+    
+    Avtk::Dial* velocityStartPoint;
+    Avtk::Dial* velocityEndPoint;
     
     Avtk::Widget* padSends;
     Avtk::Widget* padMaster;

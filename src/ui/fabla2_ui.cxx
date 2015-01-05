@@ -70,15 +70,38 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waveform = new Avtk::Waveform( this, 355, 42, FABLA2_UI_WAVEFORM_PX, 113, "Waveform" );
   
   // sample edit view
+  const int colWidth = 90;
   const int spacer = 4;
   int wx = 355;
   int wy = 161;
-  Avtk::Widget* waste = new Avtk::ListItem( this, wx, 161, 90, 14, "Layers" );
+  
+  layers    = new Avtk::List( this, wx, wy, colWidth, 166-spacer, "LayersList" );
+  Avtk::Widget* waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Layers" );
   waste->value( true );
   waste->clickMode( Widget::CLICK_NONE );
-  wy += 13;
-  layers    = new Avtk::List( this, wx, wy, 90, 166-13-spacer, "LayersList" );
-  wx += 109 + spacer;
+  
+  // next column
+  wx += colWidth + spacer;
+  wy = 161;
+  
+  // sample info view
+  layers    = new Avtk::List( this, wx, wy, colWidth, 166-spacer, "SampleList" );
+  
+  waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Sample" );
+  waste->value( true );
+  waste->clickMode( Widget::CLICK_NONE );
+  
+  wy += 22;
+  sampleName = new Avtk::Text( this, wx, wy, colWidth, 14, "Name: Boom 1" );
+  wy += 14;
+  sampleChannels = new Avtk::Text( this, wx, wy, colWidth, 14, "Chnnls: 2" );
+  wy += 14;
+  sampleFrames = new Avtk::Text( this, wx, wy, colWidth, 14, "Frames: 543789" );
+  
+  wx += colWidth + spacer;
+  wy += 23;
+  
+  
   
   int divider = 25;
   wy = 161;
@@ -124,6 +147,11 @@ TestUI::TestUI( PuglNativeWindow parent ):
   samplePitch= new Avtk::Dial( this, 635+30-2, 247+2, 40,  40, "Sample Pitch" );
   samplePitch->value( 0.5 );
   sampleStartPoint=new Avtk::Dial(this,635+30-2,247+42,40, 40, "Sample Start Point" );
+  sampleEndPoint  =new Avtk::Dial(this,635+30+40,247+42,40, 40, "Sample End Point" );
+  
+  
+  velocityStartPoint=new Avtk::Dial(this,635+30-2,247+42,40, 40, "Velocity Start Point" );
+  velocityEndPoint  =new Avtk::Dial(this,635+30-2,247+42+42,40, 40, "Velocity End Point" );
   
   //padSends  = new Avtk::Button( this, 699, 161, 32, 166, "Snd" );
   //padMaster = new Avtk::Button( this, 736, 160, 40, 166, "Mstr" );
