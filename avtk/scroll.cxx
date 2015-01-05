@@ -20,6 +20,7 @@ Scroll::Scroll( Avtk::UI* ui, int x_, int y_, int w_, int h_, std::string label_
   scrollY_( 0 ),
   scrollV_( false ),
   scrollH_( false ),
+  setCtrlZoom_( false ),
   
   vSlider( new Avtk::Slider( ui, x_ + w_ - AVTK_SCROLL_BAR_SIZE, y_, AVTK_SCROLL_BAR_SIZE, h_, "Scroll VSlider") ),
   hSlider( new Avtk::Slider( ui, x_, y_ - w_ - AVTK_SCROLL_BAR_SIZE, w_, AVTK_SCROLL_BAR_SIZE, "Scroll HSlider") )
@@ -168,7 +169,7 @@ void Scroll::draw( cairo_t* cr )
     }
     if( scrollH_ )
     {
-      //hSlider->draw( cr );
+      hSlider->draw( cr );
     }
     
     cairo_restore( cr );
@@ -195,6 +196,11 @@ void Scroll::horizontal( float v )
   }
 }
 
+void Scroll::setCtrlZoom( bool zoom )
+{
+  setCtrlZoom_ = zoom;
+}
+
 int Scroll::handle( const PuglEvent* event )
 {
   // handle slider, so slider-click is responeded to
@@ -211,12 +217,24 @@ int Scroll::handle( const PuglEvent* event )
       // not control pressed
       if( !(((PuglEventScroll*)event)->state & PUGL_MOD_CTRL) )
       {
-        if( event->scroll.dy > 0 )
-          vSlider->value( vSlider->value() + 0.1 );
+        // shift scrolls horizontal
+        if( !(((PuglEventScroll*)event)->state & PUGL_MOD_SHIFT) )
+        {
+          if( event->scroll.dy > 0 )
+            vSlider->value( vSlider->value() + 0.1 );
+          else
+            vSlider->value( vSlider->value() - 0.1 );
+          vertical( vSlider->value() );
+        }
         else
-          vSlider->value( vSlider->value() - 0.1 );
+        {
+          if( event->scroll.dy > 0 )
+            hSlider->value( hSlider->value() - 0.1 );
+          else
+            hSlider->value( hSlider->value() + 0.1 );
+          horizontal( hSlider->value() );
+        }
         
-        vertical( vSlider->value() );
         ui->redraw( this );
         
         // return, eating event, so child group won't react
@@ -224,7 +242,35 @@ int Scroll::handle( const PuglEvent* event )
       }
       else
       {
-        handle = true;
+        if( !setCtrlZoom_ )
+        {
+          handle = true;
+        }
+        else
+        {
+          // zoom on the child widget: aka, change its 
+          if( children.size() )
+          {
+            Widget* w = children.at(0);
+            float scale = 0.75;
+            if( event->scroll.dy > 0 )
+              scale = 1.5;
+            
+            int newW = w->w() * scale;
+            int newH = w->h() * scale;
+            
+            if( newW > 2048 * 2 || newH > 2048 * 2 )
+              return 1; // no more zooming: cairo_t context gets too big
+            
+            w->w( newW );
+            w->h( newH );
+            
+            childResize( w );
+            
+            // handled
+            return 1;
+          }
+        }
       }
     }
   }

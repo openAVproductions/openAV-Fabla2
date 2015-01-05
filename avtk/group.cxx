@@ -8,8 +8,8 @@ namespace Avtk
 {
 
 
-Group::Group( Avtk::UI* ui ) :
-  Widget( ui ),
+Group::Group( Avtk::UI* ui, int w, int h ) :
+  Widget( ui, w, h ),
   groupMode( NONE ),
   valueMode_( VALUE_NORMAL ),
   resizeMode_( RESIZE_NONE ),
@@ -67,7 +67,7 @@ void Group::add( Widget* child )
     
     if( resizeMode_ == RESIZE_FIT_TO_CHILDREN )
     {
-      h( childY );
+      h( childY + child->h() - y_ );
       //printf("group height %i : child y = %i\n", h_, child->y() );
     }
   }
@@ -80,8 +80,8 @@ void Group::add( Widget* child )
     
     if( resizeMode_ == RESIZE_FIT_TO_CHILDREN )
     {
-      w( x_ - (child->w() + child->w()) );
-      //printf("group width set to %i\n", w_ );
+      w( childX + child->w() - x_ );
+      //printf("group width set to %i, childX %i\n", w_ );
     }
   }
   
@@ -143,7 +143,7 @@ void Group::clear()
   while( children.size() > 0 )
   {
 #ifdef AVTK_DEBUG
-    printf("removing child %s from UI : size() %i\n", children.at(0)->label(), children.size() );
+    //printf("removing child %s from UI : size() %i\n", children.at(0)->label(), children.size() );
 #endif
     Avtk::Widget* tmp = children.at(0);
     tmp->parent()->remove( tmp );

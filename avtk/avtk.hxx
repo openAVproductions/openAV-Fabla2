@@ -17,12 +17,14 @@
 #include "scroll.hxx"
 
 // widget headers
+#include "text.hxx"
 #include "list.hxx"
 #include "dial.hxx"
 #include "image.hxx"
 #include "button.hxx"
 #include "number.hxx"
 #include "slider.hxx"
+#include "spectrum.hxx"
 #include "envelope.hxx"
 #include "waveform.hxx"
 #include "listitem.hxx"

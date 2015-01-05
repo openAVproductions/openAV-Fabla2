@@ -12,6 +12,7 @@ set(AVTK_VERSION "${AVTK_VERSION_MAJOR}.${AVTK_VERSION_MINOR}.${AVTK_VERSION_PAT
 option(AVTK_RELEASE_BUILD   "Build for releasing"         OFF )
 option(AVTK_DEBUG_PRINTS    "Build with debugging prints" ON )
 option(AVTK_SNDFILE_SUPPORT "Build with sndfile library"  ON )
+option(AVTK_TESTER_SUPPORT  "Build with Tester Rec/Play"  ON )
 
 
 ################################################################################
@@ -25,8 +26,13 @@ include_directories ("${PROJECT_SOURCE_DIR}/avtk/")
 find_package(PkgConfig)
 
 IF(AVTK_DEBUG_PRINTS)
+  ADD_DEFINITIONS( "-DAVTK_TESTER" )
+ENDIF()
+
+IF(AVTK_DEBUG_PRINTS)
   ADD_DEFINITIONS( "-DAVTK_DEBUG" )
   #ADD_DEFINITIONS( "-DAVTK_DEBUG_DTOR" )
+  #ADD_DEFINITIONS( "-DAVTK_DEBUG_FILE_OPS" )
 ENDIF()
 
 IF( AVTK_SNDFILE_SUPPORT )
@@ -47,12 +53,26 @@ link_directories   ( ${X11_LIBRARY_DIRS} )
 
 SET(CMAKE_CXX_FLAGS "-trigraphs -g")
 
-FILE(GLOB src main.cxx test_ui.cxx avtk/*.cxx avtk/pugl/pugl_x11.c )
-ADD_EXECUTABLE( avtk ${src} )
+FILE(GLOB src libs/pffft.cxx avtk/*.cxx )
+
+ADD_LIBRARY( avtk STATIC ${src} )
+
+
+ADD_EXECUTABLE( avtkDemo test_ui.cxx main.cxx avtk/pugl/pugl_x11.c )
+
+FILE(GLOB testSrc tests/*.cxx)
+
+ADD_EXECUTABLE( avtkTests ${testSrc} avtk/pugl/pugl_x11.c )
 
 #target_link_libraries( avtk ${GL_LIBRARIES}     )
-target_link_libraries( avtk ${CAIRO_LIBRARIES}  )
-target_link_libraries( avtk ${X11_LIBRARIES}    )
+target_link_libraries( avtkDemo avtk  )
+target_link_libraries( avtkDemo ${CAIRO_LIBRARIES}  )
+target_link_libraries( avtkDemo ${X11_LIBRARIES}    )
+
+target_link_libraries( avtkTests avtk  )
+target_link_libraries( avtkTests ${CAIRO_LIBRARIES}  )
+target_link_libraries( avtkTests ${X11_LIBRARIES}    )
+target_link_libraries( avtkTests ${SNDFILE_LIBRARIES}    )
 
 IF( AVTK_SNDFILE_SUPPORT )
   target_link_libraries( avtk ${SNDFILE_LIBRARIES}    )
