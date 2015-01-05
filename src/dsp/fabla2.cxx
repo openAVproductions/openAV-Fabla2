@@ -264,7 +264,7 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
               if( !allocd )
               {
                 // play pad
-                voices.at(i)->play( bank, pad, p, msg[2] );
+                voices.at(i)->play( bank, pad, p, msg[2] / 127.f );
                 
                 // write note on MIDI events to UI
                 LV2_Atom_Forge_Frame frame;
@@ -498,8 +498,16 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
     s->dirty = 1; s->pan = v;
   }
   else if(  URI == uris->fabla2_SampleStartPoint ) {
-    //printf("setting start point to %f\n", v );
     s->dirty = 1; s->startPoint = v * s->getFrames();
+  }
+  else if(  URI == uris->fabla2_SampleEndPoint ) {
+    //s->dirty = 1; s->startPoint = v * s->getFrames();
+  }
+  else if(  URI == uris->fabla2_SampleVelStartPnt ) {
+    s->dirty = 1; s->velocityLow( v );
+  }
+  else if(  URI == uris->fabla2_SampleVelEndPnt ) {
+    s->dirty = 1; s->velocityHigh( v );
   }
   else if(  URI == uris->fabla2_SampleFilterType ) {
     s->dirty = 1; s->filterType = v;

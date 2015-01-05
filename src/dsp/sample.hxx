@@ -70,8 +70,9 @@ class Sample
     }
     
     /// velocity functions
-    bool velocity( int vel );
-    void velocity( int low, int high );
+    bool velocity( int vel ); // returns true if vel is in this samples range
+    void velocityLow ( float low  );
+    void velocityHigh( float high );
     
     /// playback controls
     bool dirty;           ///< Set to true when the cache is invalid
@@ -84,8 +85,8 @@ class Sample
     float filterFrequency;///< Filter cutoff/center frequency
     float filterResonance;///< Filter resonance ( Q-factor )
     
-    int velLow;           ///< Velocity low mark  (inclusive)
-    int velHigh;          ///< Velocity high mark (inclusive)
+    float velLow;           ///< Velocity low mark  0-1 range
+    float velHigh;          ///< Velocity high mark 0-1 range
   
   private:
     Fabla2DSP* dsp;

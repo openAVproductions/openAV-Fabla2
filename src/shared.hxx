@@ -65,6 +65,9 @@
 #define FABLA2_SamplePan            FABLA2_URI "#SamplePan"
 #define FABLA2_SamplePitch          FABLA2_URI "#SamplePitch"
 #define FABLA2_SampleStartPoint     FABLA2_URI "#SampleStartPoint"
+#define FABLA2_SampleEndPoint       FABLA2_URI "#SampleEndPoint"
+#define FABLA2_SampleVelStartPnt    FABLA2_URI "#SampleVelStartPnt"
+#define FABLA2_SampleVelEndPnt      FABLA2_URI "#SampleVelEndPnt"
 #define FABLA2_SampleLoad           FABLA2_URI "#SampleLoad"
 #define FABLA2_SampleUnload         FABLA2_URI "#SampleUnload"
 #define FABLA2_SampleAudioData      FABLA2_URI "#SampleAudioData"
@@ -123,6 +126,9 @@ typedef struct {
   LV2_URID fabla2_SamplePan;
   LV2_URID fabla2_SamplePitch;
   LV2_URID fabla2_SampleStartPoint;
+  LV2_URID fabla2_SampleEndPoint;
+  LV2_URID fabla2_SampleVelStartPnt;
+  LV2_URID fabla2_SampleVelEndPnt;
   LV2_URID fabla2_SampleLoad;
   LV2_URID fabla2_SampleUnload;
   LV2_URID fabla2_SampleAudioData;
@@ -181,6 +187,9 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->fabla2_SamplePan            = map->map(map->handle, FABLA2_SamplePan );
   uris->fabla2_SamplePitch          = map->map(map->handle, FABLA2_SamplePitch);
   uris->fabla2_SampleStartPoint     = map->map(map->handle, FABLA2_SampleStartPoint);
+  uris->fabla2_SampleEndPoint       = map->map(map->handle, FABLA2_SampleEndPoint);
+  uris->fabla2_SampleVelStartPnt    = map->map(map->handle, FABLA2_SampleVelStartPnt);
+  uris->fabla2_SampleVelEndPnt      = map->map(map->handle, FABLA2_SampleVelEndPnt);
   uris->fabla2_SampleLoad           = map->map(map->handle, FABLA2_SampleLoad);
   uris->fabla2_SampleUnload         = map->map(map->handle, FABLA2_SampleUnload);
   uris->fabla2_SampleAudioData      =map->map(map->handle,FABLA2_SampleAudioData);

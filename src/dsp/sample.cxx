@@ -290,10 +290,15 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
 #endif
 }
 
-void Sample::velocity( int low, int high )
+void Sample::velocityLow( float low )
 {
   velLow  = low;
+  printf("sample vel low %f\n", velLow );
+}
+void Sample::velocityHigh( float high )
+{
   velHigh = high;
+  printf("sample vel high %f\n", velHigh );
 }
 
 const float* Sample::getAudio( int chnl )

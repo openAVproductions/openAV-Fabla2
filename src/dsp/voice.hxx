@@ -56,7 +56,7 @@ class Voice
     bool active(){return active_;}
     
     /// start playing a sample on this voice
-    void play( int bank, int pad, Pad*, int velocity );
+    void play( int bank, int pad, Pad*, float velocity );
     void stop();
     
     /// start recording a sample on this voice

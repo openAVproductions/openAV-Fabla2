@@ -66,7 +66,7 @@ bool Voice::matches( int bank, int pad )
   return ( bank == bankInt_ && pad == padInt_ );
 }
 
-void Voice::play( int bankInt, int padInt, Pad* p, int velocity )
+void Voice::play( int bankInt, int padInt, Pad* p, float velocity )
 {
   // useful for mute groups etc
   bankInt_ = bankInt;

@@ -85,8 +85,8 @@ class Pad
     
     /// Sets the switch system between samples
     enum SAMPLE_SWITCH_SYSTEM {
-      SS_NONE = 0,        /// always plays first sample added
-      SS_ROUND_ROBIN,     /// iterates over all samples 1 by 1
+      SS_NONE = 0,        /// always plays selected sample
+      SS_ROUND_ROBIN,     /// iterates over all samples incrementally
       SS_VELOCITY_LAYERS, /// takes velocity into account, and plays a sample
     };
     void switchSystem( SAMPLE_SWITCH_SYSTEM sss );

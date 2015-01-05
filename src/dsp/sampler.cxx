@@ -48,7 +48,7 @@ Sampler::Sampler( Fabla2DSP* d, int rate ) :
 #endif
 }
 
-void Sampler::play( Pad* p, int velocity )
+void Sampler::play( Pad* p, float velocity )
 {
 #ifdef FABLA2_COMPONENT_TEST
   printf("%s : Pad ID %i\n", __PRETTY_FUNCTION__, p->ID() );

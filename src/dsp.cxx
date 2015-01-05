@@ -211,7 +211,12 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
       else if (obj->body.otype == self->uris.fabla2_SampleGain            ||
                obj->body.otype == self->uris.fabla2_SamplePitch           ||
                obj->body.otype == self->uris.fabla2_SamplePan             ||
+               
                obj->body.otype == self->uris.fabla2_SampleStartPoint      ||
+               obj->body.otype == self->uris.fabla2_SampleEndPoint        ||
+               
+               obj->body.otype == self->uris.fabla2_SampleVelStartPnt     ||
+               obj->body.otype == self->uris.fabla2_SampleVelEndPnt       ||
                
                obj->body.otype == self->uris.fabla2_SampleFilterType      ||
                obj->body.otype == self->uris.fabla2_SampleFilterFrequency ||

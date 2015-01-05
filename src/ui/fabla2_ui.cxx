@@ -96,19 +96,47 @@ TestUI::TestUI( PuglNativeWindow parent ):
   wy += 14;
   sampleFrames = new Avtk::Text( this, wx, wy, colWidth, 14, "Frames: 543789" );
   
-  // gain pan
-  wy += 14;
-  waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Gain / Pan" );
+  
+  // velocity ranges
+  wy += 12;
+  waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Velocity" );
   waste->value( true );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
   // gain pan dials
-  sampleGain = new Avtk::Dial( this, wx, wy, 40, 40, "Gain" );
+  velocityStartPoint = new Avtk::Dial( this, wx     , wy, 40, 40, "Velocity Low" );
+  velocityEndPoint   = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Velocity High" );
+  velocityStartPoint->value( 0 );
+  velocityEndPoint  ->value( 1 );
+  
+  wy += 40;
+  waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Gain / Pan" );
+  waste->value( true );
+  waste->clickMode( Widget::CLICK_NONE );
+  wy += 14;
+  
+  
+  
+  
+  
+  // next col
+  wx += colWidth + spacer;
+  wy = 161;
+  
+  
+  // gain pan
+  wy += 12;
+  waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Gain / Pan" );
+  waste->value( true );
+  waste->clickMode( Widget::CLICK_NONE );
+  wy += 16;
+  // gain pan dials
+  sampleGain = new Avtk::Dial( this, wx + 4, wy, 40, 40, "Gain" );
   sampleGain->value( 0.75 );
-  samplePan  = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Pan" );
+  samplePan  = new Avtk::Dial( this, wx + 46, wy, 40, 40, "Pan" );
   samplePan->value( 0.5 );
   
-  wy += 42;
+  wy += 38;
   waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Gain / Pan" );
   waste->value( true );
   waste->clickMode( Widget::CLICK_NONE );
@@ -161,10 +189,6 @@ TestUI::TestUI( PuglNativeWindow parent ):
   samplePitch->value( 0.5 );
   sampleStartPoint=new Avtk::Dial(this,635+30-2,247+42,40, 40, "Sample Start Point" );
   sampleEndPoint  =new Avtk::Dial(this,635+30+40,247+42,40, 40, "Sample End Point" );
-  
-  
-  velocityStartPoint=new Avtk::Dial(this,635+30-2,247+42,40, 40, "Velocity Start Point" );
-  velocityEndPoint  =new Avtk::Dial(this,635+30-2,247+42+42,40, 40, "Velocity End Point" );
   
   //padSends  = new Avtk::Button( this, 699, 161, 32, 166, "Snd" );
   //padMaster = new Avtk::Button( this, 736, 160, 40, 166, "Mstr" );
@@ -488,6 +512,14 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     float fin = tmp * 2.99;
     printf("switchType %f\n", fin);
     writeAtom( uris.fabla2_PadSwitchType, fin );
+  }
+  else if( w == velocityStartPoint )
+  {
+    writeAtom( uris.fabla2_SampleVelStartPnt, tmp );
+  }
+  else if( w == velocityEndPoint )
+  {
+    writeAtom( uris.fabla2_SampleVelEndPnt, tmp );
   }
   else if( w == sampleGain )
   {
