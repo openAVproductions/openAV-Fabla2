@@ -75,7 +75,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   int wx = 355;
   int wy = 161;
   
-  layers    = new Avtk::List( this, wx, wy, colWidth, 166-spacer, "LayersList" );
+  layers    = new Avtk::List( this, wx, wy+18, colWidth, 166-spacer, "LayersList" );
   Avtk::Widget* waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Layers" );
   waste->value( true );
   waste->clickMode( Widget::CLICK_NONE );
@@ -85,23 +85,39 @@ TestUI::TestUI( PuglNativeWindow parent ):
   wy = 161;
   
   // sample info view
-  layers    = new Avtk::List( this, wx, wy, colWidth, 166-spacer, "SampleList" );
-  
-  waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Sample" );
+  waste = new Avtk::Box( this, wx, wy, colWidth, 166 - spacer, "Sample" );
   waste->value( true );
   waste->clickMode( Widget::CLICK_NONE );
   
   wy += 22;
   sampleName = new Avtk::Text( this, wx, wy, colWidth, 14, "Name: Boom 1" );
   wy += 14;
-  sampleChannels = new Avtk::Text( this, wx, wy, colWidth, 14, "Chnnls: 2" );
+  sampleChannels = new Avtk::Text( this, wx, wy, colWidth, 14, "Type: Stereo" );
   wy += 14;
   sampleFrames = new Avtk::Text( this, wx, wy, colWidth, 14, "Frames: 543789" );
   
+  // gain pan
+  wy += 14;
+  waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Gain / Pan" );
+  waste->value( true );
+  waste->clickMode( Widget::CLICK_NONE );
+  wy += 14;
+  // gain pan dials
+  sampleGain = new Avtk::Dial( this, wx, wy, 40, 40, "Gain" );
+  sampleGain->value( 0.75 );
+  samplePan  = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Pan" );
+  samplePan->value( 0.5 );
+  
+  wy += 42;
+  waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Gain / Pan" );
+  waste->value( true );
+  waste->clickMode( Widget::CLICK_NONE );
+  wy += 14;
+  
+  
+  // next col
   wx += colWidth + spacer;
   wy += 23;
-  
-  
   
   int divider = 25;
   wy = 161;
@@ -140,10 +156,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   //comp      = new Avtk::Button( this, 635, 161, 59, 81, "Comp" );
   
   //gainPitch = new Avtk::Button( this, 635, 247, 59, 81, "Gain/Ptc" );
-  sampleGain = new Avtk::Dial( this, 635  -4 , 247+2, 40,  40, "Sample Gain" );
-  sampleGain->value( 0.5 );
-  samplePan  = new Avtk::Dial( this, 635  -4 , 247+42, 40, 40, "Sample Pan" );
-  samplePan->value( 0.5 );
+  
   samplePitch= new Avtk::Dial( this, 635+30-2, 247+2, 40,  40, "Sample Pitch" );
   samplePitch->value( 0.5 );
   sampleStartPoint=new Avtk::Dial(this,635+30-2,247+42,40, 40, "Sample Start Point" );
