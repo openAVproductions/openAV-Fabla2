@@ -4,13 +4,20 @@
 #include "avtk.hxx"
 #include "theme.hxx"
 
+#ifdef AVTK_TESTER
+#include "tester.hxx"
+#endif
+
 using namespace Avtk;
 
-UI::UI( int w__, int h__, PuglNativeWindow parent ) :
-  Group( this ),
+UI::UI( int w__, int h__, PuglNativeWindow parent, const char* windowName ) :
+  Group( this, w__, h__ ),
   quit_( false ),
   w_( w__ ),
   h_( h__ )
+#ifdef AVTK_TESTER
+  , tester( new Tester( this ) ) // nasty but necessary
+#endif
 {
   view = puglInit(NULL, NULL);
   
@@ -18,15 +25,17 @@ UI::UI( int w__, int h__, PuglNativeWindow parent ) :
     puglInitWindowParent( view, parent );
   
   puglInitWindowSize  (view, w_, h_ );
-  puglInitResizable   (view, false );
+  puglInitResizable   (view, true );
   puglInitContextType (view, PUGL_CAIRO);
   puglIgnoreKeyRepeat (view, true );
+  
   puglSetEventFunc    (view, UI::onEvent  );
   puglSetDisplayFunc  (view, UI::onDisplay);
   puglSetCloseFunc    (view, UI::onClose  );
   puglSetMotionFunc   (view, UI::onMotion );
+  puglSetReshapeFunc  (view, UI::onReshape);
   
-  puglCreateWindow    (view, "Avtk");
+  puglCreateWindow    (view, windowName );
   puglShowWindow      (view);
   
   puglSetHandle       (view, this);
@@ -45,9 +54,19 @@ UI::UI( int w__, int h__, PuglNativeWindow parent ) :
   themes.push_back( new Theme( this, "default.avtk" ) );
 }
 
+void UI::reshape(int x, int y)
+{
+  printf("reshaping UI: scale factor: %f \t%f\n", x/float(initW), y/float(initH) );
+  
+  //Group::resize( );
+  
+  //Group::w( x );
+  //Group::h( y );
+}
+
 UI::~UI()
 {
-#ifdef AVTK_DEBUG
+#ifdef AVTK_DEBUG_DTOR
   printf("%s %s\n", __PRETTY_FUNCTION__, label() );
 #endif
   Group::clear();
@@ -83,17 +102,75 @@ Theme* UI::theme( int id )
   return themes.at( 0 );
 }
 
+int UI::run()
+{
+  redraw();
+  
+  while ( !quit_ )
+  {
+    puglProcessEvents(view);
+    usleep( 10 );
+    
+#ifdef AVTK_TESTER
+    tester->process();
+#endif
+    
+  }
+  
+  return 0;
+}
+
 void UI::event( const PuglEvent* event )
 {
   if( event->type != PUGL_EXPOSE )
   {
-    //printf("UI::handle() type = %i\n", event->type );
+    //printf("UI::handle() type = %i, sending to Tester\n", event->type );
+#ifdef AVTK_TESTER
+    // eat AVTK start record events shortcut: 
+    if( event->type == PUGL_KEY_PRESS )
+    {
+      // ^1 pressed (Ctrl and number 1)
+      if( event->key.character == 'a' )
+        //&& (((PuglEventKey*)event)->state & PUGL_MOD_CTRL) )
+      {
+        if( !tester->recording() )
+        {
+          printf("AVTK: Tester Record Starting!\n");
+          tester->record( "test1" );
+        }
+        else
+        {
+          tester->recordStop();
+        }
+        return;
+      }
+      
+      // replay on Ctrl^2
+      if( event->key.character == 's' )
+        // && (((PuglEventKey*)event)->state & PUGL_MOD_CTRL) )
+      {
+        printf("run test!\n");
+        tester->runTest( "test1" );
+        return;
+      }
+    }
+    else
+    {
+      tester->handle( event );
+    }
+#endif
+    
+    // pass event to group to be handled
     int ret = Group::handle( event );
     if ( ret )
     {
       redraw();
       return;
     }
+  }
+  else if( event->type == PUGL_CONFIGURE )
+  {
+    printf("UI handleing PUGL_CONFIGURE\n");
   }
   else
   {
