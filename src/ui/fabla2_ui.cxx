@@ -90,11 +90,11 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waste->clickMode( Widget::CLICK_NONE );
   
   wy += 22;
-  sampleName = new Avtk::Text( this, wx, wy, colWidth, 14, "Name: Boom 1" );
+  sampleName = new Avtk::Text( this, wx, wy, colWidth, 14, "-" );
   wy += 14;
-  sampleChannels = new Avtk::Text( this, wx, wy, colWidth, 14, "Type: Stereo" );
+  sampleChannels = new Avtk::Text( this, wx, wy, colWidth, 14, "Type: -" );
   wy += 14;
-  sampleFrames = new Avtk::Text( this, wx, wy, colWidth, 14, "Frames: 543789" );
+  sampleFrames = new Avtk::Text( this, wx, wy, colWidth, 14, "Frames: -" );
   
   
   // velocity ranges

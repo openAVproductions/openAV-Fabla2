@@ -240,6 +240,10 @@ static void fabla2_port_event(LV2UI_Handle handle,
         ui->muteGroup       ->value( ((const LV2_Atom_Float*)aPadMuteGrp)->body );
         ui->triggerMode     ->value( ((const LV2_Atom_Float*)aPadTrigMode)->body);
         ui->switchType      ->value( ((const LV2_Atom_Float*)aPadSwtchSys)->body );
+        
+        //ui->sampleName      ->value( ((const LV2_Atom_Float*)aName)->body );
+        ui->sampleName      ->label( (const char*) LV2_ATOM_BODY_CONST( aName ) );
+        
         ui->sampleGain      ->value( ((const LV2_Atom_Float*)aGain)->body );
         ui->samplePan       ->value( ((const LV2_Atom_Float*)aPan )->body );
         ui->samplePitch     ->value( ((const LV2_Atom_Float*)aPitch)->body);
