@@ -399,6 +399,12 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleStartPoint );
   lv2_atom_forge_float(&lv2->forge, s->startPoint / s->getFrames() );
   
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleVelStartPnt );
+  lv2_atom_forge_float(&lv2->forge, s->velLow );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleVelEndPnt );
+  lv2_atom_forge_float(&lv2->forge, s->velHigh );
+  
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleFilterType );
   lv2_atom_forge_float(&lv2->forge, s->filterType );
   

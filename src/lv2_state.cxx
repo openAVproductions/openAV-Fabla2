@@ -282,7 +282,7 @@ fabla2_restore(LV2_Handle                  instance,
             {
               delete s;
               // error loading this sample!
-              printf("Pad %i : Sample %i : Frames == 0, aborting!\n", p, i );
+              printf("Pad %i : Sample %i : Frames == 0, ignoring this sample!\n", p, i );
               continue;
             }
             else

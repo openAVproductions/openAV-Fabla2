@@ -212,6 +212,8 @@ static void fabla2_port_event(LV2UI_Handle handle,
       const LV2_Atom* aPitch      = 0;
       const LV2_Atom* aPan        = 0;
       const LV2_Atom* aStartPoint = 0;
+      const LV2_Atom* aVelLow     = 0;
+      const LV2_Atom* aVelHigh    = 0;
       const LV2_Atom* aFiltType   = 0;
       const LV2_Atom* aFiltFreq   = 0;
       const LV2_Atom* aFiltReso   = 0;
@@ -224,6 +226,8 @@ static void fabla2_port_event(LV2UI_Handle handle,
             ui->uris.fabla2_SampleGain        , &aGain,
             ui->uris.fabla2_SamplePitch       , &aPitch,
             ui->uris.fabla2_SampleStartPoint  , &aStartPoint,
+            ui->uris.fabla2_SampleVelStartPnt , &aVelLow,
+            ui->uris.fabla2_SampleVelEndPnt   , &aVelHigh,
             ui->uris.fabla2_SamplePan         , &aPan,
             ui->uris.fabla2_SampleFilterType  , &aFiltType,
             ui->uris.fabla2_SampleFilterFrequency,&aFiltFreq,
@@ -239,8 +243,12 @@ static void fabla2_port_event(LV2UI_Handle handle,
         ui->sampleGain      ->value( ((const LV2_Atom_Float*)aGain)->body );
         ui->samplePan       ->value( ((const LV2_Atom_Float*)aPan )->body );
         ui->samplePitch     ->value( ((const LV2_Atom_Float*)aPitch)->body);
+        
         ui->sampleStartPoint->value( ((const LV2_Atom_Float*)aStartPoint)->body*2); // 2* as dial offsets on write too!
         ui->waveform->setStartPoint( ((const LV2_Atom_Float*)aStartPoint)->body);
+        
+        ui->velocityStartPoint->value(((const LV2_Atom_Float*)aVelLow)->body  );
+        ui->velocityEndPoint  ->value(((const LV2_Atom_Float*)aVelHigh)->body );
         
         ui->filterType      ->value( ((const LV2_Atom_Float*)aFiltType)->body);
         ui->filterFrequency ->value( ((const LV2_Atom_Float*)aFiltFreq)->body);
