@@ -450,6 +450,20 @@ void Fabla2DSP::padRefreshLayers( int bank, int pad )
     // Close off object
     lv2_atom_forge_pop(&lv2->forge, &frame);
   }
+  
+  // now *re-write* the note-on event to highlight the played layer in the UI
+  LV2_Atom_Forge_Frame frame;
+  lv2_atom_forge_frame_time( &lv2->forge, 0 );
+  lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_PadPlay );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_bank);
+  lv2_atom_forge_int(&lv2->forge, bank );
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_pad);
+  lv2_atom_forge_int(&lv2->forge, pad );
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_layer);
+  lv2_atom_forge_int(&lv2->forge, p->lastPlayedLayer() );
+  
+  lv2_atom_forge_pop(&lv2->forge, &frame);
 }
 
 void Fabla2DSP::tx_waveform( int b, int p, int l, const float* data )

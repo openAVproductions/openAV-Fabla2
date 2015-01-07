@@ -115,21 +115,23 @@ static void fabla2_port_event(LV2UI_Handle handle,
           ui->uris.fabla2_velocity, &vel,
           NULL);
       
-      if (n_props != 4 ||
-          bank->type != ui->uris.atom_Int ||
-          pad->type != ui->uris.atom_Int  ||
-          lay->type != ui->uris.atom_Int  ||
-          vel->type != ui->uris.atom_Int )
+      if ( bank->type != ui->uris.atom_Int ||
+           pad->type != ui->uris.atom_Int  ||
+           lay->type != ui->uris.atom_Int   )
       {
-        printf("Fabla2::port_event() error: Corrupt state message\n");
+        printf("Fabla2-UI::port_event() error: Corrupt state message\n");
         return;
       }
       else
       {
         const int32_t b  = ((const LV2_Atom_Int*)bank)->body;
         const int32_t p  = ((const LV2_Atom_Int*)pad)->body;
-        int32_t v        = ((const LV2_Atom_Int*)vel)->body;
         int32_t layer    = ((const LV2_Atom_Int*)lay)->body;
+        
+        int32_t v = 127;
+        if( vel )
+          v = ((const LV2_Atom_Int*)vel)->body;
+        
         ui->padEvent( b, p, layer, !padStop, v );
       }
     }

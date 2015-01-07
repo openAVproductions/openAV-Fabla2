@@ -223,7 +223,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   //gainPitch = new Avtk::Button( this, 635, 247, 59, 81, "Gain/Ptc" );
   
-
+  
   //padSends  = new Avtk::Button( this, 699, 161, 32, 166, "Snd" );
   //padMaster = new Avtk::Button( this, 736, 160, 40, 166, "Mstr" );
   
