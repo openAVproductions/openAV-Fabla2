@@ -75,6 +75,7 @@ class TestUI : public Avtk::UI
     Avtk::Dial* sampleGain;
     Avtk::Dial* samplePan;
     Avtk::Dial* samplePitch;
+    Avtk::Dial* sampleTime;
     Avtk::Dial* sampleStartPoint;
     Avtk::Dial* sampleEndPoint;
     

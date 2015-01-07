@@ -126,7 +126,9 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Vel -> Vol-Fil" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
-  // widgets here
+  waste = new Avtk::Dial( this, wx     , wy, 40, 40, "VelocityToVolume" );
+  waste = new Avtk::Dial( this, wx + 44, wy, 40, 40, "VelocityToFilter" );
+  waste->value( true );
   wy += 40;
   
   /// Filter
@@ -171,9 +173,9 @@ TestUI::TestUI( PuglNativeWindow parent ):
   wy += 14;
   samplePitch = new Avtk::Dial( this, wx     , wy, 40, 40, "Pitch" );
   samplePitch->value( 0.5 );
-  waste   = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Time" );
-  waste->clickMode( Widget::CLICK_NONE );
-  waste->theme( theme(2) );
+  sampleTime   = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Time" );
+  sampleTime->clickMode( Widget::CLICK_NONE );
+  sampleTime->theme( theme(2) );
   
   /// next col
   wx += colWidth + spacer;
@@ -181,6 +183,9 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Todo" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
+  waste = new Avtk::Dial( this, wx     , wy, 40, 40, "Todo" );
+  waste = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Todo" );
+  waste->value( true );
   wy += 40;
   
   waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Sends 1 2" );
@@ -285,11 +290,22 @@ void TestUI::blankSampleState()
   muteGroup       ->value( 0 );
   triggerMode     ->value( 0 );
   switchType      ->value( 0 );
+  
   sampleGain      ->value( 0 );
   samplePan       ->value( 0 );
+  
   samplePitch     ->value( 0 );
+  sampleTime      ->value( 0 );
+  
   sampleStartPoint->value( 0 );
+  sampleEndPoint  ->value( 0 );
+  
   waveform->setStartPoint( 0 );
+  
+  velocityStartPoint->value( 0 );
+  velocityEndPoint->value( 0 );
+  
+  
   
   send1           ->value( 0 );
   send2           ->value( 0 );
@@ -390,7 +406,7 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
     
     // if the current note-off event is *also* the current pad:
     // then highlight it as the selected pad
-    if( pad == currentPad && bank == currentBank )
+    if( pad == currentPad && bank == currentBank && followPad )
     {
       pads[pad]-> value( 0.78900 );
       pads[pad]->theme( theme( bank+1%3 ) );
@@ -612,6 +628,13 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   else if( w == followPadBtn )
   {
     followPad = (int)tmp;
+    
+    // reset current "followed" pad to normal color
+    if( !followPad )
+    {
+      pads[currentPad]->value( 0 );
+      pads[currentPad]->theme( theme( currentBank ) );
+    }
   }
   else
   {
