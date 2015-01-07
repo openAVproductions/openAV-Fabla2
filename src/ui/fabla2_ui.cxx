@@ -75,18 +75,18 @@ TestUI::TestUI( PuglNativeWindow parent ):
   int wx = 355;
   int wy = 161;
   
-  layers    = new Avtk::List( this, wx, wy+18, colWidth, 166-spacer, "LayersList" );
-  Avtk::Widget* waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Layers" );
-  waste->value( true );
+  Avtk::Widget* waste = 0;
+  
+  waste = new Avtk::Box( this, wx, wy, colWidth, 166-spacer,  "Layers" );
   waste->clickMode( Widget::CLICK_NONE );
+  layers    = new Avtk::List( this, wx, wy+18, colWidth, 166-spacer, "LayersList" );
   
   // next column
   wx += colWidth + spacer;
   wy = 161;
   
   // sample info view
-  waste = new Avtk::Box( this, wx, wy, colWidth, 166 - spacer, "Sample" );
-  waste->value( true );
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Sample" );
   waste->clickMode( Widget::CLICK_NONE );
   
   wy += 22;
@@ -99,8 +99,8 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   // velocity ranges
   wy += 12;
-  waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Velocity" );
-  waste->value( true );
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Velocity" );
+  waste->clickMode( Widget::CLICK_NONE );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
   // gain pan dials
@@ -110,7 +110,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   velocityEndPoint  ->value( 1 );
   
   wy += 40;
-  waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Gain / Pan" );
+  waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Vel -> Vol-Fil" );
   waste->value( true );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
@@ -125,9 +125,8 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   
   // gain pan
-  wy += 12;
-  waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Gain / Pan" );
-  waste->value( true );
+  //wy += 12;
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Gain / Pan" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 16;
   // gain pan dials
@@ -136,11 +135,25 @@ TestUI::TestUI( PuglNativeWindow parent ):
   samplePan  = new Avtk::Dial( this, wx + 46, wy, 40, 40, "Pan" );
   samplePan->value( 0.5 );
   
+  // start / end point dials
   wy += 38;
-  waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Gain / Pan" );
-  waste->value( true );
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Start / End" );
   waste->clickMode( Widget::CLICK_NONE );
+  //waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Start / End" );
   wy += 14;
+  sampleStartPoint = new Avtk::Dial( this, wx     , wy, 40, 40, "Sample Start Point" );
+  sampleEndPoint   = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Sample End Point" );
+  sampleEndPoint->value( true );
+  
+  // pitch / time
+  wy += 40;
+  waste = new Avtk::Box( this, wx, wy, colWidth, 54,  "Pitch / Time" );
+  waste->clickMode( Widget::CLICK_NONE );
+  //waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Start / End" );
+  wy += 14;
+  samplePitch = new Avtk::Dial( this, wx     , wy, 40, 40, "Pitch" );
+  samplePitch->value( 0.5 );
+  waste   = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Time" );
   
   
   // next col
@@ -185,11 +198,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   //gainPitch = new Avtk::Button( this, 635, 247, 59, 81, "Gain/Ptc" );
   
-  samplePitch= new Avtk::Dial( this, 635+30-2, 247+2, 40,  40, "Sample Pitch" );
-  samplePitch->value( 0.5 );
-  sampleStartPoint=new Avtk::Dial(this,635+30-2,247+42,40, 40, "Sample Start Point" );
-  sampleEndPoint  =new Avtk::Dial(this,635+30+40,247+42,40, 40, "Sample End Point" );
-  
+
   //padSends  = new Avtk::Button( this, 699, 161, 32, 166, "Snd" );
   //padMaster = new Avtk::Button( this, 736, 160, 40, 166, "Mstr" );
   
@@ -267,15 +276,20 @@ void TestUI::loadNewDir( std::string newDir )
 {
   std::vector< std::string > tmp;
   int error = Avtk::directories( newDir, tmp );
+  
   if( !error )
   {
     // don't navigate into a dir with only . and ..
     if( tmp.size() > 2 )
     {
       currentDir = newDir;
-      printf("Fabla2UI::loadNewDir() new dir : %s\n", newDir.c_str() );
+      printf("%s, %d : new dir : %s\n", __PRETTY_FUNCTION__, __LINE__, newDir.c_str() );
       listSampleDirs->clear();
       listSampleDirs->show( tmp );
+    }
+    else
+    {
+      printf("%s , %d : not moving to sub-dir : has no folders to cd into\n", __PRETTY_FUNCTION__, __LINE__ );
     }
     
     currentFilesDir = newDir;
@@ -284,13 +298,20 @@ void TestUI::loadNewDir( std::string newDir )
     error = Avtk::directoryContents( currentFilesDir, tmp, strippedFilenameStart );
     if( !error )
     {
-      listSampleFiles->show( tmp );
-      printf("%s error showing contents of %s\n", __PRETTY_FUNCTION__, currentFilesDir.c_str() );
+      if( tmp.size() )
+      {
+        listSampleFiles->show( tmp );
+        printf("%s , %d : error showing contents of %s\n", __PRETTY_FUNCTION__, __LINE__, currentFilesDir.c_str() );
+      }
+      else
+      {
+        printf("tmp.size() == 0, not showing\n");
+      }
     }
   }
   else
   {
-    printf("Fabla2UI: Error loading dir %s", newDir.c_str() );
+    printf("%s , %d :  Error loading dir %s", __PRETTY_FUNCTION__, __LINE__, newDir.c_str() );
     return;
   }
 }
