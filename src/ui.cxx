@@ -242,7 +242,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
         ui->switchType      ->value( ((const LV2_Atom_Float*)aPadSwtchSys)->body );
         
         //ui->sampleName      ->value( ((const LV2_Atom_Float*)aName)->body );
-        ui->sampleName      ->label( (const char*) LV2_ATOM_BODY_CONST( aName ) );
+        //ui->sampleName      ->label( (const char*) LV2_ATOM_BODY_CONST( aName ) );
         
         ui->sampleGain      ->value( ((const LV2_Atom_Float*)aGain)->body );
         ui->samplePan       ->value( ((const LV2_Atom_Float*)aPan )->body );

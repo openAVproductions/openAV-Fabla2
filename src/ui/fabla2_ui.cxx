@@ -74,8 +74,10 @@ TestUI::TestUI( PuglNativeWindow parent ):
   const int spacer = 4;
   int wx = 355;
   int wy = 161;
+  int divider = 25;
   
   Avtk::Widget* waste = 0;
+  
   
   waste = new Avtk::Box( this, wx, wy, colWidth, 166-spacer,  "Layers" );
   waste->clickMode( Widget::CLICK_NONE );
@@ -85,22 +87,21 @@ TestUI::TestUI( PuglNativeWindow parent ):
   wx += colWidth + spacer;
   wy = 161;
   
+  /*
   // sample info view
   waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Sample" );
   waste->clickMode( Widget::CLICK_NONE );
-  
   wy += 22;
   sampleName = new Avtk::Text( this, wx, wy, colWidth, 14, "-" );
   wy += 14;
   sampleChannels = new Avtk::Text( this, wx, wy, colWidth, 14, "Type: -" );
   wy += 14;
   sampleFrames = new Avtk::Text( this, wx, wy, colWidth, 14, "Frames: -" );
-  
+  */
   
   // velocity ranges
-  wy += 12;
-  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Velocity" );
-  waste->clickMode( Widget::CLICK_NONE );
+  //wy += 12;
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Trigger Range" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
   // gain pan dials
@@ -110,11 +111,21 @@ TestUI::TestUI( PuglNativeWindow parent ):
   velocityEndPoint  ->value( 1 );
   
   wy += 40;
-  waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Vel -> Vol-Fil" );
-  waste->value( true );
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Vel -> Vol-Fil" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
   
+  // Filter
+  wy += 40;
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50, "Filter" );
+  waste->clickMode( Widget::CLICK_NONE );
+  
+  filterType = new Avtk::Number( this, wx + colWidth-divider, wy, divider, 20, "Filter Type" );
+  filterType->setRange( 0, 3 );
+  
+  wy += 14;
+  filterFrequency = new Avtk::Dial( this, wx, wy, 40, 40, "Filter Frequency" );
+  filterResonance = new Avtk::Dial( this, wx + divider + 10, wy, 40, 40, "Filter Resonance" );
   
   
   
@@ -122,7 +133,6 @@ TestUI::TestUI( PuglNativeWindow parent ):
   // next col
   wx += colWidth + spacer;
   wy = 161;
-  
   
   // gain pan
   //wy += 12;
@@ -160,7 +170,6 @@ TestUI::TestUI( PuglNativeWindow parent ):
   wx += colWidth + spacer;
   wy += 23;
   
-  int divider = 25;
   wy = 161;
   waste = new Avtk::Button( this, wx+divider, wy, 90 - divider, 20, "Mute" );
   muteGroup = new Avtk::Number( this, wx, wy, divider, 20, "Mute Group" );
@@ -179,14 +188,6 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   //
   //adsr      = new Avtk::Button( this, wx, 318, 90, 9, "ADSR" );
-  
-  // Filters
-  waste = new Avtk::Button( this, wx+divider, wy, 90 - divider, 20, "F-Type" );
-  filterType = new Avtk::Number( this, wx, wy, divider, 20, "Filter Type" );
-  filterType->setRange( 0, 3 );
-  wy += 20 + spacer;
-  filterFrequency = new Avtk::Dial( this, wx, wy, 40, 40, "Filter Frequency" );
-  filterResonance = new Avtk::Dial( this, wx + divider + 10, wy, 40, 40, "Filter Resonance" );
   
   //filterFrequency= new Avtk::Button( this, 510, 161, 59, 81, "Filter 1" );
   
