@@ -67,56 +67,69 @@ TestUI::TestUI( PuglNativeWindow parent ):
   masterPitch->theme( theme( 2 ) );
   masterPitch->value( 0.5 );
   
-  waveform = new Avtk::Waveform( this, 355, 42, FABLA2_UI_WAVEFORM_PX, 113, "Waveform" );
+  Avtk::Widget* waste = 0;
   
-  // sample edit view
+  waveformGroup = new Avtk::Group( this, 355, 42, FABLA2_UI_WAVEFORM_PX, 113, "WaveformGroup");
+  waveform = new Avtk::Waveform( this, 355, 42, FABLA2_UI_WAVEFORM_PX, 113, "Waveform" );
+  waveformGroup->add( waveform );
+  
+  /// waveform overlays
+  int waveX = 355;
+  int waveY = 42;
+  int waveTW = 120;
+  sampleName = new Avtk::Text( this, waveX + 8, waveY + 8, waveTW, 14, "-" );
+  waveformGroup->add( sampleName );
+  
+  
+  /// sample edit view
   const int colWidth = 90;
   const int spacer = 4;
   int wx = 355;
   int wy = 161;
   int divider = 25;
   
-  Avtk::Widget* waste = 0;
   
-  
-  waste = new Avtk::Box( this, wx, wy, colWidth, 166-spacer,  "Layers" );
+  /// sample config options
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Mte-Trg-Swc" );
   waste->clickMode( Widget::CLICK_NONE );
-  layers    = new Avtk::List( this, wx, wy+18, colWidth, 166-spacer, "LayersList" );
+  wy += 14;
+  muteGroup = new Avtk::Number( this, wx + 5, wy + 8, divider, 20, "Mute Group" );
+  muteGroup->setRange( 0, 8 );
   
-  // next column
+  triggerMode = new Avtk::Number( this, wx + 32, wy + 8, divider, 20, "Trigger Mode" );
+  triggerMode->setRange( 1, 1 );
+  
+  switchType = new Avtk::Number( this, wx + 60, wy + 8, divider, 20, "Switch Type" );
+  switchType->setRange( 1, 2 );
+  wy += 40;
+  
+  /// layers
+  waste = new Avtk::Box( this, wx, wy, colWidth, 104,  "Layers" );
+  waste->clickMode( Widget::CLICK_NONE );
+  layers    = new Avtk::List( this, wx, wy+18, colWidth, 162-18, "LayersList" );
+  
+  /// next column
   wx += colWidth + spacer;
   wy = 161;
   
-  /*
-  // sample info view
-  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Sample" );
-  waste->clickMode( Widget::CLICK_NONE );
-  wy += 22;
-  sampleName = new Avtk::Text( this, wx, wy, colWidth, 14, "-" );
-  wy += 14;
-  sampleChannels = new Avtk::Text( this, wx, wy, colWidth, 14, "Type: -" );
-  wy += 14;
-  sampleFrames = new Avtk::Text( this, wx, wy, colWidth, 14, "Frames: -" );
-  */
-  
-  // velocity ranges
-  //wy += 12;
+  /// velocity ranges
   waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Trigger Range" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
-  // gain pan dials
   velocityStartPoint = new Avtk::Dial( this, wx     , wy, 40, 40, "Velocity Low" );
   velocityEndPoint   = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Velocity High" );
   velocityStartPoint->value( 0 );
   velocityEndPoint  ->value( 1 );
-  
   wy += 40;
+  
+  /// Velocity -> Volume / Filter
   waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Vel -> Vol-Fil" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
-  
-  // Filter
+  // widgets here
   wy += 40;
+  
+  /// Filter
   waste = new Avtk::Box( this, wx, wy, colWidth, 50, "Filter" );
   waste->clickMode( Widget::CLICK_NONE );
   
@@ -129,62 +142,61 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   
   
-  
-  // next col
+  /// next col
   wx += colWidth + spacer;
   wy = 161;
   
-  // gain pan
-  //wy += 12;
+  /// gain pan
   waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Gain / Pan" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 16;
-  // gain pan dials
   sampleGain = new Avtk::Dial( this, wx + 4, wy, 40, 40, "Gain" );
   sampleGain->value( 0.75 );
   samplePan  = new Avtk::Dial( this, wx + 46, wy, 40, 40, "Pan" );
   samplePan->value( 0.5 );
-  
-  // start / end point dials
   wy += 38;
+  
+  /// start / end point dials
   waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Start / End" );
   waste->clickMode( Widget::CLICK_NONE );
-  //waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Start / End" );
   wy += 14;
   sampleStartPoint = new Avtk::Dial( this, wx     , wy, 40, 40, "Sample Start Point" );
   sampleEndPoint   = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Sample End Point" );
   sampleEndPoint->value( true );
-  
-  // pitch / time
   wy += 40;
-  waste = new Avtk::Box( this, wx, wy, colWidth, 54,  "Pitch / Time" );
+  
+  /// pitch / time
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Pitch / Time" );
   waste->clickMode( Widget::CLICK_NONE );
-  //waste = new Avtk::ListItem( this, wx, wy, colWidth, 14, "Start / End" );
   wy += 14;
   samplePitch = new Avtk::Dial( this, wx     , wy, 40, 40, "Pitch" );
   samplePitch->value( 0.5 );
   waste   = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Time" );
   
   
-  // next col
+  /// next col
   wx += colWidth + spacer;
-  wy += 23;
-  
   wy = 161;
-  waste = new Avtk::Button( this, wx+divider, wy, 90 - divider, 20, "Mute" );
-  muteGroup = new Avtk::Number( this, wx, wy, divider, 20, "Mute Group" );
-  muteGroup->setRange( 0, 8 );
-  wy += 20 + spacer;
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Todo" );
+  waste->clickMode( Widget::CLICK_NONE );
+  wy += 14;
+  wy += 40;
   
-  waste = new Avtk::Button( this, wx+divider, wy+1, 90 - divider, 18, "Trigger" );
-  triggerMode = new Avtk::Number( this, wx, wy, divider, 20, "Trigger Mode" );
-  triggerMode->setRange( 1, 1 );
-  wy += 20 + spacer;
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Todo" );
+  waste->clickMode( Widget::CLICK_NONE );
+  wy += 14;
+  wy += 40;
   
-  waste = new Avtk::Button( this, wx+divider, wy, 90 - divider, 20, "Switch" );
-  switchType = new Avtk::Number( this, wx, wy, divider, 20, "SwitchType" );
-  switchType->setRange( 1, 2 );
-  wy += 20 + spacer;
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Todo" );
+  waste->clickMode( Widget::CLICK_NONE );
+  wy += 14;
+  wy += 40;
+  
+  /// master
+  wx += colWidth + spacer;
+  wy = 161;
+  waste = new Avtk::Box( this, wx, wy, colWidth/2, 162,  "Mstr" );
+  waste->clickMode( Widget::CLICK_NONE );
   
   //
   //adsr      = new Avtk::Button( this, wx, 318, 90, 9, "ADSR" );
@@ -202,6 +214,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
 
   //padSends  = new Avtk::Button( this, 699, 161, 32, 166, "Snd" );
   //padMaster = new Avtk::Button( this, 736, 160, 40, 166, "Mstr" );
+  
   
   /// load defaults config dir
   loadConfigFile( defaultDir );
@@ -269,6 +282,8 @@ void TestUI::blankSampleState()
   filterType      ->value( 0 );
   filterFrequency ->value( 0 );
   filterResonance ->value( 0 );
+  
+  sampleName->label("-");
   
   layers->clear();
 }

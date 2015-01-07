@@ -24,7 +24,7 @@ void Pad::draw( cairo_t* cr )
   {
     theme_->color( cr, HIGHLIGHT, 0.2 );
     cairo_fill_preserve(cr);
-    theme_->color( cr, HIGHLIGHT );
+    theme_->color( cr, HIGHLIGHT, 0.8 );
     cairo_set_line_width(cr, theme_->lineWidthWide() );
     cairo_stroke(cr);
   }

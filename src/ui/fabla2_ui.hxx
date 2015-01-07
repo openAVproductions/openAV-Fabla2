@@ -54,9 +54,6 @@ class TestUI : public Avtk::UI
     
     // sample info
     Avtk::Text* sampleName;
-    Avtk::Text* sampleChannels;
-    Avtk::Text* sampleFrames;
-    
     
     // sample edit view
     Avtk::Number* muteGroup;
@@ -94,6 +91,8 @@ class TestUI : public Avtk::UI
     Avtk::List* listSampleFiles;
     
     // shared between views!
+    /// holds all waveform related widgets: sample name, sample duration etc
+    Avtk::Group*    waveformGroup;
     Avtk::Waveform* waveform;
     
     void padEvent( int bank, int pad, int layer, bool noteOn, int velocity );
