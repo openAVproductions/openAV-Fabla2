@@ -90,7 +90,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   
   /// sample config options
-  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Mte-Trg-Swc" );
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Mute-Trg-Swch" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
   muteGroup = new Avtk::Number( this, wx + 5, wy + 8, divider, 20, "Mute Group" );
@@ -113,7 +113,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   wy = 161;
   
   /// velocity ranges
-  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Trigger Range" );
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Velocity Map" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
   velocityStartPoint = new Avtk::Dial( this, wx     , wy, 40, 40, "Velocity Low" );
@@ -172,7 +172,8 @@ TestUI::TestUI( PuglNativeWindow parent ):
   samplePitch = new Avtk::Dial( this, wx     , wy, 40, 40, "Pitch" );
   samplePitch->value( 0.5 );
   waste   = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Time" );
-  
+  waste->clickMode( Widget::CLICK_NONE );
+  waste->theme( theme(2) );
   
   /// next col
   wx += colWidth + spacer;
@@ -182,21 +183,32 @@ TestUI::TestUI( PuglNativeWindow parent ):
   wy += 14;
   wy += 40;
   
-  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Todo" );
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Sends 1 2" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
+  send1 = new Avtk::Dial( this, wx     , wy, 40, 40, "Send1" );
+  send1->theme( theme(1) );
+  send2 = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Send2" );
+  send2->theme( theme(2) );
   wy += 40;
   
-  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Todo" );
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Sends 3 4" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
+  send3 = new Avtk::Dial( this, wx     , wy, 40, 40, "Send3" );
+  send3->theme( theme(3) );
+  send4 = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Send4" );
+  send4->theme( theme(4) );
   wy += 40;
   
   /// master
   wx += colWidth + spacer;
   wy = 161;
-  waste = new Avtk::Box( this, wx, wy, colWidth/2, 162,  "Mstr" );
+  waste = new Avtk::Box( this, wx, wy, colWidth/2, (14+40)*3-4,  "Pad" );
   waste->clickMode( Widget::CLICK_NONE );
+  wy += 55;
+  padVolume = new Avtk::Slider( this, wx+10, wy, 20, 100,  "PadVolume" );
+  padVolume->clickMode( Widget::CLICK_NONE );
   
   //
   //adsr      = new Avtk::Button( this, wx, 318, 90, 9, "ADSR" );
@@ -278,6 +290,11 @@ void TestUI::blankSampleState()
   samplePitch     ->value( 0 );
   sampleStartPoint->value( 0 );
   waveform->setStartPoint( 0 );
+  
+  send1           ->value( 0 );
+  send2           ->value( 0 );
+  send3           ->value( 0 );
+  send4           ->value( 0 );
   
   filterType      ->value( 0 );
   filterFrequency ->value( 0 );

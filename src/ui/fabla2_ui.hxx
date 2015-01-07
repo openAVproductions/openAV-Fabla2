@@ -81,6 +81,13 @@ class TestUI : public Avtk::UI
     Avtk::Dial* velocityStartPoint;
     Avtk::Dial* velocityEndPoint;
     
+    Avtk::Dial* send1;
+    Avtk::Dial* send2;
+    Avtk::Dial* send3;
+    Avtk::Dial* send4;
+    
+    Avtk::Slider* padVolume;
+    
     Avtk::Widget* padSends;
     Avtk::Widget* padMaster;
     

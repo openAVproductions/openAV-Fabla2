@@ -77,6 +77,8 @@ void Sample::recacheWaveform()
   {
     float average = 0.f;
     
+    printf("WF px %i : sampsPerPix %i\n", p, sampsPerPix );
+    
     // calc value for this pixel
     for( int i = 0; i < sampsPerPix; i++ )
     {
@@ -108,6 +110,7 @@ void Sample::recacheWaveform()
     normalizeFactor = (1.f / highestPeak);
   printf("normalizing with highestPeak %f: nomalizeFactor %f\n", highestPeak, normalizeFactor );
   
+  Plotter::plot( getName(), FABLA2_UI_WAVEFORM_PX, &waveformData[0] );
   
   // loop over each pixel and normalize it
   for( int p = 0; p < FABLA2_UI_WAVEFORM_PX; p++ )
