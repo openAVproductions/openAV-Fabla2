@@ -492,7 +492,12 @@ void Fabla2DSP::tx_waveform( int b, int p, int l, const float* data )
 
 void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 {
-  //printf("Fabla2:uiMessage bank %i, pad %i, layer %i: %f\n", b, p, l, v );
+  printf("Fabla2:uiMessage bank %i, pad %i, layer %i: %f\n", b, p, l, v );
+  
+  if(       URI == uris->fabla2_PadPlay )
+  {
+    printf("DSP has note on from UI: %i, %i, %i\n", b, p, l);
+  }
   
   Pad* pad = library->bank( b )->pad( p );
   Sample* s = pad->layer( l );

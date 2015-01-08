@@ -10,6 +10,29 @@
 #include <fstream>
 #include <sstream>
 
+static LV2_Atom* writePadPlay( LV2_Atom_Forge* forge, URIs* uris, int bank, int pad, int layer, bool noteOn )
+{
+  LV2_Atom_Forge_Frame frame;
+  LV2_Atom* set;
+  if( noteOn )
+    set = (LV2_Atom*)lv2_atom_forge_object( forge, &frame, 0, uris->fabla2_PadPlay);
+  else
+    set = (LV2_Atom*)lv2_atom_forge_object( forge, &frame, 0, uris->fabla2_PadStop);
+  
+  lv2_atom_forge_key(forge, uris->fabla2_bank);
+  lv2_atom_forge_int(forge, bank );
+  
+  lv2_atom_forge_key(forge, uris->fabla2_pad);
+  lv2_atom_forge_int(forge, pad );
+  
+  lv2_atom_forge_key(forge, uris->fabla2_layer);
+  lv2_atom_forge_int(forge, layer );
+  
+  lv2_atom_forge_pop(forge, &frame);
+  
+  return set;
+}
+
 static LV2_Atom* writeSetFile( LV2_Atom_Forge* forge, URIs* uris, int bank, int pad, std::string file )
 {
   LV2_Atom_Forge_Frame frame;

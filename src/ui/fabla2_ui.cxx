@@ -86,20 +86,20 @@ TestUI::TestUI( PuglNativeWindow parent ):
   const int spacer = 4;
   int wx = 355;
   int wy = 161;
-  int divider = 25;
+  int divider = 35;
   
   
   /// sample config options
   waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Mute-Trg-Swch" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
-  muteGroup = new Avtk::Number( this, wx + 5, wy + 8, divider, 20, "Mute Group" );
+  muteGroup = new Avtk::Number( this, wx + 5, wy + 8, 25, 20, "Mute Group" );
   muteGroup->setRange( 0, 8 );
   
-  triggerMode = new Avtk::Number( this, wx + 32, wy + 8, divider, 20, "Trigger Mode" );
+  triggerMode = new Avtk::Number( this, wx + 32, wy + 8, 25, 20, "Trigger Mode" );
   triggerMode->setRange( 1, 1 );
   
-  switchType = new Avtk::Number( this, wx + 60, wy + 8, divider, 20, "Switch Type" );
+  switchType = new Avtk::Number( this, wx + 60, wy + 8, 25, 20, "Switch Type" );
   switchType->setRange( 1, 2 );
   wy += 40;
   
@@ -128,14 +128,14 @@ TestUI::TestUI( PuglNativeWindow parent ):
   wy += 14;
   waste = new Avtk::Dial( this, wx     , wy, 40, 40, "VelocityToVolume" );
   waste = new Avtk::Dial( this, wx + 44, wy, 40, 40, "VelocityToFilter" );
-  waste->value( true );
+  waste->value( 0 );
   wy += 40;
   
   /// Filter
   waste = new Avtk::Box( this, wx, wy, colWidth, 50, "Filter" );
   waste->clickMode( Widget::CLICK_NONE );
   
-  filterType = new Avtk::Number( this, wx + colWidth-divider, wy, divider, 20, "Filter Type" );
+  filterType = new Avtk::Number( this, wx + colWidth-divider, wy, divider, 14, "Filter Type" );
   filterType->setRange( 0, 3 );
   
   wy += 14;
@@ -222,29 +222,11 @@ TestUI::TestUI( PuglNativeWindow parent ):
   wy += 55-36;
   padVolume = new Avtk::Slider( this, wx+10, wy, 25, 100,  "PadVolume" );
   padVolume->clickMode( Widget::CLICK_NONE );
-  
-  //
-  //adsr      = new Avtk::Button( this, wx, 318, 90, 9, "ADSR" );
-  
-  //filterFrequency= new Avtk::Button( this, 510, 161, 59, 81, "Filter 1" );
-  
-  
-  //filt2     = new Avtk::Button( this, 510, 246, 59, 81, "Filter 2" );
-  //bitcrusDist=new Avtk::Button( this, 573, 161, 59, 81, "Bit Cr,Dist" );
-  //eq        = new Avtk::Button( this, 573, 247, 59, 81, "Equalizer" );
-  //comp      = new Avtk::Button( this, 635, 161, 59, 81, "Comp" );
-  
-  //gainPitch = new Avtk::Button( this, 635, 247, 59, 81, "Gain/Ptc" );
-  
-  
-  //padSends  = new Avtk::Button( this, 699, 161, 32, 166, "Snd" );
-  //padMaster = new Avtk::Button( this, 736, 160, 40, 166, "Mstr" );
-  
+  padVolume->value( 0.75 );
   
   /// load defaults config dir
   loadConfigFile( defaultDir );
   currentDir = defaultDir;
-  
   
   // samples folder view
   sampleDirScroll = new Avtk::Scroll( this, 82, 43, 110, 216, "SampleFilesScroll" );
@@ -310,6 +292,11 @@ void TestUI::blankSampleState()
   
   velocityStartPoint->value( 0 );
   velocityEndPoint->value( 0 );
+  
+  adsrA->value( 0 );
+  adsrD->value( 0 );
+  adsrS->value( 0 );
+  adsrR->value( 0 );
   
   send1           ->value( 0 );
   send2           ->value( 0 );
@@ -678,8 +665,9 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
         
         if( currentPad != i )
         {
-          printf("UI requesting %i %i %i\n", currentBank, currentPad );
-          requestSampleState( currentBank, currentPad, 0 ); // layer == 0?
+          //printf("UI requesting %i %i %i\n", currentBank, currentPad );
+          requestSampleState( currentBank, currentPad, currentLayer );
+          writePadPlay(  &forge, &uris, currentBank, currentPad, currentLayer, tmp );
         }
         return;
       }

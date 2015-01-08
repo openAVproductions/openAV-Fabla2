@@ -181,7 +181,6 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
       
       const uint8_t* const msg = (const uint8_t*)(ev + 1);
       self->dsp->midi( ev->time.frames, msg );
-      
     }
     else if (lv2_atom_forge_is_object_type(&self->forge, ev->body.type))
     {
@@ -227,6 +226,8 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
                obj->body.otype == self->uris.fabla2_PadMuteGroup          ||
                obj->body.otype == self->uris.fabla2_PadTriggerMode        ||
                obj->body.otype == self->uris.fabla2_PadSwitchType         ||
+               
+               obj->body.otype == self->uris.fabla2_PadPlay               ||
                false )
       {
         int bank, pad, layer;
