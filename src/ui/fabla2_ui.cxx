@@ -180,7 +180,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   /// next col
   wx += colWidth + spacer;
   wy = 161;
-  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Todo" );
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "ADSR" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
   waste = new Avtk::Dial( this, wx     , wy, 40, 40, "Todo" );
@@ -211,8 +211,14 @@ TestUI::TestUI( PuglNativeWindow parent ):
   wy = 161;
   waste = new Avtk::Box( this, wx, wy, colWidth/2, (14+40)*3-4,  "Pad" );
   waste->clickMode( Widget::CLICK_NONE );
-  wy += 55;
-  padVolume = new Avtk::Slider( this, wx+10, wy, 20, 100,  "PadVolume" );
+  wy += 18;
+  padPlay = new Avtk::Button( this, wx+3.5, wy, 38, 16,  "Play" );
+  //padPlay->theme( theme( 2 ) ); // green?
+  wy += 18;
+  padMute = new Avtk::Button( this, wx+3.5, wy, 38, 16,  "Mute" );
+  padMute->theme( theme( 1 ) );
+  wy += 55-36;
+  padVolume = new Avtk::Slider( this, wx+10, wy, 25, 100,  "PadVolume" );
   padVolume->clickMode( Widget::CLICK_NONE );
   
   //
@@ -393,6 +399,13 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
     
     if( pad == currentPad && bank == currentBank )
     {
+      if( followPad )
+      {
+        // light up pad play button
+        padPlay->value( true );
+      }
+      
+      // set the theme (ensure revert highlighting)
       pads[pad]->theme( theme( bank ) );
     }
     else
@@ -402,6 +415,7 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
   }
   else
   {
+    padPlay->value( false );
     pads[pad]-> value( false );
     
     // if the current note-off event is *also* the current pad:
@@ -447,6 +461,8 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
     
     currentPad  = pad;
     pads[currentPad]->theme( theme(bank) );
+    
+    padPlay->value( true );
     
     // request update for state from DSP
     //printf("UI requesting %i %i %i\n", bank, pad, layer );
@@ -537,7 +553,7 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     //if( w->mouseButton() == 3 )
     {
       // right click
-      printf("right click on %s, %i\n", w->label(), w->mouseButton() );
+      printf("right click on %s, %i, %f\n", w->label(), w->mouseButton(), tmp );
     }
   }
   else if( w == loadSample )

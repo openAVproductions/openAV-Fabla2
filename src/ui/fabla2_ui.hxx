@@ -87,6 +87,8 @@ class TestUI : public Avtk::UI
     Avtk::Dial* send3;
     Avtk::Dial* send4;
     
+    Avtk::Button* padPlay;
+    Avtk::Button* padMute;
     Avtk::Slider* padVolume;
     
     Avtk::Widget* padSends;
