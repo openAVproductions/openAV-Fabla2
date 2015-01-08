@@ -182,10 +182,12 @@ TestUI::TestUI( PuglNativeWindow parent ):
   wy = 161;
   waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "ADSR" );
   waste->clickMode( Widget::CLICK_NONE );
-  wy += 14;
-  waste = new Avtk::Dial( this, wx     , wy, 40, 40, "Todo" );
-  waste = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Todo" );
-  waste->value( true );
+  wy += 12;
+  adsrA = new Avtk::Dial( this, wx - 2 , wy   , 32, 32, "adsrA" );
+  adsrD = new Avtk::Dial( this, wx + 21, wy+10, 32, 32, "adsrD" );
+  adsrS = new Avtk::Dial( this, wx + 42, wy   , 32, 32, "adsrS" );
+  adsrR = new Avtk::Dial( this, wx + 63, wy+10, 32, 32, "adsrR" );
+  adsrS->value( 1.0 );
   wy += 40;
   
   waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Sends 1 2" );
@@ -306,12 +308,8 @@ void TestUI::blankSampleState()
   sampleStartPoint->value( 0 );
   sampleEndPoint  ->value( 0 );
   
-  waveform->setStartPoint( 0 );
-  
   velocityStartPoint->value( 0 );
   velocityEndPoint->value( 0 );
-  
-  
   
   send1           ->value( 0 );
   send2           ->value( 0 );
@@ -325,6 +323,12 @@ void TestUI::blankSampleState()
   sampleName->label("-");
   
   layers->clear();
+  
+  waveform->setStartPoint( 0 );
+  
+  std::vector<float> tmp(FABLA2_UI_WAVEFORM_PX);
+  waveform->show( tmp );
+  
 }
 
 void TestUI::loadNewDir( std::string newDir )
