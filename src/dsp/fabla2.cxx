@@ -494,7 +494,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 {
   printf("Fabla2:uiMessage bank %i, pad %i, layer %i: %f\n", b, p, l, v );
   
-  if(       URI == uris->fabla2_PadPlay )
+  if( URI == uris->fabla2_PadPlay )
   {
     printf("DSP has note on from UI: %i, %i, %i\n", b, p, l);
   }
@@ -549,7 +549,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
   }
   else if(  URI == uris->fabla2_PadSwitchType ) {
     int c = int(v);
-    printf("pad switch type: %i\n", c );
+    //printf("pad switch type: %i\n", c );
     if ( c == 0 ) pad->switchSystem( Pad::SS_NONE ); // first sample every time
     if ( c == 1 ) pad->switchSystem( Pad::SS_ROUND_ROBIN ); // iter over all samples
     if ( c == 2 ) pad->switchSystem( Pad::SS_VELOCITY_LAYERS ); // velocity based choice
@@ -574,17 +574,17 @@ void Fabla2DSP::startRecordToPad( int b, int p )
   recordPad   = p;
   recordIndex = 0;
   recordEnable = true;
-  printf("record starting, bank %i, pad %i\n", recordBank, recordPad );
+  //printf("record starting, bank %i, pad %i\n", recordBank, recordPad );
 }
 
 void Fabla2DSP::stopRecordToPad()
 {
-  printf("record finished, pad # %i\n", recordPad );
+  //printf("record finished, pad # %i\n", recordPad );
   
   Pad* pad = library->bank( recordBank )->pad( recordPad );
   
   printf("%s : NON RT SAFE NEW SAMPLE()\n", __PRETTY_FUNCTION__ );
-  Sample* s = new Sample( this, sr, recordIndex, &recordBuffer[0] );
+  Sample* s = new Sample( this, sr, "Recorded", recordIndex, &recordBuffer[0] );
   
   // reset the pad
   pad->clearAllSamples();

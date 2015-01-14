@@ -42,7 +42,7 @@ class Sample
     Sample( Fabla2DSP* dsp, int rate, std::string name, std::string filePathToLoad );
     
     /// record constructor: creates a Sample based on live-recorded audio data
-    Sample( Fabla2DSP* dsp, int rate, int size, float* data );
+    Sample( Fabla2DSP* dsp, int rate, const char* name, int size, float* data );
     
     ~Sample();
     

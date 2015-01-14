@@ -119,7 +119,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
            pad->type != ui->uris.atom_Int  ||
            lay->type != ui->uris.atom_Int   )
       {
-        printf("Fabla2-UI::port_event() error: Corrupt state message\n");
+        //printf("Fabla2-UI::port_event() error: Corrupt state message\n");
         return;
       }
       else
@@ -132,6 +132,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
         if( vel )
           v = ((const LV2_Atom_Int*)vel)->body;
         
+        //printf("UI pad event %i, %i, %i\n", b, p, layer );
         ui->padEvent( b, p, layer, !padStop, v );
       }
     }
@@ -143,14 +144,14 @@ static void fabla2_port_event(LV2UI_Handle handle,
 
       if (data_val->type != ui->uris.atom_Vector) {
         // Object does not have the required properties with correct types
-        fprintf(stderr, "eg-scope.lv2 UI error: Corrupt audio message\n");
+        fprintf(stderr, "Fabla2 UI error: Corrupt audio message\n");
         return;
       }
       
       // Get the values we need from the body of the property value atoms
       const LV2_Atom_Vector* vec = (const LV2_Atom_Vector*)data_val;
       if (vec->body.child_type != ui->uris.atom_Float) {
-        fprintf(stderr, "eg-scope.lv2 UI error: Corrupt audio message, incorrect element type!\n");
+        fprintf(stderr, "Fabla2 UI error: Corrupt audio message, incorrect element type!\n");
               return;  // Vector has incorrect element type
       }
       
@@ -193,8 +194,8 @@ static void fabla2_port_event(LV2UI_Handle handle,
         const int32_t p  = ((const LV2_Atom_Int*)pad)->body;
         int32_t layer    = ((const LV2_Atom_Int*)lay)->body;
         std::string n    = (const char*) LV2_ATOM_BODY_CONST( name );
-        //ui->padEvent( b, p, layer, !padStop, v );
-        printf(" got PadRefresh in UI: layer = %i, name = %s\n", layer, n.c_str() );
+        
+        //printf("UI got PadRefresh: layer = %i, name = %s\n", layer, n.c_str() );
         
         if( layer == 0 ) // starting from start: reset
         {
@@ -238,7 +239,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
       
       if( aGain && aPan && aPitch && aStartPoint )
       {
-        printf("setting UI from DSP ReplyUiSampleState\n");
+        //printf("UI got ReplyUiSampleState from DSP\n");
         ui->muteGroup       ->value( ((const LV2_Atom_Float*)aPadMuteGrp)->body );
         ui->triggerMode     ->value( ((const LV2_Atom_Float*)aPadTrigMode)->body);
         ui->switchType      ->value( ((const LV2_Atom_Float*)aPadSwtchSys)->body );
@@ -263,7 +264,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
       }
       else
       {
-        printf("NOT setting UI from DSP ReplyUiSampleState, %i, %i, %i, %i\n", aGain, aPan, aPitch, aStartPoint );
+        //printf("UI NOT setting from DSP ReplyUiSampleState, %i, %i, %i, %i\n", aGain, aPan, aPitch, aStartPoint );
         ui->blankSampleState();
       }
     }

@@ -22,9 +22,11 @@ void Pad::draw( cairo_t* cr )
   
   if( value() > 0.4999 )
   {
-    theme_->color( cr, HIGHLIGHT, 0.2 );
+    cairo_set_source_rgba( cr, 1,1,1, 0.1 );
+    //theme_->color( cr, HIGHLIGHT, 0.2 );
     cairo_fill_preserve(cr);
-    theme_->color( cr, HIGHLIGHT, 0.8 );
+    cairo_set_source_rgba( cr, 1,1,1, 0.75 );
+    //theme_->color( cr, HIGHLIGHT, 0.8 );
     cairo_set_line_width(cr, theme_->lineWidthWide() );
     cairo_stroke(cr);
   }
@@ -42,7 +44,7 @@ void Pad::draw( cairo_t* cr )
   cairo_set_font_size(cr, 15.0);
   cairo_text_extents(cr, label(), &extents);
   cairo_move_to(cr,
-                (x_ + w_ / 2) - extents.width / 2,
+                (x_ + w_ / 2) - extents.width / 2 - 2,
                 (y_ + h_ / 2) + extents.height / 2 - 2);
   
   if( !value() )

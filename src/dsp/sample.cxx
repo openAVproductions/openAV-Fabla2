@@ -176,9 +176,10 @@ void Sample::init()
   dirty = true;
 }
 
-Sample::Sample( Fabla2DSP* d, int rate, int size, float* data ) :
+Sample::Sample( Fabla2DSP* d, int rate, const char* nme, int size, float* data ) :
   dsp( d ),
   sr(rate),
+  name( nme ),
   channels( 2 ),
   frames( size / 2 ),
   velLow( 0 ),

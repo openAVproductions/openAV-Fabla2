@@ -52,9 +52,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   for(int i = 0; i < 4; i++)
     bankBtns[i]->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
-  recordOverPad = new Avtk::Button( this, 5, 43+(s+6)*2, s * 2 + 6, s*2+6,  "X-REC" );
-  recordOverPad->theme( theme( 4 ) );
-  recordOverPad->clickMode( Avtk::Widget::CLICK_TOGGLE );
+  
   
   followPadBtn = new Avtk::Button( this, 5, 43+(s+6)*2 + 75, s * 2 + 6, 22,  "Follow" );
   followPadBtn->clickMode( Avtk::Widget::CLICK_TOGGLE );
@@ -63,9 +61,15 @@ TestUI::TestUI( PuglNativeWindow parent ):
   loadSample = new Avtk::Button( this, 5, 43+(s+6)*2 + 78+ 25, s * 2 + 6, 22,  "Load" );
   loadSample->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
+  /*
   masterPitch = new Avtk::Dial( this, 5, 43+(s+6)*4+6 +26+28, s * 2 + 6, s*2+6,  "Pitch" );
   masterPitch->theme( theme( 2 ) );
   masterPitch->value( 0.5 );
+  */
+  
+  recordOverPad = new Avtk::Button( this, 5, 43+(s+6)*4+6 +26+28, s * 2 + 6, s*2,  "X-REC" );
+  recordOverPad->theme( theme( 4 ) );
+  recordOverPad->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
   Avtk::Widget* waste = 0;
   
@@ -218,6 +222,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   //padPlay->theme( theme( 2 ) ); // green?
   wy += 18;
   padMute = new Avtk::Button( this, wx+3.5, wy, 38, 16,  "Mute" );
+  padMute->clickMode( Widget::CLICK_TOGGLE );
   padMute->theme( theme( 1 ) );
   wy += 55-36;
   padVolume = new Avtk::Slider( this, wx+10, wy, 25, 100,  "PadVolume" );
@@ -263,7 +268,9 @@ TestUI::TestUI( PuglNativeWindow parent ):
       x = 82;
     }
     
-    pads[i] = new Avtk::Pad( this, x, y, xS, yS, "-" );
+    std::stringstream s;
+    s << i + 1;
+    pads[i] = new Avtk::Pad( this, x, y, xS, yS, s.str().c_str() );
     
     x += xS + border;
   }
@@ -378,6 +385,8 @@ void TestUI::showSampleBrowser( bool show )
 
 void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
 {
+  
+  
   if( pad < 0 || pad >= 16 )
   {
     return; // invalid pad number
@@ -457,7 +466,7 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
     
     // request update for state from DSP
     //printf("UI requesting %i %i %i\n", bank, pad, layer );
-    requestSampleState( bank, pad, layer );
+    //requestSampleState( bank, pad, layer );
   }
   
   redraw();
@@ -482,6 +491,8 @@ void TestUI::requestSampleState( int bank, int pad, int layer )
   lv2_atom_forge_key(&forge, uris.fabla2_layer);
   lv2_atom_forge_int(&forge, currentLayer );
   
+  //printf("UI writes requestSampleState %i, %i, %i\n", currentBank, currentPad, currentLayer );
+  
   lv2_atom_forge_pop(&forge, &frame);
   
   // send it
@@ -490,7 +501,19 @@ void TestUI::requestSampleState( int bank, int pad, int layer )
 
 void TestUI::setBank( int bank )
 {
+  bankBtns[currentBank]->value( false );
+  currentBank = bank;
+  bankBtns[currentBank]->value( true );
   
+  Avtk::Theme* t = theme( bank );
+  waveform->theme( t );
+  
+  /*
+  for(int i = 0; i < 16; i++)
+  {
+    pads[i]->theme( t );
+  }
+  */
 }
 
 void TestUI::writeAtom( int eventURI, float value )
@@ -533,11 +556,13 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   {
     write_function( controller, Fabla2::RECORD_OVER_LAST_PLAYED_PAD, sizeof(float), 0, &tmp );
   }
+  /*
   else if( w == masterPitch )
   {
     float scaleVal = tmp * 24 - 12;
     write_function( controller, Fabla2::MASTER_PITCH, sizeof(float), 0, &scaleVal );
   }
+  */
   else if( w == layers )
   {
     currentLayer = tmp;
@@ -581,13 +606,13 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   else if( w == triggerMode )
   {
     float fin = tmp;
-    printf("TriggerMode %i\n", (int)fin);
+    //printf("TriggerMode %i\n", (int)fin);
     writeAtom( uris.fabla2_PadTriggerMode, fin );
   }
   else if( w == switchType )
   {
     float fin = tmp * 2.99;
-    printf("switchType %f\n", fin);
+    //printf("switchType %f\n", fin);
     writeAtom( uris.fabla2_PadSwitchType, fin );
   }
   else if( w == velocityStartPoint )
@@ -660,15 +685,14 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     {
       if( w == pads[i] )
       {
-        currentPad = i;
-        writeAtom( uris.fabla2_PadPlay, w->value() );
-        
         if( currentPad != i )
         {
-          //printf("UI requesting %i %i %i\n", currentBank, currentPad );
+          currentPad = i;
           requestSampleState( currentBank, currentPad, currentLayer );
-          writePadPlay(  &forge, &uris, currentBank, currentPad, currentLayer, tmp );
         }
+        
+        writeAtom( uris.fabla2_PadPlay, w->value() );
+        
         return;
       }
     }

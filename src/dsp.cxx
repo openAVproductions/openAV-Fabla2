@@ -231,7 +231,7 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
                false )
       {
         int bank, pad, layer;
-        float value;
+        float value = -1;
         if( self->atomBankPadLayer( obj, bank, pad, layer, value ) == 0 )
         {
           self->dsp->uiMessage( bank, pad, layer, obj->body.otype, value );
