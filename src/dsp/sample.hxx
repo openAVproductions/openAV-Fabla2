@@ -76,10 +76,15 @@ class Sample
     
     /// playback controls
     bool dirty;           ///< Set to true when the cache is invalid
+    
     float gain;           ///< Gain of this sample
-    float pitch;          ///< Pitch of the sample (playback speed)
     float pan;            ///< Panning of the sample (amplitude based)
+    
+    float pitch;          ///< Pitch of the sample (affects playback speed)
+    float time;           ///< Time-stretch sample (does *not* affect playback pitch)
+    
     float startPoint;     ///< Starting point of the sample playback
+    float endPoint;       ///< Ending point of the sample
     
     float filterType;     ///< Filter high/low/band-pass setting
     float filterFrequency;///< Filter cutoff/center frequency
@@ -87,6 +92,11 @@ class Sample
     
     float velLow;           ///< Velocity low mark  0-1 range
     float velHigh;          ///< Velocity high mark 0-1 range
+    
+    float attack;           ///< ADSR Attack
+    float decay;            ///< ADSR Decay
+    float sustain;          ///< ADSR Sustain
+    float release;          ///< ADSR Release
   
   private:
     Fabla2DSP* dsp;

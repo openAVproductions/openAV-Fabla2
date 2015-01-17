@@ -414,6 +414,15 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleFilterResonance );
   lv2_atom_forge_float(&lv2->forge, s->filterResonance );
   
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleAdsrAttack );
+  lv2_atom_forge_float(&lv2->forge, s->attack );
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleAdsrDecay );
+  lv2_atom_forge_float(&lv2->forge, s->decay );
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleAdsrSustain );
+  lv2_atom_forge_float(&lv2->forge, s->sustain );
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleAdsrRelease );
+  lv2_atom_forge_float(&lv2->forge, s->release );
+  
   lv2_atom_forge_pop(&lv2->forge, &frame);
 }
 
@@ -542,6 +551,18 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
   }
   else if(  URI == uris->fabla2_SampleFilterResonance ) {
     s->dirty = 1; s->filterResonance = v;
+  }
+  else if(  URI == uris->fabla2_SampleAdsrAttack ) {
+    s->dirty = 1; s->attack = v;
+  }
+  else if(  URI == uris->fabla2_SampleAdsrDecay ) {
+    s->dirty = 1; s->decay = v;
+  }
+  else if(  URI == uris->fabla2_SampleAdsrSustain ) {
+    s->dirty = 1; s->sustain = v;
+  }
+  else if(  URI == uris->fabla2_SampleAdsrRelease ) {
+    s->dirty = 1; s->release = v;
   }
   else if(  URI == uris->fabla2_PadMuteGroup ) {
     //printf("setting start point to %f\n", v );

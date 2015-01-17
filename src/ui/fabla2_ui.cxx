@@ -668,6 +668,22 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
       pads[currentPad]->theme( theme( currentBank ) );
     }
   }
+  else if( w == adsrA )
+  {
+    writeAtom( uris.fabla2_SampleAdsrAttack, tmp );
+  }
+  else if( w == adsrD )
+  {
+    writeAtom( uris.fabla2_SampleAdsrDecay, tmp );
+  }
+  else if( w == adsrS )
+  {
+    writeAtom( uris.fabla2_SampleAdsrSustain, tmp );
+  }
+  else if( w == adsrR )
+  {
+    writeAtom( uris.fabla2_SampleAdsrRelease, tmp );
+  }
   else
   {
     // check bank buttons

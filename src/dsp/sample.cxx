@@ -164,7 +164,14 @@ void Sample::init()
   gain  = 0.75;
   pitch = 0.5;
   pan   = 0.5;
+  
   startPoint = 0.0;
+  endPoint = 1.0;
+  
+  attack  = 0;
+  decay   = 0.25;
+  sustain = 1;
+  release = 0;
   
   filterType = 0;
   filterFrequency = 1.0;

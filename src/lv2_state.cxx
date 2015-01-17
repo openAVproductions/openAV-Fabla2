@@ -131,6 +131,11 @@ fabla2_save(LV2_Handle                 instance,
         pjLayer["velLow"          ] = picojson::value( (double)s->velLow );
         pjLayer["velHigh"         ] = picojson::value( (double)s->velHigh );
         
+        pjLayer["attack"          ] = picojson::value( (double)s->attack );
+        pjLayer["decay"           ] = picojson::value( (double)s->decay );
+        pjLayer["sustain"         ] = picojson::value( (double)s->sustain );
+        pjLayer["release"         ] = picojson::value( (double)s->release );
+        
         std::stringstream layer;
         layer << "layer_" << l;
         pjPad[ layer.str() ] = picojson::value( pjLayer );
@@ -282,31 +287,32 @@ fabla2_restore(LV2_Handle                  instance,
             {
               delete s;
               // error loading this sample!
-              printf("Pad %i : Sample %i : Frames == 0, ignoring this sample!\n", p, i );
+              printf("Error Loading %s : Pad %i : Sample %i : Frames == 0, ignoring this sample!\n", path.c_str(), p, i );
               continue;
             }
             else
             {
               // write directly to Sample*
               s->gain            = (float)pjLayer.get("gain").get<double>();
-              printf("pitch\n");
-              s->pitch           = (float)pjLayer.get("pitch").get<double>();
-              printf("pan\n");
               s->pan             = (float)pjLayer.get("pan").get<double>();
-              printf("startPoint\n");
+              
+              s->pitch           = (float)pjLayer.get("pitch").get<double>();
+              s->time            = (float)pjLayer.get("time").get<double>();
+              
               s->startPoint      = (float)pjLayer.get("startPoint").get<double>();
-              printf("filterType\n");
+              s->endPoint        = (float)pjLayer.get("endPoint").get<double>();
+              
               s->filterType      = (float)pjLayer.get("filterType").get<double>();
-              printf("filterFrequency\n");
               s->filterFrequency = (float)pjLayer.get("filterFrequency").get<double>();
-              printf("filterResonance\n");
               s->filterResonance = (float)pjLayer.get("filterResonance").get<double>();
               
-              printf("velLow\n");
               s->velLow          = (int)pjLayer.get("velLow").get<double>();
-              printf("velHigh\n");
               s->velHigh         = (int)pjLayer.get("velHigh").get<double>();
-              printf("done\n");
+              
+              s->attack          = (int)pjLayer.get("attack").get<double>();
+              s->decay           = (int)pjLayer.get("decay").get<double>();
+              s->sustain         = (int)pjLayer.get("sustain").get<double>();
+              s->release         = (int)pjLayer.get("release").get<double>();
               
               // add the sample to the Pad
               pad->add( s );

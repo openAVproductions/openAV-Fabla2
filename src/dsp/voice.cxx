@@ -110,6 +110,12 @@ void Voice::play( int bankInt, int padInt, Pad* p, float velocity )
   filterL->setType( filterType );
   filterR->setType( filterType );
   
+  // ADSR: add *minimal* attack / release to avoid clicks
+  adsr->setAttackRate  ( (0.001+s->attack) * sr );
+  adsr->setDecayRate   ( s->decay * sr );
+  adsr->setSustainLevel( s->sustain  );
+  adsr->setReleaseRate ( (0.05+s->release) * sr );
+  
   adsr->reset();
   adsr->gate( true );
   
