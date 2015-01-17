@@ -102,6 +102,7 @@ class TestUI : public Avtk::UI
     Avtk::Widget* padMaster;
     
     // Preset loading screen
+    Avtk::Box* sampleViewHeader;
     Avtk::Scroll* sampleDirScroll;
     Avtk::List* listSampleDirs;
     Avtk::Scroll* sampleFileScroll;

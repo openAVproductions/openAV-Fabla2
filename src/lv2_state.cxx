@@ -121,8 +121,12 @@ fabla2_save(LV2_Handle                 instance,
         
         pjLayer["gain"            ] = picojson::value( (double)s->gain );
         pjLayer["pan"             ] = picojson::value( (double)s->pan );
+        
         pjLayer["pitch"           ] = picojson::value( (double)s->pitch );
+        pjLayer["time"            ] = picojson::value( (double)s->time );
+        
         pjLayer["startPoint"      ] = picojson::value( (double)s->startPoint );
+        pjLayer["endPoint"        ] = picojson::value( (double)s->endPoint );
         
         pjLayer["filterType"      ] = picojson::value( (double)s->filterType );
         pjLayer["filterFrequency" ] = picojson::value( (double)s->filterFrequency );

@@ -86,7 +86,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   
   /// sample edit view
-  const int colWidth = 90;
+  int colWidth = 90;
   const int spacer = 4;
   int wx = 355;
   int wy = 161;
@@ -233,8 +233,15 @@ TestUI::TestUI( PuglNativeWindow parent ):
   loadConfigFile( defaultDir );
   currentDir = defaultDir;
   
+  
+  /// Sample Browser panes =====================================================
+  wx = 82;
+  wy = 43;
+  sampleViewHeader = new Avtk::Box( this, wx, wy, 266, 276,  "Sample Browser" );
+  wy += 20 + spacer;
+  
   // samples folder view
-  sampleDirScroll = new Avtk::Scroll( this, 82, 43, 110, 216, "SampleFilesScroll" );
+  sampleDirScroll = new Avtk::Scroll( this, wx, wy, 110, 166, "SampleFilesScroll" );
   
   listSampleDirs = new Avtk::List( this, 82, 73, 110, 216, "Folder" );
   listSampleDirs->mode      ( Group::WIDTH_EQUAL );
@@ -243,8 +250,10 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   sampleDirScroll->set( listSampleDirs );
   
+  wx = 198;
+  wy = 43 + 20 + spacer;
   // samples view
-  sampleFileScroll = new Avtk::Scroll( this, 198, 43, 146, 266, "SampleFilesScroll" );
+  sampleFileScroll = new Avtk::Scroll( this, wx, wy, 146, 166, "SampleFilesScroll" );
   
   listSampleFiles = new Avtk::List( this, 0, 0, 126, 866, "Sample Files" );
   listSampleFiles->mode      ( Group::WIDTH_EQUAL );
@@ -569,7 +578,11 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     //if( w->mouseButton() == 3 )
     {
       // right click
-      printf("right click on %s, %i, %f\n", w->label(), w->mouseButton(), tmp );
+      printf("right click on %s, %i, %f, %s\n",
+          w->label(),
+          w->mouseButton(),
+          layers->value(),
+          layers->selectedString().c_str() );
     }
   }
   else if( w == loadSample )
