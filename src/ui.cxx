@@ -210,16 +210,29 @@ static void fabla2_port_event(LV2UI_Handle handle,
       const LV2_Atom* aPadMuteGrp = 0;
       const LV2_Atom* aPadTrigMode= 0;
       const LV2_Atom* aPadSwtchSys= 0;
+      
       const LV2_Atom* aName       = 0;
+      
       const LV2_Atom* aGain       = 0;
-      const LV2_Atom* aPitch      = 0;
       const LV2_Atom* aPan        = 0;
+      
+      const LV2_Atom* aPitch      = 0;
+      const LV2_Atom* aTime       = 0;
+      
       const LV2_Atom* aStartPoint = 0;
+      const LV2_Atom* aEndPoint   = 0;
+      
       const LV2_Atom* aVelLow     = 0;
       const LV2_Atom* aVelHigh    = 0;
+      
       const LV2_Atom* aFiltType   = 0;
       const LV2_Atom* aFiltFreq   = 0;
       const LV2_Atom* aFiltReso   = 0;
+      
+      const LV2_Atom* aAttack     = 0;
+      const LV2_Atom* aDecay      = 0;
+      const LV2_Atom* aSustain    = 0;
+      const LV2_Atom* aRelease    = 0;
       
       const int n_props  = lv2_atom_object_get( obj,
             ui->uris.fabla2_PadMuteGroup      , &aPadMuteGrp,
@@ -228,13 +241,20 @@ static void fabla2_port_event(LV2UI_Handle handle,
             ui->uris.fabla2_name              , &aName,
             ui->uris.fabla2_SampleGain        , &aGain,
             ui->uris.fabla2_SamplePitch       , &aPitch,
+            ui->uris.fabla2_SampleTime        , &aTime,
             ui->uris.fabla2_SampleStartPoint  , &aStartPoint,
+            ui->uris.fabla2_SampleEndPoint    , &aEndPoint,
             ui->uris.fabla2_SampleVelStartPnt , &aVelLow,
             ui->uris.fabla2_SampleVelEndPnt   , &aVelHigh,
             ui->uris.fabla2_SamplePan         , &aPan,
             ui->uris.fabla2_SampleFilterType  , &aFiltType,
             ui->uris.fabla2_SampleFilterFrequency,&aFiltFreq,
             ui->uris.fabla2_SampleFilterResonance,&aFiltReso,
+            
+            ui->uris.fabla2_SampleAdsrAttack  ,&aAttack,
+            ui->uris.fabla2_SampleAdsrDecay   ,&aDecay,
+            ui->uris.fabla2_SampleAdsrSustain ,&aSustain,
+            ui->uris.fabla2_SampleAdsrRelease ,&aRelease,
             0 );
       
       if( aGain && aPan && aPitch && aStartPoint )
@@ -261,6 +281,11 @@ static void fabla2_port_event(LV2UI_Handle handle,
         ui->filterType      ->value( ((const LV2_Atom_Float*)aFiltType)->body);
         ui->filterFrequency ->value( ((const LV2_Atom_Float*)aFiltFreq)->body);
         ui->filterResonance ->value( ((const LV2_Atom_Float*)aFiltReso)->body);
+        
+        ui->adsrA ->value( ((const LV2_Atom_Float*)aAttack)->body);
+        ui->adsrD ->value( ((const LV2_Atom_Float*)aDecay)->body);
+        ui->adsrS ->value( ((const LV2_Atom_Float*)aSustain)->body);
+        ui->adsrR ->value( ((const LV2_Atom_Float*)aRelease)->body);
       }
       else
       {
