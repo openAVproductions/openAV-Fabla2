@@ -612,7 +612,11 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
       int mx = w->mouseX();
       int my = w->mouseY();
       printf("%i %i\n", mx, my );
-      if( deleteLayer->run("Are you sure you want to delete layer!?",
+      
+      std::stringstream s;
+      s << "Delete layer " << layers->selectedString() << "?";
+      
+      if( deleteLayer->run("Delete Layer", s.str().c_str(),
           Avtk::Dialog::OK_CANCEL, mx, my ) == 1 )
       {
         printf("UI writing sampleUnload\n");
@@ -623,7 +627,7 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     {
       int lay = int( layers->value() );
       printf("click on layer %i : value() %f\n", lay, tmp );
-      if( tmp > 0.4999 )
+      if( true ) //;;tmp > 0.4999 )
         writePadPlayStop( true, currentBank, currentPad, lay );
       else
         writePadPlayStop( false, currentBank, currentPad, lay );

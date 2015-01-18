@@ -207,7 +207,11 @@ void Fabla2DSP::auditionPlay( int bank, int pad, int layer )
 {
   if ( bank < 0 || bank >=  4 ) return;
   if ( pad  < 0 || pad  >= 16 ) return;
+  
   Pad* p = library->bank( bank )->pad( pad );
+  Sample* s = p->layer( layer );
+  
+  writeSampleState( bank, pad, layer, p, s );
   
   auditionVoice->stop();
   

@@ -204,7 +204,9 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
           {
             //printf("audition voice play()\n");
             if( noteOn )
+            {
               self->dsp->auditionPlay( bank, pad, layer );
+            }
             else
               self->dsp->auditionStop();
           }
