@@ -59,7 +59,8 @@ class Voice
     void play( int bank, int pad, Pad*, float velocity );
     void stop();
     
-    /// start recording a sample on this voice
+    /// used to audition samples from UI
+    void playLayer( Pad* p, int layer );
     
     /// the main audio callback: since we have the dsp pointer, we can access the
     /// audio buffers etc from there: no need to pass them around.

@@ -145,11 +145,13 @@ int FablaLV2::atomBankPadLayer( const LV2_Atom_Object* obj, int& b, int& p, int&
                           uris.fabla2_pad  , &pad,
                           uris.fabla2_layer, &lay,
                           uris.fabla2_value, &fl, 0);
-  if( bank && pad && lay )
+  if( bank && pad )
   {
     b = ((const LV2_Atom_Int*)bank)->body;
     p = ((const LV2_Atom_Int*)pad )->body;
-    l = ((const LV2_Atom_Int*)lay )->body;
+    
+    if( lay )
+      l = ((const LV2_Atom_Int*)lay )->body;
     
     // not all messages have a float, so just leave its value alone
     if( fl )
@@ -191,19 +193,33 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
       bool noteOff = (obj->body.otype == self->uris.fabla2_PadStop);
       if ( noteOn || noteOff )
       {
-        int bank, pad, layer; float v;
+        int bank, pad;
+        int layer = -1;
+        float v;
         // convienience func to get bank, pad, and check OK
         if( self->atomBankPadLayer( obj, bank, pad, layer, v ) == 0 )
         {
-          uint8_t msg[3];
-          if( noteOn )
-            msg[0] = 0x90 + bank;
-          if( noteOff )
-            msg[0] = 0x80 + bank;
-          msg[1] = 36 + pad;
-          msg[2] = 90;
-          // use normal MIDI function for playing notes
-          self->dsp->midi( 0, msg );
+          // check if we have layer info
+          if( layer != -1 )
+          {
+            //printf("audition voice play()\n");
+            if( noteOn )
+              self->dsp->auditionPlay( bank, pad, layer );
+            else
+              self->dsp->auditionStop();
+          }
+          else
+          {
+            uint8_t msg[3];
+            if( noteOn )
+              msg[0] = 0x90 + bank;
+            if( noteOff )
+              msg[0] = 0x80 + bank;
+            msg[1] = 36 + pad;
+            msg[2] = 90;
+            // use normal MIDI function for playing notes
+            self->dsp->midi( 0, msg );
+          }
         }
       }
       // handle *ALL* UI message types here!
@@ -231,8 +247,6 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
                obj->body.otype == self->uris.fabla2_PadMuteGroup          ||
                obj->body.otype == self->uris.fabla2_PadTriggerMode        ||
                obj->body.otype == self->uris.fabla2_PadSwitchType         ||
-               
-               obj->body.otype == self->uris.fabla2_PadPlay               ||
                false )
       {
         int bank, pad, layer;

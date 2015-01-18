@@ -48,6 +48,15 @@ Sampler::Sampler( Fabla2DSP* d, int rate ) :
 #endif
 }
 
+void Sampler::playLayer( Pad* p, int layer )
+{
+  playIndex = 0;
+  frames = 0;
+  
+  pad = p;
+  sample = pad->layer( layer );
+}
+
 void Sampler::play( Pad* p, float velocity )
 {
 #ifdef FABLA2_COMPONENT_TEST

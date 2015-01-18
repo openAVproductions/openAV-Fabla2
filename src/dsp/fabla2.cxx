@@ -52,6 +52,8 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
   // init the library
   library = new Library( this, rate );
   
+  auditionVoice = new Voice( this, rate );
+  
   for( int i = 0; i < 16; i++ )
     voices.push_back( new Voice( this, rate ) );
   
@@ -175,6 +177,8 @@ void Fabla2DSP::process( int nf )
     }
   }
   
+  auditionVoice->process();
+  
   // master outputs
   
   /*
@@ -192,6 +196,23 @@ void Fabla2DSP::process( int nf )
   }
   */
   
+}
+
+void Fabla2DSP::auditionStop()
+{
+  auditionVoice->stop();
+}
+
+void Fabla2DSP::auditionPlay( int bank, int pad, int layer )
+{
+  if ( bank < 0 || bank >=  4 ) return;
+  if ( pad  < 0 || pad  >= 16 ) return;
+  Pad* p = library->bank( bank )->pad( pad );
+  
+  auditionVoice->stop();
+  
+  auditionVoice->playLayer( p, layer );
+  printf("auditionPlay()\n");
 }
 
 static void fabla2_dsp_getDetailsFromNote( const uint8_t* msg, int& bank, int& pad )
@@ -617,6 +638,7 @@ void Fabla2DSP::stopRecordToPad()
 
 Fabla2DSP::~Fabla2DSP()
 {
+  
 }
 
 }; // Fabla2

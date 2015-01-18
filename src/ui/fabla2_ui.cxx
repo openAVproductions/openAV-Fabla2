@@ -525,12 +525,36 @@ void TestUI::setBank( int bank )
   */
 }
 
-void TestUI::writeAtom( int eventURI, float value )
+void TestUI::writePadPlayStop( bool noteOn, int bank, int pad, int layer )
 {
   uint8_t obj_buf[UI_ATOM_BUF_SIZE];
   lv2_atom_forge_set_buffer(&forge, obj_buf, UI_ATOM_BUF_SIZE);
   
-  // set atom buffer at start
+  LV2_Atom_Forge_Frame frame;
+  int uri = uris.fabla2_PadStop;
+  if( noteOn )
+    uri = uris.fabla2_PadPlay;
+  
+  LV2_Atom* msg = (LV2_Atom*)lv2_atom_forge_object( &forge, &frame, 0, uri);
+  
+  lv2_atom_forge_key(&forge, uris.fabla2_bank);
+  lv2_atom_forge_int(&forge, bank );
+  
+  lv2_atom_forge_key(&forge, uris.fabla2_pad);
+  lv2_atom_forge_int(&forge, pad );
+  
+  lv2_atom_forge_key(&forge, uris.fabla2_layer);
+  lv2_atom_forge_int(&forge, layer );
+  
+  lv2_atom_forge_pop(&forge, &frame);
+  
+  // send it
+  write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
+}
+
+void TestUI::writeAtom( int eventURI, float value )
+{
+  uint8_t obj_buf[UI_ATOM_BUF_SIZE];
   lv2_atom_forge_set_buffer(&forge, obj_buf, UI_ATOM_BUF_SIZE);
   
   //printf("Fabla2:UI writeAtom %i, %f\n", eventURI, value );
@@ -543,8 +567,12 @@ void TestUI::writeAtom( int eventURI, float value )
   lv2_atom_forge_key(&forge, uris.fabla2_pad);
   lv2_atom_forge_int(&forge, currentPad );
   
-  lv2_atom_forge_key(&forge, uris.fabla2_layer);
-  lv2_atom_forge_int(&forge, currentLayer );
+  // don't write layer if its a pad play event
+  if( eventURI != uris.fabla2_PadPlay && eventURI != uris.fabla2_PadStop )
+  {
+    lv2_atom_forge_key(&forge, uris.fabla2_layer);
+    lv2_atom_forge_int(&forge, currentLayer );
+  }
   
   lv2_atom_forge_key  (&forge, uris.fabla2_value);
   lv2_atom_forge_float(&forge, value );
@@ -575,14 +603,14 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   else if( w == layers )
   {
     currentLayer = tmp;
-    //if( w->mouseButton() == 3 )
+    //if( int( w->mouseButton() ) == 3 )
     {
-      // right click
-      printf("right click on %s, %i, %f, %s\n",
-          w->label(),
-          w->mouseButton(),
-          layers->value(),
-          layers->selectedString().c_str() );
+      int lay = int( layers->value() );
+      printf("click on layer %i : value() %f\n", lay, tmp );
+      if( tmp > 0.4999 )
+        writePadPlayStop( true, currentBank, currentPad, lay );
+      else
+        writePadPlayStop( false, currentBank, currentPad, lay );
     }
   }
   else if( w == loadSample )

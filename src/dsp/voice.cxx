@@ -66,6 +66,55 @@ bool Voice::matches( int bank, int pad )
   return ( bank == bankInt_ && pad == padInt_ );
 }
 
+void Voice::playLayer( Pad* p, int layer )
+{
+  pad_ = p;
+  
+  sampler->playLayer( p, layer );
+  
+  Sample* s = sampler->getSample();
+  if( s )
+  {
+    printf("Voice::playLayer() %i, on Sample %s\n", ID, s->getName() );
+    active_ = true;
+  }
+  else
+  {
+    printf("Voice::playLayer() %i, sampler->play() returns NULL sample! Setting active to false\n", ID );
+    // *hard* set the sample to not play: we don't have a sample!
+    active_ = false;
+    return;
+  }
+  
+  filterActive_ = true;
+  
+  int filterType = 0; // lowpass
+  // check the value of the filter type to set voice params
+       if( s->filterType < 0.25 )
+    filterActive_ = false;
+  else if( s->filterType < 0.5 )
+    filterType = 0;
+  else if( s->filterType < 0.75 )
+    filterType = 1;
+  else if( s->filterType < 1.0 )
+    filterType = 1;
+  else
+    filterType = 0; // lowpass default
+  
+  filterL->setType( filterType );
+  filterR->setType( filterType );
+  
+  // ADSR: add *minimal* attack / release to avoid clicks
+  adsr->setAttackRate  ( (0.001+s->attack) * sr );
+  adsr->setDecayRate   ( s->decay * sr );
+  adsr->setSustainLevel( s->sustain  );
+  adsr->setReleaseRate ( (0.05+s->release) * sr );
+  
+  
+  adsr->reset();
+  adsr->gate( true );
+}
+
 void Voice::play( int bankInt, int padInt, Pad* p, float velocity )
 {
   // useful for mute groups etc

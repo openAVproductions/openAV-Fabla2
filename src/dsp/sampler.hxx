@@ -44,6 +44,9 @@ class Sampler
     /// the Pad to play
     void play( Pad*, float velocity );
     
+    /// for auditioning from UI
+    void playLayer( Pad*, int layer );
+    
     /// process function, passing in the voice buffers for FX
     int process(int nframes, float* L, float* R);
     

@@ -63,6 +63,10 @@ class Fabla2DSP
     int sr;
     int nframes;
     
+    /// audition voice details
+    void auditionPlay( int bank, int pad, int layer );
+    void auditionStop();
+    
     /// control values
     float* controlPorts[PORT_COUNT];
     
@@ -87,6 +91,9 @@ class Fabla2DSP
     
   private:
     URIs* uris;
+    
+    /// used to audition samples, and deal with layer-playing from UI
+    yasper::ptr<Voice> auditionVoice;
     
     /// voices store all the voices available for use
     std::vector< yasper::ptr<Voice> > voices;

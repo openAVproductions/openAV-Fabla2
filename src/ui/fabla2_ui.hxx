@@ -150,6 +150,8 @@ class TestUI : public Avtk::UI
     void setBank( int bank );
     /// writes event/value identified by eventURI using currentBank / currentPad
     void writeAtom( int eventURI, float value );
+    /// writes a pad play/stop event
+    void writePadPlayStop( bool noteOn, int bank, int pad, int layer );
     /// request the state of a sample from the DSP, to show in the UI
     void requestSampleState( int bank, int pad, int layer );
     /// list sample dirs
