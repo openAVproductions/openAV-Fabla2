@@ -115,21 +115,23 @@ void Voice::playLayer( Pad* p, int layer )
   adsr->gate( true );
 }
 
-void Voice::play( int bankInt, int padInt, Pad* p, float velocity )
+void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
 {
   // useful for mute groups etc
   bankInt_ = bankInt;
   padInt_ = padInt;
   
   pad_ = p;
+  
   active_ = true;
+  activeCountdown = time;
   
   sampler->play( pad_, velocity );
   
   Sample* s = sampler->getSample();
   if( s )
   {
-    //printf("Voice::play() %i, on Sample %s\n", ID, samp->getName() );
+    printf("Voice::play() %i, on Sample %s @ time : %i\n", ID, s->getName(), time );
   }
   else
   {
@@ -223,6 +225,16 @@ void Voice::process()
     return;
   }
   
+  int nframes = dsp->nframes;
+  if( activeCountdown )
+  {
+    printf("process() with activeCountdown = %i\n", activeCountdown ); 
+  }
+  
+  
+  // if we have a note on coming up, but we're not active yet, then start processing
+  // where the note actually starts
+  
   int done = sampler->process( dsp->nframes, &voiceBuffer[0], &voiceBuffer[dsp->nframes] );
   
   float adsrVal = adsr->process();
@@ -240,7 +252,7 @@ void Voice::process()
   
   if( done || adsr->getState() == ADSR::ENV_IDLE )
   {
-    //printf("Voice done\n");
+    printf("Voice done\n");
     active_ = false;
     pad_ = 0;
     return;
@@ -270,6 +282,8 @@ void Voice::process()
     // ADSR processes first sample *before* the filter set section.
     adsrVal = adsr->process();
   }
+  
+  activeCountdown = 0;
 }
 
 Voice::~Voice()

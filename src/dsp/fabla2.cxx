@@ -290,7 +290,7 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
               if( !allocd )
               {
                 // play pad
-                voices.at(i)->play( bank, pad, p, msg[2] / 127.f );
+                voices.at(i)->play( eventTime, bank, pad, p, msg[2] / 127.f );
                 
                 // write note on MIDI events to UI
                 LV2_Atom_Forge_Frame frame;
@@ -317,7 +317,7 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
           /// if all voices are full, we steal the first one
           if( allocd == false )
           {
-            voices.at( 0 )->play( bank, pad, p, msg[2] );
+            voices.at( 0 )->play( eventTime, bank, pad, p, msg[2] );
           }
         }
         break;

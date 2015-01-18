@@ -57,7 +57,7 @@ class Voice
     bool active(){return active_;}
     
     /// start playing a sample on this voice
-    void play( int bank, int pad, Pad*, float velocity );
+    void play( int time, int bank, int pad, Pad*, float velocity );
     
     void stop();
     void stopIfSample( Sample* s );
@@ -87,6 +87,9 @@ class Voice
     int bankInt_;
     int padInt_;
     Pad* pad_;
+    
+    /// a counter to count down frames until note-on event
+    int activeCountdown;
     
     bool active_;
     bool filterActive_;
