@@ -95,10 +95,10 @@ fabla2_save(LV2_Handle                 instance,
       Pad* pad = bank->pad( p );
       
       /// write Pad specific things
-      //printf("mute group: %lf\n", pad->muteGroup() );
       pjPad["muteGroup"]     = picojson::value( (double)pad->muteGroup() );
       pjPad["triggerMode"]   = picojson::value( (double)pad->triggerMode() );
       pjPad["switchMode"]    = picojson::value( (double)pad->switchSystem() );
+      pjPad["volume"]        = picojson::value( (double)pad->volume );
       
       pjPad["nLayers"]    = picojson::value( (double)pad->nLayers() );
       
@@ -257,8 +257,11 @@ fabla2_restore(LV2_Handle                  instance,
           padStr << "pad_" << p;
           picojson::value pjPad = pjBanks.get( padStr.str() );
           
-          int muteGroup     = (int)pjPad.get("muteGroup").get<double>();
-          int triggerMode   = (int)pjPad.get("triggerMode").get<double>();
+          pad->muteGroup   ( (int)pjPad.get("muteGroup").get<double>() );
+          pad->triggerMode ( (Fabla2::Pad::TRIGGER_MODE)pjPad.get("triggerMode").get<double>() );
+          pad->switchSystem( (Fabla2::Pad::SAMPLE_SWITCH_SYSTEM)pjPad.get("switchMode" ).get<double>() );
+          pad->volume      = (int)pjPad.get("volume").get<double>();
+          
           int nLayers       = (int)pjPad.get("nLayers").get<double>();
           
           for(int i = 0; i < nLayers; i++)

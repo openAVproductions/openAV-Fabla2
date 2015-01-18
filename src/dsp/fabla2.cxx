@@ -570,6 +570,9 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
   else if(       URI == uris->fabla2_Panic ) {
     panic();
   }
+  else if(       URI == uris->fabla2_PadVolume ) {
+    pad->volume = v;
+  }
   else if(       URI == uris->fabla2_SamplePitch ) {
     s->dirty = 1; s->pitch = v;
   }

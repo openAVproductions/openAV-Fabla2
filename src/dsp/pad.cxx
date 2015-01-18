@@ -49,6 +49,8 @@ Pad::Pad( Fabla2DSP* d, int rate, int ID ) :
   printf("%s\n", __PRETTY_FUNCTION__ );
 #endif
   
+  volume = 0.75f;
+  
   samples.reserve( 4 );
 }
 

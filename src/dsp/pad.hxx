@@ -97,6 +97,9 @@ class Pad
     /// testing func
     void checkAll();
   
+    /// volume: is used by Sampler to multiply into each sample. Default 0.75.
+    float volume;
+  
   private:
     Fabla2DSP* dsp;
     int sr;

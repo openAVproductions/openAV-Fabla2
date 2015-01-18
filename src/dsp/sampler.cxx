@@ -54,6 +54,9 @@ void Sampler::playLayer( Pad* p, int layer )
   frames = 0;
   
   pad = p;
+  
+  padVol = pad->volume;
+  
   sample = pad->layer( layer );
 }
 
@@ -109,7 +112,7 @@ int Sampler::process(int nframes, float* L, float* R)
 
 //#define DB_CO(g) ((g) > -90.0f ? powf(10.0f, (g) * 0.05f) : 0.0f)
   //const float volMultiply = DB_CO(sample->gain);
-  float volMultiply = pow( sample->gain, 3 );
+  float volMultiply = pow( sample->gain * (padVol*1.5), 3 );
   
   float panL = cos(sample->pan * 3.14/2.f);
   float panR = sin(sample->pan * 3.14/2.f);

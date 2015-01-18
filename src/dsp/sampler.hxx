@@ -62,6 +62,9 @@ class Sampler
     /// needed in order to process this sampler object
     Pad* pad;
     
+    /// store the volume of the pad and use it: saves a seperate multiply later
+    float padVol;
+    
     /// Sample pointer, retrieved from Pad when the note started playing
     Sample* sample;
     

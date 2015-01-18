@@ -706,6 +706,10 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     //printf("switchType %f\n", fin);
     writeAtom( uris.fabla2_PadSwitchType, fin );
   }
+  else if( w == padVolume )
+  {
+    writeAtom( uris.fabla2_PadVolume, tmp );
+  }
   else if( w == velocityStartPoint )
   {
     writeAtom( uris.fabla2_SampleVelStartPnt, tmp );
