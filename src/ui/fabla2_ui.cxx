@@ -88,12 +88,14 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waveformGroup->end();
   
   
-  /// sample edit view
+  
+  /// sample edit view =========================================================
   int colWidth = 90;
   const int spacer = 4;
   int wx = 355;
   int wy = 161;
   int divider = 35;
+  sampleControlGroup = new Avtk::Group( this, wx, wy, FABLA2_UI_WAVEFORM_PX, 260, "SampleControlGroup");
   
   
   /// sample config options
@@ -233,15 +235,22 @@ TestUI::TestUI( PuglNativeWindow parent ):
   padVolume->clickMode( Widget::CLICK_NONE );
   padVolume->value( 0.75 );
   
+  
+  
+  //sampleControlGroup->visible( false );
+  sampleControlGroup->end();
+  
+  
   /// load defaults config dir
   loadConfigFile( defaultDir );
   currentDir = defaultDir;
   
   
-  /*
+  
   /// Sample Browser panes =====================================================
   wx = 82;
   wy = 43;
+  sampleBrowseGroup = new Avtk::Group( this, wx, wy, 266, 276, "SampleBrowseGroup");
   sampleViewHeader = new Avtk::Box( this, wx, wy, 266, 276,  "Sample Browser" );
   wy += 20 + spacer;
   
@@ -252,6 +261,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   listSampleDirs->mode      ( Group::WIDTH_EQUAL );
   listSampleDirs->valueMode ( Group::VALUE_SINGLE_CHILD );
   listSampleDirs->resizeMode( Group::RESIZE_FIT_TO_CHILDREN );
+  listSampleDirs->end();
   
   sampleDirScroll->set( listSampleDirs );
   
@@ -266,10 +276,14 @@ TestUI::TestUI( PuglNativeWindow parent ):
   listSampleFiles->mode      ( Group::WIDTH_EQUAL );
   listSampleFiles->valueMode ( Group::VALUE_SINGLE_CHILD );
   listSampleFiles->resizeMode( Group::RESIZE_FIT_TO_CHILDREN );
+  listSampleFiles->end();
   
   sampleFileScroll->set( listSampleFiles );
   sampleFileScroll->end();
-  */
+  
+  
+  sampleBrowseGroup->visible(false);
+  sampleBrowseGroup->end();
   
   // pads
   int xS = 58;
@@ -395,6 +409,8 @@ void TestUI::loadNewDir( std::string newDir )
 
 void TestUI::showSampleBrowser( bool show )
 {
+  sampleBrowseGroup->visible( show );
+  
   // toggle other widgets
   for(int i = 0; i < 16; i++)
     pads[i]->visible( !show );
@@ -402,9 +418,6 @@ void TestUI::showSampleBrowser( bool show )
   loadNewDir( currentDir );
   
   sampleFileScroll->set( listSampleFiles );
-  
-  sampleDirScroll ->visible( show );
-  sampleFileScroll->visible( show );
 }
 
 void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )

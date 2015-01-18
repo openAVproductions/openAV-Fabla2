@@ -115,6 +115,9 @@ class TestUI : public Avtk::UI
     Avtk::Group*    waveformGroup;
     Avtk::Waveform* waveform;
     
+    Avtk::Group*    sampleBrowseGroup;
+    Avtk::Group*    sampleControlGroup;
+    
     void padEvent( int bank, int pad, int layer, bool noteOn, int velocity );
     
     Avtk::Pad* pads[16];
