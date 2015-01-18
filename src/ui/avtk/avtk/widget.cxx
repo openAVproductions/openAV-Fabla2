@@ -6,11 +6,15 @@
 
 namespace Avtk
 {
+#ifdef AVTK_DEBUG
+int Widget::widgetCounter = 0;
+#endif
 
 // constructor for top-level windows only
 Widget::Widget( Avtk::UI* ui_, int w, int h ) :
   ui( ui_ ),
   noHandle_( false ),
+  label_("avtk-top-level"),
   x_( 0 ),
   y_( 0 ),
   w_( w ),
@@ -22,6 +26,9 @@ Widget::Widget( Avtk::UI* ui_, int w, int h ) :
   visible_(true),
   parent_( 0x0 ) // top levels don't have a parent
 {
+#ifdef AVTK_DEBUG
+  widgetCounter++;
+#endif
 }
 
 Widget::Widget( Avtk::UI* ui_, int x, int y, int w, int h, std::string label__) :
@@ -62,6 +69,10 @@ Widget::Widget( Avtk::UI* ui_, int x, int y, int w, int h, std::string label__) 
   // actual scroll in PX / number == delta
   scrollDeltaAmount( 10 )
 {
+#ifdef AVTK_DEBUG
+  widgetCounter++;
+#endif
+  
   // when created, we register a widget to the top-level UI. Just add() it to a
   // different Group, and the parent* will be updated
   ui_->add( this );
@@ -81,6 +92,8 @@ int Widget::handle( const PuglEvent* event )
 #ifdef AVTK_DEBUG
     printf("widget %s noHandle (%i) or visible (%i)\n", label(), int(noHandle_), int(visible_) );
 #endif
+    // no point in calling motion() on a widget that isn't shown, or doesn't handle
+    ui->wantsMotionUpdates( this, false );
     return 0;
   }
   switch (event->type)
@@ -317,6 +330,11 @@ void Widget::dragMode( DragMode d )
 
 Widget::~Widget()
 {
+#ifdef AVTK_DEBUG
+  widgetCounter--;
+  printf("widgetCounter = %i\n", widgetCounter );
+#endif
+  
 #ifdef AVTK_DEBUG_DTOR
   printf("%s %s\n", __PRETTY_FUNCTION__, label() );
 #endif // AVTK_DEBUG
