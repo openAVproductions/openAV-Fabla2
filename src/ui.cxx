@@ -207,6 +207,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
     else if( obj->body.otype == ui->uris.fabla2_ReplyUiSampleState )
     {
       // atoms to represent the data
+      const LV2_Atom* aPadVolume  = 0;
       const LV2_Atom* aPadMuteGrp = 0;
       const LV2_Atom* aPadTrigMode= 0;
       const LV2_Atom* aPadSwtchSys= 0;
@@ -235,6 +236,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
       const LV2_Atom* aRelease    = 0;
       
       const int n_props  = lv2_atom_object_get( obj,
+            ui->uris.fabla2_PadVolume         , &aPadVolume,
             ui->uris.fabla2_PadMuteGroup      , &aPadMuteGrp,
             ui->uris.fabla2_PadTriggerMode    , &aPadTrigMode,
             ui->uris.fabla2_PadSwitchType     , &aPadSwtchSys,
@@ -260,6 +262,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
       if( aGain && aPan && aPitch && aStartPoint )
       {
         //printf("UI got ReplyUiSampleState from DSP\n");
+        ui->padVolume       ->value( ((const LV2_Atom_Float*)aPadVolume)->body );
         ui->muteGroup       ->value( ((const LV2_Atom_Float*)aPadMuteGrp)->body );
         ui->triggerMode     ->value( ((const LV2_Atom_Float*)aPadTrigMode)->body);
         ui->switchType      ->value( ((const LV2_Atom_Float*)aPadSwtchSys)->body );

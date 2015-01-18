@@ -70,7 +70,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   masterPitch->value( 0.5 );
   */
   
-  recordOverPad = new Avtk::Button( this, 5, 43+(s+6)*4+6 +26+28, s * 2 + 6, s*2,  "X-REC" );
+  recordOverPad = new Avtk::Button( this, 5, 43+(s+6)*4+6 +26+28, s * 2 + 6, s*2,  "REC" );
   recordOverPad->theme( theme( 4 ) );
   recordOverPad->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
@@ -319,6 +319,8 @@ TestUI::TestUI( PuglNativeWindow parent ):
 
 void TestUI::blankSampleState()
 {
+  padVolume       ->value( 0 );
+  
   muteGroup       ->value( 0 );
   triggerMode     ->value( 0 );
   switchType      ->value( 0 );
@@ -498,7 +500,7 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
     
     // request update for state from DSP
     //printf("UI requesting %i %i %i\n", bank, pad, layer );
-    requestSampleState( bank, pad, layer );
+    requestSampleState( currentBank, currentPad, currentLayer );
   }
   
   redraw();

@@ -398,6 +398,9 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_name);
   lv2_atom_forge_string(&lv2->forge, s->getName(), strlen( s->getName() ) );
   
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadVolume );
+  lv2_atom_forge_float(&lv2->forge, pad->volume );
+  
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadMuteGroup);
   lv2_atom_forge_float(&lv2->forge, pad->muteGroup() );
   
