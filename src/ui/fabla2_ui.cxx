@@ -319,9 +319,6 @@ TestUI::TestUI( PuglNativeWindow parent ):
 
 void TestUI::blankSampleState()
 {
-  printf("blankSampleState() returning\n");
-  return;
-  
   muteGroup       ->value( 0 );
   triggerMode     ->value( 0 );
   switchType      ->value( 0 );
@@ -422,8 +419,6 @@ void TestUI::showSampleBrowser( bool show )
 
 void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
 {
-  
-  
   if( pad < 0 || pad >= 16 )
   {
     return; // invalid pad number
@@ -434,7 +429,7 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
     pads[pad]->value( true );
     pads[pad]->theme( theme( bank ) );
     
-    if( pad == currentPad && bank == currentBank )
+    if( pad == currentPad )
     {
       if( followPad )
       {
@@ -466,10 +461,10 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
   
   layers->value( layer );
   
-  bool newPad = ( pad   != currentPad   ||
-                  layer != currentLayer  );
+  bool newLayer = ( pad   != currentPad   ||
+                    layer != currentLayer  );
   
-  if( followPad && noteOn && newPad )
+  if( followPad && noteOn && newLayer )
   {
     if( bank != currentBank )
     {
@@ -503,7 +498,7 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
     
     // request update for state from DSP
     //printf("UI requesting %i %i %i\n", bank, pad, layer );
-    //requestSampleState( bank, pad, layer );
+    requestSampleState( bank, pad, layer );
   }
   
   redraw();
