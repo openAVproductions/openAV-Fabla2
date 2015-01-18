@@ -53,7 +53,6 @@ TestUI::TestUI( PuglNativeWindow parent ):
     bankBtns[i]->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
   
-  
   followPadBtn = new Avtk::Button( this, 5, 43+(s+6)*2 + 75, s * 2 + 6, 22,  "Follow" );
   followPadBtn->clickMode( Avtk::Widget::CLICK_TOGGLE );
   followPadBtn->value( 1 );
@@ -289,6 +288,9 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   //showSampleBrowser( true );
   showSampleBrowser( false );
+  
+  /// created last, so its on top
+  deleteLayer = new Avtk::Dialog( this, 0, 0, 320, 120, "Delete Sample?" );
 }
 
 void TestUI::blankSampleState()
@@ -602,8 +604,19 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   */
   else if( w == layers )
   {
-    currentLayer = tmp;
+    int lay = int( layers->value() );
+    currentLayer = lay;
     //if( int( w->mouseButton() ) == 3 )
+    if( true )
+    {
+      if( deleteLayer->run("Are you sure you want to delete layer!?",
+          Avtk::Dialog::OK_CANCEL) == 1 )
+      {
+        printf("UI writing sampleUnload\n");
+        writeAtom( uris.fabla2_SampleUnload, true );
+      }
+    }
+    else
     {
       int lay = int( layers->value() );
       printf("click on layer %i : value() %f\n", lay, tmp );

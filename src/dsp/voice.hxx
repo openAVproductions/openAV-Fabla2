@@ -31,6 +31,7 @@ namespace Fabla2
 
 class Pad;
 class FxUnit;
+class Sample;
 class Sampler;
 class FiltersSVF;
 
@@ -57,7 +58,9 @@ class Voice
     
     /// start playing a sample on this voice
     void play( int bank, int pad, Pad*, float velocity );
+    
     void stop();
+    void stopIfSample( Sample* s );
     
     /// used to audition samples from UI
     void playLayer( Pad* p, int layer );

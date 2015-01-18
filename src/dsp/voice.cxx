@@ -190,6 +190,16 @@ void Voice::play( int bankInt, int padInt, Pad* p, float velocity )
 #endif
 }
 
+void Voice::stopIfSample( Sample* s )
+{
+  Sample* vs = sampler->getSample();
+  if( s == vs )
+  {
+    printf("Voice::stopIfSample() %s : KILLED VOICE.\n", s->getName() );
+    active_ = false;
+  }
+}
+
 void Voice::stop()
 {
   if( active_ )
@@ -223,6 +233,19 @@ void Voice::process()
   /// set filter state
   Sample* s = sampler->getSample();
   
+  if( !s )
+  {
+    printf("Fabla2 DSP: Voice process() with invalid Sample* : WARNING!");
+  }
+  
+  if( done || adsr->getState() == ADSR::ENV_IDLE )
+  {
+    //printf("Voice done\n");
+    active_ = false;
+    pad_ = 0;
+    return;
+  }
+  
   // filter details setup in play()
   if( filterActive_ )
   {
@@ -246,13 +269,6 @@ void Voice::process()
     
     // ADSR processes first sample *before* the filter set section.
     adsrVal = adsr->process();
-  }
-  
-  if( done || adsr->getState() == ADSR::ENV_IDLE )
-  {
-    //printf("Voice done\n");
-    active_ = false;
-    pad_ = 0;
   }
 }
 

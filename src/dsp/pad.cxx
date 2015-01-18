@@ -52,6 +52,18 @@ Pad::Pad( Fabla2DSP* d, int rate, int ID ) :
   samples.reserve( 4 );
 }
 
+void Pad::remove( Sample* s )
+{
+  for( int i = 0; i < samples.size(); ++i)
+  {
+    if( samples.at(i) == s )
+    {
+      samples.erase( samples.begin() + i );
+      printf("Pad remove() sample at %i : sample name %s\n", i, s->getName() );
+    }
+  }
+}
+
 void Pad::add( Sample* s )
 {
   loaded_ = true;
@@ -82,7 +94,7 @@ int Pad::lastPlayedLayer()
 void Pad::checkAll()
 {
   printf("%s : Starting...\n", __PRETTY_FUNCTION__ );
-  for(int bi = 0; bi < 8; bi++ )
+  for(int bi = 0; bi < nLayers(); bi++ )
   {
     Sample* s = layer( bi );
     if( !s )

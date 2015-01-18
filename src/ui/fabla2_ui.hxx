@@ -55,7 +55,8 @@ class TestUI : public Avtk::UI
     // sample info
     Avtk::Text* sampleName;
     
-    
+    // delete layer dialog
+    Avtk::Dialog* deleteLayer;
     
     // sample edit view
     Avtk::Number* muteGroup;

@@ -59,6 +59,8 @@ class Pad
     
     /// library functions
     void add( Sample* );
+    void remove( Sample* s );
+    
     void clearAllSamples();
     bool loaded(){return loaded_;}
     
@@ -109,7 +111,6 @@ class Pad
     
     /// shared pointer to each of the samples available on this pad
     std::vector< yasper::ptr<Sample> > samples;
-    
 };
 
 };

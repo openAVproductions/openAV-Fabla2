@@ -541,7 +541,25 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
     return;
   }
   
-  if(       URI == uris->fabla2_SamplePitch ) {
+  if(       URI == uris->fabla2_SampleUnload )
+  {
+    // remove a sample from the engine
+    printf("Fabla2-DSP *Deleteing* sample %s now!\n", s->getName() );
+    
+    // tell all voices / pads / samplers that the sample is gone
+    for(int i = 0; i < voices.size(); ++i)
+    {
+      voices.at(i)->stopIfSample( s );
+    }
+    pad->remove( s );
+    pad->checkAll();
+    
+    padRefreshLayers( b, p );
+    
+    // TODO - refactor away yasper<ptr> stuff, to manually de-alloc
+    //delete s;
+  }
+  else if(       URI == uris->fabla2_SamplePitch ) {
     s->dirty = 1; s->pitch = v;
   }
   else if(  URI == uris->fabla2_SampleGain ) {
