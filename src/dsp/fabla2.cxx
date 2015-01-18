@@ -244,6 +244,7 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
 {
   //printf("MIDI: %i, %i, %i\n", (int)msg[0], (int)msg[1], (int)msg[2] );
   
+  
   switch( lv2_midi_message_type( msg ) )
   {
     case LV2_MIDI_MSG_NOTE_ON:
@@ -365,21 +366,15 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
       break;
     
     case LV2_MIDI_MSG_CONTROLLER:
-        //printf("MIDI : Controller received\n");
-        if( msg[1] == 119 ) 
-        {
-          startRecordToPad( recordBank, recordPad );
-        }
-        else if( msg[1] == 117 )
-        {
-          stopRecordToPad();
-        }
+        if( msg[1] == 120 ) // all sounds off
+          panic();
+        if( msg[1] == 123 ) // all notes off
+          panic();
         break;
     
     case LV2_MIDI_MSG_PGM_CHANGE:
         //printf("MIDI : Program Change received\n");
         break;
-    
   }
   
 }
@@ -524,6 +519,15 @@ void Fabla2DSP::tx_waveform( int b, int p, int l, const float* data )
   lv2_atom_forge_pop(&lv2->forge, &frame);
 }
 
+void Fabla2DSP::panic()
+{
+  for(int i = 0; i < voices.size(); ++i)
+  {
+    voices.at(i)->stop();
+  }
+  auditionStop();
+}
+
 void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 {
   printf("Fabla2:uiMessage bank %i, pad %i, layer %i: %f\n", b, p, l, v );
@@ -562,6 +566,9 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
     
     // TODO - refactor away yasper<ptr> stuff, to manually de-alloc
     //delete s;
+  }
+  else if(       URI == uris->fabla2_Panic ) {
+    panic();
   }
   else if(       URI == uris->fabla2_SamplePitch ) {
     s->dirty = 1; s->pitch = v;

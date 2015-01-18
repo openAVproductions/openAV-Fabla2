@@ -45,6 +45,7 @@ class TestUI : public Avtk::UI
     Avtk::Button* followPadBtn;
     
     Avtk::Button* loadSample;
+    Avtk::Button* panicButton;
     
     Avtk::Dial* masterPitch;
     

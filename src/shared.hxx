@@ -44,6 +44,8 @@
 /// Atom Event types
 #define FABLA2_StateStringJSON      FABLA2_URI "#StateStringJSON"
 
+#define FABLA2_Panic                FABLA2_URI "#Panic"
+
 #define FABLA2_requestUiSampleState FABLA2_URI "#RequestUiSampleState"
 #define FABLA2_replyUiSampleState   FABLA2_URI "#ReplyUiSampleState"
 
@@ -103,6 +105,8 @@ typedef struct {
   LV2_URID patch_value;
   
   LV2_URID fabla2_StateStringJSON;
+  
+  LV2_URID fabla2_Panic;
   
   LV2_URID fabla2_RequestUiSampleState;
   LV2_URID fabla2_ReplyUiSampleState;
@@ -165,6 +169,8 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->patch_value                 = map->map(map->handle, LV2_PATCH__value);
   
   uris->fabla2_StateStringJSON      = map->map(map->handle, FABLA2_StateStringJSON);
+  
+  uris->fabla2_Panic                = map->map(map->handle, FABLA2_Panic);
   
   uris->fabla2_RequestUiSampleState = map->map(map->handle, FABLA2_requestUiSampleState);
   uris->fabla2_ReplyUiSampleState   = map->map(map->handle, FABLA2_replyUiSampleState);

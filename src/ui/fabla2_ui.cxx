@@ -53,6 +53,10 @@ TestUI::TestUI( PuglNativeWindow parent ):
     bankBtns[i]->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
   
+  panicButton = new Avtk::Button( this, 5, 43+(s+6)*2 + 45, s * 2 + 6, 22,  "PANIC" );
+  panicButton->clickMode( Avtk::Widget::CLICK_MOMENTARY );
+  panicButton->theme( theme(4) );
+  
   followPadBtn = new Avtk::Button( this, 5, 43+(s+6)*2 + 75, s * 2 + 6, 22,  "Follow" );
   followPadBtn->clickMode( Avtk::Widget::CLICK_TOGGLE );
   followPadBtn->value( 1 );
@@ -632,6 +636,10 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
       else
         writePadPlayStop( false, currentBank, currentPad, lay );
     }
+  }
+  else if( w == panicButton )
+  {
+    writeAtom( uris.fabla2_Panic , true );
   }
   else if( w == loadSample )
   {

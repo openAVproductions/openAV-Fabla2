@@ -63,6 +63,9 @@ class Fabla2DSP
     int sr;
     int nframes;
     
+    /// turns off all voices, silencing output
+    void panic();
+    
     /// audition voice details
     void auditionPlay( int bank, int pad, int layer );
     void auditionStop();

@@ -251,6 +251,8 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
                obj->body.otype == self->uris.fabla2_PadSwitchType         ||
                
                obj->body.otype == self->uris.fabla2_SampleUnload          ||
+               
+               obj->body.otype == self->uris.fabla2_Panic                 ||
                false )
       {
         int bank, pad, layer;
