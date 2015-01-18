@@ -43,6 +43,7 @@ UI::UI( int w__, int h__, PuglNativeWindow parent, const char* windowName ) :
   //themes.push_back( new Theme( this ) );
   
   motionUpdateWidget = 0;
+  handleOnlyWidget = 0;
   
   dragDropOrigin   = 0;
   dragDropDataSize = 0;
@@ -56,7 +57,9 @@ UI::UI( int w__, int h__, PuglNativeWindow parent, const char* windowName ) :
 
 void UI::reshape(int x, int y)
 {
+#ifdef AVTK_DEBUG_DTOR
   printf("reshaping UI: scale factor: %f \t%f\n", x/float(initW), y/float(initH) );
+#endif
   
   //Group::resize( );
   
@@ -69,7 +72,6 @@ UI::~UI()
 #ifdef AVTK_DEBUG_DTOR
   printf("%s %s\n", __PRETTY_FUNCTION__, label() );
 #endif
-  Group::clear();
   
   while( themes.size() > 0 )
   {
@@ -120,6 +122,33 @@ int UI::run()
   return 0;
 }
 
+void UI::remove( Avtk::Widget* w )
+{
+  if( w == handleOnlyWidget )
+  {
+    handleOnlyWidget = 0x0;
+  }
+  else if ( w == motionUpdateWidget )
+  {
+    motionUpdateWidget = 0x0;
+  }
+  else if ( w == dragDropOrigin )
+  {
+    dragDropOrigin = 0x0;
+  }
+  else if ( w == dragDropTargetVerifiedWidget )
+  {
+    dragDropTargetVerifiedWidget = 0x0;
+  }
+  
+  Group::remove( w );
+}
+
+void UI::handleOnly( Widget* wid )
+{
+  handleOnlyWidget = wid;
+}
+
 void UI::event( const PuglEvent* event )
 {
   if( event->type != PUGL_EXPOSE )
@@ -160,17 +189,26 @@ void UI::event( const PuglEvent* event )
     }
 #endif
     
-    // pass event to group to be handled
-    int ret = Group::handle( event );
-    if ( ret )
+    if( handleOnlyWidget )
     {
-      redraw();
-      return;
+      handleOnlyWidget->handle( event );
+    }
+    else
+    {
+      // pass event to group to be handled
+      int ret = Group::handle( event );
+      if ( ret )
+      {
+        redraw();
+        return;
+      }
     }
   }
   else if( event->type == PUGL_CONFIGURE )
   {
+#ifdef AVTK_DEBUG
     printf("UI handleing PUGL_CONFIGURE\n");
+#endif
   }
   else
   {
@@ -219,6 +257,8 @@ void UI::motion(int x, int y)
   }
   else if( dragDropOrigin )
   {
+    /*
+    refactor to use GROUP!
     // scan trough widgets on mouse-move, as it *could* be a drag-drop action.
     for (std::list< Avtk::Widget* >::iterator it = widgets.begin(); it != widgets.end(); it++)
     {
@@ -228,6 +268,7 @@ void UI::motion(int x, int y)
         dragDropVerify( (*it) );
       }
     }
+    */
   }
 }
 

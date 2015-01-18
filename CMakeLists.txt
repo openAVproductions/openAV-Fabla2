@@ -9,10 +9,10 @@ set(AVTK_VERSION_PATCH "1")
 
 set(AVTK_VERSION "${AVTK_VERSION_MAJOR}.${AVTK_VERSION_MINOR}.${AVTK_VERSION_PATCH}")
 
-option(AVTK_RELEASE_BUILD   "Build for releasing"         OFF )
-option(AVTK_DEBUG_PRINTS    "Build with debugging prints" ON )
-option(AVTK_SNDFILE_SUPPORT "Build with sndfile library"  ON )
-option(AVTK_TESTER_SUPPORT  "Build with Tester Rec/Play"  ON )
+option(AVTK_RELEASE_BUILD   "Build for releasing"         ON )
+option(AVTK_DEBUG_PRINTS    "Build with debugging prints" OFF )
+option(AVTK_SNDFILE_SUPPORT "Build with sndfile library"  OFF )
+option(AVTK_TESTER_SUPPORT  "Build with Tester Rec/Play"  OFF )
 
 
 ################################################################################
@@ -51,7 +51,7 @@ pkg_check_modules(X11 x11 REQUIRED)
 include_directories( ${X11_INCLUDE_DIRS} )
 link_directories   ( ${X11_LIBRARY_DIRS} )
 
-SET(CMAKE_CXX_FLAGS "-trigraphs -g")
+SET(CMAKE_CXX_FLAGS "-trigraphs -g -fsanitize=address")
 
 FILE(GLOB src libs/pffft.cxx avtk/*.cxx )
 

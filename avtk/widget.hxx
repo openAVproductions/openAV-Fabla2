@@ -151,6 +151,12 @@ class Widget
     
     float scrollDeltaAmount;
 
+#ifdef AVTK_DEBUG
+  public:
+    // public so main() can print out how many widgets have not been cleaned up
+    // (if any) at the end of a test run
+    static int widgetCounter;
+#endif
 };
 
 };

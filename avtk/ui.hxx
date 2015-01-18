@@ -39,6 +39,9 @@ class UI : public Avtk::Group
         motionUpdateWidget = 0;
     }
     
+    /// overriden so we can set motion widget etc to null on removal.
+    virtual void remove ( Widget* child );
+    
     /// Initiate a drag-and-drop action, with the widget as the "origin widget",
     /// and the data is copied to the UI instance.
     void dragDropInit( Avtk::Widget* origin, size_t size, void* data );
@@ -82,6 +85,10 @@ class UI : public Avtk::Group
     /// the function returns, the main window has been closed.
     virtual int run();
     
+    /// Handle Only make the UI only pass events to one widget, until it is
+    /// called with 0x0, then normal functionality resumes.
+    void handleOnly( Widget* wid );
+    
     /// get the theme requested: the themes have ID's defined in theme file.
     /// calling this without a parameter returns the default theme.
     Theme* theme( int id = 0 );
@@ -103,6 +110,9 @@ class UI : public Avtk::Group
     /// for testing the UI, the Tester class can record and playback events.
     Tester* tester;
 #endif
+    /// The widget that should be handled modally: no other widgets are given
+    /// the event
+    Avtk::Widget* handleOnlyWidget;
     
     /// the list of widgets currently instantiated, in order of being drawn.
     std::list<Avtk::Widget*> widgets;
@@ -133,7 +143,7 @@ class UI : public Avtk::Group
   public: // make event() public when TESTER is on to allow injecting events
 #endif
     /// the main event function: it handles all event input, and distritbutes it
-    /// to the widgets
+    /// to the widgets. See handleOnly() for details on handling Dialogs
     void event( const PuglEvent* event );
 #ifdef AVTK_TESTER
   protected:
