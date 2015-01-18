@@ -56,6 +56,7 @@ void Sampler::playLayer( Pad* p, int layer )
   pad = p;
   
   padVol = pad->volume;
+  printf("sampler playLayer with vol %f\n", padVol );
   
   sample = pad->layer( layer );
 }
@@ -70,6 +71,8 @@ void Sampler::play( Pad* p, float velocity )
   frames = 0;
   
   sample = pad->getPlaySample( velocity );
+  
+  padVol = pad->volume;
   
   if( !sample )
   {

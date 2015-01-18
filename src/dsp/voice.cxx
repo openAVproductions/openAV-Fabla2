@@ -30,9 +30,7 @@
 #include "sampler.hxx"
 #include "dsp_filters_svf.hxx"
 
-#ifdef FABLA2_COMPONENT_TEST
 #include "plotter.hxx"
-#endif
 
 namespace Fabla2
 {
@@ -75,7 +73,7 @@ void Voice::playLayer( Pad* p, int layer )
   Sample* s = sampler->getSample();
   if( s )
   {
-    printf("Voice::playLayer() %i, on Sample %s\n", ID, s->getName() );
+    //printf("Voice::playLayer() %i, on Sample %s\n", ID, s->getName() );
     active_ = true;
   }
   else
@@ -131,7 +129,7 @@ void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
   Sample* s = sampler->getSample();
   if( s )
   {
-    printf("Voice::play() %i, on Sample %s @ time : %i\n", ID, s->getName(), time );
+    //printf("Voice::play() %i, on Sample %s @ time : %i, padVol %f\n", ID, s->getName(), time, pad_->volume );
   }
   else
   {
@@ -197,7 +195,7 @@ void Voice::stopIfSample( Sample* s )
   Sample* vs = sampler->getSample();
   if( s == vs )
   {
-    printf("Voice::stopIfSample() %s : KILLED VOICE.\n", s->getName() );
+    //printf("Voice::stopIfSample() %s : KILLED VOICE.\n", s->getName() );
     active_ = false;
   }
 }
@@ -228,14 +226,15 @@ void Voice::process()
   int nframes = dsp->nframes;
   if( activeCountdown )
   {
-    printf("process() with activeCountdown = %i\n", activeCountdown ); 
+    nframes = nframes - activeCountdown;
+    //printf("process() with activeCountdown = %i\n", activeCountdown ); 
   }
   
   
   // if we have a note on coming up, but we're not active yet, then start processing
   // where the note actually starts
   
-  int done = sampler->process( dsp->nframes, &voiceBuffer[0], &voiceBuffer[dsp->nframes] );
+  int done = sampler->process( nframes, &voiceBuffer[0], &voiceBuffer[dsp->nframes] );
   
   float adsrVal = adsr->process();
   
@@ -247,12 +246,12 @@ void Voice::process()
   
   if( !s )
   {
-    printf("Fabla2 DSP: Voice process() with invalid Sample* : WARNING!");
+    //printf("Fabla2 DSP: Voice process() with invalid Sample* : WARNING!");
   }
   
   if( done || adsr->getState() == ADSR::ENV_IDLE )
   {
-    printf("Voice done\n");
+    //printf("Voice done\n");
     active_ = false;
     pad_ = 0;
     return;
@@ -267,21 +266,29 @@ void Voice::process()
     filterL->setValue( ( s->filterFrequency + 0.3) );
     filterR->setValue( ( s->filterFrequency + 0.3) );
     
-    filterL->process( dsp->nframes, &voiceBuffer[           0], &voiceBuffer[           0] );
-    filterR->process( dsp->nframes, &voiceBuffer[dsp->nframes], &voiceBuffer[dsp->nframes] );
+    filterL->process( nframes, &voiceBuffer[           0+activeCountdown], &voiceBuffer[           0+activeCountdown] );
+    filterR->process( nframes, &voiceBuffer[dsp->nframes+activeCountdown], &voiceBuffer[dsp->nframes+activeCountdown] );
   }
   
   float* outL = dsp->controlPorts[OUTPUT_L];
   float* outR = dsp->controlPorts[OUTPUT_R];
   
-  for(int i = 0; i < dsp->nframes; i++ )
+  for(int i = activeCountdown; i < dsp->nframes; i++ )
   {
-    *outL++ += voiceBuffer[             i] * adsrVal;
-    *outR++ += voiceBuffer[dsp->nframes+i] * adsrVal;
+    outL[i] += voiceBuffer[             i] * adsrVal;
+    outR[i] += voiceBuffer[dsp->nframes+i] * adsrVal;
     
     // ADSR processes first sample *before* the filter set section.
     adsrVal = adsr->process();
   }
+  
+  /*
+  // for testing sample-accurate voice note-on
+  if( activeCountdown )
+  {
+    Plotter::plot( "active.dat", dsp->nframes, dsp->controlPorts[OUTPUT_L] );
+  }
+  */
   
   activeCountdown = 0;
 }

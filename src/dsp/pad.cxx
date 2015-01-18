@@ -51,7 +51,7 @@ Pad::Pad( Fabla2DSP* d, int rate, int ID ) :
   
   volume = 0.75f;
   
-  samples.reserve( 4 );
+  samples.reserve( 8 );
 }
 
 void Pad::remove( Sample* s )
