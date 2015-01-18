@@ -78,14 +78,14 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   waveformGroup = new Avtk::Group( this, 355, 42, FABLA2_UI_WAVEFORM_PX, 113, "WaveformGroup");
   waveform = new Avtk::Waveform( this, 355, 42, FABLA2_UI_WAVEFORM_PX, 113, "Waveform" );
-  waveformGroup->add( waveform );
   
   /// waveform overlays
   int waveX = 355;
   int waveY = 42;
   int waveTW = 120;
   sampleName = new Avtk::Text( this, waveX + 8, waveY + 8, waveTW, 14, "-" );
-  waveformGroup->add( sampleName );
+  
+  waveformGroup->end();
   
   
   /// sample edit view
@@ -114,6 +114,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waste = new Avtk::Box( this, wx, wy, colWidth, 104,  "Layers" );
   waste->clickMode( Widget::CLICK_NONE );
   layers    = new Avtk::List( this, wx, wy+18, colWidth, 162-18, "LayersList" );
+  layers->end();
   
   /// next column
   wx += colWidth + spacer;
@@ -237,6 +238,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   currentDir = defaultDir;
   
   
+  /*
   /// Sample Browser panes =====================================================
   wx = 82;
   wy = 43;
@@ -253,6 +255,8 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   sampleDirScroll->set( listSampleDirs );
   
+  sampleDirScroll->end();
+  
   wx = 198;
   wy = 43 + 20 + spacer;
   // samples view
@@ -264,6 +268,8 @@ TestUI::TestUI( PuglNativeWindow parent ):
   listSampleFiles->resizeMode( Group::RESIZE_FIT_TO_CHILDREN );
   
   sampleFileScroll->set( listSampleFiles );
+  sampleFileScroll->end();
+  */
   
   // pads
   int xS = 58;
@@ -291,7 +297,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   bankBtns[0]->value( true );
   
   //showSampleBrowser( true );
-  showSampleBrowser( false );
+  //showSampleBrowser( false );
   
   /// created last, so its on top
   deleteLayer = new Avtk::Dialog( this, 0, 0, 320, 120, "Delete Sample?" );
@@ -299,6 +305,9 @@ TestUI::TestUI( PuglNativeWindow parent ):
 
 void TestUI::blankSampleState()
 {
+  printf("blankSampleState() returning\n");
+  return;
+  
   muteGroup       ->value( 0 );
   triggerMode     ->value( 0 );
   switchType      ->value( 0 );
