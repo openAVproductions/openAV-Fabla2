@@ -591,6 +591,8 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   
   printf("widgetCB : %s, value: %f\n", w->label(), tmp );
   
+  printf("widget mousebutton %i\n", w->mouseButton() );
+  
   if( w == recordOverPad )
   {
     write_function( controller, Fabla2::RECORD_OVER_LAST_PLAYED_PAD, sizeof(float), 0, &tmp );
@@ -604,13 +606,14 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   */
   else if( w == layers )
   {
-    int lay = int( layers->value() );
-    currentLayer = lay;
-    //if( int( w->mouseButton() ) == 3 )
-    if( true )
+    currentLayer = int( layers->value() );
+    if( w->mouseButton() == 3 )
     {
+      int mx = w->mouseX();
+      int my = w->mouseY();
+      printf("%i %i\n", mx, my );
       if( deleteLayer->run("Are you sure you want to delete layer!?",
-          Avtk::Dialog::OK_CANCEL) == 1 )
+          Avtk::Dialog::OK_CANCEL, mx, my ) == 1 )
       {
         printf("UI writing sampleUnload\n");
         writeAtom( uris.fabla2_SampleUnload, true );
