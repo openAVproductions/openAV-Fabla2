@@ -103,16 +103,16 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
   muteGroup = new Avtk::Number( this, wx + 2, wy + 8, 20, 19, "Mute Group" );
-  muteGroup->setRange( 0, 8 );
+  muteGroup->valueMode( Avtk::Widget::VALUE_INT, 0, 8 );
   
   offGroup = new Avtk::Number( this, wx + 24, wy + 8, 20, 19, "Off Group" );
-  offGroup->setRange( 0, 8 );
+  offGroup->valueMode( Avtk::Widget::VALUE_INT, 0, 8 );
   
   triggerMode = new Avtk::Number( this, wx + 46, wy + 8, 20, 19, "Trigger Mode" );
-  triggerMode->setRange( 1, 1 );
+  triggerMode->valueMode( Avtk::Widget::VALUE_INT, 1, 1 );
   
   switchType = new Avtk::Number( this, wx + 68, wy + 8, 20, 19, "Switch Type" );
-  switchType->setRange( 1, 2 );
+  switchType->valueMode( Avtk::Widget::VALUE_INT, 1, 2 );
   wy += 40;
   
   /// layers
@@ -149,7 +149,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waste->clickMode( Widget::CLICK_NONE );
   
   filterType = new Avtk::Number( this, wx + colWidth-divider, wy, divider, 14, "Filter Type" );
-  filterType->setRange( 0, 3 );
+  filterType->valueMode( Widget::VALUE_INT, 0, 3 );
   
   wy += 14;
   filterFrequency = new Avtk::Dial( this, wx, wy, 40, 40, "Filter Frequency" );
@@ -695,21 +695,15 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   }
   else if( w == muteGroup )
   {
-    float fin = tmp;
-    //printf("MuteGroup %i\n", (int)fin);
-    writeAtom( uris.fabla2_PadMuteGroup, fin );
+    writeAtom( uris.fabla2_PadMuteGroup, tmp );
   }
   else if( w == triggerMode )
   {
-    float fin = tmp;
-    //printf("TriggerMode %i\n", (int)fin);
-    writeAtom( uris.fabla2_PadTriggerMode, fin );
+    writeAtom( uris.fabla2_PadTriggerMode, tmp );
   }
   else if( w == switchType )
   {
-    float fin = tmp * 2.99;
-    //printf("switchType %f\n", fin);
-    writeAtom( uris.fabla2_PadSwitchType, fin );
+    writeAtom( uris.fabla2_PadSwitchType, tmp );
   }
   else if( w == padVolume )
   {
