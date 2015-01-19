@@ -240,16 +240,17 @@ fabla2_restore(LV2_Handle                  instance,
       {
         Bank* bank = library->bank( b );
         
-        printf("Bank %i\n", b );
+        //printf("Bank %i\n", b );
         
         std::stringstream bankStr;
         bankStr << "bank_" << char('A' + b);
+        
         picojson::value pjBanks = pjAll.get( bankStr.str() );
         
         for(int p = 0; p < 16; p ++)
         {
           Pad* pad = bank->pad( p );
-          printf("Pad %i\n", p );
+          //printf("Pad %i\n", p );
           
           // kick all state out
           pad->clearAllSamples();
@@ -258,40 +259,67 @@ fabla2_restore(LV2_Handle                  instance,
           padStr << "pad_" << p;
           picojson::value pjPad = pjBanks.get( padStr.str() );
           
-          pad->muteGroup   ( (int)pjPad.get("muteGroup").get<double>() );
-          pad->offGroup    ( (int)pjPad.get("offGroup" ).get<double>() );
-          pad->triggerMode ( (Fabla2::Pad::TRIGGER_MODE)pjPad.get("triggerMode").get<double>() );
-          pad->switchSystem( (Fabla2::Pad::SAMPLE_SWITCH_SYSTEM)pjPad.get("switchMode" ).get<double>() );
-          pad->volume      = (int)pjPad.get("volume").get<double>();
+          if( pjPad.get("muteGroup").is<double>() )
+            pad->muteGroup   ( (int)pjPad.get("muteGroup").get<double>() );
           
-          int nLayers       = (int)pjPad.get("nLayers").get<double>();
+          if( pjPad.get("offGroup").is<double>() )
+            pad->offGroup    ( (int)pjPad.get("offGroup" ).get<double>() );
+          
+          if( pjPad.get("triggerMode").is<double>() )
+            pad->triggerMode ( (Fabla2::Pad::TRIGGER_MODE)pjPad.get("triggerMode").get<double>() );
+          
+          if( pjPad.get("switchMode").is<double>() )
+            pad->switchSystem( (Fabla2::Pad::SAMPLE_SWITCH_SYSTEM)pjPad.get("switchMode" ).get<double>() );
+          
+          if( pjPad.get("volume").is<double>() );
+            pad->volume      = (int)pjPad.get("volume").get<double>();
+          
+          
+          int nLayers = 0;
+          if( pjPad.get("nLayers").is<double>() )
+            nLayers= (int)pjPad.get("nLayers").get<double>();
           
           for(int i = 0; i < nLayers; i++)
           {
-            printf("Sample %i\n", i );
             
             std::stringstream layerStr;
             layerStr << "layer_" << i;
+            
+            printf("Sample %i, %s\n", i, layerStr.str().c_str() );
+            
             picojson::value pjLayer = pjPad.get( layerStr.str() );
             
-            // create new audio sample from the file on disk here
-            // save Sample audio data as <pad_num>_<layer_num>.wav
-            std::stringstream padName;
-            padName << "pad" << p << "_layer" << i << ".wav";
-            /*
-            char* savePath = make_path->path(make_path->handle, padName.str().c_str() );
-            s->write( savePath );
-            free( savePath );
-            */
+            std::string filename;
+            if( pjLayer.get("filename").is<std::string>() )
+            {
+              filename = pjLayer.get("filename").get<std::string>();
+            }
+            else
+            {
+              printf("Fabla2UI: Pad %i : Sample %i : no filename in save file, skipping sample.\n", p, i );
+              continue;
+            }
             
-            std::string filename = pjLayer.get("filename").get<std::string>();
+            std::string name;
+            if( !pjLayer.get("name").is<std::string>() )
+            {
+              std::stringstream padName;
+              padName << "pad" << p << "_layer" << i << ".wav";
+              name = padName.str();
+            }
+            else
+            {
+              name = pjLayer.get("name").get<std::string>();
+            }
+            
             // map the short filename to the full path
-            
             std::string path = map_path->absolute_path(map_path->handle, filename.c_str() );
+            
             // strip the file:// from the start
             path = path.substr( 7 );
+            
             printf("Loading %s\n", path.c_str() );
-            Sample* s = new Sample( self->dsp, self->dsp->sr, padName.str().c_str(), path );
+            Sample* s = new Sample( self->dsp, self->dsp->sr, name.c_str(), path );
             if( s->getFrames() <= 0 )
             {
               delete s;
@@ -302,26 +330,41 @@ fabla2_restore(LV2_Handle                  instance,
             else
             {
               // write directly to Sample*
-              s->gain            = (float)pjLayer.get("gain").get<double>();
-              s->pan             = (float)pjLayer.get("pan").get<double>();
+              if( pjPad.get("gain").is<double>() )
+                s->gain            = (float)pjLayer.get("gain").get<double>();
+              if( pjPad.get("pan").is<double>() )
+                s->pan             = (float)pjLayer.get("pan").get<double>();
               
-              s->pitch           = (float)pjLayer.get("pitch").get<double>();
-              s->time            = (float)pjLayer.get("time").get<double>();
+              if( pjPad.get("pitch").is<double>() )
+                s->pitch           = (float)pjLayer.get("pitch").get<double>();
+              if( pjPad.get("time").is<double>() )
+                s->time            = (float)pjLayer.get("time").get<double>();
               
-              s->startPoint      = (float)pjLayer.get("startPoint").get<double>();
-              s->endPoint        = (float)pjLayer.get("endPoint").get<double>();
+              if( pjPad.get("startPoint").is<double>() )
+                s->startPoint      = (float)pjLayer.get("startPoint").get<double>();
+              if( pjPad.get("endPoint").is<double>() )
+                s->endPoint        = (float)pjLayer.get("endPoint").get<double>();
               
-              s->filterType      = (float)pjLayer.get("filterType").get<double>();
-              s->filterFrequency = (float)pjLayer.get("filterFrequency").get<double>();
-              s->filterResonance = (float)pjLayer.get("filterResonance").get<double>();
+              if( pjPad.get("filterType").is<double>() )
+                s->filterType      = (float)pjLayer.get("filterType").get<double>();
+              if( pjPad.get("filterFrequency").is<double>() )
+                s->filterFrequency = (float)pjLayer.get("filterFrequency").get<double>();
+              if( pjPad.get("filterResonance").is<double>() )
+                s->filterResonance = (float)pjLayer.get("filterResonance").get<double>();
               
-              s->velLow          = (int)pjLayer.get("velLow").get<double>();
-              s->velHigh         = (int)pjLayer.get("velHigh").get<double>();
+              if( pjPad.get("velLow").is<double>() )
+                s->velLow          = (int)pjLayer.get("velLow").get<double>();
+              if( pjPad.get("velHigh").is<double>() )
+                s->velHigh         = (int)pjLayer.get("velHigh").get<double>();
               
-              s->attack          = (int)pjLayer.get("attack").get<double>();
-              s->decay           = (int)pjLayer.get("decay").get<double>();
-              s->sustain         = (int)pjLayer.get("sustain").get<double>();
-              s->release         = (int)pjLayer.get("release").get<double>();
+              if( pjPad.get("attack").is<double>() )
+                s->attack          = (int)pjLayer.get("attack").get<double>();
+              if( pjPad.get("decay").is<double>() )
+                s->decay           = (int)pjLayer.get("decay").get<double>();
+              if( pjPad.get("sustain").is<double>() )
+                s->sustain         = (int)pjLayer.get("sustain").get<double>();
+              if( pjPad.get("release").is<double>() )
+                s->release         = (int)pjLayer.get("release").get<double>();
               
               // add the sample to the Pad
               pad->add( s );
