@@ -40,6 +40,7 @@ Sampler::Sampler( Fabla2DSP* d, int rate ) :
   
   playheadDelta(1),
   playIndex(0),
+  endPoint(0),
   
   frames( 0 )
 {
@@ -84,6 +85,7 @@ void Sampler::play( Pad* p, float velocity )
   
   // trigger audio playback here
   playIndex = sample->startPoint;
+  endPoint = sample->endPoint;
 }
 
 int Sampler::process(int nframes, float* L, float* R)

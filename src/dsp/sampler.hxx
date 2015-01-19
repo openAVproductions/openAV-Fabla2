@@ -73,6 +73,7 @@ class Sampler
     
     /// audio playback variables
     float playIndex;
+    long  endPoint;
     long  frames;
 };
 

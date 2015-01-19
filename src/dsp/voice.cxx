@@ -150,16 +150,16 @@ void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
   
   int filterType = 0; // lowpass
   // check the value of the filter type to set voice params
-       if( s->filterType < 0.25 )
+       if( s->filterType < 0.1)
     filterActive_ = false;
-  else if( s->filterType < 0.5 )
+  else if( s->filterType < 1.1 )
     filterType = 0;
-  else if( s->filterType < 0.75 )
+  else if( s->filterType < 2.1 )
     filterType = 1;
-  else if( s->filterType < 1.0 )
-    filterType = 1;
+  else if( s->filterType < 3.1 )
+    filterType = 2;
   else
-    filterType = 0; // lowpass default
+    filterActive_ = false; // default: off
   
   filterL->setType( filterType );
   filterR->setType( filterType );
