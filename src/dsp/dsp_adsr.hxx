@@ -60,7 +60,7 @@ public:
     ENV_ATTACK,
     ENV_DECAY,
     ENV_SUSTAIN,
-    ENV_RELEASE
+    ENV_RELEASE,
   };
 
 protected:

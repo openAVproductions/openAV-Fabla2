@@ -91,6 +91,9 @@ class Voice
     /// a counter to count down frames until note-on event
     int activeCountdown;
     
+    /// a counter to check if we should trigger ADSR gate off due to end of sample
+    int adsrOffCounter;
+    
     bool active_;
     bool filterActive_;
     

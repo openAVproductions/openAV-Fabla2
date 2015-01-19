@@ -28,6 +28,8 @@
 #include "pad.hxx"
 #include "sample.hxx"
 #include "sampler.hxx"
+
+#include "dsp_adsr.hxx"
 #include "dsp_filters_svf.hxx"
 
 #include "plotter.hxx"
@@ -56,7 +58,10 @@ Voice::Voice( Fabla2DSP* d, int r ) :
   adsr->setAttackRate  ( 0.001 * r );
   adsr->setDecayRate   ( 0.25 * r );
   adsr->setSustainLevel( 0.5  );
-  adsr->setReleaseRate ( 0.05 * r );
+  
+  int releaseSamps = 0.05 * r;
+  adsr->setReleaseRate ( releaseSamps );
+  adsrOffCounter = releaseSamps;
 }
 
 bool Voice::matches( int bank, int pad )
@@ -160,10 +165,124 @@ void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
   filterR->setType( filterType );
   
   // ADSR: add *minimal* attack / release to avoid clicks
-  adsr->setAttackRate  ( (0.001+s->attack) * sr );
-  adsr->setDecayRate   ( s->decay * sr );
+  int attackSamps  = (0.005+s->attack ) * sr;
+  int decaySamps   = (0.005+s->decay  ) * sr;
+  int releaseSamps = (0.05 +s->release) * sr;
+  int totalSamps   = s->getFrames();
+  // sanitize ADSR values:
+  
+  // shorten release if needed
+  if( attackSamps + decaySamps + releaseSamps > totalSamps )
+  {
+    releaseSamps = totalSamps - attackSamps - decaySamps;
+    
+    // ensure release has min length
+    if( releaseSamps < 0.05 * sr )
+    {
+      releaseSamps = 0.05 * sr;
+      printf("too long: clipped release to %i : NOT OK YET\n", releaseSamps);
+    }
+    else
+    {
+      printf("too long: clipped release to %i : now OK\n", releaseSamps);
+    }
+  }
+  
+  // shorten decay if needed
+  if( attackSamps + decaySamps + releaseSamps > totalSamps )
+  {
+    decaySamps = totalSamps - attackSamps - releaseSamps;
+    
+    // ensure release has min length
+    if( decaySamps < 0.005 * sr )
+    {
+      decaySamps = 0.005 * sr;
+      printf("too long: clipped decay to %i : NOT OK YET\n", decaySamps);
+    }
+    else
+    {
+      printf("too long: clipped decay to %i : now OK\n", decaySamps);
+    }
+  }
+  
+  // shorten attack if needed
+  if( attackSamps + decaySamps + releaseSamps > totalSamps )
+  {
+    attackSamps = totalSamps - decaySamps - releaseSamps;
+    
+    // ensure release has min length
+    if( attackSamps < 0.005 * sr )
+    {
+      attackSamps = 0.005 * sr;
+      printf("too long: clipped attack to %i : NOT OK YET\n", attackSamps);
+    }
+    else
+    {
+      printf("too long: clipped attack to %i : now OK\n", attackSamps);
+    }
+  }
+  
+  if( true ) // extreme ADSR testing at note-on stage
+  {
+    adsr->reset();
+    adsr->gate(true);
+    
+    float array[totalSamps];
+    float outAudio[totalSamps];
+    for( int i = 0; i < totalSamps; i++ )
+    {
+      if( i == totalSamps - adsrOffCounter )
+        adsr->gate(false);
+      
+      array[i] = adsr->process();
+      outAudio[i] = s->getAudio(0)[i] * array[i];
+    }
+    
+    Plotter::plot( "adsr.dat" , 2500, &array[totalSamps-2501] );
+    Plotter::plot( "audio.dat", 2500, &outAudio[totalSamps-2501] );
+    
+    Plotter::plot( "adsr_s.dat" , 500, &array[0] );
+    Plotter::plot( "audio_s.dat", 500, &outAudio[0] );
+  }
+  
+  adsr->reset();
+  
+  
+  
+  /*
+  if( attackSamps > totalSamps - releaseSamps )
+  {
+    // attack gets reduced to max lenght, with 0 decay and minimal release.
+    attackSamps = totalSamps - releaseSamps;
+    decaySamps  = 0;
+    printf("ADR > total! new attack : %i\n", attackSamps );
+  }
+  else if( attackSamps + decaySamps > totalSamps - releaseSamps )
+  {
+    // decay reduced to max given 
+    decaySamps = totalSamps - attackSamps - releaseSamps;
+    printf("ADR > total! new decay : %i\n", decaySamps );
+  }
+  /*
+  else if( attackSamps + decaySamps + releaseSamps >totalSamps )
+  {
+    // release reduced to max length
+    releaseSamps = s->getFrames() - attackSamps - decaySamps;
+    if( releaseSamps < 0 )
+       releaseSamps = (0.05) * sr;
+    
+    printf("ADR > total! new release : %i\n", releaseSamps );
+  }
+  */
+  
+  
+  adsrOffCounter = releaseSamps;
+  printf("voice playing with adsrOffCounter %i\n", adsrOffCounter );
+  
+  adsr->setAttackRate  ( attackSamps );
+  adsr->setDecayRate   ( decaySamps  );
   adsr->setSustainLevel( s->sustain  );
-  adsr->setReleaseRate ( (0.05+s->release) * sr );
+  adsr->setReleaseRate ( releaseSamps);
   
   adsr->reset();
   adsr->gate( true );
@@ -234,12 +353,19 @@ void Voice::process()
   // if we have a note on coming up, but we're not active yet, then start processing
   // where the note actually starts
   
-  int done = sampler->process( nframes, &voiceBuffer[0], &voiceBuffer[dsp->nframes] );
+  int done = sampler->process( nframes, &voiceBuffer[0+activeCountdown], &voiceBuffer[dsp->nframes+activeCountdown] );
+  
+  // check if we need to trigger ADSR off
+  if( sampler->getRemainingFrames() + nframes < adsrOffCounter )
+  {
+    if( adsr->getState() != ADSR::ENV_RELEASE )
+    {
+      printf("remaining frames + nframes < adsrOffCounter : ADSR OFF\n");
+      adsr->gate( false );
+    }
+  }
   
   float adsrVal = adsr->process();
-  
-  // adsr -> freq / reso / etc, we need to multiply by the adsrVal * routingAmount
-  //* adsrVal );
   
   /// set filter state
   Sample* s = sampler->getSample();
@@ -282,13 +408,13 @@ void Voice::process()
     adsrVal = adsr->process();
   }
   
-  /*
+  
   // for testing sample-accurate voice note-on
   if( activeCountdown )
   {
     Plotter::plot( "active.dat", dsp->nframes, dsp->controlPorts[OUTPUT_L] );
   }
-  */
+  
   
   activeCountdown = 0;
 }
