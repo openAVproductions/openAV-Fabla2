@@ -222,7 +222,7 @@ void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
     }
   }
   
-  if( true ) // extreme ADSR testing at note-on stage
+  if( false ) // extreme ADSR testing at note-on stage
   {
     adsr->reset();
     adsr->gate(true);
@@ -243,9 +243,10 @@ void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
     
     Plotter::plot( "adsr_s.dat" , 500, &array[0] );
     Plotter::plot( "audio_s.dat", 500, &outAudio[0] );
+    adsr->reset();
   }
   
-  adsr->reset();
+  
   
   
   
