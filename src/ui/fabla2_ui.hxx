@@ -61,6 +61,7 @@ class TestUI : public Avtk::UI
     
     // sample edit view
     Avtk::Number* muteGroup;
+    Avtk::Number* offGroup;
     Avtk::Number* triggerMode;
     Avtk::Number* switchType;
     Avtk::List* layers;

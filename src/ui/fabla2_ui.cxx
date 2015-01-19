@@ -99,16 +99,19 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   
   /// sample config options
-  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Mute-Trg-Swch" );
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Mt-Of-Trg-Swch" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
-  muteGroup = new Avtk::Number( this, wx + 5, wy + 8, 25, 20, "Mute Group" );
+  muteGroup = new Avtk::Number( this, wx + 2, wy + 8, 20, 19, "Mute Group" );
   muteGroup->setRange( 0, 8 );
   
-  triggerMode = new Avtk::Number( this, wx + 32, wy + 8, 25, 20, "Trigger Mode" );
+  offGroup = new Avtk::Number( this, wx + 24, wy + 8, 20, 19, "Off Group" );
+  offGroup->setRange( 0, 8 );
+  
+  triggerMode = new Avtk::Number( this, wx + 46, wy + 8, 20, 19, "Trigger Mode" );
   triggerMode->setRange( 1, 1 );
   
-  switchType = new Avtk::Number( this, wx + 60, wy + 8, 25, 20, "Switch Type" );
+  switchType = new Avtk::Number( this, wx + 68, wy + 8, 20, 19, "Switch Type" );
   switchType->setRange( 1, 2 );
   wy += 40;
   
@@ -322,6 +325,7 @@ void TestUI::blankSampleState()
   padVolume       ->value( 0 );
   
   muteGroup       ->value( 0 );
+  offGroup        ->value( 0 );
   triggerMode     ->value( 0 );
   switchType      ->value( 0 );
   
@@ -685,9 +689,13 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     LV2_Atom* msg = writeSetFile( &forge, &uris, currentBank, currentPad, s.str() );
     write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
   }
+  else if( w == offGroup )
+  {
+    writeAtom( uris.fabla2_PadOffGroup, tmp );
+  }
   else if( w == muteGroup )
   {
-    float fin = tmp * 8;
+    float fin = tmp;
     //printf("MuteGroup %i\n", (int)fin);
     writeAtom( uris.fabla2_PadMuteGroup, fin );
   }

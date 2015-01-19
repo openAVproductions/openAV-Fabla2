@@ -51,6 +51,7 @@
 
 #define FABLA2_PadSwitchType        FABLA2_URI "#PadSwitchType"
 #define FABLA2_PadMuteGroup         FABLA2_URI "#PadMuteGroup"
+#define FABLA2_PadOffGroup          FABLA2_URI "#PadOffByGroup"
 #define FABLA2_PadTriggerMode       FABLA2_URI "#PadTriggerMode"
 #define FABLA2_PadRefreshLayers     FABLA2_URI "#PadRefreshLayers"
 #define FABLA2_PadPlay              FABLA2_URI "#PadPlay"
@@ -114,6 +115,7 @@ typedef struct {
   
   LV2_URID fabla2_PadSwitchType;
   LV2_URID fabla2_PadMuteGroup;
+  LV2_URID fabla2_PadOffGroup;
   LV2_URID fabla2_PadTriggerMode;
   LV2_URID fabla2_PadRefreshLayers;
   LV2_URID fabla2_PadPlay;
@@ -180,6 +182,7 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->fabla2_PadSwitchType        = map->map(map->handle, FABLA2_PadSwitchType);
   uris->fabla2_PadTriggerMode       = map->map(map->handle, FABLA2_PadTriggerMode);
   uris->fabla2_PadMuteGroup         = map->map(map->handle, FABLA2_PadMuteGroup);
+  uris->fabla2_PadOffGroup          = map->map(map->handle, FABLA2_PadOffGroup);
   uris->fabla2_PadRefreshLayers     = map->map(map->handle, FABLA2_PadRefreshLayers);
   uris->fabla2_PadPlay              = map->map(map->handle, FABLA2_PadPlay);
   uris->fabla2_PadStop              = map->map(map->handle, FABLA2_PadStop);

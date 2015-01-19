@@ -96,6 +96,7 @@ fabla2_save(LV2_Handle                 instance,
       
       /// write Pad specific things
       pjPad["muteGroup"]     = picojson::value( (double)pad->muteGroup() );
+      pjPad["offGroup"]      = picojson::value( (double)pad->offGroup() );
       pjPad["triggerMode"]   = picojson::value( (double)pad->triggerMode() );
       pjPad["switchMode"]    = picojson::value( (double)pad->switchSystem() );
       pjPad["volume"]        = picojson::value( (double)pad->volume );
@@ -258,6 +259,7 @@ fabla2_restore(LV2_Handle                  instance,
           picojson::value pjPad = pjBanks.get( padStr.str() );
           
           pad->muteGroup   ( (int)pjPad.get("muteGroup").get<double>() );
+          pad->offGroup    ( (int)pjPad.get("offGroup" ).get<double>() );
           pad->triggerMode ( (Fabla2::Pad::TRIGGER_MODE)pjPad.get("triggerMode").get<double>() );
           pad->switchSystem( (Fabla2::Pad::SAMPLE_SWITCH_SYSTEM)pjPad.get("switchMode" ).get<double>() );
           pad->volume      = (int)pjPad.get("volume").get<double>();

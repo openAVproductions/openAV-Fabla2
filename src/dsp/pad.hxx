@@ -67,6 +67,9 @@ class Pad
     void muteGroup( int mg ){muteGroup_ = mg; }
     int  muteGroup(){ return muteGroup_;}
     
+    void offGroup( int og ){offGroup_ = og;}
+    int  offGroup(){ return offGroup_;}
+    
     /// Sets play method for samples: gated or one-shot
     enum TRIGGER_MODE {
       TM_GATED = 0,       /// Note on starts, note off does ADSR->release()
@@ -106,6 +109,7 @@ class Pad
     int bank_;// pad bank
     int ID_; // pad place within Bank
     int muteGroup_;
+    int offGroup_;
     int triggerMode_;
     bool loaded_;
     

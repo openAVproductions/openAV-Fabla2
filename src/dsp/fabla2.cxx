@@ -404,6 +404,9 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadMuteGroup);
   lv2_atom_forge_float(&lv2->forge, pad->muteGroup() );
   
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadOffGroup);
+  lv2_atom_forge_float(&lv2->forge, pad->offGroup() );
+  
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadTriggerMode);
   lv2_atom_forge_float(&lv2->forge, pad->triggerMode() );
   
@@ -623,6 +626,10 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
   else if(  URI == uris->fabla2_PadMuteGroup ) {
     //printf("setting start point to %f\n", v );
     pad->muteGroup( int(v) );
+  }
+  else if(  URI == uris->fabla2_PadOffGroup ) {
+    //printf("setting start point to %f\n", v );
+    pad->offGroup( int(v) );
   }
   else if(  URI == uris->fabla2_PadSwitchType ) {
     int c = int(v);

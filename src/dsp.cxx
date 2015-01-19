@@ -247,6 +247,7 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
                obj->body.otype == self->uris.fabla2_SampleAdsrRelease     ||
                
                obj->body.otype == self->uris.fabla2_PadMuteGroup          ||
+               obj->body.otype == self->uris.fabla2_PadOffGroup           ||
                obj->body.otype == self->uris.fabla2_PadTriggerMode        ||
                obj->body.otype == self->uris.fabla2_PadSwitchType         ||
                
