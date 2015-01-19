@@ -83,7 +83,7 @@ void Sampler::play( Pad* p, float velocity )
   }
   
   // trigger audio playback here
-  playIndex = sample->startPoint;
+  playIndex = sample->getStartPoint();
 }
 
 long Sampler::getRemainingFrames()
@@ -105,7 +105,7 @@ int Sampler::process(int nframes, float* L, float* R)
   // return immidiatly if we are finished playing the sample
   // (keeping within interpolation limits)
   
-  if( playIndex + 4 >= frames )
+  if( playIndex + 4 >= frames || playIndex < 0 )
   {
     printf("%s : ERROR : Sampler click stop, ran out of frames!\n", __PRETTY_FUNCTION__ );
     return 1;

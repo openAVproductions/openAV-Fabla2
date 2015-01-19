@@ -57,6 +57,7 @@ class Sample
     const long    getFrames()   {return (endPoint - startPoint)*frames;}
     /// returns the buffer for the provided channel
     const float*  getAudio(int channel);
+    const int     getStartPoint(){return startPoint*frames;}
     
     /// returns the waveform buffer, a mono-mixdown resampled to fit the window
     const float* getWaveform()
@@ -83,8 +84,8 @@ class Sample
     float pitch;          ///< Pitch of the sample (affects playback speed)
     float time;           ///< Time-stretch sample (does *not* affect playback pitch)
     
-    float startPoint;     ///< Starting point of the sample playback
-    float endPoint;       ///< Ending point of the sample
+    float startPoint;     ///< Starting point of the sample playback 0->1
+    float endPoint;       ///< Ending point of the sample 0->1
     
     float filterType;     ///< Filter high/low/band-pass setting
     float filterFrequency;///< Filter cutoff/center frequency
