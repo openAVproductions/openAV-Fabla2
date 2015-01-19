@@ -402,16 +402,16 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
   lv2_atom_forge_float(&lv2->forge, pad->volume );
   
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadMuteGroup);
-  lv2_atom_forge_float(&lv2->forge, pad->muteGroup() );
+  lv2_atom_forge_int(&lv2->forge, pad->muteGroup() );
   
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadOffGroup);
-  lv2_atom_forge_float(&lv2->forge, pad->offGroup() );
+  lv2_atom_forge_int(&lv2->forge, pad->offGroup() );
   
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadTriggerMode);
-  lv2_atom_forge_float(&lv2->forge, pad->triggerMode() );
+  lv2_atom_forge_int(&lv2->forge, pad->triggerMode() );
   
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadSwitchType);
-  lv2_atom_forge_float(&lv2->forge, pad->switchSystem() );
+  lv2_atom_forge_int(&lv2->forge, pad->switchSystem() );
   
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleGain);
   lv2_atom_forge_float(&lv2->forge, s->gain );

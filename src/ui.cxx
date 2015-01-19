@@ -265,10 +265,17 @@ static void fabla2_port_event(LV2UI_Handle handle,
       {
         //printf("UI got ReplyUiSampleState from DSP\n");
         ui->padVolume       ->value( ((const LV2_Atom_Float*)aPadVolume)->body );
-        ui->offGroup        ->value( ((const LV2_Atom_Float*)aPadOffGrp)->body );
-        ui->muteGroup       ->value( ((const LV2_Atom_Float*)aPadMuteGrp)->body );
-        ui->triggerMode     ->value( ((const LV2_Atom_Float*)aPadTrigMode)->body);
-        ui->switchType      ->value( ((const LV2_Atom_Float*)aPadSwtchSys)->body );
+        
+        int mute = ((const LV2_Atom_Int*)aPadMuteGrp)->body;
+        int off  = ((const LV2_Atom_Int*)aPadOffGrp)->body;
+        int trig = ((const LV2_Atom_Int*)aPadTrigMode)->body;
+        int swtc = ((const LV2_Atom_Int*)aPadSwtchSys)->body;
+        printf("UI numbers: %i, %i, %i, %i\n", mute, off, trig, swtc );
+        
+        ui->muteGroup   ->value( mute );
+        ui->offGroup    ->value( off  );
+        ui->triggerMode ->value( trig );
+        ui->switchType  ->value( swtc );
         
         // sample string up top of waveform
         const char* n = (const char*) LV2_ATOM_BODY_CONST( aName );
