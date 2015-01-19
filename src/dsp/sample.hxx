@@ -54,7 +54,7 @@ class Sample
     
     /// data get functions
     const int     getChannels() {return channels    ;}
-    const long    getFrames()   {return frames      ;}
+    const long    getFrames()   {return (endPoint - startPoint)*frames;}
     /// returns the buffer for the provided channel
     const float*  getAudio(int channel);
     

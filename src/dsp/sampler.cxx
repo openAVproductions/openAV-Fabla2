@@ -39,10 +39,9 @@ Sampler::Sampler( Fabla2DSP* d, int rate ) :
   sample( 0 ),
   
   playheadDelta(1),
-  playIndex(0),
-  endPoint(0),
+  playIndex(0)
   
-  frames( 0 )
+  //,frames( 0 )
 {
 #ifdef FABLA2_COMPONENT_TEST
   printf("%s\n", __PRETTY_FUNCTION__ );
@@ -52,7 +51,7 @@ Sampler::Sampler( Fabla2DSP* d, int rate ) :
 void Sampler::playLayer( Pad* p, int layer )
 {
   playIndex = 0;
-  frames = 0;
+  //frames = 0;
   
   pad = p;
   
@@ -69,7 +68,7 @@ void Sampler::play( Pad* p, float velocity )
 #endif
   pad = p;
   
-  frames = 0;
+  //frames = 0;
   
   sample = pad->getPlaySample( velocity );
   
@@ -85,7 +84,11 @@ void Sampler::play( Pad* p, float velocity )
   
   // trigger audio playback here
   playIndex = sample->startPoint;
-  endPoint = sample->endPoint;
+}
+
+long Sampler::getRemainingFrames()
+{
+  return sample->getFrames() - playIndex;
 }
 
 int Sampler::process(int nframes, float* L, float* R)
@@ -96,12 +99,15 @@ int Sampler::process(int nframes, float* L, float* R)
     return 1;
   }
   const int    chans = sample->getChannels();
-  frames = sample->getFrames();
+  
+  int frames = sample->getFrames();
   
   // return immidiatly if we are finished playing the sample
   // (keeping within interpolation limits)
+  
   if( playIndex + 4 >= frames )
   {
+    printf("%s : ERROR : Sampler click stop, ran out of frames!\n", __PRETTY_FUNCTION__ );
     return 1;
   }
   
@@ -150,8 +156,11 @@ int Sampler::process(int nframes, float* L, float* R)
       *R++ = out * panR;
       playIndex += pd;
       
-      if( playIndex + 4 > frames )
+      if( playIndex + 4 >= frames )
+      {
+        printf("%s : ERROR : Sampler click stop, ran out of frames!\n", __PRETTY_FUNCTION__ );
         return 1;
+      }
     }
   }
   else if( chans == 2 )
@@ -190,44 +199,12 @@ int Sampler::process(int nframes, float* L, float* R)
       
       playIndex += pd;
       
-      if( playIndex + 4 > frames )
+      if( playIndex + 4 >= frames )
       {
+        printf("%s : ERROR : Sampler click stop, ran out of frames!\n", __PRETTY_FUNCTION__ );
         return 1;
       }
       
-      
-      
-      
-      /*
-      int inpos = (int)playIndex;
-      float finpos = playIndex - inpos;
-      
-      // Left channel
-      {
-        float xm1 = audioL[inpos + 0];
-        float x0  = audioL[inpos + 1];
-        float x1  = audioL[inpos + 2];
-        float x2  = audioL[inpos + 3];
-        float a = (3 * (x0-x1) - xm1 + x2) / 2;
-        float b = 2*x1 + xm1 - (5*x0 + x2) / 2;
-        float c = (x1 - xm1) / 2;
-        *L++ = (((a * finpos) + b) * finpos + c) * finpos + x0;
-      }
-      // right channel
-      {
-        float xm1 = audioR[inpos + 0];
-        float x0  = audioR[inpos + 1];
-        float x1  = audioR[inpos + 2];
-        float x2  = audioR[inpos + 3];
-        float a = (3 * (x0-x1) - xm1 + x2) / 2;
-        float b = 2*x1 + xm1 - (5*x0 + x2) / 2;
-        float c = (x1 - xm1) / 2;
-        *L++ = (((a * finpos) + b) * finpos + c) * finpos + x0;
-      }
-      
-      // move forward 2 frames
-      playIndex += pd;
-      */
     }
   }
   else

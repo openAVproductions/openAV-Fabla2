@@ -278,7 +278,7 @@ void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
   
   
   adsrOffCounter = releaseSamps;
-  printf("voice playing with adsrOffCounter %i\n", adsrOffCounter );
+  printf("voice playing with start-end %i,  adsrOffCounter %i\n", totalSamps, adsrOffCounter );
   
   adsr->setAttackRate  ( attackSamps );
   adsr->setDecayRate   ( decaySamps  );
@@ -350,12 +350,6 @@ void Voice::process()
     //printf("process() with activeCountdown = %i\n", activeCountdown ); 
   }
   
-  
-  // if we have a note on coming up, but we're not active yet, then start processing
-  // where the note actually starts
-  
-  int done = sampler->process( nframes, &voiceBuffer[0+activeCountdown], &voiceBuffer[dsp->nframes+activeCountdown] );
-  
   // check if we need to trigger ADSR off
   if( sampler->getRemainingFrames() + nframes < adsrOffCounter )
   {
@@ -365,6 +359,8 @@ void Voice::process()
       adsr->gate( false );
     }
   }
+  
+  int done = sampler->process( nframes, &voiceBuffer[0+activeCountdown], &voiceBuffer[dsp->nframes+activeCountdown] );
   
   float adsrVal = adsr->process();
   

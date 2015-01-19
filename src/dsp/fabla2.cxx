@@ -608,7 +608,6 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
   }
   else if(  URI == uris->fabla2_SampleFilterType ) {
     s->dirty = 1; s->filterType = v;
-    printf("DSP: filter type = %f\n", v );
   }
   else if(  URI == uris->fabla2_SampleFilterFrequency ) {
     s->dirty = 1; s->filterFrequency = v;
@@ -629,11 +628,11 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
     s->dirty = 1; s->release = v;
   }
   else if(  URI == uris->fabla2_PadMuteGroup ) {
-    //printf("setting start point to %f\n", v );
+    printf("setting start point to %f\n", v );
     pad->muteGroup( int(v) );
   }
   else if(  URI == uris->fabla2_PadOffGroup ) {
-    //printf("setting start point to %f\n", v );
+    printf("setting start point to %f\n", v );
     pad->offGroup( int(v) );
   }
   else if(  URI == uris->fabla2_PadSwitchType ) {
