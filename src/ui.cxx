@@ -158,11 +158,13 @@ static void fabla2_port_event(LV2UI_Handle handle,
       // Number of elements = (total size - header size) / element size
       const size_t n_elem = ((data_val->size - sizeof(LV2_Atom_Vector_Body))
                              / sizeof(float));
-
+      
       // Float elements immediately follow the vector body header
       const float* data = (const float*)(&vec->body + 1);
       
-      //Plotter::plot( "waveformArrived.dat", FABLA2_UI_WAVEFORM_PX, data );
+      //printf("Fabla UI got %i elements for waveform data\n", n_elem );
+      
+      Plotter::plot( "waveformArrived.dat", FABLA2_UI_WAVEFORM_PX, data );
       ui->waveform->show( FABLA2_UI_WAVEFORM_PX, data );
       ui->redraw();
     }

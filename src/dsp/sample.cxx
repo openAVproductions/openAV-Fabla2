@@ -68,10 +68,41 @@ void Sample::recacheWaveform()
 #ifdef FABLA2_COMPONENT_TEST
   printf("recaching waveform... \n" );
 #endif
+  
+  printf("Recache waveform with %i frames\n", frames );
+  
+  memset( waveformData, 0 , sizeof(float) * FABLA2_UI_WAVEFORM_PX );
+  
   int sampsPerPix = frames / FABLA2_UI_WAVEFORM_PX;
   
   float highestPeak = 0.f;
   
+  // counts pixels in output waveform
+  int p = 0;
+  
+  for( int f = 0; f < frames; f++ )
+  {
+    float tmp = audioMono[f];
+    
+    if ( channels == 2 )
+      tmp += audioStereoRight[f];
+    
+    float t = fabsf(tmp);
+    
+    if( t > fabsf( waveformData[p] ) )
+      waveformData[p] = t;
+    
+    if( f / sampsPerPix != p )
+    {
+      p++;
+    }
+  }
+  
+  printf("RECACHE: done, frames %i, sampsPerPx %i,  p %i\n", frames, sampsPerPix, p );
+  
+  Plotter::plot( "forLoop", FABLA2_UI_WAVEFORM_PX, &waveformData[0] );
+  
+  /*
   // loop over each pixel value we need
   for( int p = 0; p < FABLA2_UI_WAVEFORM_PX; p++ )
   {
@@ -104,19 +135,20 @@ void Sample::recacheWaveform()
     
     waveformData[p] = tmp;
   }
+  */
   
   float normalizeFactor = 1;
   if( highestPeak > 0.001 ) // avoid divide-by-zero
     normalizeFactor = (1.f / highestPeak);
   printf("normalizing with highestPeak %f: nomalizeFactor %f\n", highestPeak, normalizeFactor );
   
-  Plotter::plot( getName(), FABLA2_UI_WAVEFORM_PX, &waveformData[0] );
-  
   // loop over each pixel and normalize it
   for( int p = 0; p < FABLA2_UI_WAVEFORM_PX; p++ )
   {
-    waveformData[p] = waveformData[p] * normalizeFactor;
+    waveformData[p] = (waveformData[p] * normalizeFactor) - 1.0;
   }
+  
+  Plotter::plot( getName(), FABLA2_UI_WAVEFORM_PX, &waveformData[0] );
 }
 
 
@@ -177,8 +209,6 @@ void Sample::init()
   filterFrequency = 1.0;
   filterResonance = 0.4;
   
-  memset( waveformData, 0 , sizeof(float) * FABLA2_UI_WAVEFORM_PX );
-  
   // set to true so we recacheWaveform() when requested for it
   dirty = true;
 }
@@ -195,16 +225,13 @@ Sample::Sample( Fabla2DSP* d, int rate, const char* nme, int size, float* data )
   gain ( 0.75 ),
   pan  ( 0 )
 {
-  //memset( waveformData, 0, sizeof(float)*FABLA2_UI_WAVEFORM_PX);
-  
 #ifdef FABLA2_COMPONENT_TEST
   printf("%s\n", __PRETTY_FUNCTION__ );
 #endif
   
-  //memcpy( &audioMono[0], data, sizeof(float) * size );
-  fabla2_deinterleave( size, data, audioMono, audioStereoRight );
-  
   init();
+  
+  fabla2_deinterleave( size, data, audioMono, audioStereoRight );
 }
 
 Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
@@ -242,9 +269,11 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
     return;
   }
   
+  printf("Loading sample with %i frames\n", frames );
+  
   if( channels > 2 || channels <= 0 )
   {
-    printf("Error loading sample %s, channels >= 2\n", path.c_str() );
+    printf("Error loading sample %s, channels > 2 || <= 0\n", path.c_str() );
     return;
   }
   
@@ -272,20 +301,24 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
   int samplRead = sf_read_float( sndfile, loadBuffer, info.frames * channels );
   sf_close(sndfile);
   
-  if( sr != info.samplerate )
-  {
-    // resample audio to current session sample-rate
-    resample( info.samplerate, audioMono );
-    
-    // store new re-sampled size
-    frames = audioMono.size() / channels;
-  }
-  
   if( channels == 2 )
   {
     audioMono.resize( frames );
     audioStereoRight.resize( frames );
     fabla2_deinterleave( frames, loadBuffer, audioMono, audioStereoRight );
+  }
+  
+  if( sr != info.samplerate )
+  {
+    resample( info.samplerate, audioMono );
+    
+    if( channels == 2 )
+    {
+      resample( info.samplerate, audioStereoRight );
+    }
+    
+    // since we've resampled, the size will have changed!
+    frames = audioMono.size();
   }
   
   init();

@@ -39,6 +39,8 @@
 #include "library.hxx"
 #include "midi_helper.hxx"
 
+#include "plotter.hxx"
+
 namespace Fabla2
 {
 
@@ -517,6 +519,8 @@ void Fabla2DSP::tx_waveform( int b, int p, int l, const float* data )
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_layer);
   lv2_atom_forge_int(&lv2->forge, l );
   
+  Plotter::plot( "tx_waveform", FABLA2_UI_WAVEFORM_PX, data );
+  
   // Add vector of floats 'audioData' property
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_audioData);
   lv2_atom_forge_vector( &lv2->forge, sizeof(float), uris->atom_Float, FABLA2_UI_WAVEFORM_PX, data);
@@ -536,7 +540,7 @@ void Fabla2DSP::panic()
 
 void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 {
-  printf("Fabla2:uiMessage bank %i, pad %i, layer %i: %f\n", b, p, l, v );
+  //printf("Fabla2:uiMessage bank %i, pad %i, layer %i: %f\n", b, p, l, v );
   
   if( URI == uris->fabla2_PadPlay )
   {
@@ -639,11 +643,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
     if ( c == 2 ) pad->switchSystem( Pad::SS_VELOCITY_LAYERS ); // velocity based choice
   }
   else if(  URI == uris->fabla2_PadTriggerMode ) {
-    //printf("setting start point to %f\n", v );
-    if( v > 0.499999 )
-      pad->triggerMode( Pad::TM_ONE_SHOT );
-    else
-      pad->triggerMode( Pad::TM_GATED );
+    pad->triggerMode( (Pad::TRIGGER_MODE) v );
   }
   else if(  URI == uris->fabla2_RequestUiSampleState ) {
     tx_waveform( b, p, l, s->getWaveform() );

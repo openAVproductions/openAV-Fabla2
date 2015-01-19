@@ -617,8 +617,7 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   float tmp = w->value();
   
   printf("widgetCB : %s, value: %f\n", w->label(), tmp );
-  
-  printf("widget mousebutton %i\n", w->mouseButton() );
+  //printf("widget mousebutton %i\n", w->mouseButton() );
   
   if( w == recordOverPad )
   {
