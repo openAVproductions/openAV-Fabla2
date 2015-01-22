@@ -277,12 +277,14 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
             // check mute-group to stop the voice first
             if( v->active() )
             {
-              // current voice mutegroup = pad-to-play muteGroup, stop it.
-              if( v->getPad()->muteGroup() != 0 &&
-                  v->getPad()->muteGroup() == p->muteGroup() )
+              int mg = p->muteGroup();
+              // note-on mute-group is valid && == to current voice off-group
+              if( mg != 0 &&
+                  mg == v->getPad()->offGroup() )
               {
                 // note that this triggers ADSR off, so we can *NOT* re-purpose
                 // the voice right away to play the new note.
+                printf("note-on muteGroup %i : turning off %i\n", mg, v->getPad()->offGroup() );
                 v->stop();
               }
             }
