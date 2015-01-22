@@ -378,8 +378,20 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   waste = new Avtk::Box( this, wx, wy, 228, 276, "AuxBus" );
   waste->clickMode( Widget::CLICK_NONE );
-  wx += 20 + spacer;
+  wy += 14;
   
+  for(int i = 0; i < 4; ++i)
+  {
+    int mx = wx + (228/4.f*i);
+    int my = wy;
+    int mw = 228 / 4;
+    int mh = 276-14;
+    std::stringstream s;
+    s << i + 1;
+    auxbus[i] = new Avtk::MixStrip( this, mx, my, mw, mh, s.str().c_str() );
+    mixStrip[i]->clickMode( Widget::CLICK_NONE );
+    mixStrip[i]->setNum( s.str() );
+  }
   liveGroup->visible( false );
   liveGroup->end();
   

@@ -120,6 +120,18 @@ class TestUI : public Avtk::UI
     Avtk::Group* liveGroup;
     Avtk::Widget* padsHeaderBox;
     
+    // pad - tracks
+    Avtk::MixStrip* mixStrip[16];
+    Avtk::Dial* aux1[16];
+    Avtk::Dial* aux2[16];
+    Avtk::Dial* aux3[16];
+    Avtk::Dial* aux4[16];
+    
+    // AuxBus tracks
+    Avtk::MixStrip* auxbus[4];
+    
+    
+    
     // shared between views!
     /// holds all waveform related widgets: sample name, sample duration etc
     Avtk::Group*    waveformGroup;
@@ -132,12 +144,6 @@ class TestUI : public Avtk::UI
     
     Avtk::Group* padsGroup;
     Avtk::Pad* pads[16];
-    
-    Avtk::MixStrip* mixStrip[16];
-    Avtk::Dial* aux1[16];
-    Avtk::Dial* aux2[16];
-    Avtk::Dial* aux3[16];
-    Avtk::Dial* aux4[16];
     
     // LV2 ports
     LV2UI_Controller controller;
