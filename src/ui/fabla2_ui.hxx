@@ -44,9 +44,9 @@ class TestUI : public Avtk::UI
     Avtk::Button* panicButton;
     
     Avtk::List*  uiViewGroup;
-    Avtk::Button* liveView;
-    Avtk::Button* padsView;
-    Avtk::Button* fileView;
+    Avtk::ListItem* liveView;
+    Avtk::ListItem* padsView;
+    Avtk::ListItem* fileView;
     
     Avtk::Widget* recordOverPad;
     

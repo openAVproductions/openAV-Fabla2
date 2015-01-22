@@ -4,7 +4,9 @@
 #include "utils.hxx"
 #include "theme.hxx"
 
-#include "header.c"
+// include the data files for the header images
+#include "header_fabla.c"
+#include "header_openav.c"
 
 #include <sstream>
 
@@ -17,7 +19,7 @@
 static void fabla2_widgetCB(Avtk::Widget* w, void* ud);
 
 TestUI::TestUI( PuglNativeWindow parent ):
-  Avtk::UI( 780, 330, parent ),
+  Avtk::UI( 780 + 76, 330, parent ),
   currentBank( 0 ),
   currentPad( 0 ),
   currentLayer(0),
@@ -33,8 +35,11 @@ TestUI::TestUI( PuglNativeWindow parent ):
   theme_ = themes.front();
   
   // slider vert
-  Avtk::Image* headerImage = new Avtk::Image( this, 0, 0, 780, 36, "Header Image" );
-  headerImage->load( header.pixel_data );
+  Avtk::Image* headerImage = 0;
+  headerImage = new Avtk::Image( this, 0, 0, 200, 36, "Header Image - Fabla" );
+  headerImage->load( header_fabla.pixel_data );
+  headerImage = new Avtk::Image( this, 780-130, 0, 130, 36, "Header Image - OpenAV" );
+  headerImage->load( header_openav.pixel_data );
   
   int s = 32;
   bankBtns[0] = new Avtk::Button( this, 5      , 43    , s, s, "A" );
@@ -52,26 +57,30 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   int wx = 5;
   int wy = 43+(s+6)*2; // bottom of bank buttons
+  Avtk::Widget* waste = 0;
   
-  
-  panicButton = new Avtk::Button( this, wx, wy, s * 2 + 6, 22,  "PANIC" );
+  panicButton = new Avtk::Button( this, wx, wy, s * 2 + 6, 32,  "PANIC" );
   panicButton->clickMode( Avtk::Widget::CLICK_MOMENTARY );
   panicButton->theme( theme(4) );
-  wy += 22 + s;
+  wy += 32 + 10;
   
-  uiViewGroup = new Avtk::List( this, wx, wy, 70, 230, "UiViewGroup");
-  uiViewGroup->spacing( 6 );
+  waste = new Avtk::Box( this, wx, wy, 70, 74,  "Views" );
+  waste->clickMode( Widget::CLICK_NONE );
+  wy += 20;
+  
+  uiViewGroup = new Avtk::List( this, wx+2, wy, 70-4, 78, "UiViewGroup");
+  uiViewGroup->spacing( 2 );
   uiViewGroup->mode      ( Group::WIDTH_EQUAL );
   uiViewGroup->valueMode ( Group::VALUE_SINGLE_CHILD );
   
-  liveView = new Avtk::Button( this, wx, 10, 70, 22,  "Live" );
+  liveView = new Avtk::ListItem( this, wx, 10, 70, 16,  "Live" );
   liveView->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
-  padsView = new Avtk::Button( this, wx, 10, 70, 22,  "Follow" );
+  padsView = new Avtk::ListItem( this, wx, 10, 70, 16,  "Follow" );
   padsView->clickMode( Avtk::Widget::CLICK_TOGGLE );
   padsView->value( 1 );
   
-  fileView = new Avtk::Button( this, wx, 10, 70, 22,  "Files" );
+  fileView = new Avtk::ListItem( this, wx, 10, 70, 16,  "Files" );
   fileView->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
   uiViewGroup->end();
@@ -80,8 +89,6 @@ TestUI::TestUI( PuglNativeWindow parent ):
   recordOverPad->theme( theme( 4 ) );
   recordOverPad->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
-  
-  Avtk::Widget* waste = 0;
   
   waveformGroup = new Avtk::Group( this, 355, 42, FABLA2_UI_WAVEFORM_PX, 113, "WaveformGroup");
   waveform = new Avtk::Waveform( this, 355, 42, FABLA2_UI_WAVEFORM_PX, 113, "Waveform" );
