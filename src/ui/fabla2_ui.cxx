@@ -19,7 +19,7 @@
 static void fabla2_widgetCB(Avtk::Widget* w, void* ud);
 
 TestUI::TestUI( PuglNativeWindow parent ):
-  Avtk::UI( 780 + 76, 322, parent ),
+  Avtk::UI( 856, 322, parent ),
   currentBank( 0 ),
   currentPad( 0 ),
   currentLayer(0),
@@ -33,7 +33,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   Avtk::Image* headerImage = 0;
   headerImage = new Avtk::Image( this, 0, 0, 200, 36, "Header Image - Fabla" );
   headerImage->load( header_fabla.pixel_data );
-  headerImage = new Avtk::Image( this, 780-130, 0, 130, 36, "Header Image - OpenAV" );
+  headerImage = new Avtk::Image( this, w()-130, 0, 130, 36, "Header Image - OpenAV" );
   headerImage->load( header_openav.pixel_data );
   
   int s = 32;
@@ -217,21 +217,21 @@ TestUI::TestUI( PuglNativeWindow parent ):
   adsrS->value( 1.0 );
   wy += 40;
   
-  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Sends 1 2" );
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "AuxBus 1 2" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
-  send1 = new Avtk::Dial( this, wx     , wy, 40, 40, "Send1" );
+  send1 = new Avtk::Dial( this, wx     , wy, 40, 40, "AuxBus 1" );
   send1->theme( theme(1) );
-  send2 = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Send2" );
+  send2 = new Avtk::Dial( this, wx + 44, wy, 40, 40, "AuxBus 2" );
   send2->theme( theme(2) );
   wy += 40;
   
-  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Sends 3 4" );
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "AuxBus 3 4" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
-  send3 = new Avtk::Dial( this, wx     , wy, 40, 40, "Send3" );
+  send3 = new Avtk::Dial( this, wx     , wy, 40, 40, "AuxBus 3" );
   send3->theme( theme(3) );
-  send4 = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Send4" );
+  send4 = new Avtk::Dial( this, wx + 44, wy, 40, 40, "AuxBus 4" );
   send4->theme( theme(4) );
   wy += 40;
   
@@ -332,6 +332,52 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   padsGroup->end();
   
+  /// live view =======================================================
+  wx = 82;
+  wy = 43;
+  liveGroup = new Avtk::Group( this, wx, wy, 266, 276, "SampleBrowseGroup");
+  
+  int livePadsX = 464;
+  int livePadsY = 276;
+  padsHeaderBox = new Avtk::Box( this, wx, wy, livePadsX, 14,  "16 Pads" );
+  padsHeaderBox->clickMode( Widget::CLICK_NONE );
+  wy += 14;
+  
+  for(int i = 0; i < 16; ++i)
+  {
+    int mx = wx + (livePadsX/16.f*i);
+    int my = wy;
+    int mw = (livePadsX/16.f);
+    
+    std::stringstream s;
+    s << i + 1;
+    mixStrip[i] = new Avtk::MixStip( this, mx, my, mw, livePadsY - 14, s.str().c_str() );
+    mixStrip[i]->clickMode( Widget::CLICK_NONE );
+    
+    // dials
+    int size = mw+4;
+    mw -= 6;
+    aux1[i] = new Avtk::Dial( this, mx, my       , size, size, "Aux1" );
+    aux2[i] = new Avtk::Dial( this, mx, my + mw  , size, size, "Aux2" );
+    aux3[i] = new Avtk::Dial( this, mx, my + mw*2, size, size, "Aux3" );
+    aux4[i] = new Avtk::Dial( this, mx, my + mw*3, size, size, "Aux4" );
+    
+    aux1[i]->theme( theme( 1 ) );
+    aux2[i]->theme( theme( 2 ) );
+    aux3[i]->theme( theme( 3 ) );
+    aux4[i]->theme( theme( 4 ) );
+  }
+  
+  wx = 82;
+  wy = 43;
+  wx += padsHeaderBox->w() + spacer;
+  
+  waste = new Avtk::Box( this, wx, wy, 228, 276, "AuxBus" );
+  waste->clickMode( Widget::CLICK_NONE );
+  wx += 20 + spacer;
+  
+  liveGroup->visible( false );
+  liveGroup->end();
   
   
   /// Master view on right
@@ -453,10 +499,13 @@ void TestUI::showLiveView()
   waveformGroup     ->visible( false );
   sampleBrowseGroup ->visible( false );
   sampleControlGroup->visible( false );
+  
+  liveGroup         ->visible( true  );
 }
 
 void TestUI::showPadsView()
 {
+  liveGroup         ->visible( false );
   sampleBrowseGroup ->visible( false );
   
   padsGroup         ->visible( true );
@@ -466,9 +515,11 @@ void TestUI::showPadsView()
 
 void TestUI::showFileView()
 {
+  liveGroup->visible( false );
   padsGroup->visible( false );
-  sampleBrowseGroup->visible( true );
+  
   waveformGroup->visible( true );
+  sampleBrowseGroup->visible( true );
   sampleControlGroup->visible( true );
   
   ui->redraw();
@@ -599,6 +650,12 @@ void TestUI::setBank( int bank )
   
   Avtk::Theme* t = theme( bank );
   waveform->theme( t );
+  
+  for(int i = 0; i < 16; i++)
+    mixStrip[i]->theme( t );
+  
+  //padsHeaderBox->theme( t );
+  
   
   /*
   for(int i = 0; i < 16; i++)
@@ -865,18 +922,24 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     {
       if( w == pads[i] )
       {
-        if( tmp )
+        if( w->mouseButton() == 3 )
         {
-          currentPad = i;
-          requestSampleState( currentBank, currentPad, currentLayer );
-          writeAtom( uris.fabla2_PadPlay, w->value() );
+          // rename pad
+          
         }
         else
         {
-          writeAtom( uris.fabla2_PadStop, 0 );
+          if( tmp )
+          {
+            currentPad = i;
+            requestSampleState( currentBank, currentPad, currentLayer );
+            writeAtom( uris.fabla2_PadPlay, w->value() );
+          }
+          else
+          {
+            writeAtom( uris.fabla2_PadStop, 0 );
+          }
         }
-        
-        
         return;
       }
     }

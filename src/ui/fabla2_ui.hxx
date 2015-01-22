@@ -6,6 +6,7 @@
 
 #include "../shared.hxx"
 #include "pad.hxx"
+#include "mixstrip.hxx"
 
 // for write_function and controller
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
@@ -108,12 +109,16 @@ class TestUI : public Avtk::UI
     Avtk::Widget* padSends;
     Avtk::Widget* padMaster;
     
-    // Preset loading screen
+    // Sample / File loading screen
     Avtk::Box* sampleViewHeader;
     Avtk::Scroll* sampleDirScroll;
     Avtk::List* listSampleDirs;
     Avtk::Scroll* sampleFileScroll;
     Avtk::List* listSampleFiles;
+    
+    // Live view
+    Avtk::Group* liveGroup;
+    Avtk::Widget* padsHeaderBox;
     
     // shared between views!
     /// holds all waveform related widgets: sample name, sample duration etc
@@ -127,6 +132,12 @@ class TestUI : public Avtk::UI
     
     Avtk::Group* padsGroup;
     Avtk::Pad* pads[16];
+    
+    Avtk::Widget* mixStrip[16];
+    Avtk::Dial* aux1[16];
+    Avtk::Dial* aux2[16];
+    Avtk::Dial* aux3[16];
+    Avtk::Dial* aux4[16];
     
     // LV2 ports
     LV2UI_Controller controller;
