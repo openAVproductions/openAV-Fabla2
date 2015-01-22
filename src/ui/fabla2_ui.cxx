@@ -19,7 +19,7 @@
 static void fabla2_widgetCB(Avtk::Widget* w, void* ud);
 
 TestUI::TestUI( PuglNativeWindow parent ):
-  Avtk::UI( 780 + 76, 330, parent ),
+  Avtk::UI( 780 + 76, 322, parent ),
   currentBank( 0 ),
   currentPad( 0 ),
   currentLayer(0),
@@ -111,7 +111,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   
   /// sample config options
-  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Mt-Of-Trg-Swch" );
+  waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Mt-Of-Trg-Swt" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
   muteGroup = new Avtk::Number( this, wx + 2, wy + 8, 20, 19, "Mute Group" );
@@ -301,19 +301,24 @@ TestUI::TestUI( PuglNativeWindow parent ):
   sampleBrowseGroup->end();
   
   // pads
-  int xS = 58;
-  int yS = 58;
-  int border = 10;
-  padsGroup = new Avtk::Group( this, 82, yS*4 + border*3, xS*4 + border*3, yS*4 + border*3, "Pads Group");
+  wx = 82;
+  wy = 43;
+  int xS = 57;
+  int yS = 56;
+  int border = 9;
   
-  int x = 82;
-  int y = -18 + (yS+border) * 4;
+  padsGroup = new Avtk::Group( this,  wx, wy, 266, 276, "Pads Group");
+  waste = new Avtk::Box( this, wx, wy, 266, 276, "Pads" );
+  waste->clickMode( Widget::CLICK_NONE );
+  
+  int x = 87;
+  int y = (yS+border) * 4 - 1.5;
   for(int i = 0; i < 16; i++ )
   {
     if( i != 0 && i % 4 == 0 )
     {
       y -= yS + border;
-      x = 82;
+      x = 87;
     }
     
     std::stringstream s;
@@ -324,6 +329,20 @@ TestUI::TestUI( PuglNativeWindow parent ):
   }
   
   padsGroup->end();
+  
+  
+  
+  /// Master view on right
+  wx = 782;
+  wy = 43;
+  waste = new Avtk::Box( this, wx, wy, 70, 276, "Master" );
+  waste->clickMode( Widget::CLICK_NONE );
+  wy += 18;
+  
+  masterVolume = new Avtk::Slider( this, wx+10, wy, 25, 100,  "Master Volume" );
+  masterVolume->clickMode( Widget::CLICK_NONE );
+  masterVolume->value( 0.75 );
+  
   
   // initial values
   bankBtns[0]->value( true );

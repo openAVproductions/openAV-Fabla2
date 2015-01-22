@@ -204,11 +204,14 @@ static void fabla2_port_event(LV2UI_Handle handle,
           ui->layers->clear();
         }
         ui->layers->addItem( n );
+        ui->pads[p]->loaded = true;
       }
     }
     else if( obj->body.otype == ui->uris.fabla2_ReplyUiSampleState )
     {
       // atoms to represent the data
+      const LV2_Atom* aPad        = 0;
+      
       const LV2_Atom* aPadVolume  = 0;
       
       const LV2_Atom* aPadOffGrp  = 0;
@@ -240,6 +243,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
       const LV2_Atom* aRelease    = 0;
       
       const int n_props  = lv2_atom_object_get( obj,
+            ui->uris.fabla2_pad               , &aPad,
             ui->uris.fabla2_PadVolume         , &aPadVolume,
             ui->uris.fabla2_PadOffGroup       , &aPadOffGrp,
             ui->uris.fabla2_PadMuteGroup      , &aPadMuteGrp,
@@ -264,18 +268,23 @@ static void fabla2_port_event(LV2UI_Handle handle,
             ui->uris.fabla2_SampleAdsrRelease ,&aRelease,
             0 );
       
+      int pad = -1;
+      if( aPad )
+      {
+        pad = ((const LV2_Atom_Int*)aPad)->body;
+      } 
+      
       if( aGain && aPan && aPitch && aStartPoint )
       {
         float tmp = ((const LV2_Atom_Float*)aPadVolume)->body;
-        printf("UI got ReplyUiSampleState from DSP : volume %f\n", tmp);
+        //printf("UI got ReplyUiSampleState from DSP : volume %f\n", tmp);
         ui->padVolume       ->value( tmp );
-        ui->redraw();
         
         int mute = ((const LV2_Atom_Int*)aPadMuteGrp)->body;
         int off  = ((const LV2_Atom_Int*)aPadOffGrp)->body;
         int trig = ((const LV2_Atom_Int*)aPadTrigMode)->body;
         int swtc = ((const LV2_Atom_Int*)aPadSwtchSys)->body;
-        printf("UI numbers: %i, %i, %i, %i\n", mute, off, trig, swtc );
+        //printf("UI numbers: %i, %i, %i, %i\n", mute, off, trig, swtc );
         
         ui->muteGroup   ->value( mute );
         ui->offGroup    ->value( off  );
@@ -309,6 +318,10 @@ static void fabla2_port_event(LV2UI_Handle handle,
       {
         //printf("UI NOT setting from DSP ReplyUiSampleState, %i, %i, %i, %i\n", aGain, aPan, aPitch, aStartPoint );
         ui->blankSampleState();
+        if( pad != -1 )
+          ui->pads[pad]->loaded = false;
+        else
+          printf("Fabla2 UI pad == -1");
       }
     }
     else
