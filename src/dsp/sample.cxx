@@ -73,6 +73,9 @@ void Sample::recacheWaveform()
   
   memset( waveformData, 0 , sizeof(float) * FABLA2_UI_WAVEFORM_PX );
   
+  printf("Recache returning!\n" );
+  return;
+  
   int sampsPerPix = frames / FABLA2_UI_WAVEFORM_PX;
   
   float highestPeak = 0.f;
@@ -92,10 +95,9 @@ void Sample::recacheWaveform()
     if( t > fabsf( waveformData[p] ) )
       waveformData[p] = t;
     
-    if( f / sampsPerPix != p )
-    {
-      p++;
-    }
+    p = f / sampsPerPix;
+    if( p >= FABLA2_UI_WAVEFORM_PX )
+      p = FABLA2_UI_WAVEFORM_PX - 1;
   }
   
   printf("RECACHE: done, frames %i, sampsPerPx %i,  p %i\n", frames, sampsPerPix, p );
@@ -149,6 +151,8 @@ void Sample::recacheWaveform()
   }
   
   Plotter::plot( getName(), FABLA2_UI_WAVEFORM_PX, &waveformData[0] );
+  
+  printf("Recache waveform with %i frames : DONE!\n", frames );
 }
 
 
