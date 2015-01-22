@@ -53,7 +53,7 @@ class TestUI : public Avtk::UI
     Avtk::Dial* masterPitch; // not shown
     
     // Right
-    Avtk::Widget* masterVolume;
+    Avtk::Slider* masterVolume;
     
     
     // sample info
@@ -124,6 +124,7 @@ class TestUI : public Avtk::UI
     
     void padEvent( int bank, int pad, int layer, bool noteOn, int velocity );
     
+    Avtk::Group* padsGroup;
     Avtk::Pad* pads[16];
     
     // LV2 ports

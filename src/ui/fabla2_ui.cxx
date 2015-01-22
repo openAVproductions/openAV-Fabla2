@@ -29,10 +29,8 @@ TestUI::TestUI( PuglNativeWindow parent ):
   themes.push_back( new Avtk::Theme( this, "green.avtk" ) );
   themes.push_back( new Avtk::Theme( this, "yellow.avtk" ) );
   themes.push_back( new Avtk::Theme( this, "red.avtk" ) );
-  
-  masterVolume = 0;
-  
-  theme_ = themes.front();
+  // set the UI's theme to the first loaded theme
+  //theme_ = themes.front();
   
   // slider vert
   Avtk::Image* headerImage = 0;
@@ -76,11 +74,11 @@ TestUI::TestUI( PuglNativeWindow parent ):
   liveView = new Avtk::ListItem( this, wx, 10, 70, 16,  "Live" );
   liveView->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
-  padsView = new Avtk::ListItem( this, wx, 10, 70, 16,  "Follow" );
+  padsView = new Avtk::ListItem( this, wx, 10, 70, 16,  "Pads" );
   padsView->clickMode( Avtk::Widget::CLICK_TOGGLE );
   padsView->value( 1 );
   
-  fileView = new Avtk::ListItem( this, wx, 10, 70, 16,  "Files" );
+  fileView = new Avtk::ListItem( this, wx, 10, 70, 16,  "File" );
   fileView->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
   uiViewGroup->end();
@@ -306,6 +304,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   int xS = 58;
   int yS = 58;
   int border = 10;
+  padsGroup = new Avtk::Group( this, 82, yS*4 + border*3, xS*4 + border*3, yS*4 + border*3, "Pads Group");
   
   int x = 82;
   int y = -18 + (yS+border) * 4;
@@ -323,6 +322,8 @@ TestUI::TestUI( PuglNativeWindow parent ):
     
     x += xS + border;
   }
+  
+  padsGroup->end();
   
   // initial values
   bankBtns[0]->value( true );
@@ -428,32 +429,24 @@ void TestUI::loadNewDir( std::string newDir )
 
 void TestUI::showLiveView()
 {
-  sampleBrowseGroup->visible( false );
-  for(int i = 0; i < 16; i++)
-    pads[i]->visible( false );
-  
-  waveformGroup->visible( false );
+  padsGroup         ->visible( false );
+  waveformGroup     ->visible( false );
+  sampleBrowseGroup ->visible( false );
   sampleControlGroup->visible( false );
 }
 
 void TestUI::showPadsView()
 {
-  sampleBrowseGroup->visible( false );
+  sampleBrowseGroup ->visible( false );
   
-  // toggle other widgets
-  for(int i = 0; i < 16; i++)
-    pads[i]->visible( true );
-  
-  waveformGroup->visible( true );
+  padsGroup         ->visible( true );
+  waveformGroup     ->visible( true );
   sampleControlGroup->visible( true );
 }
 
 void TestUI::showFileView()
 {
-  // toggle other widgets
-  for(int i = 0; i < 16; i++)
-    pads[i]->visible( false );
-  
+  padsGroup->visible( false );
   sampleBrowseGroup->visible( true );
   waveformGroup->visible( true );
   sampleControlGroup->visible( true );
@@ -688,6 +681,7 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
       {
         printf("UI writing sampleUnload\n");
         writeAtom( uris.fabla2_SampleUnload, true );
+        requestSampleState( currentBank, currentPad, currentLayer );
       }
     }
     else
