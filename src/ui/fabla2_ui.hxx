@@ -48,6 +48,7 @@ class TestUI : public Avtk::UI
     Avtk::ListItem* padsView;
     Avtk::ListItem* fileView;
     
+    Avtk::Widget* followPadBtn;
     Avtk::Widget* recordOverPad;
     
     Avtk::Dial* masterPitch; // not shown

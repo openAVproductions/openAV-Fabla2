@@ -29,10 +29,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   themes.push_back( new Avtk::Theme( this, "green.avtk" ) );
   themes.push_back( new Avtk::Theme( this, "yellow.avtk" ) );
   themes.push_back( new Avtk::Theme( this, "red.avtk" ) );
-  // set the UI's theme to the first loaded theme
-  //theme_ = themes.front();
   
-  // slider vert
   Avtk::Image* headerImage = 0;
   headerImage = new Avtk::Image( this, 0, 0, 200, 36, "Header Image - Fabla" );
   headerImage->load( header_fabla.pixel_data );
@@ -82,8 +79,13 @@ TestUI::TestUI( PuglNativeWindow parent ):
   fileView->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
   uiViewGroup->end();
+  wy += 78 + 6;
   
-  recordOverPad = new Avtk::Button( this, wx, 43+(s+6)*4+6 +26+28, s * 2 + 6, s*2,  "REC" );
+  followPadBtn = new Avtk::Button( this, wx, wy, 70, 20,  "Follow" );
+  followPadBtn->clickMode( Avtk::Widget::CLICK_TOGGLE );
+  wy += 26;
+  
+  recordOverPad = new Avtk::Button( this, wx, wy, 70, 30,  "REC" );
   recordOverPad->theme( theme( 4 ) );
   recordOverPad->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
@@ -346,9 +348,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   // initial values
   bankBtns[0]->value( true );
-  
-  //showSampleBrowser( true );
-  //showSampleBrowser( false );
+  followPadBtn->value(true );
   
   /// created last, so its on top
   deleteLayer = new Avtk::Dialog( this, 0, 0, 320, 120, "Delete Sample?" );
@@ -421,6 +421,7 @@ void TestUI::loadNewDir( std::string newDir )
     {
       printf("%s , %d : not moving to sub-dir : has no folders to cd into\n", __PRETTY_FUNCTION__, __LINE__ );
     }
+    
     
     currentFilesDir = newDir;
     tmp.clear();
@@ -716,6 +717,14 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   else if( w == panicButton )
   {
     writeAtom( uris.fabla2_Panic , true );
+  }
+  else if( w == followPadBtn )
+  {
+    followPad = int(tmp);
+    if( !followPad )
+    {
+      pads[currentPad]->value(0);
+    }
   }
   else if( w == liveView )
   {
