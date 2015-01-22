@@ -37,42 +37,49 @@ TestUI::TestUI( PuglNativeWindow parent ):
   headerImage->load( header.pixel_data );
   
   int s = 32;
+  bankBtns[0] = new Avtk::Button( this, 5      , 43    , s, s, "A" );
   
-  bankBtns[0] = new Avtk::Button( this, 5, 43, s, s, "A" );
-  
-  bankBtns[1] = new Avtk::Button( this, 5 + s+6, 43, s, s, "B" );
+  bankBtns[1] = new Avtk::Button( this, 5 + s+6, 43    , s, s, "B" );
   bankBtns[1]->theme( theme( 1 ) );
-  
-  bankBtns[2] = new Avtk::Button( this, 5, 43  + +s+6, s, s, "C" );
+  bankBtns[2] = new Avtk::Button( this, 5      , 43+s+6, s, s, "C" );
   bankBtns[2]->theme( theme( 2 ) );
-  
-  bankBtns[3] = new Avtk::Button( this, 5 + +s+6, 43 +s+6, s, s, "D" );
+  bankBtns[3] = new Avtk::Button( this, 5 + s+6, 43+s+6, s, s, "D" );
   bankBtns[3]->theme( theme( 3 ) );
   
   for(int i = 0; i < 4; i++)
     bankBtns[i]->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
   
-  panicButton = new Avtk::Button( this, 5, 43+(s+6)*2 + 45, s * 2 + 6, 22,  "PANIC" );
+  int wx = 5;
+  int wy = 43+(s+6)*2; // bottom of bank buttons
+  
+  
+  panicButton = new Avtk::Button( this, wx, wy, s * 2 + 6, 22,  "PANIC" );
   panicButton->clickMode( Avtk::Widget::CLICK_MOMENTARY );
   panicButton->theme( theme(4) );
+  wy += 22 + s;
   
-  followPadBtn = new Avtk::Button( this, 5, 43+(s+6)*2 + 75, s * 2 + 6, 22,  "Follow" );
-  followPadBtn->clickMode( Avtk::Widget::CLICK_TOGGLE );
-  followPadBtn->value( 1 );
+  uiViewGroup = new Avtk::List( this, wx, wy, 70, 230, "UiViewGroup");
+  uiViewGroup->spacing( 6 );
+  uiViewGroup->mode      ( Group::WIDTH_EQUAL );
+  uiViewGroup->valueMode ( Group::VALUE_SINGLE_CHILD );
   
-  loadSample = new Avtk::Button( this, 5, 43+(s+6)*2 + 78+ 25, s * 2 + 6, 22,  "Load" );
-  loadSample->clickMode( Avtk::Widget::CLICK_TOGGLE );
+  liveView = new Avtk::Button( this, wx, 10, 70, 22,  "Live" );
+  liveView->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
-  /*
-  masterPitch = new Avtk::Dial( this, 5, 43+(s+6)*4+6 +26+28, s * 2 + 6, s*2+6,  "Pitch" );
-  masterPitch->theme( theme( 2 ) );
-  masterPitch->value( 0.5 );
-  */
+  padsView = new Avtk::Button( this, wx, 10, 70, 22,  "Follow" );
+  padsView->clickMode( Avtk::Widget::CLICK_TOGGLE );
+  padsView->value( 1 );
   
-  recordOverPad = new Avtk::Button( this, 5, 43+(s+6)*4+6 +26+28, s * 2 + 6, s*2,  "REC" );
+  fileView = new Avtk::Button( this, wx, 10, 70, 22,  "Files" );
+  fileView->clickMode( Avtk::Widget::CLICK_TOGGLE );
+  
+  uiViewGroup->end();
+  
+  recordOverPad = new Avtk::Button( this, wx, 43+(s+6)*4+6 +26+28, s * 2 + 6, s*2,  "REC" );
   recordOverPad->theme( theme( 4 ) );
   recordOverPad->clickMode( Avtk::Widget::CLICK_TOGGLE );
+  
   
   Avtk::Widget* waste = 0;
   
@@ -92,8 +99,8 @@ TestUI::TestUI( PuglNativeWindow parent ):
   /// sample edit view =========================================================
   int colWidth = 90;
   const int spacer = 4;
-  int wx = 355;
-  int wy = 161;
+  wx = 355;
+  wy = 161;
   int divider = 35;
   sampleControlGroup = new Avtk::Group( this, wx, wy, FABLA2_UI_WAVEFORM_PX, 260, "SampleControlGroup");
   
@@ -412,16 +419,41 @@ void TestUI::loadNewDir( std::string newDir )
   }
 }
 
-void TestUI::showSampleBrowser( bool show )
+void TestUI::showLiveView()
 {
-  sampleBrowseGroup->visible( show );
+  sampleBrowseGroup->visible( false );
+  for(int i = 0; i < 16; i++)
+    pads[i]->visible( false );
+  
+  waveformGroup->visible( false );
+  sampleControlGroup->visible( false );
+}
+
+void TestUI::showPadsView()
+{
+  sampleBrowseGroup->visible( false );
   
   // toggle other widgets
   for(int i = 0; i < 16; i++)
-    pads[i]->visible( !show );
+    pads[i]->visible( true );
+  
+  waveformGroup->visible( true );
+  sampleControlGroup->visible( true );
+}
+
+void TestUI::showFileView()
+{
+  // toggle other widgets
+  for(int i = 0; i < 16; i++)
+    pads[i]->visible( false );
+  
+  sampleBrowseGroup->visible( true );
+  waveformGroup->visible( true );
+  sampleControlGroup->visible( true );
+  
+  ui->redraw();
   
   loadNewDir( currentDir );
-  
   sampleFileScroll->set( listSampleFiles );
 }
 
@@ -665,9 +697,17 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   {
     writeAtom( uris.fabla2_Panic , true );
   }
-  else if( w == loadSample )
+  else if( w == liveView )
   {
-    showSampleBrowser( tmp );
+    showLiveView();
+  }
+  else if( w == padsView )
+  {
+    showPadsView();
+  }
+  else if( w == fileView )
+  {
+    showFileView();
   }
   else if( w == listSampleDirs )
   {
@@ -752,7 +792,7 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   {
     write_function( controller, Fabla2::MASTER_VOL, sizeof(float), 0, &tmp );
   }
-  else if( w == followPadBtn )
+  else if( w == padsView )
   {
     followPad = (int)tmp;
     

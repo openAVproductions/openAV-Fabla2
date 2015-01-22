@@ -38,18 +38,21 @@ class TestUI : public Avtk::UI
     void widgetValueCB( Avtk::Widget* widget);
     
     
-    // always visible widgets
+    // left: always visible widgets
     Avtk::Widget* bankBtns[4];
-    Avtk::Widget* recordOverPad;
     
-    Avtk::Button* followPadBtn;
-    
-    Avtk::Button* loadSample;
     Avtk::Button* panicButton;
     
-    Avtk::Dial* masterPitch;
+    Avtk::List*  uiViewGroup;
+    Avtk::Button* liveView;
+    Avtk::Button* padsView;
+    Avtk::Button* fileView;
     
-    // R
+    Avtk::Widget* recordOverPad;
+    
+    Avtk::Dial* masterPitch; // not shown
+    
+    // Right
     Avtk::Widget* masterVolume;
     
     
@@ -150,7 +153,9 @@ class TestUI : public Avtk::UI
     int currentLayer;
     
     /// shows the sample browser window instead of the pads
-    void showSampleBrowser( bool show );
+    void showLiveView();
+    void showPadsView();
+    void showFileView();
     
     /// updates the UI to a specifc bank
     void setBank( int bank );
