@@ -210,6 +210,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
     {
       // atoms to represent the data
       const LV2_Atom* aPadVolume  = 0;
+      
       const LV2_Atom* aPadOffGrp  = 0;
       const LV2_Atom* aPadMuteGrp = 0;
       const LV2_Atom* aPadTrigMode= 0;
@@ -265,8 +266,10 @@ static void fabla2_port_event(LV2UI_Handle handle,
       
       if( aGain && aPan && aPitch && aStartPoint )
       {
-        //printf("UI got ReplyUiSampleState from DSP\n");
-        ui->padVolume       ->value( ((const LV2_Atom_Float*)aPadVolume)->body );
+        float tmp = ((const LV2_Atom_Float*)aPadVolume)->body;
+        printf("UI got ReplyUiSampleState from DSP : volume %f\n", tmp);
+        ui->padVolume       ->value( tmp );
+        ui->redraw();
         
         int mute = ((const LV2_Atom_Int*)aPadMuteGrp)->body;
         int off  = ((const LV2_Atom_Int*)aPadOffGrp)->body;

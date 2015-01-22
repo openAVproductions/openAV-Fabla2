@@ -271,9 +271,11 @@ fabla2_restore(LV2_Handle                  instance,
           if( pjPad.get("switchMode").is<double>() )
             pad->switchSystem( (Fabla2::Pad::SAMPLE_SWITCH_SYSTEM)pjPad.get("switchMode" ).get<double>() );
           
-          if( pjPad.get("volume").is<double>() );
-            pad->volume      = (int)pjPad.get("volume").get<double>();
-          
+          if( pjPad.get("volume").is<double>() )
+          {
+            pad->volume = pjPad.get("volume").get<double>();
+            //printf("LV2 state, pad volume %f\n", pad->volume );
+          }
           
           int nLayers = 0;
           if( pjPad.get("nLayers").is<double>() )
@@ -281,7 +283,6 @@ fabla2_restore(LV2_Handle                  instance,
           
           for(int i = 0; i < nLayers; i++)
           {
-            
             std::stringstream layerStr;
             layerStr << "layer_" << i;
             
