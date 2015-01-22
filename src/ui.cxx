@@ -64,7 +64,7 @@ static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descript
   
   if (resize)
   {
-    resize->ui_resize(resize->handle, 780, 330 );
+    resize->ui_resize(resize->handle, t->w(), t->h() );
   }
   else
   {
