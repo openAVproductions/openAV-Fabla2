@@ -796,13 +796,17 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     {
       if( w == pads[i] )
       {
-        if( currentPad != i )
+        if( tmp )
         {
           currentPad = i;
           requestSampleState( currentBank, currentPad, currentLayer );
+          writeAtom( uris.fabla2_PadPlay, w->value() );
+        }
+        else
+        {
+          writeAtom( uris.fabla2_PadStop, 0 );
         }
         
-        writeAtom( uris.fabla2_PadPlay, w->value() );
         
         return;
       }
