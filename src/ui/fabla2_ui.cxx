@@ -4,6 +4,9 @@
 #include "utils.hxx"
 #include "theme.hxx"
 
+#include "pad.hxx"
+#include "mixstrip.hxx"
+
 // include the data files for the header images
 #include "header_fabla.c"
 #include "header_openav.c"
@@ -351,8 +354,9 @@ TestUI::TestUI( PuglNativeWindow parent ):
     
     std::stringstream s;
     s << i + 1;
-    mixStrip[i] = new Avtk::MixStip( this, mx, my, mw, livePadsY - 14, s.str().c_str() );
+    mixStrip[i] = new Avtk::MixStrip( this, mx, my, mw, livePadsY - 14, s.str().c_str() );
     mixStrip[i]->clickMode( Widget::CLICK_NONE );
+    mixStrip[i]->setNum( s.str() );
     
     // dials
     int size = mw+4;

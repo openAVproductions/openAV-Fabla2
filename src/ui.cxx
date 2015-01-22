@@ -7,6 +7,8 @@
 #include "shared.hxx"
 
 #include "ui/fabla2_ui.hxx"
+#include "ui/pad.hxx"
+#include "ui/mixstrip.hxx"
 
 #include "plotter.hxx"
 

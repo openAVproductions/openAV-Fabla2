@@ -8,12 +8,12 @@
 
 using namespace Avtk;
 
-MixStip::MixStip( Avtk::UI* ui, int x_, int y_, int w_, int h_, std::string label_) :
+MixStrip::MixStrip( Avtk::UI* ui, int x_, int y_, int w_, int h_, std::string label_) :
   Widget( ui, x_, y_, w_, h_, label_ )
 {
 }
 
-void MixStip::draw( cairo_t* cr )
+void MixStrip::draw( cairo_t* cr )
 {
   cairo_save( cr );
   
@@ -46,7 +46,7 @@ void MixStip::draw( cairo_t* cr )
   cairo_set_font_size(cr, 12.0);
   cairo_text_extents(cr, label(), &extents);
   
-  int labelPosY = y_ + h_*4/9.f;
+  int labelPosY = y_ + h_*6/17.f+4;
   
   int textX = (x_ + w_ / 2) - extents.width / 2;
   int textY = labelPosY     + extents.height + 2;
@@ -62,7 +62,19 @@ void MixStip::draw( cairo_t* cr )
   else
     theme_->color( cr, BG );
   cairo_move_to(cr, textX, textY );
-  cairo_show_text( cr, label() );
+  cairo_show_text( cr, num.c_str() );
+  
+  {
+    cairo_save(cr);
+    cairo_move_to(cr, x_ + w_ + 5 - extents.height, y_ + h_ - 5 );
+    cairo_rotate( cr, -3.1415/2.f );
+    
+    //theme_->color( cr, HIGHLIGHT, 0.8 );
+    cairo_set_source_rgb( cr, 1,1,1 );
+    cairo_show_text( cr, label() );
+    
+    cairo_restore(cr);
+  }
   
   cairo_restore( cr );
 }

@@ -5,15 +5,15 @@
 #include "avtk.hxx"
 
 #include "../shared.hxx"
-#include "pad.hxx"
-#include "mixstrip.hxx"
 
 // for write_function and controller
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 
 namespace Avtk
 {
+  class Pad;
   class Widget;
+  class MixStrip;
 };
 
 #define UI_ATOM_BUF_SIZE 128
@@ -133,7 +133,7 @@ class TestUI : public Avtk::UI
     Avtk::Group* padsGroup;
     Avtk::Pad* pads[16];
     
-    Avtk::Widget* mixStrip[16];
+    Avtk::MixStrip* mixStrip[16];
     Avtk::Dial* aux1[16];
     Avtk::Dial* aux2[16];
     Avtk::Dial* aux3[16];

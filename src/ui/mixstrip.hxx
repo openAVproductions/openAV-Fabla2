@@ -7,12 +7,18 @@
 namespace Avtk
 {
 
-class MixStip : public Widget
+class MixStrip : public Widget
 {
   public:
-    MixStip( Avtk::UI* ui, int x, int y, int w, int h, std::string label);
+    MixStrip( Avtk::UI* ui, int x, int y, int w, int h, std::string label);
+    
+    void setNum( std::string n ){num = n;}
     
     virtual void draw( cairo_t* cr );
+  
+  private:
+    // for drawing mixer strip number
+    std::string num;
 };
 
 };
