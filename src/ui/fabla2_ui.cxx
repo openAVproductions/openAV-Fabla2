@@ -976,7 +976,14 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
         if( w == auxDials[aux*16+i] ) {
           currentBank = i/16;
           currentPad  = i%16;
-          writeAtom( uris.fabla2_PadAuxBus1, tmp );
+          if( aux == 0 )
+            writeAtomForPad( uris.fabla2_PadAuxBus1, i, tmp );
+          if( aux == 1 )
+            writeAtomForPad( uris.fabla2_PadAuxBus2, i, tmp );
+          if( aux == 2 )
+            writeAtomForPad( uris.fabla2_PadAuxBus3, i, tmp );
+          if( aux == 3 )
+            writeAtomForPad( uris.fabla2_PadAuxBus4, i, tmp );
         }
       }
       

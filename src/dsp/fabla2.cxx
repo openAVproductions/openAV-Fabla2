@@ -150,9 +150,18 @@ void Fabla2DSP::process( int nf )
     }
   }
   
-  
+  // clear the audio buffers
   memset( controlPorts[OUTPUT_L], 0, sizeof(float) * nframes );
   memset( controlPorts[OUTPUT_R], 0, sizeof(float) * nframes );
+  // aux buffers if set
+  memset( controlPorts[AUXBUS1_L], 0, sizeof(float) * nframes );
+  memset( controlPorts[AUXBUS1_R], 0, sizeof(float) * nframes );
+  memset( controlPorts[AUXBUS2_L], 0, sizeof(float) * nframes );
+  memset( controlPorts[AUXBUS2_R], 0, sizeof(float) * nframes );
+  memset( controlPorts[AUXBUS3_L], 0, sizeof(float) * nframes );
+  memset( controlPorts[AUXBUS3_R], 0, sizeof(float) * nframes );
+  memset( controlPorts[AUXBUS4_L], 0, sizeof(float) * nframes );
+  memset( controlPorts[AUXBUS4_R], 0, sizeof(float) * nframes );
   
   if( recordEnable && recordPad != -1 && recordIndex + nframes < sr * 4 )
   {

@@ -395,18 +395,39 @@ void Voice::process()
   
   float* outL = dsp->controlPorts[OUTPUT_L];
   float* outR = dsp->controlPorts[OUTPUT_R];
+  
+  float aux1s = pad_->sends[0];
   float* aux1L = dsp->controlPorts[AUXBUS1_L];
   float* aux1R = dsp->controlPorts[AUXBUS1_R];
   
-  float aux1s = pad_->sends[0];
+  float aux2s = pad_->sends[1];
+  float* aux2L = dsp->controlPorts[AUXBUS2_L];
+  float* aux2R = dsp->controlPorts[AUXBUS2_R];
+  
+  float aux3s = pad_->sends[2];
+  float* aux3L = dsp->controlPorts[AUXBUS3_L];
+  float* aux3R = dsp->controlPorts[AUXBUS3_R];
+  
+  float aux4s = pad_->sends[3];
+  float* aux4L = dsp->controlPorts[AUXBUS4_L];
+  float* aux4R = dsp->controlPorts[AUXBUS4_R];
   
   for(int i = activeCountdown; i < dsp->nframes; i++ )
   {
     float pfL = voiceBuffer[             i] * adsrVal;
     float pfR = voiceBuffer[dsp->nframes+i] * adsrVal;
     
-    aux1L[i] = pfL * aux1s;
-    aux1R[i] = pfR * aux1s;
+    aux1L[i] += pfL * aux1s;
+    aux1R[i] += pfR * aux1s;
+    
+    aux2L[i] += pfL * aux2s;
+    aux2R[i] += pfR * aux2s;
+    
+    aux3L[i] += pfL * aux3s;
+    aux3R[i] += pfR * aux3s;
+    
+    aux4L[i] += pfL * aux4s;
+    aux4R[i] += pfR * aux4s;
     
     outL[i] += pfL;
     outR[i] += pfR;
