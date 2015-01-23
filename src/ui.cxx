@@ -207,6 +207,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
         }
         ui->layers->addItem( n );
         ui->pads[p]->loaded = true;
+        ui->mixStrip[p]->label( n.c_str() );
       }
     }
     else if( obj->body.otype == ui->uris.fabla2_ReplyUiSampleState )
