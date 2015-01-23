@@ -209,6 +209,10 @@ void Sample::init()
   sustain = 1;
   release = 0;
   
+  // full range
+  velLow  = 0;
+  velHigh = 1;
+  
   filterType = 0;
   filterFrequency = 1.0;
   filterResonance = 0.4;
@@ -224,7 +228,7 @@ Sample::Sample( Fabla2DSP* d, int rate, const char* nme, int size, float* data )
   channels( 2 ),
   frames( size / 2 ),
   velLow( 0 ),
-  velHigh( 127 ),
+  velHigh( 1 ),
   pitch( 0 ),
   gain ( 0.75 ),
   pan  ( 0 )

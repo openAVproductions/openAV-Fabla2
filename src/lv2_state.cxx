@@ -356,40 +356,40 @@ fabla2_restore(LV2_Handle                  instance,
             else
             {
               // write directly to Sample*
-              if( pjPad.get("gain").is<double>() )
+              if( pjLayer.get("gain").is<double>() )
                 s->gain            = (float)pjLayer.get("gain").get<double>();
-              if( pjPad.get("pan").is<double>() )
+              if( pjLayer.get("pan").is<double>() )
                 s->pan             = (float)pjLayer.get("pan").get<double>();
               
-              if( pjPad.get("pitch").is<double>() )
+              if( pjLayer.get("pitch").is<double>() )
                 s->pitch           = (float)pjLayer.get("pitch").get<double>();
-              if( pjPad.get("time").is<double>() )
+              if( pjLayer.get("time").is<double>() )
                 s->time            = (float)pjLayer.get("time").get<double>();
               
-              if( pjPad.get("startPoint").is<double>() )
+              if( pjLayer.get("startPoint").is<double>() )
                 s->startPoint      = (float)pjLayer.get("startPoint").get<double>();
-              if( pjPad.get("endPoint").is<double>() )
+              if( pjLayer.get("endPoint").is<double>() )
                 s->endPoint        = (float)pjLayer.get("endPoint").get<double>();
               
-              if( pjPad.get("filterType").is<double>() )
+              if( pjLayer.get("filterType").is<double>() )
                 s->filterType      = (float)pjLayer.get("filterType").get<double>();
-              if( pjPad.get("filterFrequency").is<double>() )
+              if( pjLayer.get("filterFrequency").is<double>() )
                 s->filterFrequency = (float)pjLayer.get("filterFrequency").get<double>();
-              if( pjPad.get("filterResonance").is<double>() )
+              if( pjLayer.get("filterResonance").is<double>() )
                 s->filterResonance = (float)pjLayer.get("filterResonance").get<double>();
               
-              if( pjPad.get("velLow").is<double>() )
-                s->velLow          = (int)pjLayer.get("velLow").get<double>();
-              if( pjPad.get("velHigh").is<double>() )
-                s->velHigh         = (int)pjLayer.get("velHigh").get<double>();
+              if( pjLayer.get("velLow").is<double>() )
+                s->velLow          = pjLayer.get("velLow").get<double>();
+              if( pjLayer.get("velHigh").is<double>() )
+                s->velHigh         = pjLayer.get("velHigh").get<double>();
               
-              if( pjPad.get("attack").is<double>() )
+              if( pjLayer.get("attack").is<double>() )
                 s->attack          = (int)pjLayer.get("attack").get<double>();
-              if( pjPad.get("decay").is<double>() )
+              if( pjLayer.get("decay").is<double>() )
                 s->decay           = (int)pjLayer.get("decay").get<double>();
-              if( pjPad.get("sustain").is<double>() )
+              if( pjLayer.get("sustain").is<double>() )
                 s->sustain         = (int)pjLayer.get("sustain").get<double>();
-              if( pjPad.get("release").is<double>() )
+              if( pjLayer.get("release").is<double>() )
                 s->release         = (int)pjLayer.get("release").get<double>();
               
               // add the sample to the Pad
