@@ -25,10 +25,10 @@ void Fader::draw( cairo_t* cr )
 {
   static const int faderHeight = 16;
   
-  roundedBox(cr, x_ + (w_/2), y_, 2, h_, 0 );
+  roundedBox(cr, x_ + (w_/2)-1, y_, 3, h_, 0 );
   theme_->color( cr, BG_DARK );
   //cairo_fill_preserve(cr);
-  theme_->color( cr, FG, 0.4 );
+  theme_->color( cr, FG, 0.3 );
   cairo_stroke(cr);
   
   // fader
@@ -43,7 +43,8 @@ void Fader::draw( cairo_t* cr )
     roundedBox(cr, x_ + 1 + range*value(), y_ + 1, faderHeight, h_ - 2, theme_->cornerRadius_ );
   }
   
-  cairo_set_source_rgba( cr, 1, 1, 1, 0.2 );
+  float a = 0.2;
+  cairo_set_source_rgb( cr, 1*a, 1*a, 1*a );
   //theme_->color( cr, HIGHLIGHT, 0.2 );
   cairo_fill_preserve(cr);
   cairo_set_source_rgba( cr, 1, 1, 1, 0.8 );

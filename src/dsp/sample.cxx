@@ -205,7 +205,7 @@ void Sample::init()
   endPoint = 1.0;
   
   attack  = 0;
-  decay   = 0.25;
+  decay   = 0.05;
   sustain = 1;
   release = 0;
   
