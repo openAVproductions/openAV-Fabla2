@@ -405,6 +405,15 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadVolume );
   lv2_atom_forge_float(&lv2->forge, pad->volume );
   
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadAuxBus1 );
+  lv2_atom_forge_float(&lv2->forge, pad->sends[0] );
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadAuxBus2 );
+  lv2_atom_forge_float(&lv2->forge, pad->sends[1] );
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadAuxBus3 );
+  lv2_atom_forge_float(&lv2->forge, pad->sends[2] );
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadAuxBus4 );
+  lv2_atom_forge_float(&lv2->forge, pad->sends[3] );
+  
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadMuteGroup);
   lv2_atom_forge_int(&lv2->forge, pad->muteGroup() );
   
@@ -584,6 +593,18 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
   }
   else if(       URI == uris->fabla2_PadVolume ) {
     pad->volume = v;
+  }
+  else if(       URI == uris->fabla2_PadAuxBus1 ) {
+    pad->sends[0] = v;
+  }
+  else if(       URI == uris->fabla2_PadAuxBus2 ) {
+    pad->sends[1] = v;
+  }
+  else if(       URI == uris->fabla2_PadAuxBus3 ) {
+    pad->sends[2] = v;
+  }
+  else if(       URI == uris->fabla2_PadAuxBus4 ) {
+    pad->sends[3] = v;
   }
   else if(       URI == uris->fabla2_SamplePitch ) {
     s->dirty = 1; s->pitch = v;

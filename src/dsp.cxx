@@ -251,6 +251,11 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
                obj->body.otype == self->uris.fabla2_PadTriggerMode        ||
                obj->body.otype == self->uris.fabla2_PadSwitchType         ||
                
+               obj->body.otype == self->uris.fabla2_PadAuxBus1            ||
+               obj->body.otype == self->uris.fabla2_PadAuxBus2            ||
+               obj->body.otype == self->uris.fabla2_PadAuxBus3            ||
+               obj->body.otype == self->uris.fabla2_PadAuxBus4            ||
+               
                obj->body.otype == self->uris.fabla2_SampleUnload          ||
                
                obj->body.otype == self->uris.fabla2_PadVolume             ||

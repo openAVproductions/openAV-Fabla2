@@ -52,6 +52,9 @@ Pad::Pad( Fabla2DSP* d, int rate, int ID ) :
   
   volume = 0.75f;
   
+  for(int i = 0; i < 4; ++i)
+    sends[i] = 0.f;
+  
   samples.reserve( 8 );
 }
 

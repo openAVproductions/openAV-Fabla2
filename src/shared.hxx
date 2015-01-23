@@ -57,6 +57,10 @@
 #define FABLA2_PadPlay              FABLA2_URI "#PadPlay"
 #define FABLA2_PadStop              FABLA2_URI "#PadStop"
 #define FABLA2_PadVolume            FABLA2_URI "#PadVolume"
+#define FABLA2_PadAuxBus1           FABLA2_URI "#PadAuxBus1"
+#define FABLA2_PadAuxBus2           FABLA2_URI "#PadAuxBus2"
+#define FABLA2_PadAuxBus3           FABLA2_URI "#PadAuxBus3"
+#define FABLA2_PadAuxBus4           FABLA2_URI "#PadAuxBus4"
 
 #define FABLA2_SampleFilterType     FABLA2_URI "#SampleFilterType"
 #define FABLA2_SampleFilterFrequency FABLA2_URI"#SampleFilterFrequency"
@@ -121,6 +125,11 @@ typedef struct {
   LV2_URID fabla2_PadPlay;
   LV2_URID fabla2_PadStop;
   LV2_URID fabla2_PadVolume;
+  
+  LV2_URID fabla2_PadAuxBus1;
+  LV2_URID fabla2_PadAuxBus2;
+  LV2_URID fabla2_PadAuxBus3;
+  LV2_URID fabla2_PadAuxBus4;
   
   LV2_URID fabla2_SampleFilterType;
   LV2_URID fabla2_SampleFilterFrequency;
@@ -187,6 +196,12 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->fabla2_PadPlay              = map->map(map->handle, FABLA2_PadPlay);
   uris->fabla2_PadStop              = map->map(map->handle, FABLA2_PadStop);
   uris->fabla2_PadVolume            = map->map(map->handle, FABLA2_PadVolume);
+  
+  uris->fabla2_PadAuxBus1           = map->map(map->handle, FABLA2_PadAuxBus1);
+  uris->fabla2_PadAuxBus2           = map->map(map->handle, FABLA2_PadAuxBus2);
+  uris->fabla2_PadAuxBus3           = map->map(map->handle, FABLA2_PadAuxBus3);
+  uris->fabla2_PadAuxBus4           = map->map(map->handle, FABLA2_PadAuxBus4);
+  
   
   uris->fabla2_SampleFilterType     = map->map(map->handle, FABLA2_SampleFilterType);
   uris->fabla2_SampleFilterFrequency= map->map(map->handle, FABLA2_SampleFilterFrequency);

@@ -122,10 +122,7 @@ class TestUI : public Avtk::UI
     
     // pad - tracks
     Avtk::MixStrip* mixStrip[16];
-    Avtk::Dial* aux1[16];
-    Avtk::Dial* aux2[16];
-    Avtk::Dial* aux3[16];
-    Avtk::Dial* aux4[16];
+    Avtk::Dial* auxDials[16*4];
     
     // AuxBus tracks
     Avtk::MixStrip* auxbus[4];

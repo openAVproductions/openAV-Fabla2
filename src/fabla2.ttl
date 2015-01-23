@@ -78,7 +78,7 @@
         lv2:index 1 ;
         lv2:symbol "notify" ;
         lv2:name "Notify" ;
-        # 8192 * sizeof(float) + LV2-Atoms
+        # 500 * sizeof(float) + LV2-Atoms
         rsz:minimumSize 32832;
   ]
   
@@ -100,14 +100,70 @@
       a lv2:AudioPort ;
       a lv2:OutputPort ;
       lv2:index 4 ;
-      lv2:symbol "out_l" ;
-      lv2:name "Output Left" ;
+      lv2:symbol "master_l" ;
+      lv2:name "Master Out Left" ;
   ] , [
       a lv2:AudioPort ;
       a lv2:OutputPort ;
       lv2:index 5 ;
-      lv2:symbol "out_r" ;
-      lv2:name "Output Right" ;
+      lv2:symbol "master_r" ;
+      lv2:name "Master Right" ;
+  ]
+  , # AuxBus 1
+  [
+      a lv2:AudioPort ;
+      a lv2:OutputPort ;
+      lv2:index 6 ;
+      lv2:symbol "aux1_l" ;
+      lv2:name "AuxBus1 Left" ;
+  ] , [
+      a lv2:AudioPort ;
+      a lv2:OutputPort ;
+      lv2:index 7 ;
+      lv2:symbol "aux1_r" ;
+      lv2:name "AuxBus1 Right" ;
+  ]
+  , # AuxBus 2
+  [
+      a lv2:AudioPort ;
+      a lv2:OutputPort ;
+      lv2:index 8 ;
+      lv2:symbol "aux2_l" ;
+      lv2:name "AuxBus2 Left" ;
+  ] , [
+      a lv2:AudioPort ;
+      a lv2:OutputPort ;
+      lv2:index 9 ;
+      lv2:symbol "aux2_r" ;
+      lv2:name "AuxBus2 Right" ;
+  ]
+  , # AuxBus 3
+  [
+      a lv2:AudioPort ;
+      a lv2:OutputPort ;
+      lv2:index 10 ;
+      lv2:symbol "aux3_l" ;
+      lv2:name "AuxBus3 Left" ;
+  ] , [
+      a lv2:AudioPort ;
+      a lv2:OutputPort ;
+      lv2:index 11 ;
+      lv2:symbol "aux3_r" ;
+      lv2:name "AuxBus3 Right" ;
+  ]
+  , # AuxBus 4
+  [
+      a lv2:AudioPort ;
+      a lv2:OutputPort ;
+      lv2:index 12 ;
+      lv2:symbol "aux4_l" ;
+      lv2:name "AuxBus4 Left" ;
+  ] , [
+      a lv2:AudioPort ;
+      a lv2:OutputPort ;
+      lv2:index 13 ;
+      lv2:symbol "aux4_r" ;
+      lv2:name "AuxBus4 Right" ;
   ]
   
   ,
@@ -115,7 +171,7 @@
   [
       a lv2:ControlPort ;
       a lv2:InputPort ;
-      lv2:index 6 ;
+      lv2:index 14 ;
       lv2:symbol "master_vol" ;
       lv2:name "Master Volume" ;
       lv2:default 0.5;
@@ -124,7 +180,7 @@
   ] , [
       a lv2:ControlPort ;
       a lv2:InputPort ;
-      lv2:index 7 ;
+      lv2:index 15 ;
       lv2:symbol "master_pitch" ;
       lv2:name "Master Pitch" ;
       lv2:default 0.0;
@@ -133,7 +189,7 @@
   ] , [
       a lv2:ControlPort ;
       a lv2:InputPort ;
-      lv2:index 8 ;
+      lv2:index 16 ;
       lv2:symbol "record_over_last_played_pad" ;
       lv2:name "Record Over Last Played Pad" ;
       lv2:default 0.0;

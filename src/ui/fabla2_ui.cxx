@@ -361,15 +361,15 @@ TestUI::TestUI( PuglNativeWindow parent ):
     // dials
     int size = mw+4;
     mw -= 6;
-    aux1[i] = new Avtk::Dial( this, mx, my       , size, size, "Aux1" );
-    aux2[i] = new Avtk::Dial( this, mx, my + mw  , size, size, "Aux2" );
-    aux3[i] = new Avtk::Dial( this, mx, my + mw*2, size, size, "Aux3" );
-    aux4[i] = new Avtk::Dial( this, mx, my + mw*3, size, size, "Aux4" );
+    auxDials[ 0+i] = new Avtk::Dial( this, mx, my       , size, size, "Aux1" );
+    auxDials[16+i] = new Avtk::Dial( this, mx, my + mw  , size, size, "Aux2" );
+    auxDials[32+i] = new Avtk::Dial( this, mx, my + mw*2, size, size, "Aux3" );
+    auxDials[48+i] = new Avtk::Dial( this, mx, my + mw*3, size, size, "Aux4" );
     
-    aux1[i]->theme( theme( 1 ) );
-    aux2[i]->theme( theme( 2 ) );
-    aux3[i]->theme( theme( 3 ) );
-    aux4[i]->theme( theme( 4 ) );
+    auxDials[ 0+i]->theme( theme( 1 ) );
+    auxDials[16+i]->theme( theme( 2 ) );
+    auxDials[32+i]->theme( theme( 3 ) );
+    auxDials[48+i]->theme( theme( 4 ) );
   }
   
   wx = 82;
@@ -933,9 +933,20 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
       }
     }
     
-    // check all the pads
     for(int i = 0; i < 16; i++)
     {
+      // check the Aux dials in live view
+      for(int aux = 0; aux  < 4; ++aux)
+      {
+        if( w == auxDials[aux*16+i] ) {
+          currentBank = i/16;
+          currentPad  = i%16;
+          writeAtom( uris.fabla2_PadAuxBus1, tmp );
+        }
+      }
+      
+      
+      // check pads
       if( w == pads[i] )
       {
         if( w->mouseButton() == 3 )

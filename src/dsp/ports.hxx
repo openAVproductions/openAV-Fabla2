@@ -33,8 +33,18 @@ typedef enum
   // Audio
   INPUT_L,
   INPUT_R,
+  
   OUTPUT_L,
   OUTPUT_R,
+  
+  AUXBUS1_L,
+  AUXBUS1_R,
+  AUXBUS2_L,
+  AUXBUS2_R,
+  AUXBUS3_L,
+  AUXBUS3_R,
+  AUXBUS4_L,
+  AUXBUS4_R,
   
   MASTER_VOL,
   MASTER_PITCH,

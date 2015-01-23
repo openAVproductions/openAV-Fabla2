@@ -101,6 +101,11 @@ fabla2_save(LV2_Handle                 instance,
       pjPad["switchMode"]    = picojson::value( (double)pad->switchSystem() );
       pjPad["volume"]        = picojson::value( (double)pad->volume );
       
+      pjPad["auxbus1"]        = picojson::value( (double)pad->sends[0] );
+      pjPad["auxbus2"]        = picojson::value( (double)pad->sends[1] );
+      pjPad["auxbus3"]        = picojson::value( (double)pad->sends[2] );
+      pjPad["auxbus4"]        = picojson::value( (double)pad->sends[3] );
+      
       pjPad["nLayers"]    = picojson::value( (double)pad->nLayers() );
       
       for(int l = 0; l < pad->nLayers(); l++ )
@@ -286,10 +291,16 @@ fabla2_restore(LV2_Handle                  instance,
             pad->switchSystem( (Fabla2::Pad::SAMPLE_SWITCH_SYSTEM)pjPad.get("switchMode" ).get<double>() );
           
           if( pjPad.get("volume").is<double>() )
-          {
             pad->volume = pjPad.get("volume").get<double>();
-            //printf("LV2 state, pad volume %f\n", pad->volume );
-          }
+          
+          if( pjPad.get("auxbus1").is<double>() )
+            pad->sends[0] = pjPad.get("auxbus1").get<double>();
+          if( pjPad.get("auxbus2").is<double>() )
+            pad->sends[1] = pjPad.get("auxbus2").get<double>();
+          if( pjPad.get("auxbus3").is<double>() )
+            pad->sends[2] = pjPad.get("auxbus3").get<double>();
+          if( pjPad.get("auxbus4").is<double>() )
+            pad->sends[3] = pjPad.get("auxbus4").get<double>();
           
           int nLayers = 0;
           if( pjPad.get("nLayers").is<double>() )
