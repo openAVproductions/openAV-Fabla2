@@ -527,6 +527,9 @@ void TestUI::showPadsView()
   padsGroup         ->visible( true );
   waveformGroup     ->visible( true );
   sampleControlGroup->visible( true );
+  
+  // info could be outdated from live view
+  requestSampleState( currentBank, currentPad, currentLayer );
 }
 
 void TestUI::showFileView()
@@ -921,6 +924,14 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   {
     writeAtom( uris.fabla2_SampleAdsrRelease, tmp );
   }
+  else if( w == send1 )
+    writeAtom( uris.fabla2_PadAuxBus1, tmp );
+  else if( w == send2 )
+    writeAtom( uris.fabla2_PadAuxBus2, tmp );
+  else if( w == send3 )
+    writeAtom( uris.fabla2_PadAuxBus3, tmp );
+  else if( w == send4 )
+    writeAtom( uris.fabla2_PadAuxBus4, tmp );
   else
   {
     // check bank buttons

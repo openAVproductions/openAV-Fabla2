@@ -44,7 +44,7 @@ void MixStrip::draw( cairo_t* cr )
   // Draw label
   cairo_text_extents_t extents;
   cairo_set_font_size(cr, 12.0);
-  cairo_text_extents(cr, label(), &extents);
+  cairo_text_extents(cr, num.c_str(), &extents);
   
   int labelPosY = y_ + h_*6/17.f+4;
   

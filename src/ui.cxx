@@ -216,6 +216,10 @@ static void fabla2_port_event(LV2UI_Handle handle,
       const LV2_Atom* aPad        = 0;
       
       const LV2_Atom* aPadVolume  = 0;
+      const LV2_Atom* aPadAux1  = 0;
+      const LV2_Atom* aPadAux2  = 0;
+      const LV2_Atom* aPadAux3  = 0;
+      const LV2_Atom* aPadAux4  = 0;
       
       const LV2_Atom* aPadOffGrp  = 0;
       const LV2_Atom* aPadMuteGrp = 0;
@@ -248,6 +252,10 @@ static void fabla2_port_event(LV2UI_Handle handle,
       const int n_props  = lv2_atom_object_get( obj,
             ui->uris.fabla2_pad               , &aPad,
             ui->uris.fabla2_PadVolume         , &aPadVolume,
+            ui->uris.fabla2_PadAuxBus1        , &aPadAux1,
+            ui->uris.fabla2_PadAuxBus2        , &aPadAux2,
+            ui->uris.fabla2_PadAuxBus3        , &aPadAux3,
+            ui->uris.fabla2_PadAuxBus4        , &aPadAux4,
             ui->uris.fabla2_PadOffGroup       , &aPadOffGrp,
             ui->uris.fabla2_PadMuteGroup      , &aPadMuteGrp,
             ui->uris.fabla2_PadTriggerMode    , &aPadTrigMode,
@@ -282,6 +290,11 @@ static void fabla2_port_event(LV2UI_Handle handle,
         float tmp = ((const LV2_Atom_Float*)aPadVolume)->body;
         //printf("UI got ReplyUiSampleState from DSP : volume %f\n", tmp);
         ui->padVolume       ->value( tmp );
+        
+        ui->send1->value( ((const LV2_Atom_Float*)aPadAux1)->body );
+        ui->send2->value( ((const LV2_Atom_Float*)aPadAux2)->body );
+        ui->send3->value( ((const LV2_Atom_Float*)aPadAux3)->body );
+        ui->send4->value( ((const LV2_Atom_Float*)aPadAux4)->body );
         
         int mute = ((const LV2_Atom_Int*)aPadMuteGrp)->body;
         int off  = ((const LV2_Atom_Int*)aPadOffGrp)->body;
