@@ -82,7 +82,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   fileView->clickMode( Avtk::Widget::CLICK_TOGGLE );
   
   uiViewGroup->end();
-  wy += 78 + 6;
+  wy += 78;
   
   followPadBtn = new Avtk::Button( this, wx, wy, 70, 20,  "Follow" );
   followPadBtn->clickMode( Avtk::Widget::CLICK_TOGGLE );

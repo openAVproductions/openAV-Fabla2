@@ -234,7 +234,7 @@ fabla2_restore(LV2_Handle                  instance,
       return LV2_STATE_ERR_UNKNOWN;
     }
     
-    //try
+    try
     {
       for(int b = 0; b < 4; b++ )
       {
@@ -246,6 +246,13 @@ fabla2_restore(LV2_Handle                  instance,
         bankStr << "bank_" << char('A' + b);
         
         picojson::value pjBanks = pjAll.get( bankStr.str() );
+        
+        bool pjBankOk = pjBanks.is<picojson::object>();
+        if( !pjBankOk )
+        {
+          printf( "Fabla2 : Lv2 State Restore() : PjBanks is object not valid, corrupt save file? Check letter X in \"bank_X\" of the save file.\n" );
+          continue;
+        }
         
         for(int p = 0; p < 16; p ++)
         {
@@ -376,9 +383,9 @@ fabla2_restore(LV2_Handle                  instance,
       } // banks
     
     }
-    //catch( std::exception& e )
+    catch( std::exception& e )
     {
-      //printf("PicoJSON : Runtime exception thrown! %s\n", e.what() );
+      printf("Fabla2 : LV2 State restore() Runtime exception thrown. Please send the preset you attempted to load to harryhaaren@gmail.com so I can fix a bug in Fabla2! Thanks, -Harry. PicoJSON says: %s\n", e.what() );
     }
     
   }
