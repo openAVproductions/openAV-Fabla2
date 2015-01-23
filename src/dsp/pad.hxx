@@ -90,7 +90,7 @@ class Pad
     
     /// playback functions
     int lastPlayedLayer();
-    Sample* getPlaySample( int velocity );
+    Sample* getPlaySample( float velocity );
     
     /// Sets the switch system between samples
     enum SAMPLE_SWITCH_SYSTEM {

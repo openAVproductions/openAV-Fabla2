@@ -136,7 +136,7 @@ void Pad::checkAll()
   printf("%s : Done.\n", __PRETTY_FUNCTION__ );
 }
 
-Sample* Pad::getPlaySample( int velocity )
+Sample* Pad::getPlaySample( float velocity )
 {
 #ifdef FABLA2_COMPONENT_TEST
   QUNIT_IS_TRUE( samples.size() > 0 );
@@ -177,6 +177,10 @@ Sample* Pad::getPlaySample( int velocity )
           sampleLayerCounter = i;
           printf("playing pad SS_VELOCITY_LAYERS %i\n", sampleLayerCounter );
           return samples.at(i);
+        }
+        else
+        {
+          printf("SS_VELOCITY_LAYERS : sample at %i, *NOT* ok for velocity\n", i );
         }
       }
       

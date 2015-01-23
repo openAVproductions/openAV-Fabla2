@@ -388,7 +388,7 @@ bool Sample::write( const char* filename )
   printf("%s Done: %s\n", __PRETTY_FUNCTION__, __TIME__ );
 }
 
-bool Sample::velocity( int vel )
+bool Sample::velocity( float vel )
 {
   if( vel >= velLow &&
       vel <= velHigh )

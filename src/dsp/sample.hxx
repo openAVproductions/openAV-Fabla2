@@ -71,7 +71,7 @@ class Sample
     }
     
     /// velocity functions
-    bool velocity( int vel ); // returns true if vel is in this samples range
+    bool velocity( float vel ); // returns true if vel is in this samples range
     void velocityLow ( float low  );
     void velocityHigh( float high );
     
