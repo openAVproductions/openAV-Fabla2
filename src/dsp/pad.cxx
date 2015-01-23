@@ -70,6 +70,23 @@ void Pad::remove( Sample* s )
   }
 }
 
+void Pad::setName( const char* n )
+{
+  // char name[21], keep a newline in the last place
+  name[20] = '\n';
+  
+  int chars = strlen( n );
+  if( chars > 20 )
+  {
+    // add better handling of long names?
+    // first 3 chars .. last 15 chars - .wav extension?
+    chars = 20;
+  }
+  memcpy(name, n, sizeof(char)*chars);
+  
+  dsp->writePadsState( bank_, ID_, this );
+}
+
 void Pad::add( Sample* s )
 {
   loaded_ = true;
@@ -81,8 +98,11 @@ void Pad::add( Sample* s )
   // request DSP to refresh UI layers for this pad
   dsp->padRefreshLayers( bank_, ID_ );
   
+  dsp->writePadsState( bank_, ID_, this );
+  
   // update the sample state to the UI
-  dsp->writeSampleState( bank_, ID_, samples.size()-1, this, s );
+  //dsp->writeSampleState( bank_, ID_, samples.size()-1, this, s );
+  
 }
 
 Sample* Pad::layer( int id )

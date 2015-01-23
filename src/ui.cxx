@@ -206,8 +206,35 @@ static void fabla2_port_event(LV2UI_Handle handle,
           ui->layers->clear();
         }
         ui->layers->addItem( n );
-        ui->pads[p]->loaded = true;
+        ui->pads[p]->loaded( true );
         ui->mixStrip[p]->label( n.c_str() );
+      }
+    }
+    else if( obj->body.otype == ui->uris.fabla2_UiPadsState )
+    {
+      const LV2_Atom* aBank       = 0;
+      const LV2_Atom* aPad        = 0;
+      //const LV2_Atom* aName       = 0;
+      const LV2_Atom* aVol        = 0;
+      const LV2_Atom* aLoaded     = 0;
+      const int n_props  = lv2_atom_object_get( obj,
+            ui->uris.fabla2_bank              , &aBank,
+            ui->uris.fabla2_pad               , &aPad,
+            ui->uris.fabla2_PadVolume         , &aVol,
+            ui->uris.fabla2_value             , &aLoaded,
+            0 );
+      
+      if( n_props == 4 )
+      {
+        int bank = ((const LV2_Atom_Int*)aBank)->body;
+        int pad  = ((const LV2_Atom_Int*)aPad )->body;
+        if( bank == ui->currentBank )
+        {
+          if( ui->currentPad == pad )
+            ui->padVolume->value( ((const LV2_Atom_Float*)aVol)->body );
+          
+          ui->pads[pad]->loaded( ((const LV2_Atom_Int*)aLoaded)->body );
+        }
       }
     }
     else if( obj->body.otype == ui->uris.fabla2_ReplyUiSampleState )
@@ -288,7 +315,6 @@ static void fabla2_port_event(LV2UI_Handle handle,
       if( aGain && aPan && aPitch && aStartPoint )
       {
         float tmp = ((const LV2_Atom_Float*)aPadVolume)->body;
-        //printf("UI got ReplyUiSampleState from DSP : volume %f\n", tmp);
         ui->padVolume       ->value( tmp );
         
         ui->send1->value( ((const LV2_Atom_Float*)aPadAux1)->body );
@@ -333,12 +359,13 @@ static void fabla2_port_event(LV2UI_Handle handle,
       else
       {
         //printf("UI NOT setting from DSP ReplyUiSampleState, %i, %i, %i, %i\n", aGain, aPan, aPitch, aStartPoint );
-        ui->blankSampleState();
         if( pad != -1 )
-          ui->pads[pad]->loaded = false;
+          ui->pads[pad]->loaded( false );
         else
           printf("Fabla2 UI pad == -1");
+        ui->blankSampleState();
       }
+      ui->redraw();
     }
     else
     {

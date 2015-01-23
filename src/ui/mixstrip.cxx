@@ -66,7 +66,7 @@ void MixStrip::draw( cairo_t* cr )
   
   {
     cairo_save(cr);
-    cairo_move_to(cr, x_ + w_ + 5 - extents.height, y_ + h_ - 5 );
+    cairo_move_to(cr, x_ + w_ - extents.height, y_ + h_ - 5 );
     cairo_rotate( cr, -3.1415/2.f );
     
     //theme_->color( cr, HIGHLIGHT, 0.8 );

@@ -87,6 +87,7 @@ class Fabla2DSP
     void padRefreshLayers( int bank, int pad );
     
     /// lv2 convienience function to write a samples state to the UI
+    void writePadsState( int b, int p, Pad* pad );
     void writeSampleState( int b, int p, int l, Pad* pad, Sample* );
     void tx_waveform( int bank, int pad, int layer, const float* data );
     

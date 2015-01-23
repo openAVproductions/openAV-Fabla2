@@ -142,6 +142,11 @@ class TestUI : public Avtk::UI
     Avtk::Group* padsGroup;
     Avtk::Pad* pads[16];
     
+    // bank/pad/layer currently shown in UI
+    int currentBank;
+    int currentPad;
+    int currentLayer;
+    
     // LV2 ports
     LV2UI_Controller controller;
     LV2UI_Write_Function write_function;
@@ -163,10 +168,6 @@ class TestUI : public Avtk::UI
     
     /// followPad allows the UI to update to the last played PAD.
     bool followPad;
-    
-    int currentBank;
-    int currentPad;
-    int currentLayer;
     
     /// shows the sample browser window instead of the pads
     void showLiveView();

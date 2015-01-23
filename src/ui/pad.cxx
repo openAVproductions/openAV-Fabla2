@@ -12,7 +12,7 @@ Pad::Pad( Avtk::UI* ui, int x_, int y_, int w_, int h_, std::string label_) :
   Widget( ui, x_, y_, w_, h_, label_ )
 {
   clickMode( CLICK_MOMENTARY );
-  loaded = false;
+  loaded_ = false;
 }
 
 void Pad::draw( cairo_t* cr )
@@ -33,17 +33,22 @@ void Pad::draw( cairo_t* cr )
   }
   else
   {
-    if( loaded )
-    {
-      theme_->color( cr, BG );
-    }
-    else
-    {
-      theme_->color( cr, BG_DARK );
-    }
+    theme_->color( cr, BG_DARK );
     cairo_fill_preserve(cr);
     theme_->color( cr, FG );
     cairo_set_line_width(cr, theme_->lineWidthNorm() );
+    cairo_stroke(cr);
+  }
+  
+  if( !loaded_ )
+  {
+    // X for when no sample is loaded
+    cairo_move_to( cr, x_, y_ + h_ );
+    cairo_line_to( cr, x_ + w_, y_ );
+    cairo_move_to( cr, x_, y_ );
+    cairo_line_to( cr, x_ + w_, y_ + h_ );
+    theme_->color( cr, BG, 0.2 );
+    cairo_set_line_width(cr, theme_->lineWidthWide()*3 );
     cairo_stroke(cr);
   }
   
@@ -61,7 +66,7 @@ void Pad::draw( cairo_t* cr )
   }
   else
   {
-    if( loaded )
+    if( loaded_ )
     {
       cairo_set_source_rgb( cr, 1,1,1 );
     }

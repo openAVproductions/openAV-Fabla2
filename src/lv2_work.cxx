@@ -156,6 +156,7 @@ fabla2_work_response(LV2_Handle  instance,
     if(bank < 0 || bank >=  4){ delete msg->sample; return LV2_WORKER_ERR_UNKNOWN; }
     if(pad  < 0 || pad  >= 16){ delete msg->sample; return LV2_WORKER_ERR_UNKNOWN; }
     
+    // add() of pad writes LV2 update: we don't have layer information here yet.
     self->dsp->getLibrary()->bank( bank )->pad( pad )->add( msg->sample );
   }
   

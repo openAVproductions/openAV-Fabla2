@@ -376,7 +376,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   wy = 43;
   wx += padsHeaderBox->w() + spacer;
   
-  waste = new Avtk::Box( this, wx, wy, 228, 276, "AuxBus" );
+  waste = new Avtk::Box( this, wx, wy, 228, 14, "AuxBus" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
   

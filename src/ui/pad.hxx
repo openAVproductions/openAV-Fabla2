@@ -14,7 +14,12 @@ class Pad : public Widget
     
     virtual void draw( cairo_t* cr );
     
-    bool loaded;
+    void loaded( bool l )
+    {
+      loaded_ = l;
+    }
+    
+    bool loaded_;
 };
 
 };

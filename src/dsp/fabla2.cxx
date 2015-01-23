@@ -383,6 +383,31 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
   
 }
 
+void Fabla2DSP::writePadsState( int b, int p, Pad* pad )
+{
+  LV2_Atom_Forge_Frame frame;
+  lv2_atom_forge_frame_time( &lv2->forge, 0 );
+  
+  lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_UiPadsState );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_bank);
+  lv2_atom_forge_int(&lv2->forge, b );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_pad);
+  lv2_atom_forge_int(&lv2->forge, p );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_name);
+  lv2_atom_forge_string(&lv2->forge, pad->getName(), strlen( pad->getName() ) );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadVolume );
+  lv2_atom_forge_float(&lv2->forge, pad->volume );
+  
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_value );
+  lv2_atom_forge_float(&lv2->forge, pad->loaded() );
+  
+  lv2_atom_forge_pop(&lv2->forge, &frame);
+}
+
 void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
 {
   LV2_Atom_Forge_Frame frame;
@@ -553,10 +578,12 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 {
   //printf("Fabla2:uiMessage bank %i, pad %i, layer %i: %f\n", b, p, l, v );
   
+  /*
   if( URI == uris->fabla2_PadPlay )
   {
     printf("DSP has note on from UI: %i, %i, %i\n", b, p, l);
   }
+  */
   
   Pad* pad = library->bank( b )->pad( p );
   Sample* s = pad->layer( l );
@@ -566,6 +593,10 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
     LV2_Atom_Forge_Frame frame;
     lv2_atom_forge_frame_time( &lv2->forge, 0 );
     lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_ReplyUiSampleState );
+    lv2_atom_forge_key(&lv2->forge, uris->fabla2_bank);
+    lv2_atom_forge_int(&lv2->forge, b );
+    lv2_atom_forge_key(&lv2->forge, uris->fabla2_pad);
+    lv2_atom_forge_int(&lv2->forge, p );
     lv2_atom_forge_pop(&lv2->forge, &frame);
     return;
   }

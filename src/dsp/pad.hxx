@@ -53,6 +53,10 @@ class Pad
     /// position of pad (0 - 15) drum pads layout where 0 is bottom left
     int ID(){return ID_;}
     
+    // arbitrary limit of 20 chars max for names
+    void setName( const char* n );
+    const char* getName(){return name;}
+    
     /// the bank this Pad is on
     void bank(int b){bank_ = b;}
     int bank(){return bank_;}
@@ -113,6 +117,8 @@ class Pad
     int offGroup_;
     int triggerMode_;
     bool loaded_;
+    
+    char name[21];
     
     SAMPLE_SWITCH_SYSTEM sampleSwitchSystem;
     int sampleLayerCounter;
