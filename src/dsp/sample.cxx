@@ -397,9 +397,9 @@ bool Sample::velocity( int vel )
 
 Sample::~Sample()
 {
-//#ifdef FABLA2_COMPONENT_TEST
+#ifdef FABLA2_COMPONENT_TEST
   printf("%s\n", __PRETTY_FUNCTION__ );
-//#endif
+#endif
 }
 
 };

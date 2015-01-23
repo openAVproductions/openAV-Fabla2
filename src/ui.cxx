@@ -166,7 +166,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
       
       //printf("Fabla UI got %i elements for waveform data\n", n_elem );
       
-      Plotter::plot( "waveformArrived.dat", FABLA2_UI_WAVEFORM_PX, data );
+      //Plotter::plot( "waveformArrived.dat", FABLA2_UI_WAVEFORM_PX, data );
       ui->waveform->show( FABLA2_UI_WAVEFORM_PX, data );
       ui->redraw();
     }

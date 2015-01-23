@@ -9,9 +9,9 @@ import json
 pages = []
 
 
-def processFile( filename ):
+def processFile( filenameIn ):
   # open the template & input file
-  sfz = open(filename)
+  sfz = open(filenameIn)
   
   jsonData = '''{\n "bank_A":{"name":"AvLinux Red Zepplin 5pc",'''
   
@@ -69,11 +69,9 @@ def processFile( filename ):
           pass
       
       if int(key)-36 < 0:
-        print("WARNING: key out of range!" + str(items) )
+        print("WARNING: input file: " + filenameIn + "  Key out of range!" + str(items) )
         time.sleep(3)
       
-      if int(key) == 49:
-        print( i )
       
       # "pad_0": {
       groupData += '''\n\n "pad_''' + str( int(key)-36 ) + '''" : \n''' + '{'
@@ -130,23 +128,27 @@ def processFile( filename ):
       groupData += '}\n'
       
       layer = layer + 1
-      
+  
+  
+  # No new <group> to trigger writing Nlayers to this pad, so we do it here
+  groupData += ''',"nLayers": ''' + str(layer)
+  
+  groupData += '}' #pad
   
   jsonData += groupData
   
-  groupData += '}'
-  
-  jsonData += '}'
-  
   jsonData += '}' # bank
   
-  jsonData += '}'
+  jsonData += '}' # json closer
   
   #print( "FINAL:\n" + jsonData )
   
-  outfile = open( "sfzExport_fabla2.json", 'w' );
+  outfile = open( filenameIn + "_fabla2.json", 'w' );
   outfile.write( jsonData )
   
   
 
 processFile( 'Red_Zeppelin_5pc.sfz' )
+#processFile( 'Red_Zeppelin_4pc.sfz' )
+#processFile( 'Black_Pearl_4pc.sfz' )
+#processFile( 'Black_Pearl_4pc_Alt.sfz' )

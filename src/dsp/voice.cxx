@@ -409,7 +409,7 @@ void Voice::process()
   // for testing sample-accurate voice note-on
   if( activeCountdown )
   {
-    Plotter::plot( "active.dat", dsp->nframes, dsp->controlPorts[OUTPUT_L] );
+    //Plotter::plot( "active.dat", dsp->nframes, dsp->controlPorts[OUTPUT_L] );
   }
   
   
