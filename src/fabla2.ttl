@@ -12,6 +12,9 @@
 @prefix patch: <http://lv2plug.in/ns/ext/patch#> .
 @prefix work:  <http://lv2plug.in/ns/ext/worker#> .
 @prefix rsz:   <http://lv2plug.in/ns/ext/resize-port#> .
+@prefix pg:    <http://lv2plug.in/ns/ext/port-groups#> .
+
+@prefix fabla2:<http://www.openavproductions.com/fabla2#> .
 
 <http://www.openavproductions.com/fabla2#gui>
   a ui:X11UI;
@@ -57,7 +60,8 @@
   
   ui:ui <http://www.openavproductions.com/fabla2#gui>;
   
-  patch:writable <http://www.openavproductions.com/fabla2#SampleLoad>;
+  patch:writable fabla2:SampleLoad;
+  pg:mainOutput  fabla2:mainOut;
   
   lv2:port
   [
@@ -102,12 +106,14 @@
       lv2:index 4 ;
       lv2:symbol "master_l" ;
       lv2:name "Master Out Left" ;
+      pg:group fabla2:mainOut;
   ] , [
       a lv2:AudioPort ;
       a lv2:OutputPort ;
       lv2:index 5 ;
       lv2:symbol "master_r" ;
       lv2:name "Master Right" ;
+      pg:group fabla2:mainOut;
   ]
   , # AuxBus 1
   [
@@ -116,12 +122,14 @@
       lv2:index 6 ;
       lv2:symbol "aux1_l" ;
       lv2:name "AuxBus1 Left" ;
+      lv2:portProperty lv2:connectionOptional;
   ] , [
       a lv2:AudioPort ;
       a lv2:OutputPort ;
       lv2:index 7 ;
       lv2:symbol "aux1_r" ;
       lv2:name "AuxBus1 Right" ;
+      lv2:portProperty lv2:connectionOptional;
   ]
   , # AuxBus 2
   [
@@ -130,12 +138,14 @@
       lv2:index 8 ;
       lv2:symbol "aux2_l" ;
       lv2:name "AuxBus2 Left" ;
+      lv2:portProperty lv2:connectionOptional;
   ] , [
       a lv2:AudioPort ;
       a lv2:OutputPort ;
       lv2:index 9 ;
       lv2:symbol "aux2_r" ;
       lv2:name "AuxBus2 Right" ;
+      lv2:portProperty lv2:connectionOptional;
   ]
   , # AuxBus 3
   [
@@ -144,12 +154,14 @@
       lv2:index 10 ;
       lv2:symbol "aux3_l" ;
       lv2:name "AuxBus3 Left" ;
+      lv2:portProperty lv2:connectionOptional;
   ] , [
       a lv2:AudioPort ;
       a lv2:OutputPort ;
       lv2:index 11 ;
       lv2:symbol "aux3_r" ;
       lv2:name "AuxBus3 Right" ;
+      lv2:portProperty lv2:connectionOptional;
   ]
   , # AuxBus 4
   [
@@ -158,12 +170,14 @@
       lv2:index 12 ;
       lv2:symbol "aux4_l" ;
       lv2:name "AuxBus4 Left" ;
+      lv2:portProperty lv2:connectionOptional;
   ] , [
       a lv2:AudioPort ;
       a lv2:OutputPort ;
       lv2:index 13 ;
       lv2:symbol "aux4_r" ;
       lv2:name "AuxBus4 Right" ;
+      lv2:portProperty lv2:connectionOptional;
   ]
   
   ,
