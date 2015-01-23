@@ -390,6 +390,8 @@ bool Sample::write( const char* filename )
 
 bool Sample::velocity( float vel )
 {
+  if( vel > 1.0f ) vel = 0.99996;
+  
   if( vel >= velLow &&
       vel <= velHigh )
   {

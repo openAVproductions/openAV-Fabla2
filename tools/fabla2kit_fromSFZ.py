@@ -105,13 +105,13 @@ def processFile( filenameIn ):
       
       items = l.split(' ')
       filename = ""
-      lowVel   = 1
-      highVel  = 127
+      lowVel   = 0.0
+      highVel  = 1.0
       for i in items:
         if i.startswith( 'lovel=' ):
-          lowVel = i[6:]
+          lowVel  = int(i[6:]) / 127.
         if i.startswith( 'hivel=' ):
-          highVel = i[6:]
+          highVel = int(i[6:]) / 127.
         if i.startswith( 'sample=' ):
           filename = i[7:].rstrip()
       

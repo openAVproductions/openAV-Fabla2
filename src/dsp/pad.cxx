@@ -145,13 +145,12 @@ Sample* Pad::getPlaySample( float velocity )
   /// Logic to do round-robin / velocity mapping here
   if( samples.size() > 0 )
   {
-    printf("playing pad %i, with switch mode %i\n", ID_, int(sampleSwitchSystem) );
-    
-    printf("playing pad %i with sampleLayerCounter %i\n", ID_, sampleLayerCounter );
+    //printf("playing pad %i, with switch mode %i\n", ID_, int(sampleSwitchSystem) );
+    //printf("playing pad %i with sampleLayerCounter %i\n", ID_, sampleLayerCounter );
     
     if( sampleSwitchSystem == SS_NONE )
     {
-      printf("playing pad SS_NONE, layer %i\n", sampleLayerCounter);
+      //printf("playing pad SS_NONE, layer %i\n", sampleLayerCounter);
       return samples.at( sampleLayerCounter );
     }
     else if( sampleSwitchSystem == SS_ROUND_ROBIN )
@@ -162,7 +161,7 @@ Sample* Pad::getPlaySample( float velocity )
       if( sampleLayerCounter >= samples.size() )
         sampleLayerCounter = 0;
       
-      printf("playing pad SS_ROUND_ROBIN %i\n", sampleLayerCounter);
+      //printf("playing pad SS_ROUND_ROBIN %i\n", sampleLayerCounter);
       Sample* tmp = samples.at( sampleLayerCounter );
       return tmp;
     }
@@ -175,12 +174,12 @@ Sample* Pad::getPlaySample( float velocity )
         {
           // remember last played layer, for UI updates
           sampleLayerCounter = i;
-          printf("playing pad SS_VELOCITY_LAYERS %i\n", sampleLayerCounter );
+          //printf("playing pad SS_VELOCITY_LAYERS %i\n", sampleLayerCounter );
           return samples.at(i);
         }
         else
         {
-          printf("SS_VELOCITY_LAYERS : sample at %i, *NOT* ok for velocity\n", i );
+          //printf("SS_VELOCITY_LAYERS : sample at %i, *NOT* ok for velocity\n", i );
         }
       }
       
