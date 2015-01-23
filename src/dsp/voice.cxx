@@ -395,11 +395,21 @@ void Voice::process()
   
   float* outL = dsp->controlPorts[OUTPUT_L];
   float* outR = dsp->controlPorts[OUTPUT_R];
+  float* aux1L = dsp->controlPorts[AUXBUS1_L];
+  float* aux1R = dsp->controlPorts[AUXBUS1_R];
+  
+  float aux1s = pad_->sends[0];
   
   for(int i = activeCountdown; i < dsp->nframes; i++ )
   {
-    outL[i] += voiceBuffer[             i] * adsrVal;
-    outR[i] += voiceBuffer[dsp->nframes+i] * adsrVal;
+    float pfL = voiceBuffer[             i] * adsrVal;
+    float pfR = voiceBuffer[dsp->nframes+i] * adsrVal;
+    
+    aux1L[i] = pfL * aux1s;
+    aux1R[i] = pfR * aux1s;
+    
+    outL[i] += pfL;
+    outR[i] += pfR;
     
     // ADSR processes first sample *before* the filter set section.
     adsrVal = adsr->process();
