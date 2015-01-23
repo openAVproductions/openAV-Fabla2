@@ -8,6 +8,7 @@
 
 #include "ui/fabla2_ui.hxx"
 #include "ui/pad.hxx"
+#include "ui/fader.hxx"
 #include "ui/mixstrip.hxx"
 
 #include "plotter.hxx"

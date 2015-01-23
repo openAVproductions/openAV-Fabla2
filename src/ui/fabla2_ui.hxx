@@ -12,6 +12,7 @@
 namespace Avtk
 {
   class Pad;
+  class Fader;
   class Widget;
   class MixStrip;
 };
@@ -55,7 +56,7 @@ class TestUI : public Avtk::UI
     Avtk::Dial* masterPitch; // not shown
     
     // Right
-    Avtk::Slider* masterVolume;
+    Avtk::Fader* masterVolume;
     
     
     // sample info
@@ -104,17 +105,17 @@ class TestUI : public Avtk::UI
     
     Avtk::Button* padPlay;
     Avtk::Button* padMute;
-    Avtk::Slider* padVolume;
+    Avtk::Fader* padVolume;
     
     Avtk::Widget* padSends;
     Avtk::Widget* padMaster;
     
     // Sample / File loading screen
-    Avtk::Box* sampleViewHeader;
+    Avtk::Box*    sampleViewHeader;
     Avtk::Scroll* sampleDirScroll;
-    Avtk::List* listSampleDirs;
+    Avtk::List*   listSampleDirs;
     Avtk::Scroll* sampleFileScroll;
-    Avtk::List* listSampleFiles;
+    Avtk::List*   listSampleFiles;
     
     // Live view
     Avtk::Group* liveGroup;
@@ -122,6 +123,7 @@ class TestUI : public Avtk::UI
     
     // pad - tracks
     Avtk::MixStrip* mixStrip[16];
+    Avtk::Fader*    padFaders[16];
     Avtk::Dial* auxDials[16*4];
     
     // AuxBus tracks

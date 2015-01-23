@@ -5,6 +5,7 @@
 #include "theme.hxx"
 
 #include "pad.hxx"
+#include "fader.hxx"
 #include "mixstrip.hxx"
 
 // include the data files for the header images
@@ -251,7 +252,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   padMute->clickMode( Widget::CLICK_TOGGLE );
   padMute->theme( theme( 1 ) );
   wy += 55-36;
-  padVolume = new Avtk::Slider( this, wx+10, wy, 25, 100,  "PadVolume" );
+  padVolume = new Avtk::Fader( this, wx+10, wy, 25, 100,  "PadVolume" );
   padVolume->clickMode( Widget::CLICK_NONE );
   padVolume->value( 0.75 );
   
@@ -370,6 +371,11 @@ TestUI::TestUI( PuglNativeWindow parent ):
     auxDials[16+i]->theme( theme( 2 ) );
     auxDials[32+i]->theme( theme( 3 ) );
     auxDials[48+i]->theme( theme( 4 ) );
+    
+    my += mw*5;
+    
+    // pad faders
+    padFaders[i] = new Avtk::Fader( this, mx + 3, my, mw, 120, "Vol" );
   }
   
   wx = 82;
@@ -403,7 +409,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waste->clickMode( Widget::CLICK_NONE );
   wy += 18;
   
-  masterVolume = new Avtk::Slider( this, wx+10, wy, 25, 100,  "Master Volume" );
+  masterVolume = new Avtk::Fader( this, wx+10, wy, 25, 100,  "Master Volume" );
   masterVolume->clickMode( Widget::CLICK_NONE );
   masterVolume->value( 0.75 );
   
