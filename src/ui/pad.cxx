@@ -51,32 +51,33 @@ void Pad::draw( cairo_t* cr )
     cairo_set_line_width(cr, theme_->lineWidthWide()*3 );
     cairo_stroke(cr);
   }
-  
-  // Draw label
-  cairo_text_extents_t extents;
-  cairo_set_font_size(cr, 15.0);
-  cairo_text_extents(cr, label(), &extents);
-  cairo_move_to(cr,
-                (x_ + w_ / 2) - extents.width / 2 - 2,
-                (y_ + h_ / 2) + extents.height / 2 - 2);
-  
-  if( !value() )
-  {
-    theme_->color( cr, FG );
-  }
   else
   {
-    if( loaded_ )
+    // Draw label
+    cairo_text_extents_t extents;
+    cairo_set_font_size(cr, 15.0);
+    cairo_text_extents(cr, label(), &extents);
+    cairo_move_to(cr,
+                  (x_ + w_ / 2) - extents.width / 2 - 2,
+                  (y_ + h_ / 2) + extents.height / 2 - 2);
+    
+    if( !value() )
     {
-      cairo_set_source_rgb( cr, 1,1,1 );
+      theme_->color( cr, FG );
     }
     else
     {
-      theme_->color( cr, BG_DARK );
+      if( loaded_ )
+      {
+        cairo_set_source_rgb( cr, 1,1,1 );
+      }
+      else
+      {
+        theme_->color( cr, BG_DARK );
+      }
     }
+    cairo_show_text( cr, label() );
   }
-  cairo_show_text( cr, label() );
-  
   cairo_restore( cr );
 }
 

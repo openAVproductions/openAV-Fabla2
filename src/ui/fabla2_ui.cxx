@@ -717,6 +717,24 @@ void TestUI::writePadPlayStop( bool noteOn, int bank, int pad, int layer )
   write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 }
 
+void TestUI::writeAtomForPad( int eventURI, int pad, float value )
+{
+  uint8_t obj_buf[UI_ATOM_BUF_SIZE];
+  lv2_atom_forge_set_buffer(&forge, obj_buf, UI_ATOM_BUF_SIZE);
+  LV2_Atom_Forge_Frame frame;
+  LV2_Atom* msg = (LV2_Atom*)lv2_atom_forge_object( &forge, &frame, 0, eventURI);
+  
+  lv2_atom_forge_key(&forge, uris.fabla2_bank);
+  lv2_atom_forge_int(&forge, currentBank );
+  lv2_atom_forge_key(&forge, uris.fabla2_pad);
+  lv2_atom_forge_int(&forge, pad );
+  lv2_atom_forge_key(&forge, uris.fabla2_value);
+  lv2_atom_forge_float(&forge, value );
+  lv2_atom_forge_pop(&forge, &frame);
+  
+  write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
+}
+
 void TestUI::writeAtom( int eventURI, float value )
 {
   uint8_t obj_buf[UI_ATOM_BUF_SIZE];
@@ -962,6 +980,11 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
         }
       }
       
+      // check padFaders
+      if( w == padFaders[i] )
+      {
+        writeAtomForPad( uris.fabla2_PadVolume, i, tmp );
+      }
       
       // check pads
       if( w == pads[i] )

@@ -405,6 +405,15 @@ void Fabla2DSP::writePadsState( int b, int p, Pad* pad )
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_value );
   lv2_atom_forge_float(&lv2->forge, pad->loaded() );
   
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadAuxBus1 );
+  lv2_atom_forge_float(&lv2->forge, pad->sends[0] );
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadAuxBus2 );
+  lv2_atom_forge_float(&lv2->forge, pad->sends[1] );
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadAuxBus3 );
+  lv2_atom_forge_float(&lv2->forge, pad->sends[2] );
+  lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadAuxBus4 );
+  lv2_atom_forge_float(&lv2->forge, pad->sends[3] );
+  
   lv2_atom_forge_pop(&lv2->forge, &frame);
 }
 
@@ -615,6 +624,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
     pad->checkAll();
     
     padRefreshLayers( b, p );
+    writePadsState( b, p, pad );
     
     // TODO - refactor away yasper<ptr> stuff, to manually de-alloc
     //delete s;
@@ -624,6 +634,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
   }
   else if(       URI == uris->fabla2_PadVolume ) {
     pad->volume = v;
+    writePadsState( b, p, pad );
   }
   else if(       URI == uris->fabla2_PadAuxBus1 ) {
     pad->sends[0] = v;
@@ -702,6 +713,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
   else if(  URI == uris->fabla2_RequestUiSampleState ) {
     tx_waveform( b, p, l, s->getWaveform() );
     padRefreshLayers( b, p );
+    writePadsState( b, p, pad );
     writeSampleState( b, p, l, pad, s );
   }
 }

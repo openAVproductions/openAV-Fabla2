@@ -218,23 +218,44 @@ static void fabla2_port_event(LV2UI_Handle handle,
       //const LV2_Atom* aName       = 0;
       const LV2_Atom* aVol        = 0;
       const LV2_Atom* aLoaded     = 0;
+      const LV2_Atom* aux1        = 0;
+      const LV2_Atom* aux2        = 0;
+      const LV2_Atom* aux3        = 0;
+      const LV2_Atom* aux4        = 0;
+      
       const int n_props  = lv2_atom_object_get( obj,
             ui->uris.fabla2_bank              , &aBank,
             ui->uris.fabla2_pad               , &aPad,
             ui->uris.fabla2_PadVolume         , &aVol,
             ui->uris.fabla2_value             , &aLoaded,
+            ui->uris.fabla2_PadAuxBus1        , &aux1,
+            ui->uris.fabla2_PadAuxBus2        , &aux2,
+            ui->uris.fabla2_PadAuxBus3        , &aux3,
+            ui->uris.fabla2_PadAuxBus4        , &aux4,
             0 );
       
-      if( n_props == 4 )
+      if( n_props == 8 )
       {
         int bank = ((const LV2_Atom_Int*)aBank)->body;
         int pad  = ((const LV2_Atom_Int*)aPad )->body;
         if( bank == ui->currentBank )
         {
-          if( ui->currentPad == pad )
-            ui->padVolume->value( ((const LV2_Atom_Float*)aVol)->body );
+          float vol= ((const LV2_Atom_Float*)aVol)->body;
+          float a1 = ((const LV2_Atom_Float*)aux1)->body;
+          float a2 = ((const LV2_Atom_Float*)aux2)->body;
+          float a3 = ((const LV2_Atom_Float*)aux3)->body;
+          float a4 = ((const LV2_Atom_Float*)aux4)->body;
           
+          if( ui->currentPad == pad )
+            ui->padVolume->value( vol );
+          
+          ui->padFaders[pad]->value( vol );
           ui->pads[pad]->loaded( ((const LV2_Atom_Int*)aLoaded)->body );
+          
+          ui->auxDials[16*0+pad]->value( a1 );
+          ui->auxDials[16*1+pad]->value( a2 );
+          ui->auxDials[16*2+pad]->value( a3 );
+          ui->auxDials[16*3+pad]->value( a4 );
         }
       }
     }
@@ -311,7 +332,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
       if( aPad )
       {
         pad = ((const LV2_Atom_Int*)aPad)->body;
-      } 
+      }
       
       if( aGain && aPan && aPitch && aStartPoint )
       {
