@@ -22,6 +22,10 @@ def processFile( filenameIn ):
   
   groupData = ""
   
+  # is in <group> in sfz, but "layer" in Fabla, hence its declared here so we can
+  # transport it between the <group> and <region> parts.
+  pan = 0
+  
   for l in sfz:
     if l.startswith("//"):
       # Comment: ignore
@@ -34,7 +38,8 @@ def processFile( filenameIn ):
         groupData += ''',"nLayers": ''' + str(layer)
         groupData += '},'
       
-      
+      # reset default group options
+      pan = 0
       layer = 0
       boolFirstRegion = 1
       
@@ -53,7 +58,7 @@ def processFile( filenameIn ):
           pass
         
         if i.startswith( 'pan=' ):
-          #print( i[4:] )
+          pan = i[4:]
           pass
         
         if i.startswith( 'loop_mode=' ):
@@ -124,7 +129,8 @@ def processFile( filenameIn ):
       groupData += '{'
       groupData += '''"filename": "''' + filename + '''",'''
       groupData += '''"velHigh": ''' + str(highVel) + ''','''
-      groupData += '''"velLow": ''' + str(lowVel) + ''''''
+      groupData += '''"velLow": ''' + str(lowVel) + ''','''
+      groupData += '''"pan": ''' + str( int(pan)/200.+0.5) # -100,0,100 to 0.0, 0.5, 1.0 mapping
       groupData += '}\n'
       
       layer = layer + 1
