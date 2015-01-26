@@ -111,7 +111,7 @@ fabla2_save(LV2_Handle                 instance,
       for(int l = 0; l < pad->nLayers(); l++ )
       {
         picojson::object pjLayer;
-        Sample* s = pad->layer( i );
+        Sample* s = pad->layer( l );
         
         /// write Layer / Sample specific things
         pjLayer["name"            ] = picojson::value( s->getName() );

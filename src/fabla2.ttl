@@ -13,7 +13,9 @@
 @prefix work:  <http://lv2plug.in/ns/ext/worker#> .
 @prefix rsz:   <http://lv2plug.in/ns/ext/resize-port#> .
 @prefix pg:    <http://lv2plug.in/ns/ext/port-groups#> .
+@prefix state: <http://lv2plug.in/ns/ext/state#> .
 
+@prefix auxbus:<http://www.openavproductions.com/auxbus#> .
 @prefix fabla2:<http://www.openavproductions.com/fabla2#> .
 
 <http://www.openavproductions.com/fabla2#gui>
@@ -53,7 +55,8 @@
   lv2:requiredFeature urid:map;
   lv2:requiredFeature work:schedule ;
   
-  lv2:extensionData   work:interface ;
+  lv2:extensionData work:interface ;
+  lv2:extensionData state:interface ;
   
   lv2:optionalFeature lv2:hardRTCapable;
   lv2:optionalFeature epp:supportsStrictBounds ;
@@ -62,6 +65,10 @@
   
   patch:writable fabla2:SampleLoad;
   pg:mainOutput  fabla2:mainOut;
+  pg:StereoGroup fabla2:auxBus1;
+  pg:StereoGroup fabla2:auxBus2;
+  pg:StereoGroup fabla2:auxBus3;
+  pg:StereoGroup fabla2:auxBus4;
   
   lv2:port
   [
@@ -123,6 +130,7 @@
       lv2:symbol "aux1_l" ;
       lv2:name "AuxBus1 Left" ;
       lv2:portProperty lv2:connectionOptional;
+      pg:group fabla2:auxBus1;
   ] , [
       a lv2:AudioPort ;
       a lv2:OutputPort ;
@@ -130,6 +138,7 @@
       lv2:symbol "aux1_r" ;
       lv2:name "AuxBus1 Right" ;
       lv2:portProperty lv2:connectionOptional;
+      pg:group fabla2:auxBus1;
   ]
   , # AuxBus 2
   [
@@ -139,6 +148,7 @@
       lv2:symbol "aux2_l" ;
       lv2:name "AuxBus2 Left" ;
       lv2:portProperty lv2:connectionOptional;
+      pg:group fabla2:auxBus2;
   ] , [
       a lv2:AudioPort ;
       a lv2:OutputPort ;
@@ -146,6 +156,7 @@
       lv2:symbol "aux2_r" ;
       lv2:name "AuxBus2 Right" ;
       lv2:portProperty lv2:connectionOptional;
+      pg:group fabla2:auxBus2;
   ]
   , # AuxBus 3
   [
@@ -155,6 +166,7 @@
       lv2:symbol "aux3_l" ;
       lv2:name "AuxBus3 Left" ;
       lv2:portProperty lv2:connectionOptional;
+      pg:group fabla2:auxBus3;
   ] , [
       a lv2:AudioPort ;
       a lv2:OutputPort ;
@@ -162,6 +174,7 @@
       lv2:symbol "aux3_r" ;
       lv2:name "AuxBus3 Right" ;
       lv2:portProperty lv2:connectionOptional;
+      pg:group fabla2:auxBus3;
   ]
   , # AuxBus 4
   [
@@ -171,6 +184,7 @@
       lv2:symbol "aux4_l" ;
       lv2:name "AuxBus4 Left" ;
       lv2:portProperty lv2:connectionOptional;
+      pg:group fabla2:auxBus4;
   ] , [
       a lv2:AudioPort ;
       a lv2:OutputPort ;
@@ -178,6 +192,7 @@
       lv2:symbol "aux4_r" ;
       lv2:name "AuxBus4 Right" ;
       lv2:portProperty lv2:connectionOptional;
+      pg:group fabla2:auxBus4;
   ]
   
   ,
