@@ -19,7 +19,7 @@ option(AVTK_TESTER_SUPPORT  "Build with Tester Rec/Play"  OFF )
 ### Code compilation starts here
 ################################################################################
 
-ADD_DEFINITIONS( "-DAVTK_VERSION_STRING=\"v ${AVTK_VERSION}\"" )
+ADD_DEFINITIONS( "-DAVTK_VERSION_STRING=\"${AVTK_VERSION}\"" )
 
 include_directories ("${PROJECT_SOURCE_DIR}/avtk/")
 
@@ -51,7 +51,7 @@ pkg_check_modules(X11 x11 REQUIRED)
 include_directories( ${X11_INCLUDE_DIRS} )
 link_directories   ( ${X11_LIBRARY_DIRS} )
 
-SET(CMAKE_CXX_FLAGS "-trigraphs -g -fsanitize=address")
+SET(CMAKE_CXX_FLAGS "-trigraphs -g") # -fsanitize=address
 
 FILE(GLOB src libs/pffft.cxx avtk/*.cxx )
 

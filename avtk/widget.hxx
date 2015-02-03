@@ -40,6 +40,11 @@ class Widget
     /// set a new value and redraws widget
     void value( float v );
     
+    /// sets a default value: right clicking will return the dial to this value
+    // TODO
+    /// unless the right-click mode is changed
+    void defaultValue( float dv );
+    
     /// can be used to change the way the widget behaves for its value().
     /// - FLOAT_0_1, value returns float value 0-1 (default)
     /// - VALUE_INT returns *any* integer value. example: Number, Number::setRange()
@@ -82,8 +87,14 @@ class Widget
       CLICK_VALUE_FROM_Y,   /// click sets value to mouse Y position / widget Y
     };
     
+    enum RClickMode {
+      RCLICK_NONE,          /// Click has no effect
+      RCLICK_VALUE_DEFAULT, /// Resets the value() to the widgets default
+    };
+    
     /// sets the click mode
-    void clickMode( ClickMode cm );
+    void clickMode ( ClickMode  cm  );
+    void rClickMode( RClickMode rcm );
     
     /// 0 when no mouse button is down, otherwise the mouse button pressed
     int mouseButton(){return mouseButtonPressed_;}
@@ -138,6 +149,7 @@ class Widget
     void dragMode( DragMode cdm );
     DragMode dragMode(){return dm;}
     ClickMode clickMode(){return cm;}
+    RClickMode rclickMode(){return rcm;}
     
     /// used for mouse-drag
     int mX, mY;
@@ -159,6 +171,7 @@ class Widget
   
   private:
     ClickMode cm;
+    RClickMode rcm;
     DragMode  dm;
     ValueMode vm;
     
@@ -167,6 +180,7 @@ class Widget
     
     /// widgets current value, to get/set use value() and value( float )
     float value_;
+    float defaultValue_;
     
     float scrollDeltaAmount;
 
