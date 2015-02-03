@@ -394,9 +394,41 @@ TestUI::TestUI( PuglNativeWindow parent ):
     int mh = 276-14;
     std::stringstream s;
     s << i + 1;
-    auxbus[i] = new Avtk::MixStrip( this, mx, my, mw, mh, s.str().c_str() );
-    mixStrip[i]->clickMode( Widget::CLICK_NONE );
-    mixStrip[i]->setNum( s.str() );
+    
+    const char* names[] = 
+    {
+      "Reverb",
+      "Compression",
+      "Sidechain",
+      "Delay",
+    };
+    
+    auxbus[i] = new Avtk::MixStrip( this, mx, my, mw, mh, names[i] );
+    auxbus[i]->clickMode( Widget::CLICK_NONE );
+    auxbus[i]->setNum( s.str().c_str() );
+    
+    // buttons
+    waste = new Avtk::Button( this, mx+3.5, my+2, mw - 7, 16,  "Solo" );
+    waste->clickMode( Widget::CLICK_TOGGLE );
+    waste->theme( theme( 3 ) );
+    waste->value( 1 );
+    waste = new Avtk::Button( this, mx+3.5, my+22, mw - 7, 16,  "Mute" );
+    waste->clickMode( Widget::CLICK_TOGGLE );
+    waste->theme( theme( 1 ) );
+    waste->value( 1 );
+    waste = new Avtk::Button( this, mx+3.5, my+42, mw - 7, 16,  "Audit" );
+    waste->clickMode( Widget::CLICK_TOGGLE );
+    waste->theme( theme( 5 ) );
+    waste->value( 1 );
+    waste = new Avtk::Button( this, mx+3.5, my+62, mw - 7, 16,  "Meta" );
+    waste->clickMode( Widget::CLICK_TOGGLE );
+    waste->theme( theme( 2 ) );
+    waste->value( 1 );
+    
+    // fader
+    mw -= 6;
+    my += 115;
+    auxFaders[i] = new Avtk::Fader( this, mx + 20, my, 30, 120, names[i] );
   }
   liveGroup->visible( false );
   liveGroup->end();
@@ -796,13 +828,7 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
       std::stringstream s;
       s << "Delete layer " << layers->selectedString() << "?";
       
-      if( deleteLayer->run("Delete Layer", s.str().c_str(),
-          Avtk::Dialog::OK_CANCEL, mx, my ) == 1 )
-      {
-        printf("UI writing sampleUnload\n");
-        writeAtom( uris.fabla2_SampleUnload, true );
-        requestSampleState( currentBank, currentPad, currentLayer );
-      }
+      deleteLayer->run("Delete Layer", s.str().c_str(), Avtk::Dialog::OK_CANCEL, mx, my );
     }
     else
     {
@@ -812,6 +838,16 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
         writePadPlayStop( true, currentBank, currentPad, lay );
       else
         writePadPlayStop( false, currentBank, currentPad, lay );
+    }
+  }
+  else if( w == deleteLayer )
+  {
+    // user clicked OK on delete layer dialog
+    if( int(tmp) == 1 )
+    {
+      printf("UI writing sampleUnload\n");
+      writeAtom( uris.fabla2_SampleUnload, true );
+      requestSampleState( currentBank, currentPad, currentLayer );
     }
   }
   else if( w == panicButton )

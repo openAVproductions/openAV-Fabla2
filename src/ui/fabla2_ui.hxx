@@ -128,7 +128,7 @@ class TestUI : public Avtk::UI
     
     // AuxBus tracks
     Avtk::MixStrip* auxbus[4];
-    
+    Avtk::Fader*    auxFaders[4];
     
     
     // shared between views!
