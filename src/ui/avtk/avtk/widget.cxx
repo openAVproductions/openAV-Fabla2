@@ -53,6 +53,7 @@ Widget::Widget( Avtk::UI* ui_, int x, int y, int w, int h, std::string label__) 
   visible_( true ),
   
   value_( 0 ),
+  defaultValue_( 0 ),
   
   callback( Avtk::UI::staticWidgetValueCB ),
   callbackUD( ui_ ),
@@ -62,6 +63,7 @@ Widget::Widget( Avtk::UI* ui_, int x, int y, int w, int h, std::string label__) 
   cm( CLICK_NONE ),
   dm( DM_NONE ),
   vm( VALUE_FLOAT_0_1 ),
+  rcm(RCLICK_VALUE_DEFAULT),
   
   mX(0),
   mY(0),
@@ -114,6 +116,16 @@ int Widget::handle( const PuglEvent* event )
 #ifdef AVTK_DEBUG
           printf("click touches %s, clickMode %i, mouseBtn %i\n", label_.c_str(), clickMode(), mouseButton() );
 #endif // AVTK_DEBUG
+          
+          if( mouseButtonPressed_ == 3 &&
+              rcm == RCLICK_VALUE_DEFAULT )
+          {
+#ifdef AVTK_DEBUG
+            printf("rclick - reset to default - value( %f )\n", defaultValue_ );
+#endif // AVTK_DEBUG
+            value( defaultValue_ );
+          }
+          
           if( cm == CLICK_TOGGLE )
           {
             value( !value() );
@@ -323,9 +335,14 @@ void Widget::value( float v )
   value_ = v;
   
 #ifdef AVTK_DEBUG
-  printf("Widget %s  value() %f\n", label_.c_str(), v );
+  //printf("Widget %s  value() %f\n", label_.c_str(), v );
 #endif
   ui->redraw();
+}
+
+void Widget::defaultValue( float dv )
+{
+  defaultValue_ = dv;
 }
 
 bool Widget::touches( int inx, int iny )
@@ -339,6 +356,11 @@ void Widget::clickMode( ClickMode c )
 #ifdef AVTK_DEBUG
   //printf("Widget %s  clickMode %i, %i\n", label_.c_str(), cm, c);
 #endif // AVTK_DEBUG
+}
+
+void Widget::rClickMode( RClickMode r )
+{
+  rcm = r;
 }
 
 void Widget::visible( bool v )
