@@ -2,6 +2,8 @@
 #ifndef OPENAV_AVTK_WIDGET_HXX
 #define OPENAV_AVTK_WIDGET_HXX
 
+#include "common.hxx"
+
 #include <stdio.h>
 #include <string>
 #include <cairo/cairo.h>
@@ -181,6 +183,7 @@ class Widget
     /// widgets current value, to get/set use value() and value( float )
     float value_;
     float defaultValue_;
+    float auditionValue_;
     
     float scrollDeltaAmount;
 
