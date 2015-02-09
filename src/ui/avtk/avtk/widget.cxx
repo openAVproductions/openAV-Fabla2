@@ -1,6 +1,8 @@
 
 #include "widget.hxx"
 
+#include <math.h>
+
 #include "ui.hxx"
 #include "theme.hxx"
 
@@ -54,6 +56,7 @@ Widget::Widget( Avtk::UI* ui_, int x, int y, int w, int h, std::string label__) 
   
   value_( 0 ),
   defaultValue_( 0 ),
+  auditionValue_( 0 ),
   
   callback( Avtk::UI::staticWidgetValueCB ),
   callbackUD( ui_ ),
@@ -79,7 +82,7 @@ Widget::Widget( Avtk::UI* ui_, int x, int y, int w, int h, std::string label__) 
   
   /// add the widget to the top of the parentStack
   /// parentStack is a stack of Group* widgets. group->end() pops from stack
-  //printf("Widget() %s : adding this to %s\n", label(), ui->parentStackTop()->label() );
+  AVTK_DEV("Widget() %s : adding this to %s\n", label(), ui->parentStackTop()->label() );
   ui->parentStackTop()->add( this );
 }
 
@@ -94,9 +97,8 @@ int Widget::handle( const PuglEvent* event )
   //     !visible_ implies the widget isn't shown: so a user can't interact with it
   if( noHandle_ || !visible_ )
   {
-#ifdef AVTK_DEBUG
-    printf("widget %s noHandle (%i) or visible (%i)\n", label(), int(noHandle_), int(visible_) );
-#endif
+    AVTK_DEV("widget %s noHandle (%i) or visible (%i)\n", label(), int(noHandle_), int(visible_) );
+    
     // no point in calling motion() on a widget that isn't shown, or doesn't handle
     ui->wantsMotionUpdates( this, false );
     return 0;
@@ -113,17 +115,23 @@ int Widget::handle( const PuglEvent* event )
           mouseButtonPressed_ = event->button.button;
           mousePressX = event->button.x;
           mousePressY = event->button.y;
-#ifdef AVTK_DEBUG
-          printf("click touches %s, clickMode %i, mouseBtn %i\n", label_.c_str(), clickMode(), mouseButton() );
-#endif // AVTK_DEBUG
+          AVTK_DEV("click touches %s, clickMode %i, mouseBtn %i\n", label_.c_str(), clickMode(), mouseButton() );
           
           if( mouseButtonPressed_ == 3 &&
               rcm == RCLICK_VALUE_DEFAULT )
           {
-#ifdef AVTK_DEBUG
-            printf("rclick - reset to default - value( %f )\n", defaultValue_ );
-#endif // AVTK_DEBUG
-            value( defaultValue_ );
+            // check value() - if far from default set default, else set previous
+            if( fabsf(value_ - defaultValue_) > 0.00001 )
+            {
+              auditionValue_ = value_;
+              value( defaultValue_ );
+            }
+            else
+            {
+              value( auditionValue_ );
+            }
+            
+            AVTK_DEV("rclick - reset to default - value( %f )\n", defaultValue_ );
           }
           
           if( cm == CLICK_TOGGLE )
@@ -142,9 +150,8 @@ int Widget::handle( const PuglEvent* event )
           {
             float tmp = (event->button.y - y_) / h_/0.92;
             value( tmp );
-#ifdef AVTK_DEBUG
-            printf("Widget::handle() value from Y, %f\n", tmp);
-#endif
+            AVTK_DEV("Widget::handle() value from Y, %f\n", tmp);
+            
             callback( this, callbackUD );
             ui->redraw( this );
           }
@@ -174,18 +181,16 @@ int Widget::handle( const PuglEvent* event )
         // repeated calling.
         ui->wantsMotionUpdates( this, false );
         
-        //printf("click release %s, clickMode %i\n", label_.c_str(), clickMode() );
+        //AVTK_DEV("click release %s, clickMode %i\n", label_.c_str(), clickMode() );
         if( touches( event->button.x, event->button.y ) )
         {
-          //printf("Widget PUGL button release, cm %i\n", cm);
+          //AVTK_DEV("Widget PUGL button release, cm %i\n", cm);
           
           if ( cm == CLICK_MOMENTARY )
           {
             value( 0 );
             ui->redraw();
-#ifdef AVTK_DEBUG
-            //printf("Widget MOMENTARY, redrawn value\n");
-#endif
+            //AVTK_DEV("Widget MOMENTARY, redrawn value\n");
           }
           return 1;
         }
@@ -198,9 +203,7 @@ int Widget::handle( const PuglEvent* event )
         bool scTch = touches( event->scroll.x, event->scroll.y );
         if( scTch && !scrollDisable )
         {
-#ifdef AVTK_DEBUG
-          printf("scroll touch %i, x %lf, y %lf\n", int(scTch), event->scroll.x, event->scroll.y );
-#endif
+          AVTK_DEV("scroll touch %i, x %lf, y %lf\n", int(scTch), event->scroll.x, event->scroll.y );
           float delta = event->scroll.dy / float(scrollDeltaAmount);
           if( scrollInvert )
             delta = -delta;
@@ -218,13 +221,13 @@ int Widget::handle( const PuglEvent* event )
         {
           if (event->key.character == ' ')
           {
-            //printf("pugl space\n");
+            //AVTK_DEV("pugl space\n");
             callback( this, callbackUD );
           }
           else if (event->key.character == 's')
           {
             /*
-            printf("pugl key s\n");
+            AVTK_DEV("pugl key s\n");
             float delta = 1 / 10.f;
             value( value_ - delta );
             ui->redraw( this );
@@ -251,9 +254,7 @@ void Widget::motion( int inX, int inY )
     if( !touches( inX, inY ) )
     {
       static const char* testData = "DragDropTestPayload";
-#ifdef AVTK_DEBUG
-      printf("motion outside widget -> DND?\n");
-#endif // AVTK_DEBUG
+      AVTK_DEV("motion outside widget -> DND?\n");
       ui->dragDropInit( this, strlen( testData ), (void*)testData );
     }
     return;
@@ -267,7 +268,7 @@ void Widget::motion( int inX, int inY )
     if( dragSpeed < 100 )
     {
       dragSpeed = 100; // num of px for "full-scale" drag
-      //printf("dragspeed set to %f\n", dragSpeed);
+      //AVTK_DEV("dragspeed set to %f\n", dragSpeed);
     }
     
     delta = ( mY - inY ) / dragSpeed;
@@ -278,13 +279,13 @@ void Widget::motion( int inX, int inY )
     if( dragSpeed < 100 )
     {
       dragSpeed = 100; // num of px for "full-scale" drag
-      //printf("dragspeed set to %f\n", dragSpeed);
+      //AVTK_DEV("dragspeed set to %f\n", dragSpeed);
     }
     delta = ( inX - mX ) / dragSpeed;
   }
   
   value( value_ + delta );
-  //printf("drag(), delta %f, new value %f\n", delta, value() );
+  //AVTK_DEV("drag(), delta %f, new value %f\n", delta, value() );
   
   mX = inX;
   mY = inY;
@@ -325,7 +326,7 @@ void Widget::value( float v )
   {
     //value_ * valueIntRange + valueIntBase;
     float tmp = (v-valueIntBase) / float(valueIntRange);
-    //printf("VALUE_INT input %f, internal value %f\n", v, tmp );
+    //AVTK_DEV("VALUE_INT input %f, internal value %f\n", v, tmp );
     v = tmp;
   }
   
@@ -334,9 +335,7 @@ void Widget::value( float v )
   
   value_ = v;
   
-#ifdef AVTK_DEBUG
-  //printf("Widget %s  value() %f\n", label_.c_str(), v );
-#endif
+  //AVTK_DEV("Widget %s  value() %f\n", label_.c_str(), v );
   ui->redraw();
 }
 
@@ -354,7 +353,7 @@ void Widget::clickMode( ClickMode c )
 {
   cm = c;
 #ifdef AVTK_DEBUG
-  //printf("Widget %s  clickMode %i, %i\n", label_.c_str(), cm, c);
+  //AVTK_DEV("Widget %s  clickMode %i, %i\n", label_.c_str(), cm, c);
 #endif // AVTK_DEBUG
 }
 
@@ -370,9 +369,8 @@ void Widget::visible( bool v )
 
 void Widget::addToGroup( Group* p, int gin )
 {
-#ifdef AVTK_DEBUG
-  printf("%s adding %s to %s\n", __PRETTY_FUNCTION__, label(), p->label() );
-#endif
+  AVTK_DEV("%s adding %s to %s\n", __PRETTY_FUNCTION__, label(), p->label() );
+  
   groupChild = true;
   parent_ = p;
   groupItemNumber_ = gin;
@@ -386,12 +384,12 @@ void Widget::dragMode( DragMode d )
 Widget::~Widget()
 {
 #ifdef AVTK_DEBUG
-  widgetCounter--;
-  printf("widgetCounter = %i\n", widgetCounter );
+  //widgetCounter--;
+  //AVTK_DEV("widgetCounter = %i\n", widgetCounter );
 #endif
   
 #ifdef AVTK_DEBUG_DTOR
-  printf("%s %s\n", __PRETTY_FUNCTION__, label() );
+  AVTK_DEV("%s %s\n", __PRETTY_FUNCTION__, label() );
 #endif // AVTK_DEBUG
 }
 
