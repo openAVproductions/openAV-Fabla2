@@ -71,7 +71,10 @@ void MixStrip::draw( cairo_t* cr )
     
     //theme_->color( cr, HIGHLIGHT, 0.8 );
     cairo_set_source_rgb( cr, 1,1,1 );
-    cairo_show_text( cr, label() );
+    
+    // cut max lenght
+    std::string l = label();
+    cairo_show_text( cr, l.substr(0, 14).c_str() );
     
     cairo_restore(cr);
   }
