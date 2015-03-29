@@ -334,7 +334,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
         pad = ((const LV2_Atom_Int*)aPad)->body;
       }
       
-      if( aGain && aPan && aPitch && aStartPoint )
+      if( n_props == 24 )
       {
         float tmp = ((const LV2_Atom_Float*)aPadVolume)->body;
         ui->padVolume       ->value( tmp );
@@ -380,11 +380,14 @@ static void fabla2_port_event(LV2UI_Handle handle,
       }
       else
       {
-        //printf("UI NOT setting from DSP ReplyUiSampleState, %i, %i, %i, %i\n", aGain, aPan, aPitch, aStartPoint );
+        // sample-state event was written to the UI was not complete. If we have
+        // a pad, "unload" it in the UI. Blank state
         if( pad != -1 )
           ui->pads[pad]->loaded( false );
         else
-          printf("Fabla2 UI pad == -1");
+        {
+          //printf("Fabla2 UI pad == -1");
+        }
         ui->blankSampleState();
       }
       ui->redraw();
