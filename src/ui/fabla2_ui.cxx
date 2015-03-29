@@ -20,6 +20,9 @@
 // implementation of LV2 Atom writing
 #include "helper.hxx"
 
+// for file browsing
+#include "sofd/libsofd.h"
+
 static void fabla2_widgetCB(Avtk::Widget* w, void* ud);
 
 TestUI::TestUI( PuglNativeWindow parent ):
@@ -275,8 +278,12 @@ TestUI::TestUI( PuglNativeWindow parent ):
   sampleViewHeader = new Avtk::Box( this, wx, wy, 266, 276,  "Sample Browser" );
   wy += 20 + spacer;
   
+  fileViewHome = new Avtk::Button( this, wx     , wy, 50, 23, "Home" );
+  fileViewUp   = new Avtk::Button( this, wx + 55, wy, 50, 23, "Up" );
+  wy += 25;
+  
   // samples folder view
-  sampleDirScroll = new Avtk::Scroll( this, wx, wy, 110, 166, "SampleFilesScroll" );
+  sampleDirScroll = new Avtk::Scroll( this, wx, wy, 110, 166-25, "SampleFilesScroll" );
   
   listSampleDirs = new Avtk::List( this, 82, 73, 110, 216, "Folder" );
   listSampleDirs->mode      ( Group::WIDTH_EQUAL );
@@ -504,8 +511,9 @@ void TestUI::blankSampleState()
 
 void TestUI::loadNewDir( std::string newDir )
 {
+  printf("loadNewDir() %s\n", newDir.c_str() );
   std::vector< std::string > tmp;
-  int error = Avtk::directories( newDir, tmp );
+  int error = Avtk::directories( newDir, tmp, true, true );
   
   if( !error )
   {
@@ -570,19 +578,66 @@ void TestUI::showPadsView()
   requestSampleState( currentBank, currentPad, currentLayer );
 }
 
+/// taken from SOFD example - thanks x42 for this awesome library!
+std::string fabla2_showFileBrowser( std::string dir )
+{
+  Display* dpy = XOpenDisplay (0);
+  if (!dpy) return "";
+  
+  //x_fib_cfg_filter_callback (sofd_filter);
+  x_fib_configure (1, "Open File");
+  x_fib_load_recent ("/tmp/sofd.recent");
+  x_fib_show (dpy, 0, 400, 320);
+  
+  while (1)
+  {
+    XEvent event;
+    while (XPending (dpy) > 0)
+    {
+      XNextEvent (dpy, &event);
+      if (x_fib_handle_events (dpy, &event))
+      {
+        if (x_fib_status () > 0) {
+          char *fn = x_fib_filename ();
+          printf ("OPEN '%s'\n", fn);
+          x_fib_add_recent (fn, time (NULL));
+          free (fn);
+        }
+      }
+    }
+    if (x_fib_status ()) {
+      break;
+    }
+    usleep (80000);
+  }
+  x_fib_close (dpy);
+
+  x_fib_save_recent ("/tmp/sofd.recent");
+
+  x_fib_free_recent ();
+  XCloseDisplay (dpy);
+
+  return "";
+}
+
 void TestUI::showFileView()
 {
   liveGroup->visible( false );
   padsGroup->visible( false );
   
+  // sofd temp replacing in-UI browser
+  sampleBrowseGroup->visible( false );
+  
   waveformGroup->visible( true );
-  sampleBrowseGroup->visible( true );
   sampleControlGroup->visible( true );
   
   ui->redraw();
   
+  /*
   loadNewDir( currentDir );
   sampleFileScroll->set( listSampleFiles );
+  */
+  printf("spawming SOFD now!\n");
 }
 
 void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
@@ -849,6 +904,18 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
       writeAtom( uris.fabla2_SampleUnload, true );
       requestSampleState( currentBank, currentPad, currentLayer );
     }
+  }
+  else if( w == fileViewUp )
+  {
+    std::string newDir;
+    std::string current = listSampleDirs->selectedString();
+    Avtk::fileUpLevel( current, newDir );
+    loadNewDir( newDir );
+  }
+  else if( w == fileViewHome )
+  {
+    std::string newDir = getenv("HOME");
+    loadNewDir( newDir );
   }
   else if( w == panicButton )
   {

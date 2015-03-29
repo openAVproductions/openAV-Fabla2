@@ -37,20 +37,23 @@ pkg_check_modules(SAMPLERATE samplerate REQUIRED)
 include_directories( ${SAMPLERATE_INCLUDE_DIRS}  )
 link_directories   ( ${SAMPLERATE_LIBRARY_DIRS}  )
 
+
 ADD_DEFINITIONS( "-DPUGL_HAVE_CAIRO" )
 pkg_check_modules(CAIRO cairo REQUIRED)
 include_directories( ${CAIRO_INCLUDE_DIRS})
 link_directories   ( ${CAIRO_LIBRARY_DIRS})
 
 pkg_check_modules(X11 x11 REQUIRED)
+ADD_DEFINITIONS( "-DHAVE_X11" )
 include_directories( ${X11_INCLUDE_DIRS} )
 link_directories   ( ${X11_LIBRARY_DIRS} )
 
+SET(CMAKE_C_FLAGS "-fPIC" ${CFLAGS}  )
 SET(CMAKE_CXX_FLAGS "-g -trigraphs -Wuninitialized -Wl,-z,nodelete  -Wl,--no-undefined -fPIC -shared ")
 
 # for profiling runtime
-ADD_DEFINITIONS( "-DOPENAV_PROFILE" )
-ADD_DEFINITIONS( "-DPROFINY_CALL_GRAPH_PROFILER" )
+#ADD_DEFINITIONS( "-DOPENAV_PROFILE" )
+#ADD_DEFINITIONS( "-DPROFINY_CALL_GRAPH_PROFILER" )
 #ADD_DEFINITIONS( "-DPROFINY_FLAT_PROFILER" )
 
 ######################
@@ -68,8 +71,11 @@ IF( FABLA2_TESTS )
   configure_file( "src/dsp/tests/test.wav" "test.wav" COPYONLY)
 
 ELSE()
+
+  SET(CMAKE_C_FLAGS "-fPIC" ${CFLAGS}  )
+  
   FILE(GLOB srcDSP src/dsp.cxx src/lv2_work.cxx src/lv2_state.cxx src/dsp/*.cxx )
-  FILE(GLOB srcUI  src/ui.cxx  src/ui/*.cxx src/ui/avtk/avtk/*.cxx src/ui/avtk/avtk/pugl/pugl_x11.c )
+  FILE(GLOB srcUI  src/ui.cxx src/ui/sofd/libsofd.c src/ui/*.cxx src/ui/avtk/avtk/*.cxx src/ui/avtk/avtk/pugl/pugl_x11.c )
 
   ADD_LIBRARY( fabla2   SHARED ${srcDSP} )
   ADD_LIBRARY( fabla2ui SHARED ${srcUI}  )

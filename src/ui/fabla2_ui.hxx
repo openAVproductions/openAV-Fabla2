@@ -116,6 +116,8 @@ class TestUI : public Avtk::UI
     Avtk::List*   listSampleDirs;
     Avtk::Scroll* sampleFileScroll;
     Avtk::List*   listSampleFiles;
+    Avtk::Button* fileViewHome;
+    Avtk::Button* fileViewUp;
     
     // Live view
     Avtk::Group* liveGroup;
