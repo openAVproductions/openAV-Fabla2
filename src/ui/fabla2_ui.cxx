@@ -21,7 +21,9 @@
 #include "helper.hxx"
 
 // for file browsing
+extern "C" {
 #include "sofd/libsofd.h"
+}
 
 static void fabla2_widgetCB(Avtk::Widget* w, void* ud);
 
@@ -581,13 +583,18 @@ void TestUI::showPadsView()
 /// taken from SOFD example - thanks x42 for this awesome library!
 std::string fabla2_showFileBrowser( std::string dir )
 {
-  Display* dpy = XOpenDisplay (0);
-  if (!dpy) return "";
-  
+  Display* dpy = XOpenDisplay(0);
+  if (!dpy)
+  {
+    return "";
+  }
   //x_fib_cfg_filter_callback (sofd_filter);
   x_fib_configure (1, "Open File");
   x_fib_load_recent ("/tmp/sofd.recent");
   x_fib_show (dpy, 0, 400, 320);
+  
+  // stores result to return
+  std::string ret;
   
   while (1)
   {
@@ -599,8 +606,10 @@ std::string fabla2_showFileBrowser( std::string dir )
       {
         if (x_fib_status () > 0) {
           char *fn = x_fib_filename ();
-          printf ("OPEN '%s'\n", fn);
+          //printf ("OPEN '%s'\n", fn);
           x_fib_add_recent (fn, time (NULL));
+          
+          ret = fn;
           free (fn);
         }
       }
@@ -611,13 +620,13 @@ std::string fabla2_showFileBrowser( std::string dir )
     usleep (80000);
   }
   x_fib_close (dpy);
-
+  
   x_fib_save_recent ("/tmp/sofd.recent");
-
+  
   x_fib_free_recent ();
   XCloseDisplay (dpy);
-
-  return "";
+  
+  return ret;
 }
 
 void TestUI::showFileView()
@@ -638,6 +647,18 @@ void TestUI::showFileView()
   sampleFileScroll->set( listSampleFiles );
   */
   printf("spawming SOFD now!\n");
+  std::string chosen = fabla2_showFileBrowser( currentDir );
+  
+  if( chosen.size() > 0 )
+  {
+    printf("SOFD returned %s\n", chosen.c_str() );
+#define OBJ_BUF_SIZE 1024
+    uint8_t obj_buf[OBJ_BUF_SIZE];
+    lv2_atom_forge_set_buffer(&forge, obj_buf, OBJ_BUF_SIZE);
+    LV2_Atom* msg = writeSetFile( &forge, &uris, currentBank, currentPad, chosen.c_str() );
+    write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
+  }
+  
 }
 
 void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
@@ -951,16 +972,19 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   }
   else if( w == listSampleFiles )
   {
+    /*
+    // TMP Replaced by SOFD
     std::string selected = listSampleFiles->selectedString();
     std::stringstream s;
     s << currentFilesDir << "/" << strippedFilenameStart << selected;
     printf("UI sending sample load: %s\n", s.str().c_str() );
-
+    
 #define OBJ_BUF_SIZE 1024
     uint8_t obj_buf[OBJ_BUF_SIZE];
     lv2_atom_forge_set_buffer(&forge, obj_buf, OBJ_BUF_SIZE);
     LV2_Atom* msg = writeSetFile( &forge, &uris, currentBank, currentPad, s.str() );
     write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
+    */
   }
   else if( w == offGroup )
   {
