@@ -646,12 +646,12 @@ void TestUI::showFileView()
   loadNewDir( currentDir );
   sampleFileScroll->set( listSampleFiles );
   */
-  printf("spawming SOFD now!\n");
+  //printf("spawming SOFD now!\n");
   std::string chosen = fabla2_showFileBrowser( currentDir );
   
   if( chosen.size() > 0 )
   {
-    printf("SOFD returned %s\n", chosen.c_str() );
+    //printf("SOFD returned %s\n", chosen.c_str() );
 #define OBJ_BUF_SIZE 1024
     uint8_t obj_buf[OBJ_BUF_SIZE];
     lv2_atom_forge_set_buffer(&forge, obj_buf, OBJ_BUF_SIZE);
@@ -660,6 +660,7 @@ void TestUI::showFileView()
     
     // return to pads view for triggering
     showPadsView();
+    uiViewGroup->value( 1 );
   }
   
 }
