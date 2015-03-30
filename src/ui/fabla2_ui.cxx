@@ -437,7 +437,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
     // fader
     mw -= 6;
     my += 115;
-    auxFaders[i] = new Avtk::Fader( this, mx + 20, my, 30, 120, names[i] );
+    auxFaders[i] = new Avtk::Fader( this, mx + 8, my, 30, 140, names[i] );
   }
   liveGroup->visible( false );
   liveGroup->end();
@@ -657,6 +657,9 @@ void TestUI::showFileView()
     lv2_atom_forge_set_buffer(&forge, obj_buf, OBJ_BUF_SIZE);
     LV2_Atom* msg = writeSetFile( &forge, &uris, currentBank, currentPad, chosen.c_str() );
     write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
+    
+    // return to pads view for triggering
+    showPadsView();
   }
   
 }
