@@ -21,6 +21,7 @@
 #include "voice.hxx"
 
 #include <math.h>
+#include <assert.h>
 #include <stdio.h>
 
 #include "fabla2.hxx"
@@ -71,6 +72,8 @@ bool Voice::matches( int bank, int pad )
 
 void Voice::playLayer( Pad* p, int layer )
 {
+  assert( p );
+  
   pad_ = p;
   
   sampler->playLayer( p, layer );
@@ -120,6 +123,8 @@ void Voice::playLayer( Pad* p, int layer )
 
 void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
 {
+  assert( p );
+  
   // useful for mute groups etc
   bankInt_ = bankInt;
   padInt_ = padInt;
@@ -312,6 +317,8 @@ void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
 
 void Voice::stopIfSample( Sample* s )
 {
+  assert( s );
+  
   Sample* vs = sampler->getSample();
   if( s == vs )
   {

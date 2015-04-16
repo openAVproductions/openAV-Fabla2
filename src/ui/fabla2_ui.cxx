@@ -420,19 +420,19 @@ TestUI::TestUI( PuglNativeWindow parent ):
     waste = new Avtk::Button( this, mx+3.5, my+2, mw - 7, 16,  "Solo" );
     waste->clickMode( Widget::CLICK_TOGGLE );
     waste->theme( theme( 3 ) );
-    waste->value( 1 );
+    //waste->value( 1 );
     waste = new Avtk::Button( this, mx+3.5, my+22, mw - 7, 16,  "Mute" );
     waste->clickMode( Widget::CLICK_TOGGLE );
     waste->theme( theme( 1 ) );
-    waste->value( 1 );
+    //waste->value( 1 );
     waste = new Avtk::Button( this, mx+3.5, my+42, mw - 7, 16,  "Audit" );
     waste->clickMode( Widget::CLICK_TOGGLE );
     waste->theme( theme( 5 ) );
-    waste->value( 1 );
+   // waste->value( 1 );
     waste = new Avtk::Button( this, mx+3.5, my+62, mw - 7, 16,  "Meta" );
     waste->clickMode( Widget::CLICK_TOGGLE );
     waste->theme( theme( 2 ) );
-    waste->value( 1 );
+   // waste->value( 1 );
     
     // fader
     mw -= 6;

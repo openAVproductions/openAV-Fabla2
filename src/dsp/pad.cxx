@@ -23,6 +23,7 @@
 #include "fabla2.hxx"
 #include "sample.hxx"
 #include <stdio.h>
+#include <assert.h>
 #include <string.h>
 
 #ifdef FABLA2_COMPONENT_TEST
@@ -60,6 +61,8 @@ Pad::Pad( Fabla2DSP* d, int rate, int ID ) :
 
 void Pad::remove( Sample* s )
 {
+  assert( s );
+  
   for( int i = 0; i < samples.size(); ++i)
   {
     if( samples.at(i) == s )
@@ -89,6 +92,8 @@ void Pad::setName( const char* n )
 
 void Pad::add( Sample* s )
 {
+  assert( s );
+  
   loaded_ = true;
   
   //printf("%s, b %i, p %i, s = %i\n", __PRETTY_FUNCTION__, bank_, ID_, s );
