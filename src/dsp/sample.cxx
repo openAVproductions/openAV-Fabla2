@@ -63,6 +63,16 @@ static void fabla2_deinterleave( int size, const float* all, std::vector<float>&
   }
 }
 
+const float* Sample::getWaveform()
+{
+  if( dirty )
+  {
+    recacheWaveform();
+    dirty = false;
+  }
+  return &waveformData[0];
+}
+
 void Sample::recacheWaveform()
 {
 #ifdef FABLA2_COMPONENT_TEST

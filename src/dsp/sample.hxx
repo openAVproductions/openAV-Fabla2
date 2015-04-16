@@ -60,15 +60,7 @@ class Sample
     const int     getStartPoint(){return startPoint*frames;}
     
     /// returns the waveform buffer, a mono-mixdown resampled to fit the window
-    const float* getWaveform()
-    {
-      if( dirty )
-      {
-        recacheWaveform();
-        dirty = false;
-      }
-      return &waveformData[0];
-    }
+    const float* getWaveform();
     
     /// velocity functions
     bool velocity( float vel ); // returns true if vel is in this samples range

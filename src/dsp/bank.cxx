@@ -21,6 +21,7 @@
 #include "bank.hxx"
 
 #include "pad.hxx"
+#include <assert.h>
 #include <stdio.h>
 #include <cstring>
 
@@ -41,6 +42,7 @@ void Bank::name( const char* name )
 
 void Bank::pad( Pad* p )
 {
+  assert( p );
 #ifdef FABLA2_DEBUG
   //printf("%s : %i : Adding pad %i\n", __PRETTY_FUNCTION__, ID_, p->ID() );
 #endif // FABLA2_DEBUG
