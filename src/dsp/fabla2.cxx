@@ -394,6 +394,8 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
 
 void Fabla2DSP::writePadsState( int b, int p, Pad* pad )
 {
+  assert( pad );
+  
   LV2_Atom_Forge_Frame frame;
   lv2_atom_forge_frame_time( &lv2->forge, 0 );
   
@@ -428,6 +430,9 @@ void Fabla2DSP::writePadsState( int b, int p, Pad* pad )
 
 void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
 {
+  assert( pad );
+  assert( s );
+  
   LV2_Atom_Forge_Frame frame;
   lv2_atom_forge_frame_time( &lv2->forge, 0 );
   
@@ -559,6 +564,8 @@ void Fabla2DSP::padRefreshLayers( int bank, int pad )
 
 void Fabla2DSP::tx_waveform( int b, int p, int l, const float* data )
 {
+  assert( data );
+  
   LV2_Atom_Forge_Frame frame;
   
   lv2_atom_forge_frame_time(&lv2->forge, 0);

@@ -21,6 +21,7 @@
 #include "library.hxx"
 
 #include "bank.hxx"
+#include <assert.h>
 #include <stdio.h>
 
 namespace Fabla2
@@ -38,6 +39,7 @@ Library::Library( Fabla2DSP* d, int rate ) :
 
 void Library::bank( Bank* b )
 {
+  assert( b );
   banks.push_back( b );
 }
 

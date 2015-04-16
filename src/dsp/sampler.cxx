@@ -26,6 +26,7 @@
 #include "sample.hxx"
 
 #include <math.h>
+#include <assert.h>
 #include <stdio.h>
 
 namespace Fabla2
@@ -50,6 +51,8 @@ Sampler::Sampler( Fabla2DSP* d, int rate ) :
 
 void Sampler::playLayer( Pad* p, int layer )
 {
+  assert( p );
+  
   playIndex = 0;
   //frames = 0;
   
@@ -63,6 +66,8 @@ void Sampler::playLayer( Pad* p, int layer )
 
 void Sampler::play( Pad* p, float velocity )
 {
+  assert( p );
+  
 #ifdef FABLA2_COMPONENT_TEST
   printf("%s : Pad ID %i\n", __PRETTY_FUNCTION__, p->ID() );
 #endif
@@ -93,6 +98,9 @@ long Sampler::getRemainingFrames()
 
 int Sampler::process(int nframes, float* L, float* R)
 {
+  assert( L );
+  assert( R  );
+  
   if( !sample )
   {
     // no sample loaded on the Pad that this Sampler represents
