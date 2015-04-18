@@ -81,10 +81,12 @@ void Sample::recacheWaveform()
   
   printf("Recache waveform with %i frames\n", frames );
   
+  /*
   memset( waveformData, 0 , sizeof(float) * FABLA2_UI_WAVEFORM_PX );
   
   printf("Recache returning!\n" );
   return;
+  */
   
   int sampsPerPix = frames / FABLA2_UI_WAVEFORM_PX;
   
@@ -93,12 +95,20 @@ void Sample::recacheWaveform()
   // counts pixels in output waveform
   int p = 0;
   
-  for( int f = 0; f < frames; f++ )
+  if( frames > 20000 )
+  {
+    printf("too many samples to show waveform\n");
+    return;
+  }
+  
+  for( int f = 0; f < frames-1; f++ )
   {
     float tmp = audioMono[f];
     
+    /*
     if ( channels == 2 )
       tmp += audioStereoRight[f];
+    */
     
     float t = fabsf(tmp);
     
@@ -110,9 +120,9 @@ void Sample::recacheWaveform()
       p = FABLA2_UI_WAVEFORM_PX - 1;
   }
   
-  printf("RECACHE: done, frames %i, sampsPerPx %i,  p %i\n", frames, sampsPerPix, p );
+  //printf("RECACHE: done, frames %i, sampsPerPx %i,  p %i\n", frames, sampsPerPix, p );
   
-  Plotter::plot( "forLoop", FABLA2_UI_WAVEFORM_PX, &waveformData[0] );
+  //Plotter::plot( "forLoop", FABLA2_UI_WAVEFORM_PX, &waveformData[0] );
   
   /*
   // loop over each pixel value we need
@@ -152,7 +162,7 @@ void Sample::recacheWaveform()
   float normalizeFactor = 1;
   if( highestPeak > 0.001 ) // avoid divide-by-zero
     normalizeFactor = (1.f / highestPeak);
-  printf("normalizing with highestPeak %f: nomalizeFactor %f\n", highestPeak, normalizeFactor );
+  //printf("normalizing with highestPeak %f: nomalizeFactor %f\n", highestPeak, normalizeFactor );
   
   // loop over each pixel and normalize it
   for( int p = 0; p < FABLA2_UI_WAVEFORM_PX; p++ )
@@ -160,7 +170,7 @@ void Sample::recacheWaveform()
     waveformData[p] = (waveformData[p] * normalizeFactor) - 1.0;
   }
   
-  Plotter::plot( getName(), FABLA2_UI_WAVEFORM_PX, &waveformData[0] );
+  //Plotter::plot( getName(), FABLA2_UI_WAVEFORM_PX, &waveformData[0] );
   
   printf("Recache waveform with %i frames : DONE!\n", frames );
 }
@@ -169,7 +179,7 @@ void Sample::recacheWaveform()
 void Sample::resample( int fromSr, std::vector<float>& buf )
 {
   /// resample audio
-  printf("Resampling from %i to %i\n", fromSr, sr);
+  //printf("Resampling from %i to %i\n", fromSr, sr);
   
   float resampleRatio = float( sr ) / fromSr;
   std::vector<float> resampled( buf.size() * resampleRatio );
@@ -229,6 +239,8 @@ void Sample::init()
   
   // set to true so we recacheWaveform() when requested for it
   dirty = true;
+  
+  //recacheWaveform();
 }
 
 Sample::Sample( Fabla2DSP* d, int rate, const char* nme, int size, float* data ) :
