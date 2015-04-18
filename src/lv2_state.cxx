@@ -226,7 +226,7 @@ fabla2_restore(LV2_Handle                  instance,
   
   if( jsonSource )
   {
-    printf("\n\n%s\n\n", jsonSource );
+    //printf("\n\n%s\n\n", jsonSource );
     
     char* json = (char*)malloc(strlen(jsonSource)+1);
     strcpy(json, jsonSource);

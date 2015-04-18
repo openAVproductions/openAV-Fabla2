@@ -96,6 +96,9 @@ class Fabla2DSP
   private:
     URIs* uris;
     
+    /// when true, AuxBus audio ports can be used
+    bool useAuxbus;
+    
     /// used to audition samples, and deal with layer-playing from UI
     yasper::ptr<Voice> auditionVoice;
     

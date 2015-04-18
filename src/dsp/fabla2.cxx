@@ -47,11 +47,11 @@ namespace Fabla2
 Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
   sr( rate ),
   uris( u ),
+  useAuxbus( false ),
   recordEnable( false ),
   recordBank( 0 ),
   recordPad( 0 )
 {
-  // init the library
   library = new Library( this, rate );
   
   auditionVoice = new Voice( this, rate );
@@ -66,7 +66,6 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
   int bankID = 0;
   for(int i = 0; i < 16 * 4; i++)
   {
-    // move to next bank
     if( i > 0 && i % 16 == 0 )
     {
       bankID++;
@@ -74,56 +73,12 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
     
     Pad* tmpPad = new Pad( this, rate, i % 16 );
     tmpPad->bank( i / 16 );
-    /*
-    if ( i == 9 )
-    {
-      Sample* tmp = new Sample( this, rate, "One", "/usr/local/lib/lv2/fabla2.lv2/stereoTest.wav");
-      tmpPad->add( tmp );
-    }
-    
-    if( i < 16 )
-    {
-      std::stringstream s;
-      s << i << ".wav";
-      
-      std::stringstream path;
-      path << "/usr/local/lib/lv2/fabla2.lv2/" << i << ".wav";
-      
-      Sample* tmp = new Sample( this, rate, s.str(), path.str() );
-      tmp->velocity( 0, 128 );
-      tmpPad->add( tmp );
-    }
-    
-    // TODO: Fixme to use Library & RT-safe loading
-    // hack code load sample for now
-    if ( i == 16 )
-    {
-      Sample* tmp = new Sample( this, rate, "One", "/usr/local/lib/lv2/fabla2.lv2/test.wav");
-      tmp->velocity( 0, 32 );
-      tmpPad->add( tmp );
-      
-      tmp = new Sample( this, rate, "Two", "/usr/local/lib/lv2/fabla2.lv2/test2.wav");
-      tmp->velocity( 32, 64 );
-      tmpPad->add( tmp );
-      
-      tmp = new Sample( this, rate, "Three", "/usr/local/lib/lv2/fabla2.lv2/test3.wav");
-      tmp->velocity( 64, 96 );
-      tmpPad->add( tmp );
-      
-      tmp = new Sample( this, rate, "Four", "/usr/local/lib/lv2/fabla2.lv2/test4.wav");
-      tmp->velocity( 96, 128 );
-      tmpPad->add( tmp );
-      
-      tmpPad->switchSystem( Pad::SS_ROUND_ROBIN );
-    }
-    */
     
     library->bank( bankID )->pad( tmpPad );
   }
   
   // for debugging null pointers etc
   //library->checkAll();
-  
 }
 
 void Fabla2DSP::process( int nf )
@@ -153,15 +108,19 @@ void Fabla2DSP::process( int nf )
   // clear the audio buffers
   memset( controlPorts[OUTPUT_L],  0, sizeof(float) * nframes );
   memset( controlPorts[OUTPUT_R],  0, sizeof(float) * nframes );
+  
   // aux buffers if set
-  memset( controlPorts[AUXBUS1_L], 0, sizeof(float) * nframes );
-  memset( controlPorts[AUXBUS1_R], 0, sizeof(float) * nframes );
-  memset( controlPorts[AUXBUS2_L], 0, sizeof(float) * nframes );
-  memset( controlPorts[AUXBUS2_R], 0, sizeof(float) * nframes );
-  memset( controlPorts[AUXBUS3_L], 0, sizeof(float) * nframes );
-  memset( controlPorts[AUXBUS3_R], 0, sizeof(float) * nframes );
-  memset( controlPorts[AUXBUS4_L], 0, sizeof(float) * nframes );
-  memset( controlPorts[AUXBUS4_R], 0, sizeof(float) * nframes );
+  if( useAuxbus )
+  {
+    memset( controlPorts[AUXBUS1_L], 0, sizeof(float) * nframes );
+    memset( controlPorts[AUXBUS1_R], 0, sizeof(float) * nframes );
+    memset( controlPorts[AUXBUS2_L], 0, sizeof(float) * nframes );
+    memset( controlPorts[AUXBUS2_R], 0, sizeof(float) * nframes );
+    memset( controlPorts[AUXBUS3_L], 0, sizeof(float) * nframes );
+    memset( controlPorts[AUXBUS3_R], 0, sizeof(float) * nframes );
+    memset( controlPorts[AUXBUS4_L], 0, sizeof(float) * nframes );
+    memset( controlPorts[AUXBUS4_R], 0, sizeof(float) * nframes );
+  }
   
   if( recordEnable && recordPad != -1 && recordIndex + nframes < sr * 4 )
   {
@@ -188,24 +147,8 @@ void Fabla2DSP::process( int nf )
     }
   }
   
+  // finally run the audition voice
   auditionVoice->process();
-  
-  // master outputs
-  
-  /*
-  for(int i = 0; i < nframes; i++ )
-  {
-    float* outL = controlPorts[OUTPUT_L];
-    float* outR = controlPorts[OUTPUT_R];
-    
-    for(int i = 0; i < voices.size(); i++ )
-    {
-      float* v = voices.at(i)->getVoiceBuffer();
-      *outL++ += v[ i ];
-      *outR++ += v[ nframes + i ];
-    }
-  }
-  */
   
 }
 
