@@ -198,20 +198,11 @@ fabla2_restore(LV2_Handle                  instance,
     {
       map_path = (LV2_State_Map_Path*)features[i]->data;
     }
-    if (!strcmp(features[i]->URI, LV2_STATE__makePath))
-    {
-      make_path = (LV2_State_Make_Path*)features[i]->data;
-    }
   }
   
   if ( !map_path )
   {
     printf("Fabla2::restore() Error: map path not available! SAVE DID NOT COMPLETE!\n" );
-    return LV2_STATE_ERR_NO_FEATURE;
-  }
-  if ( !map_path )
-  {
-    printf("Fabla2::restore() Error: Make path not available! SAVE DID NOT COMPLETE!\n" );
     return LV2_STATE_ERR_NO_FEATURE;
   }
   
@@ -311,7 +302,7 @@ fabla2_restore(LV2_Handle                  instance,
             std::stringstream layerStr;
             layerStr << "layer_" << i;
             
-            printf("Sample %i, %s\n", i, layerStr.str().c_str() );
+            //printf("Sample %i, %s\n", i, layerStr.str().c_str() );
             
             picojson::value pjLayer = pjPad.get( layerStr.str() );
             
@@ -344,7 +335,7 @@ fabla2_restore(LV2_Handle                  instance,
             // strip the file:// from the start
             path = path.substr( 7 );
             
-            printf("Loading %s\n", path.c_str() );
+            //printf("Loading %s\n", path.c_str() );
             Sample* s = new Sample( self->dsp, self->dsp->sr, name.c_str(), path );
             if( s->getFrames() <= 0 )
             {
