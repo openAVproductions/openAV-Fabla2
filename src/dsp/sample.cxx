@@ -90,6 +90,13 @@ void Sample::recacheWaveform()
   
   int sampsPerPix = frames / FABLA2_UI_WAVEFORM_PX;
   
+  if( sampsPerPix == 0 )
+  {
+    printf("Not enough samples for waveform\n");
+    return;
+  }
+  
+  
   float highestPeak = 0.f;
   
   // counts pixels in output waveform
@@ -298,6 +305,12 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
     printf("Error loading sample %s, frames == 0\n", path.c_str() );
     return;
   }
+  
+  if( frames < 200 )
+  {
+    printf("Fabla2: Refusing to load sample with %i frames - too short\n", frames );
+  }
+  
   
   printf("Loading sample with %i frames\n", frames );
   
