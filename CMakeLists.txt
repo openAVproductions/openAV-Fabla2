@@ -11,7 +11,7 @@ set(FABLA2_VERSION "${FABLA2_VERSION_MAJOR}.${FABLA2_VERSION_MINOR}.${FABLA2_VER
 
 option(FABLA2_RELEASE_BUILD   "Build for releasing"         OFF )
 option(FABLA2_DEBUG_PRINTS    "Build with debugging prints" ON  )
-option(FABLA2_TESTS           "Build component tests"       OFF )
+option(FABLA2_TESTS           "Build component tests"       ON )
 
 
 ################################################################################
@@ -63,7 +63,7 @@ IF( FABLA2_TESTS )
   
   ADD_DEFINITIONS( "-DFABLA2_COMPONENT_TEST" )
   
-  SET(CMAKE_CXX_FLAGS "-g -trigraphs -fsanitize=address -Wl,-z,nodelete  -Wl,--no-undefined")
+  SET(CMAKE_CXX_FLAGS "-g -trigraphs -Wl,-z,nodelete  -Wl,--no-undefined") # -fsanitize=address
   FILE(GLOB srcDspTests src/dsp/tests/*.cxx src/dsp/*.cxx )
   ADD_EXECUTABLE( fabla2test ${srcDspTests} )
   target_link_libraries( fabla2test ${SNDFILE_LIBRARIES})
@@ -76,16 +76,16 @@ ELSE()
   
   FILE(GLOB srcDSP src/dsp.cxx src/lv2_work.cxx src/lv2_state.cxx src/dsp/*.cxx )
   FILE(GLOB srcUI  src/ui.cxx src/ui/sofd/libsofd.c src/ui/*.cxx src/ui/avtk/avtk/*.cxx src/ui/avtk/avtk/pugl/pugl_x11.c )
-
-  ADD_LIBRARY( fabla2   SHARED ${srcDSP} )
-  ADD_LIBRARY( fabla2ui SHARED ${srcUI}  )
+  
+  add_library( fabla2   SHARED ${srcDSP} )
+  add_library( fabla2ui SHARED ${srcUI}  )
+  
   set_target_properties(fabla2   PROPERTIES PREFIX "")
   set_target_properties(fabla2ui PROPERTIES PREFIX "")
-
-
+  
   target_link_libraries( fabla2 ${SNDFILE_LIBRARIES}    )
   target_link_libraries( fabla2 ${SAMPLERATE_LIBRARIES} )
-
+  
   target_link_libraries( fabla2ui ${CAIRO_LIBRARIES}  )
   target_link_libraries( fabla2ui ${X11_LIBRARIES}    )
   target_link_libraries( fabla2ui ${SNDFILE_LIBRARIES})
@@ -98,9 +98,10 @@ ELSE()
   FILE(GLOB ttls "src/*.ttl")
   install(FILES ${ttls}   DESTINATION lib/lv2/fabla2.lv2/)
   
-  configure_file( "src/ui/themes/default.avtk"  "default.avtk" COPYONLY)
-  configure_file( "src/ui/themes/green.avtk"    "green.avtk"   COPYONLY)
-  configure_file( "src/ui/themes/orange.avtk"   "orange.avtk"  COPYONLY)
-  configure_file( "src/ui/themes/red.avtk"      "red.avtk"     COPYONLY)
-  configure_file( "src/ui/themes/yellow.avtk"   "yellow.avtk"  COPYONLY)
+  # Need to be compiled in
+  #configure_file( "src/ui/themes/default.avtk"  "default.avtk" COPYONLY)
+  #configure_file( "src/ui/themes/green.avtk"    "green.avtk"   COPYONLY)
+  #configure_file( "src/ui/themes/orange.avtk"   "orange.avtk"  COPYONLY)
+  #configure_file( "src/ui/themes/red.avtk"      "red.avtk"     COPYONLY)
+  #configure_file( "src/ui/themes/yellow.avtk"   "yellow.avtk"  COPYONLY)
 ENDIF()

@@ -68,20 +68,20 @@ class Sample
     void velocityHigh( float high );
     
     /// playback controls
-    bool dirty;           ///< Set to true when the cache is invalid
+    bool dirty;             ///< Set to true when the cache is invalid
     
-    float gain;           ///< Gain of this sample
-    float pan;            ///< Panning of the sample (amplitude based)
+    float gain;             ///< Gain of this sample
+    float pan;              ///< Panning of the sample (amplitude based)
     
-    float pitch;          ///< Pitch of the sample (affects playback speed)
-    float time;           ///< Time-stretch sample (does *not* affect playback pitch)
+    float pitch;            ///< Pitch of the sample (affects playback speed)
+    float time;             ///< Time-stretch sample (does *not* affect playback pitch)
     
-    float startPoint;     ///< Starting point of the sample playback 0->1
-    float endPoint;       ///< Ending point of the sample 0->1
+    float startPoint;       ///< Starting point of the sample playback 0->1
+    float endPoint;         ///< Ending point of the sample 0->1
     
-    float filterType;     ///< Filter high/low/band-pass setting
-    float filterFrequency;///< Filter cutoff/center frequency
-    float filterResonance;///< Filter resonance ( Q-factor )
+    float filterType;       ///< Filter high/low/band-pass setting
+    float filterFrequency;  ///< Filter cutoff/center frequency
+    float filterResonance;  ///< Filter resonance ( Q-factor )
     
     float velLow;           ///< Velocity low mark  0-1 range
     float velHigh;          ///< Velocity high mark 0-1 range

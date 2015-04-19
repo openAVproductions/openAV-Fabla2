@@ -101,10 +101,11 @@ void Pad::add( Sample* s )
   samples.push_back( s );
   
   // request DSP to refresh UI layers for this pad
-  dsp->padRefreshLayers( bank_, ID_ );
-  
-  dsp->writePadsState( bank_, ID_, this );
-  
+  if( dsp )
+  {
+    dsp->padRefreshLayers( bank_, ID_ );
+    dsp->writePadsState( bank_, ID_, this );
+  }
   // update the sample state to the UI
   //dsp->writeSampleState( bank_, ID_, samples.size()-1, this, s );
   

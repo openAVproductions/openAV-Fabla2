@@ -139,7 +139,9 @@ void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
   Sample* s = sampler->getSample();
   if( s )
   {
+#ifdef FABLA2_COMPONENT_TEST
     //printf("Voice::play() %i, on Sample %s @ time : %i, padVol %f\n", ID, s->getName(), time, pad_->volume );
+#endif
   }
   else
   {
@@ -354,7 +356,7 @@ void Voice::process()
   if( activeCountdown )
   {
     nframes = nframes - activeCountdown;
-    //printf("process() with activeCountdown = %i\n", activeCountdown ); 
+    printf("process() with activeCountdown = %i\n", activeCountdown ); 
   }
   
   // check if we need to trigger ADSR off
@@ -376,12 +378,12 @@ void Voice::process()
   
   if( !s )
   {
-    //printf("Fabla2 DSP: Voice process() with invalid Sample* : WARNING!");
+    printf("Fabla2 DSP: Voice process() with invalid Sample* : WARNING!");
   }
   
   if( done || adsr->getState() == ADSR::ENV_IDLE )
   {
-    //printf("Voice done\n");
+    printf("Voice done\n");
     active_ = false;
     pad_ = 0;
     return;
@@ -447,7 +449,7 @@ void Voice::process()
   // for testing sample-accurate voice note-on
   if( activeCountdown )
   {
-    //Plotter::plot( "active.dat", dsp->nframes, dsp->controlPorts[OUTPUT_L] );
+    Plotter::plot( "active.dat", dsp->nframes, dsp->controlPorts[OUTPUT_L] );
   }
   
   
