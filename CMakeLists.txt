@@ -9,9 +9,9 @@ set(FABLA2_VERSION_PATCH "0")
 
 set(FABLA2_VERSION "${FABLA2_VERSION_MAJOR}.${FABLA2_VERSION_MINOR}.${FABLA2_VERSION_PATCH}")
 
-option(FABLA2_RELEASE_BUILD   "Build for releasing"         OFF )
+option(FABLA2_RELEASE_BUILD   "Build for releasing"         ON )
 option(FABLA2_DEBUG_PRINTS    "Build with debugging prints" ON  )
-option(FABLA2_TESTS           "Build component tests"       ON )
+option(FABLA2_TESTS           "Build component tests"       OFF )
 
 
 ################################################################################

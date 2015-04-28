@@ -450,7 +450,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waste->clickMode( Widget::CLICK_NONE );
   wy += 18;
   
-  masterVolume = new Avtk::Fader( this, wx+10, wy, 25, 100,  "Master Volume" );
+  masterVolume = new Avtk::Fader( this, wx+4, wy+5, 70-8, 250,  "Master Volume" );
   masterVolume->clickMode( Widget::CLICK_NONE );
   masterVolume->value( 0.75 );
   
