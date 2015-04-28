@@ -400,7 +400,7 @@ fabla2_restore(LV2_Handle                  instance,
   }
   else
   {
-    printf("Fabla2:State load ERROR, no JSON file available: aborting preset load!\n" );
+    printf("Fabla2:State() Warning, no JSON : not loading preset.\n" );
   }
   
   return LV2_STATE_SUCCESS;
