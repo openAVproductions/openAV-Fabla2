@@ -28,6 +28,10 @@ include_directories ("${PROJECT_SOURCE_DIR}/src/ui/avtk/avtk/")
 
 find_package(PkgConfig)
 
+
+pkg_check_modules(LV2 lv2>=1.8 REQUIRED)
+include_directories( ${LV2_INCLUDE_DIRS}  )
+
 ADD_DEFINITIONS( "-DAVTK_SNDFILE" )
 pkg_check_modules(SNDFILE sndfile REQUIRED)
 include_directories( ${SNDFILE_INCLUDE_DIRS})
