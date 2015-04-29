@@ -48,6 +48,8 @@
     lv2:InstrumentPlugin ;
   
   doap:name "Fabla 2.0" ;
+  doap:maintainer [ foaf:name "OpenAV Productions" ] ;
+
   lv2:binary <fabla2.so> ;
   
   lv2:project <http://www.openavproductions.com> ;
