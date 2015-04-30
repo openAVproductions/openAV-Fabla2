@@ -9,37 +9,32 @@ import json
 def processFile(filename_in, filename_out):
     # open the template & input file
     with open(filename_in, 'r') as sfz:
-        jsonData = '''{\n "bank_A":{"name":"AvLinux Red Zepplin 5pc",'''
+        jsonData = {'bank_A': {'name': 'AvLinux Red Zepplin 5pc'}}
 
-        layer = ""
-
-        boolFirstGroup = 1
-        boolFirstRegion = 1
-        groupData = ""
+        boolFirstGroup = True
+        currentPad = None
+        layer_count = 0
 
         # is in <group> in sfz, but "layer" in Fabla,
         # hence its declared here so we can
         # transport it between the <group> and <region> parts.
         pan = 0
-
         for l in sfz:
-            if l.startswith("//"):
+            if l.startswith('//'):
                 # Comment: ignore
                 pass
 
             # handle <group> key=56 pan=-63 loop_mode=one_shot
             if l.startswith("<group>"):
 
-                if boolFirstGroup != 1:
-                    groupData += ''',"nLayers": ''' + str(layer)
-                    groupData += '},'
+                if not boolFirstGroup:
+                    # we have seen all layers of a group
+                    jsonData['bank_A'][currentPad]['nLayers'] = layer_count
 
                 # reset default group options
                 pan = 0
-                layer = 0
-                boolFirstRegion = 1
+                layer_count = 0
 
-                # print( "Processsing: " + l )
                 items = l.split(' ')
 
                 key = -1
@@ -47,7 +42,6 @@ def processFile(filename_in, filename_out):
                 offGroup = -1
 
                 for i in items:
-                    # print( i )
                     if i.startswith('key='):
                         key = i[4:]
                         pass
@@ -57,7 +51,6 @@ def processFile(filename_in, filename_out):
                         pass
 
                     if i.startswith('loop_mode='):
-                        # print( i[10:] )
                         pass
 
                     if i.startswith('group='):
@@ -72,30 +65,20 @@ def processFile(filename_in, filename_out):
                     print("WARNING: input file: " + filename_in +
                           "  Key out of range!" + str(items))
 
-                # "pad_0": {
-                groupData += ('''\n\n "pad_''' + str(int(key)-36) +
-                              '''" : \n''' + '{')
-
-                groupData += '''"triggerMode": 1,\n'''
-                groupData += '''"volume": 0.75,\n'''
-                groupData += '''"switchMode": 2,\n'''
+                pad = {"triggerMode": 1, "volume": 0.75, "switchMode": 2}
 
                 if int(muteGroup) != -1:
-                    groupData += '''"muteGroup": ''' + muteGroup + ''',\n'''
+                    pad['muteGroup'] = int(muteGroup)
 
                 if int(offGroup) != -1:
-                    groupData += '''"offGroup": ''' + offGroup + ''',\n'''
+                    pad['offGroup'] = int(offGroup)
 
-                boolFirstGroup = 0
+                currentPad = 'pad_{0}'.format(int(key)-36)
+                jsonData['bank_A'][currentPad] = pad
 
-                # print(groupData)
+                boolFirstGroup = False
 
             if l.startswith("<region>"):
-                if boolFirstRegion != 1:
-                    groupData += ','
-                else:
-                    boolFirstRegion = 0
-
                 if key == 49:
                     print(l)
 
@@ -111,38 +94,20 @@ def processFile(filename_in, filename_out):
                     if i.startswith('sample='):
                         filename = i[7:].rstrip()
 
-                # print("Low: " + str(lowVel) + "  High: " +
-                #       str(highVel) + "  File: "+ filename)
-
-                # "velHigh": 127,
-                # "velLow": 0
-                # "filename": "pad0_layer0.wav",
-                groupData += '''"layer_''' + str(layer) + '''":  '''
-                groupData += '{'
-                groupData += '''"filename": "''' + filename + '''",'''
-                groupData += '''"velHigh": ''' + str(highVel) + ''','''
-                groupData += '''"velLow": ''' + str(lowVel) + ''','''
-                # -100,0,100 to 0.0, 0.5, 1.0 mapping
-                groupData += '''"pan": ''' + str(int(pan)/200.+0.5)
-                groupData += '}\n'
-
-                layer = layer + 1
+                layerDict = {'filename': filename, 'velHigh': highVel,
+                             'velLow': lowVel,
+                             # -100,0,100 to 0.0, 0.5, 1.0 mapping
+                             'pan': int(pan)/200. + 0.5}
+                jsonData['bank_A'][currentPad]['layer_{0}'.
+                                               format(layer_count)] = layerDict
+                layer_count += 1
 
         # No new <group> to trigger writing Nlayers to this pad,
         # so we do it here
-        groupData += ''',"nLayers": ''' + str(layer)
+        jsonData["bank_A"][currentPad]["nLayers"] = layer_count
 
-        groupData += '}'  # pad
-
-        jsonData += groupData
-
-        jsonData += '}'  # bank
-
-        jsonData += '}'  # json closer
-
-        # print( "FINAL:\n" + jsonData )
         with open(filename_out, 'w') as out:
-            out.write(jsonData)
+            out.write(json.dumps(jsonData, indent=4, sort_keys=True))
 
 
 def parseArgs():
