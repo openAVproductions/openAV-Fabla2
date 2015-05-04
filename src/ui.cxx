@@ -118,9 +118,9 @@ static void fabla2_port_event(LV2UI_Handle handle,
           ui->uris.fabla2_velocity, &vel,
           NULL);
       
-      if ( bank->type != ui->uris.atom_Int ||
-           pad->type != ui->uris.atom_Int  ||
-           lay->type != ui->uris.atom_Int   )
+      if ( !bank || bank->type != ui->uris.atom_Int ||
+           !pad  || pad->type  != ui->uris.atom_Int ||
+           !lay  || lay->type  != ui->uris.atom_Int  )
       {
         //printf("Fabla2-UI::port_event() error: Corrupt state message\n");
         return;
@@ -382,11 +382,11 @@ static void fabla2_port_event(LV2UI_Handle handle,
       {
         // sample-state event was written to the UI was not complete. If we have
         // a pad, "unload" it in the UI. Blank state
-        if( pad != -1 )
+        if( pad >= 0 || pad < 16 )
           ui->pads[pad]->loaded( false );
         else
         {
-          //printf("Fabla2 UI pad == -1");
+          printf("Fabla2 UI pad is invalid : FIXME : %s , %s", __FILE__ , __LINE__ );
         }
         ui->blankSampleState();
       }
