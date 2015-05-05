@@ -244,7 +244,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   send4->theme( theme(4) );
   wy += 40;
   
-  ///  pad fader
+  ///  pad master
   wx += colWidth + spacer;
   wy = 161;
   waste = new Avtk::Box( this, wx, wy, colWidth/2, (14+40)*3-4,  "Pad" );
@@ -450,11 +450,17 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waste->clickMode( Widget::CLICK_NONE );
   wy += 18;
   
-  masterVolume = new Avtk::Fader( this, wx+4, wy+5, 70-8, 250,  "Master Volume" );
+  
+  masterAuxMute2 = new Avtk::Button( this, wx+4, wy+ 4, 62, 22, "Master Aux 1" );
+  masterAuxMute2 = new Avtk::Button( this, wx+4, wy+28, 62, 22, "Master Aux 2" );
+  masterAuxMute3 = new Avtk::Button( this, wx+4, wy+58, 62, 22, "Master Aux 3" );
+  masterAuxMute4 = new Avtk::Button( this, wx+4, wy+72, 62, 22, "Master Aux 4" );
+  
+  masterVolume = new Avtk::Fader( this, wx+4, wy+96, 70-8, 250,  "Master Volume" );
   masterVolume->clickMode( Widget::CLICK_NONE );
   masterVolume->value( 0.75 );
   
-  
+
   // initial values
   bankBtns[0]->value( true );
   followPadBtn->value(true );

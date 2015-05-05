@@ -22,6 +22,7 @@
 
 #include <string>
 #include <sstream>
+#include <assert.h>
 
 #include "dsp.hxx"
 #include "picojson.hxx"
@@ -44,7 +45,7 @@ fabla2_save(LV2_Handle                 instance,
         const LV2_Feature *const * features)
 {
   FablaLV2* self = (FablaLV2*)instance;
-  
+  assert( self );  
   // Analyse new features, check for map path
   LV2_State_Map_Path*  map_path  = 0;
   LV2_State_Make_Path* make_path = 0;
@@ -213,7 +214,8 @@ fabla2_restore(LV2_Handle                  instance,
   uint32_t flgs = 0;
   
   // get the JSON description file
-  const char* jsonSource = (const char*)retrieve(handle, self->uris.fabla2_StateStringJSON, &size, &type, &flgs );
+  const char* jsonSource = (const char*)retrieve(handle,
+			self->uris.fabla2_StateStringJSON, &size, &type, &flgs );
   
   if( jsonSource )
   {
@@ -246,7 +248,8 @@ fabla2_restore(LV2_Handle                  instance,
         bool pjBankOk = pjBanks.is<picojson::object>();
         if( !pjBankOk )
         {
-          printf( "Fabla2 : Lv2 State Restore() : PjBanks is object not valid, corrupt save file? Check letter X in \"bank_X\" of the save file.\n" );
+          printf( "Fabla2 : Lv2 State Restore() : PjBanks is object not valid.\
+							Corrupt save file? Check letter X in \"bank_X\" of the save file.\n" );
           continue;
         }
         
@@ -265,7 +268,8 @@ fabla2_restore(LV2_Handle                  instance,
           bool pjPadOk = pjPad.is<picojson::object>();
           if( !pjPadOk )
           {
-            printf( "Fabla2 : Lv2 State Restore() : pjPad is object not valid, corrupt save file? Check number X in \"pad_X\" of the save file.\n" );
+            printf( "Fabla2 : Lv2 State Restore() : pjPad is object not valid.\
+								Corrupt save file? Check number X in \"pad_X\" of the save file.\n" );
             continue;
           }
           

@@ -17,7 +17,7 @@ namespace Avtk
   class MixStrip;
 };
 
-#define UI_ATOM_BUF_SIZE 128
+#define UI_ATOM_BUF_SIZE 128*128
 
 class TestUI : public Avtk::UI
 {
@@ -56,8 +56,11 @@ class TestUI : public Avtk::UI
     Avtk::Dial* masterPitch; // not shown
     
     // Right
-    Avtk::Fader* masterVolume;
-    
+    Avtk::Fader*  masterVolume;
+    Avtk::Button* masterAuxMute1;
+    Avtk::Button* masterAuxMute2;
+    Avtk::Button* masterAuxMute3;
+    Avtk::Button* masterAuxMute4;
     
     // sample info
     Avtk::Text* sampleName;
