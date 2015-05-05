@@ -450,13 +450,13 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waste->clickMode( Widget::CLICK_NONE );
   wy += 18;
   
-  masterAuxMute1 = new Avtk::Fader( this, wx+ 1, wy+3, 15, 90, "Master Aux 1" );
-  masterAuxMute2 = new Avtk::Fader( this, wx+19, wy+3, 15, 90, "Master Aux 2" );
-  masterAuxMute3 = new Avtk::Fader( this, wx+37, wy+3, 15, 90, "Master Aux 3" );
-  masterAuxMute4 = new Avtk::Fader( this, wx+55, wy+3, 15, 90, "Master Aux 4" );
+  masterAuxFader1 = new Avtk::Fader( this, wx+ 1, wy+3, 15, 90, "Master Aux 1" );
+  masterAuxFader2 = new Avtk::Fader( this, wx+19, wy+3, 15, 90, "Master Aux 2" );
+  masterAuxFader3 = new Avtk::Fader( this, wx+37, wy+3, 15, 90, "Master Aux 3" );
+  masterAuxFader4 = new Avtk::Fader( this, wx+55, wy+3, 15, 90, "Master Aux 4" );
   
-  masterVolume = new Avtk::Fader( this, wx+4, wy+96, 70-8, 250,  "Master Volume" );
-  masterVolume->clickMode( Widget::CLICK_NONE );
+  masterVolume = new Avtk::Fader( this, wx+4, wy+96, 70-8, 250,  "Master Vol" );
+  //masterVolume->clickMode( Widget::CLICK_NONE );
   masterVolume->value( 0.75 );
   
 
@@ -888,7 +888,7 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
 {
   float tmp = w->value();
   
-  //printf("widgetCB : %s, value: %f\n", w->label(), tmp );
+  printf("widgetCB : %s, value: %f\n", w->label(), tmp );
   
   if( w == recordOverPad )
   {
@@ -1100,6 +1100,27 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   {
     writeAtom( uris.fabla2_PadAuxBus4, tmp );
   }
+  else if( w == masterAuxFader1 )
+  {
+    printf("master aux fader 1 %f\n", tmp );
+    auxFaders[0]->value( tmp );
+    writeAtom( uris.fabla2_PadAuxBus1, tmp );  
+  }
+  else if( w == masterAuxFader2 )
+  {
+    auxFaders[1]->value( tmp );
+    writeAtom( uris.fabla2_PadAuxBus2, tmp );  
+  }
+  else if( w == masterAuxFader3 )
+  {
+    auxFaders[2]->value( tmp );
+    writeAtom( uris.fabla2_PadAuxBus3, tmp );  
+  }
+  else if( w == masterAuxFader4 )
+  {
+    auxFaders[3]->value( tmp );
+    writeAtom( uris.fabla2_PadAuxBus4, tmp );  
+  }
   else
   {
     // check bank buttons
@@ -1109,6 +1130,17 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
       {
         setBank( i );
         return;
+      }
+      else if( w == auxFaders[i] )
+      {
+        if(i == 0 )
+          masterAuxFader1->value( tmp );
+        if(i == 1 )
+          masterAuxFader2->value( tmp );
+        if(i == 2 )
+          masterAuxFader3->value( tmp );
+        if(i == 3 )
+          masterAuxFader4->value( tmp );
       }
     }
     
