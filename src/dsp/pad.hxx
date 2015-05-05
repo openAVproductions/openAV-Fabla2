@@ -21,8 +21,6 @@
 #ifndef OPENAV_FABLA2_PAD_HXX
 #define OPENAV_FABLA2_PAD_HXX
 
-#include "yasper.hxx"
-
 #include <vector>
 #include <string>
 #include <stdio.h>
@@ -124,7 +122,7 @@ class Pad
     int sampleLayerCounter;
     
     /// shared pointer to each of the samples available on this pad
-    std::vector< yasper::ptr<Sample> > samples;
+    std::vector<Sample*> samples;
 };
 
 };

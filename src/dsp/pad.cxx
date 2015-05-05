@@ -69,6 +69,7 @@ void Pad::remove( Sample* s )
     {
       samples.erase( samples.begin() + i );
       printf("Pad remove() sample at %i : sample name %s\n", i, s->getName() );
+      delete s;
     }
   }
 }
@@ -198,6 +199,10 @@ Sample* Pad::getPlaySample( float velocity )
 
 void Pad::clearAllSamples()
 {
+  for(int i = 0; i < samples.size(); i++)
+  {
+    delete samples.at(i);
+  }
   samples.clear();
   loaded_ = false;
 }
