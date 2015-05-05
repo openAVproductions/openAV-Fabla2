@@ -95,8 +95,10 @@ class Sample
     Fabla2DSP* dsp;
     int sr;
     
-    // convienience for setting defaults after constructor
+    /// convienience for setting defaults after constructor
     void init();
+    
+    /// resamples to a new samplerate
     void resample( int fromSr, std::vector<float>& inBuffer );
     
     std::string name;

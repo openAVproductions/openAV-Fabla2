@@ -244,7 +244,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   send4->theme( theme(4) );
   wy += 40;
   
-  /// master
+  ///  pad fader
   wx += colWidth + spacer;
   wy = 161;
   waste = new Avtk::Box( this, wx, wy, colWidth/2, (14+40)*3-4,  "Pad" );

@@ -124,9 +124,9 @@ class TestUI : public Avtk::UI
     Avtk::Widget* padsHeaderBox;
     
     // pad - tracks
-    Avtk::MixStrip* mixStrip[16];
+    Avtk::MixStrip* mixStrip [16];
     Avtk::Fader*    padFaders[16];
-    Avtk::Dial* auxDials[16*4];
+    Avtk::Dial*     auxDials [16*4];
     
     // AuxBus tracks
     Avtk::MixStrip* auxbus[4];
