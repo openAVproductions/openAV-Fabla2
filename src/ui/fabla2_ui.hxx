@@ -57,10 +57,10 @@ class TestUI : public Avtk::UI
     
     // Right
     Avtk::Fader*  masterVolume;
-    Avtk::Button* masterAuxMute1;
-    Avtk::Button* masterAuxMute2;
-    Avtk::Button* masterAuxMute3;
-    Avtk::Button* masterAuxMute4;
+    Avtk::Fader*  masterAuxMute1;
+    Avtk::Fader*  masterAuxMute2;
+    Avtk::Fader*  masterAuxMute3;
+    Avtk::Fader*  masterAuxMute4;
     
     // sample info
     Avtk::Text* sampleName;

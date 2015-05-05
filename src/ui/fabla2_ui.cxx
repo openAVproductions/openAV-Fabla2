@@ -450,11 +450,10 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waste->clickMode( Widget::CLICK_NONE );
   wy += 18;
   
-  
-  masterAuxMute2 = new Avtk::Button( this, wx+4, wy+ 4, 62, 22, "Master Aux 1" );
-  masterAuxMute2 = new Avtk::Button( this, wx+4, wy+28, 62, 22, "Master Aux 2" );
-  masterAuxMute3 = new Avtk::Button( this, wx+4, wy+58, 62, 22, "Master Aux 3" );
-  masterAuxMute4 = new Avtk::Button( this, wx+4, wy+72, 62, 22, "Master Aux 4" );
+  masterAuxMute1 = new Avtk::Fader( this, wx+ 1, wy+3, 15, 90, "Master Aux 1" );
+  masterAuxMute2 = new Avtk::Fader( this, wx+19, wy+3, 15, 90, "Master Aux 2" );
+  masterAuxMute3 = new Avtk::Fader( this, wx+37, wy+3, 15, 90, "Master Aux 3" );
+  masterAuxMute4 = new Avtk::Fader( this, wx+55, wy+3, 15, 90, "Master Aux 4" );
   
   masterVolume = new Avtk::Fader( this, wx+4, wy+96, 70-8, 250,  "Master Volume" );
   masterVolume->clickMode( Widget::CLICK_NONE );
@@ -516,6 +515,7 @@ void TestUI::blankSampleState()
   waveform->show( tmp );
   
 }
+
 
 void TestUI::loadNewDir( std::string newDir )
 {
@@ -667,13 +667,13 @@ void TestUI::showFileView()
     // return to pads view for triggering
     showPadsView();
     uiViewGroup->value( 1 );
-  }
-  
+  }  
 }
+
 
 void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
 {
-  if( pad < 0 || pad >= 16 )
+ if( pad < 0 || pad >= 16 )
   {
     return; // invalid pad number
   }
@@ -1085,13 +1085,21 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
     writeAtom( uris.fabla2_SampleAdsrRelease, tmp );
   }
   else if( w == send1 )
+  {
     writeAtom( uris.fabla2_PadAuxBus1, tmp );
+  }
   else if( w == send2 )
+  {
     writeAtom( uris.fabla2_PadAuxBus2, tmp );
+  }
   else if( w == send3 )
+  {
     writeAtom( uris.fabla2_PadAuxBus3, tmp );
-  else if( w == send4 )
+  }
+  else if( w == send4 ) 
+  {
     writeAtom( uris.fabla2_PadAuxBus4, tmp );
+  }
   else
   {
     // check bank buttons
