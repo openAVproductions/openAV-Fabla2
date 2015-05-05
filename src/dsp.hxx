@@ -69,6 +69,12 @@ class FablaLV2
     Fabla2::Fabla2DSP* dsp;
   
   private:
+    /// Sample rate
+    int sr;
+    
+    /// A buffer for the AuxBus ports if the host doesn't provide them
+    float* auxBusBuffer;
+
     /// convienience functions to extract bank/pad info from an Atom
     /// @return 0 on success, non-zero on error
     int atomBankPadLayer( const LV2_Atom_Object* obj,

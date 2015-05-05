@@ -98,6 +98,9 @@ LV2_Handle FablaLV2::instantiate( const LV2_Descriptor* descriptor,
 
 FablaLV2::FablaLV2(int rate)
 {
+  sr = rate;
+  // it is assumed that buffersize is < samplerate
+  auxBusBuffer = new float[rate];
 }
 
 FablaLV2::~FablaLV2()
@@ -166,6 +169,15 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
 {
   FablaLV2* self = (FablaLV2*) instance;
   
+  if( nframes > self->sr )
+  {
+    // allocate a new buffer for the AuxBus port
+    // in case the host doesn't connect them
+    // this can only happen once - buffer resize is not supported.
+    delete[] self->auxBusBuffer;
+    self->auxBusBuffer = new float[nframes];
+  }
+
   const uint32_t space = self->out_port->atom.size;
   //printf("Atom space = %i\n", space );
   

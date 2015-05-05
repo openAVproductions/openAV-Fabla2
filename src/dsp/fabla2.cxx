@@ -108,7 +108,14 @@ void Fabla2DSP::process( int nf )
   // clear the audio buffers
   memset( controlPorts[OUTPUT_L],  0, sizeof(float) * nframes );
   memset( controlPorts[OUTPUT_R],  0, sizeof(float) * nframes );
-  
+ 
+  // check if the host connected the AuxBus buffers - if so, set
+  // useAuxbus to true
+  if( !useAuxbus && controlPorts[AUXBUS1_L] && controlPorts[AUXBUS4_R] )
+  {
+    useAuxbus = true;
+  }
+
   // aux buffers if set
   if( useAuxbus )
   {

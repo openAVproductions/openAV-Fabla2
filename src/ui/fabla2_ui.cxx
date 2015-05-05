@@ -455,7 +455,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   masterAuxFader3 = new Avtk::Fader( this, wx+37, wy+3, 15, 90, "Master Aux 3" );
   masterAuxFader4 = new Avtk::Fader( this, wx+55, wy+3, 15, 90, "Master Aux 4" );
   
-  masterVolume = new Avtk::Fader( this, wx+4, wy+96, 70-8, 250,  "Master Vol" );
+  masterVolume = new Avtk::Fader( this, wx+4, wy+96,38, 160,  "Master Vol" );
   //masterVolume->clickMode( Widget::CLICK_NONE );
   masterVolume->value( 0.75 );
   
