@@ -68,7 +68,9 @@ void Pad::remove( Sample* s )
     if( samples.at(i) == s )
     {
       samples.erase( samples.begin() + i );
-      printf("Pad remove() sample at %i : sample name %s\n", i, s->getName() );
+      // TODO - RT safety - don't delete the sample here - but send it away to
+      // the worker thread for dealloc
+      //printf("Pad remove() sample at %i : sample name %s\n", i, s->getName() );
       delete s;
     }
   }

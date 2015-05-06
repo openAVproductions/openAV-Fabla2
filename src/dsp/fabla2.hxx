@@ -91,7 +91,7 @@ class Fabla2DSP
     void writeSampleState( int b, int p, int l, Pad* pad, Sample* );
     void tx_waveform( int bank, int pad, int layer, const float* data );
     
-    Library* getLibrary(){return library.GetRawPointer();}
+    Library* getLibrary(){return library;}
     
   private:
     URIs* uris;
@@ -100,13 +100,13 @@ class Fabla2DSP
     bool useAuxbus;
     
     /// used to audition samples, and deal with layer-playing from UI
-    yasper::ptr<Voice> auditionVoice;
+    Voice* auditionVoice;
     
     /// voices store all the voices available for use
     std::vector< yasper::ptr<Voice> > voices;
     
     /// Library stores all data
-    yasper::ptr<Library> library;
+    Library* library;
     
     /// map from MIDI number to pad instance
     std::map< int, yasper::ptr<Pad> > midiToPad;

@@ -105,6 +105,7 @@ FablaLV2::FablaLV2(int rate)
 
 FablaLV2::~FablaLV2()
 {
+  delete[] auxBusBuffer;
   delete dsp;
 }
 
