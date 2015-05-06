@@ -120,8 +120,17 @@ TestUI::TestUI( PuglNativeWindow parent ):
   int divider = 35;
   sampleControlGroup = new Avtk::Group( this, wx, wy, FABLA2_UI_WAVEFORM_PX, 260, "SampleControlGroup");
   
+  /// layers
+  waste = new Avtk::Box( this, wx, wy, colWidth, 146,  "Layers" );
+  waste->clickMode( Widget::CLICK_NONE );
+  layers    = new Avtk::List( this, wx, wy+18, colWidth, 204-18, "LayersList" );
+  layers->end();
   
-  /// sample config options
+  /// next column
+  wx += colWidth + spacer;
+  wy = 161;
+  
+  /// Sample triggering options
   waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Mt-Of-Trg-Swt" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
@@ -130,24 +139,15 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   offGroup = new Avtk::Number( this, wx + 24, wy + 8, 20, 19, "Off Group" );
   offGroup->valueMode( Avtk::Widget::VALUE_INT, 0, 8 );
-  
+
   triggerMode = new Avtk::Number( this, wx + 46, wy + 8, 20, 19, "Trigger Mode" );
   triggerMode->valueMode( Avtk::Widget::VALUE_INT, 1, 1 );
-  
+
   switchType = new Avtk::Number( this, wx + 68, wy + 8, 20, 19, "Switch Type" );
   switchType->valueMode( Avtk::Widget::VALUE_INT, 1, 2 );
   wy += 40;
-  
-  /// layers
-  waste = new Avtk::Box( this, wx, wy, colWidth, 104,  "Layers" );
-  waste->clickMode( Widget::CLICK_NONE );
-  layers    = new Avtk::List( this, wx, wy+18, colWidth, 162-18, "LayersList" );
-  layers->end();
-  
-  /// next column
-  wx += colWidth + spacer;
-  wy = 161;
-  
+
+
   /// velocity ranges
   waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Velocity Map" );
   waste->clickMode( Widget::CLICK_NONE );
@@ -158,6 +158,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   velocityEndPoint  ->value( 1 );
   wy += 40;
   
+  /*
   /// Velocity -> Volume / Filter
   waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "Vel -> Vol-Fil" );
   waste->clickMode( Widget::CLICK_NONE );
@@ -166,7 +167,8 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waste = new Avtk::Dial( this, wx + 44, wy, 40, 40, "VelocityToFilter" );
   waste->value( 0 );
   wy += 40;
-  
+  */
+
   /// Filter
   waste = new Avtk::Box( this, wx, wy, colWidth, 50, "Filter" );
   waste->clickMode( Widget::CLICK_NONE );
