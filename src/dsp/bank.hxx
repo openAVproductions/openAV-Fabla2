@@ -22,7 +22,6 @@
 #define OPENAV_FABLA2_BANK_HXX
 
 #include <vector>
-#include "yasper.hxx"
 
 namespace Fabla2
 {

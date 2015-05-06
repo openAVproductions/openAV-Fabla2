@@ -26,7 +26,6 @@
 #include "../shared.hxx"
 
 #include "midi.hxx"
-#include "yasper.hxx"
 
 #include <map>
 #include <vector>
