@@ -48,7 +48,7 @@ void Pad::draw( cairo_t* cr )
     cairo_move_to( cr, x_, y_ );
     cairo_line_to( cr, x_ + w_, y_ + h_ );
     theme_->color( cr, BG, 0.2 );
-    cairo_set_line_width(cr, theme_->lineWidthWide()*3 );
+    cairo_set_line_width(cr, theme_->lineWidthWide()*1.5 );
     cairo_stroke(cr);
   }
   else

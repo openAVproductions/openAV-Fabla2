@@ -229,7 +229,7 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->fabla2_SampleVelEndPnt      = map->map(map->handle, FABLA2_SampleVelEndPnt);
   uris->fabla2_SampleLoad           = map->map(map->handle, FABLA2_SampleLoad);
   uris->fabla2_SampleUnload         = map->map(map->handle, FABLA2_SampleUnload);
-  uris->fabla2_SampleAudioData      =map->map(map->handle,FABLA2_SampleAudioData);
+  uris->fabla2_SampleAudioData      = map->map(map->handle, FABLA2_SampleAudioData);
   
   uris->fabla2_sample               = map->map(map->handle, FABLA2_sample);
   uris->fabla2_name                 = map->map(map->handle, FABLA2_name);
