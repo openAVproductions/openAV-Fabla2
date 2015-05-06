@@ -21,7 +21,6 @@
 #ifndef OPENAV_FABLA2_VOICE_HXX
 #define OPENAV_FABLA2_VOICE_HXX
 
-#include "yasper.hxx"
 #include "dsp_adsr.hxx"
 
 #include <vector>
@@ -97,10 +96,10 @@ class Voice
     bool active_;
     bool filterActive_;
     
-    yasper::ptr<ADSR> adsr;
-    yasper::ptr<Sampler> sampler;
-    yasper::ptr<FiltersSVF> filterL;
-    yasper::ptr<FiltersSVF> filterR;
+    ADSR*       adsr;
+    Sampler*    sampler;
+    FiltersSVF* filterL;
+    FiltersSVF* filterR;
     
     std::vector<float> voiceBuffer;
     

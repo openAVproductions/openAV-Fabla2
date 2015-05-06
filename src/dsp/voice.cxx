@@ -140,13 +140,15 @@ void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
   if( s )
   {
 #ifdef FABLA2_COMPONENT_TEST
-    //printf("Voice::play() %i, on Sample %s @ time : %i, padVol %f\n", ID, s->getName(), time, pad_->volume );
+    //printf("Voice::play() %i, on Sample %s @ time : %i, padVol\
+      %f\n",  ID, s->getName(), time, pad_->volume );
 #endif
   }
   else
   {
 #ifdef FABLA2_COMPONENT_TEST
-    printf("Voice::play() %i, sampler->play() returns NULL sample! Setting active to false\n", ID );
+    printf("Voice::play() %i, sampler->play() returns NULL sample! \
+        Setting active to false\n", ID );
 #endif
     // *hard* set the sample to not play: we don't have a sample!
     active_ = false;
@@ -369,7 +371,9 @@ void Voice::process()
     }
   }
   
-  int done = sampler->process( nframes, &voiceBuffer[0+activeCountdown], &voiceBuffer[dsp->nframes+activeCountdown] );
+  int done = sampler->process( nframes,
+      &voiceBuffer[0+activeCountdown],
+      &voiceBuffer[dsp->nframes+activeCountdown] );
   
   float adsrVal = adsr->process();
   
@@ -398,8 +402,13 @@ void Voice::process()
     filterL->setValue( ( s->filterFrequency + 0.3) );
     filterR->setValue( ( s->filterFrequency + 0.3) );
     
-    filterL->process( nframes, &voiceBuffer[           0+activeCountdown], &voiceBuffer[           0+activeCountdown] );
-    filterR->process( nframes, &voiceBuffer[dsp->nframes+activeCountdown], &voiceBuffer[dsp->nframes+activeCountdown] );
+    filterL->process( nframes,
+        &voiceBuffer[0+activeCountdown],
+        &voiceBuffer[0+activeCountdown] );
+    
+    filterR->process( nframes,
+        &voiceBuffer[dsp->nframes+activeCountdown],
+        &voiceBuffer[dsp->nframes+activeCountdown] );
   }
   
   float* outL = dsp->controlPorts[OUTPUT_L];
@@ -458,6 +467,10 @@ void Voice::process()
 
 Voice::~Voice()
 {
+  delete adsr;
+  delete sampler;
+  delete filterL;
+  delete filterR;
 }
 
 
