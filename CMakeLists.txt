@@ -21,6 +21,8 @@ option(FABLA2_TESTS           "Build component tests"       OFF )
 ADD_DEFINITIONS( "-DFABLA2_VERSION_STRING=\"v ${FABLA2_VERSION}\"" )
 
 IF( FABLA2_DEBUG_PRINTS )
+  # For insane debugging of the AVTK / Fabla2 UI
+  #ADD_DEFINITIONS( "-DAVTK_DEBUG" )
   ADD_DEFINITIONS( "-DFABLA2_DEBUG" )
 ENDIF()
 

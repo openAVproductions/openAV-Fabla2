@@ -584,7 +584,6 @@ void TestUI::showPadsView()
   waveformGroup     ->visible( true );
   sampleControlGroup->visible( true );
   
-  // TODO - make the "views" pane show the Pads part
   uiViewGroup->value( 1 );
   
   // info could be outdated from live view
