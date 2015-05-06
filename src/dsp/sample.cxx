@@ -79,14 +79,11 @@ void Sample::recacheWaveform()
   printf("recaching waveform... \n" );
 #endif
   
-  printf("Recache waveform with %i frames, %i channels\n", frames, channels );
   
-  /*
+  printf("Recache waveform with %i frames\n", frames );
   memset( waveformData, 0 , sizeof(float) * FABLA2_UI_WAVEFORM_PX );
-  
   printf("Recache returning!\n" );
   return;
-  */
   
   int sampsPerPix = frames / FABLA2_UI_WAVEFORM_PX;
   

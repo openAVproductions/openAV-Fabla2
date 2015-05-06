@@ -54,7 +54,7 @@ Voice::Voice( Fabla2DSP* d, int r ) :
   filterL = new FiltersSVF( r );
   filterR = new FiltersSVF( r );
   
-  voiceBuffer.resize( 1024 );
+  voiceBuffer.resize( 2048 );
   
   adsr->setAttackRate  ( 0.001 * r );
   adsr->setDecayRate   ( 0.25 * r );
