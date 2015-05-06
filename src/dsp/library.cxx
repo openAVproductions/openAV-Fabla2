@@ -63,11 +63,12 @@ void Library::checkAll()
 
 Bank* Library::bank( int id )
 {
-  for (std::list< yasper::ptr<Bank> >::iterator it= banks.begin(); it != banks.end(); ++it)
+  //for (std::list< yasper::ptr<Bank> >::iterator it= banks.begin(); it != banks.end(); ++it)
+  for(int i = 0; i < banks.size(); i++)
   {
-    if( (*it)->ID() == id )
+    if( banks.at(i)->ID() == id )
     {
-      return (*it);
+      return banks.at(i);
     }
   }
   return 0;
@@ -75,6 +76,10 @@ Bank* Library::bank( int id )
 
 Library::~Library()
 {
+  for( int i = 0; i < banks.size(); i++)
+  {
+    delete banks.at(i);
+  }
 }
 
 }; // Fabla2

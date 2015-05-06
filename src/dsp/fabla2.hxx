@@ -103,13 +103,13 @@ class Fabla2DSP
     Voice* auditionVoice;
     
     /// voices store all the voices available for use
-    std::vector< yasper::ptr<Voice> > voices;
+    std::vector<Voice*> voices;
     
     /// Library stores all data
     Library* library;
     
     /// map from MIDI number to pad instance
-    std::map< int, yasper::ptr<Pad> > midiToPad;
+    std::map< int, Pad* > midiToPad;
     
     /// record buffer: when a record operation begins, it uses this buffer
     void startRecordToPad(int bank, int pad);

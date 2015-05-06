@@ -79,6 +79,10 @@ Pad* Bank::pad( int n )
 
 Bank::~Bank()
 {
+  for(int i = 0; i < pads.size(); i++)
+  {
+    delete pads.at(i);
+  }
 }
 
 }; // Fabla2

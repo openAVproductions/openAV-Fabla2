@@ -21,8 +21,7 @@
 #ifndef OPENAV_FABLA2_LIBRARY_HXX
 #define OPENAV_FABLA2_LIBRARY_HXX
 
-#include <list>
-#include "yasper.hxx"
+#include <vector>
 
 namespace Fabla2
 {
@@ -50,7 +49,7 @@ class Library
     
   private:
     Fabla2DSP* dsp;
-    std::list< yasper::ptr<Bank> > banks;
+    std::vector<Bank*> banks;
 };
 
 };

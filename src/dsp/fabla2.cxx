@@ -712,6 +712,10 @@ void Fabla2DSP::stopRecordToPad()
 
 Fabla2DSP::~Fabla2DSP()
 {
+  for(int i = 0; i < voices.size(); i++)
+  {
+    delete voices.at(i);
+  }
   delete library;
   delete auditionVoice;
 }

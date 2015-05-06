@@ -59,7 +59,7 @@ class Bank
     char name_[21]; // 20 letters + \n
     
     
-    std::vector< yasper::ptr<Pad> > pads;
+    std::vector<Pad*> pads;
 };
 
 };
