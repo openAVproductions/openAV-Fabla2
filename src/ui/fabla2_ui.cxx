@@ -17,6 +17,10 @@
 #include "../shared.hxx"
 #include "../lv2_messaging.hxx"
 
+// hack to get access to PUGL types
+// perhaps include AVTK wrapper in future?
+#include "avtk/avtk/pugl/event.h"
+
 // implementation of LV2 Atom writing
 #include "helper.hxx"
 
@@ -890,7 +894,42 @@ void TestUI::writeAtom( int eventURI, float value )
 
 int TestUI::handle( const PuglEvent* e )
 {
-  printf("%s\n", __PRETTY_FUNCTION__ );
+  // handle key presses here, playing pads press/release
+  if( e->type == PUGL_KEY_PRESS ||
+      e->type == PUGL_KEY_RELEASE )
+  {
+    int pad = -1;
+    switch( e->key.character )
+    {
+      case 'z': pad =  0; break;
+      case 'x': pad =  1; break;
+      case 'c': pad =  2; break;
+      case 'v': pad =  3; break;
+      case 'a': pad =  4; break;
+      case 's': pad =  5; break;
+      case 'd': pad =  6; break;
+      case 'f': pad =  7; break;
+      case 'q': pad =  8; break;
+      case 'w': pad =  9; break;
+      case 'e': pad = 10; break;
+      case 'r': pad = 11; break;
+      case '1': pad = 12; break;
+      case '2': pad = 13; break;
+      case '3': pad = 14; break;
+      case '4': pad = 15; break;
+    }
+    if( pad >= 0 )
+    {
+      int uri = e->type == PUGL_KEY_PRESS ? uris.fabla2_PadPlay : uris.fabla2_PadStop; 
+      currentPad = pad;
+      writeAtom( uri, 1 );
+      printf("playing pad %i, uri %i\n", pad, uri );
+      //writePadPlayStop( true, currentBank, pad, 0 );
+      return 1; // handled
+    }
+  }
+
+  return 0;
 }
 
 void TestUI::widgetValueCB( Avtk::Widget* w)
