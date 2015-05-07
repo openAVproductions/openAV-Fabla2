@@ -95,6 +95,8 @@ class Fabla2DSP
     
     Library* getLibrary(){return library;}
     
+    float auxBusVol[4];
+
   private:
     URIs* uris;
     

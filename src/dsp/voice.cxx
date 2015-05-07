@@ -414,19 +414,19 @@ void Voice::process()
   float* outL = dsp->controlPorts[OUTPUT_L];
   float* outR = dsp->controlPorts[OUTPUT_R];
   
-  float aux1s = pad_->sends[0];
+  float aux1s = pad_->sends[0] * dsp->auxBusVol[0];
   float* aux1L = dsp->controlPorts[AUXBUS1_L];
   float* aux1R = dsp->controlPorts[AUXBUS1_R];
   
-  float aux2s = pad_->sends[1];
+  float aux2s = pad_->sends[1] * dsp->auxBusVol[1];
   float* aux2L = dsp->controlPorts[AUXBUS2_L];
   float* aux2R = dsp->controlPorts[AUXBUS2_R];
   
-  float aux3s = pad_->sends[2];
+  float aux3s = pad_->sends[2] * dsp->auxBusVol[2];
   float* aux3L = dsp->controlPorts[AUXBUS3_L];
   float* aux3R = dsp->controlPorts[AUXBUS3_R];
   
-  float aux4s = pad_->sends[3];
+  float aux4s = pad_->sends[3] * dsp->auxBusVol[3];
   float* aux4L = dsp->controlPorts[AUXBUS4_L];
   float* aux4R = dsp->controlPorts[AUXBUS4_R];
   
