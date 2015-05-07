@@ -114,7 +114,7 @@
       a lv2:OutputPort ;
       lv2:index 4 ;
       lv2:symbol "master_l" ;
-      lv2:name "Master Out Left" ;
+      lv2:name "Master Left" ;
       pg:group fabla2:mainOut;
   ] , [
       a lv2:AudioPort ;
