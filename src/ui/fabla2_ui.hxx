@@ -185,6 +185,8 @@ class TestUI : public Avtk::UI
     
     /// updates the UI to a specifc bank
     void setBank( int bank );
+    /// write a value to an AuxBus
+    void writeAuxBus( int uri, int bus, float value );
     /// writes event/value identified by eventURI using currentBank / currentPad
     void writeAtom( int eventURI, float value );
     /// writes "live view" atoms for a specific pad

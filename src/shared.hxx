@@ -52,6 +52,9 @@
 #define FABLA2_UiLiveState          FABLA2_URI "#UiLiveState"
 #define FABLA2_UiPadsState          FABLA2_URI "#UiPadsState"
 
+#define FABLA2_AuxBus               FABLA2_URI "#AuxBus"
+#define FABLA2_auxBusNumber         FABLA2_URI "#auxBusNumber"
+
 #define FABLA2_PadSwitchType        FABLA2_URI "#PadSwitchType"
 #define FABLA2_PadMuteGroup         FABLA2_URI "#PadMuteGroup"
 #define FABLA2_PadOffGroup          FABLA2_URI "#PadOffByGroup"
@@ -60,6 +63,7 @@
 #define FABLA2_PadPlay              FABLA2_URI "#PadPlay"
 #define FABLA2_PadStop              FABLA2_URI "#PadStop"
 #define FABLA2_PadVolume            FABLA2_URI "#PadVolume"
+
 #define FABLA2_PadAuxBus1           FABLA2_URI "#PadAuxBus1"
 #define FABLA2_PadAuxBus2           FABLA2_URI "#PadAuxBus2"
 #define FABLA2_PadAuxBus3           FABLA2_URI "#PadAuxBus3"
@@ -130,7 +134,10 @@ typedef struct {
   LV2_URID fabla2_PadPlay;
   LV2_URID fabla2_PadStop;
   LV2_URID fabla2_PadVolume;
-  
+
+  LV2_URID fabla2_AuxBus;
+  LV2_URID fabla2_auxBusNumber;
+
   LV2_URID fabla2_PadAuxBus1;
   LV2_URID fabla2_PadAuxBus2;
   LV2_URID fabla2_PadAuxBus3;
@@ -203,6 +210,9 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
   uris->fabla2_PadPlay              = map->map(map->handle, FABLA2_PadPlay);
   uris->fabla2_PadStop              = map->map(map->handle, FABLA2_PadStop);
   uris->fabla2_PadVolume            = map->map(map->handle, FABLA2_PadVolume);
+  
+  uris->fabla2_AuxBus               = map->map(map->handle, FABLA2_AuxBus);
+  uris->fabla2_auxBusNumber         = map->map(map->handle, FABLA2_auxBusNumber);
   
   uris->fabla2_PadAuxBus1           = map->map(map->handle, FABLA2_PadAuxBus1);
   uris->fabla2_PadAuxBus2           = map->map(map->handle, FABLA2_PadAuxBus2);

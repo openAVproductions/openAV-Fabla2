@@ -861,6 +861,21 @@ void TestUI::writeAtomForPad( int eventURI, int pad, float value )
   write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 }
 
+void TestUI::writeAuxBus( int uri, int bus, float value )
+{
+  uint8_t obj_buf[UI_ATOM_BUF_SIZE];
+  lv2_atom_forge_set_buffer(&forge, obj_buf, UI_ATOM_BUF_SIZE);
+  LV2_Atom_Forge_Frame frame;
+  LV2_Atom* msg = (LV2_Atom*)lv2_atom_forge_object( &forge, &frame, 0, uri);
+  
+  lv2_atom_forge_key(&forge, uris.fabla2_auxBusNumber);
+  lv2_atom_forge_int(&forge, bus );
+  
+  lv2_atom_forge_key  (&forge, uris.fabla2_value );
+  lv2_atom_forge_float(&forge, value );
+  
+}
+
 void TestUI::writeAtom( int eventURI, float value )
 {
   uint8_t obj_buf[UI_ATOM_BUF_SIZE];
@@ -1152,7 +1167,7 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   {
     printf("master aux fader 1 %f\n", tmp );
     auxFaders[0]->value( tmp );
-    //writeAtom( uris.fabla2_PadAuxBus1, tmp );  
+    writeAtom( uris.fabla2_AuxBus, tmp );  
   }
   else if( w == masterAuxFader2 )
   {
