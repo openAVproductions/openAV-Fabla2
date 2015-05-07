@@ -874,6 +874,9 @@ void TestUI::writeAuxBus( int uri, int bus, float value )
   lv2_atom_forge_key  (&forge, uris.fabla2_value );
   lv2_atom_forge_float(&forge, value );
   
+  lv2_atom_forge_pop( &forge, &frame );
+
+  write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 }
 
 void TestUI::writeAtom( int eventURI, float value )
@@ -1167,22 +1170,22 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   {
     printf("master aux fader 1 %f\n", tmp );
     auxFaders[0]->value( tmp );
-    writeAtom( uris.fabla2_AuxBus, tmp );  
+    writeAuxBus( uris.fabla2_AuxBus, 0, tmp );
   }
   else if( w == masterAuxFader2 )
   {
     auxFaders[1]->value( tmp );
-    //writeAtom( uris.fabla2_PadAuxBus2, tmp );  
+    writeAuxBus( uris.fabla2_AuxBus, 1, tmp );  
   }
   else if( w == masterAuxFader3 )
   {
     auxFaders[2]->value( tmp );
-    //writeAtom( uris.fabla2_PadAuxBus3, tmp );  
+    writeAuxBus( uris.fabla2_AuxBus, 2, tmp );  
   }
   else if( w == masterAuxFader4 )
   {
     auxFaders[3]->value( tmp );
-    //writeAtom( uris.fabla2_PadAuxBus4, tmp );  
+    writeAuxBus( uris.fabla2_AuxBus, 3, tmp );  
   }
   else
   {
@@ -1196,14 +1199,19 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
       }
       else if( w == auxFaders[i] )
       {
-        if(i == 0 )
+        if(i == 0 ) {
           masterAuxFader1->value( tmp );
-        if(i == 1 )
+          writeAuxBus( uris.fabla2_AuxBus, 0, tmp );
+        } else if(i == 1 ) {
           masterAuxFader2->value( tmp );
-        if(i == 2 )
+          writeAuxBus( uris.fabla2_AuxBus, 1, tmp );
+        } else if(i == 2 ) {
           masterAuxFader3->value( tmp );
-        if(i == 3 )
+          writeAuxBus( uris.fabla2_AuxBus, 2, tmp );
+        } if(i == 3 ) {
           masterAuxFader4->value( tmp );
+          writeAuxBus( uris.fabla2_AuxBus, 3, tmp );
+        }
       }
     }
     
