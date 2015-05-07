@@ -93,7 +93,9 @@ void Sampler::play( Pad* p, float velocity )
 
 long Sampler::getRemainingFrames()
 {
-  return sample->getFrames() - playIndex;
+  // getFrames() returns playable number of frames
+  long totalPlayFrames = sample->getFrames()  - sample->getStartPoint();
+  return totalPlayFrames;
 }
 
 int Sampler::process(int nframes, float* L, float* R)
