@@ -64,12 +64,12 @@ fabla2_save(LV2_Handle                 instance,
   
   if ( !map_path )
   {
-    printf("Fabla2::Save() Error: map path not available! SAVE DID NOT COMPLETE!\n" );
+    printf("Fabla2::Save() Error: map_path not available! SAVE DID NOT COMPLETE!\n" );
     return LV2_STATE_ERR_NO_FEATURE;
   }
-  if ( !map_path )
+  if ( !make_path )
   {
-    printf("Fabla2::Save() Error: Make path not available! SAVE DID NOT COMPLETE!\n" );
+    printf("Fabla2::Save() Error: make_path not available! SAVE DID NOT COMPLETE!\n" );
     return LV2_STATE_ERR_NO_FEATURE;
   }
   
