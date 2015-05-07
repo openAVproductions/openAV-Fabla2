@@ -888,6 +888,11 @@ void TestUI::writeAtom( int eventURI, float value )
   write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 }
 
+int TestUI::handle( const PuglEvent* e )
+{
+  printf("%s\n", __PRETTY_FUNCTION__ );
+}
+
 void TestUI::widgetValueCB( Avtk::Widget* w)
 {
   float tmp = w->value();
@@ -1108,22 +1113,22 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
   {
     printf("master aux fader 1 %f\n", tmp );
     auxFaders[0]->value( tmp );
-    writeAtom( uris.fabla2_PadAuxBus1, tmp );  
+    //writeAtom( uris.fabla2_PadAuxBus1, tmp );  
   }
   else if( w == masterAuxFader2 )
   {
     auxFaders[1]->value( tmp );
-    writeAtom( uris.fabla2_PadAuxBus2, tmp );  
+    //writeAtom( uris.fabla2_PadAuxBus2, tmp );  
   }
   else if( w == masterAuxFader3 )
   {
     auxFaders[2]->value( tmp );
-    writeAtom( uris.fabla2_PadAuxBus3, tmp );  
+    //writeAtom( uris.fabla2_PadAuxBus3, tmp );  
   }
   else if( w == masterAuxFader4 )
   {
     auxFaders[3]->value( tmp );
-    writeAtom( uris.fabla2_PadAuxBus4, tmp );  
+    //writeAtom( uris.fabla2_PadAuxBus4, tmp );  
   }
   else
   {

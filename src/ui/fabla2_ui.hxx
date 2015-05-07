@@ -39,6 +39,8 @@ class TestUI : public Avtk::UI
     /// widget value callback
     void widgetValueCB( Avtk::Widget* widget);
     
+    /// handle() fucntion for keybindings
+    int handle( const PuglEvent* event );
     
     // left: always visible widgets
     Avtk::Widget* bankBtns[4];
