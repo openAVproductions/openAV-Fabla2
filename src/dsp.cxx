@@ -282,6 +282,22 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
           self->dsp->uiMessage( bank, pad, layer, obj->body.otype, value );
         }
       }
+      else if( obj->body.otype == self->uris.fabla2_AuxBus )
+      {
+        // TODO - deal with AuxBus message here
+        //printf("DSP.cxx got AuxBus\n");
+      
+        const LV2_Atom* bus  = 0;
+        const LV2_Atom* value= 0;
+        lv2_atom_object_get(obj,self->uris.fabla2_auxBusNumber, &bus,
+                                self->uris.fabla2_value, &value, 0);
+        if( bus && value )
+        {
+          int num  = ((const LV2_Atom_Int*)bus    )->body;
+          float val= ((const LV2_Atom_Float*)value)->body;
+          self->dsp->auxBus( num, val ); 
+        }
+      }
       else if (obj->body.otype == self->uris.patch_Set)
       {
         // Received a set message, send it to the worker.

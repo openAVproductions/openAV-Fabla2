@@ -1212,6 +1212,7 @@ void TestUI::widgetValueCB( Avtk::Widget* w)
           masterAuxFader4->value( tmp );
           writeAuxBus( uris.fabla2_AuxBus, 3, tmp );
         }
+        printf("AuxBus urid %i\n", uris.fabla2_AuxBus );
       }
     }
     

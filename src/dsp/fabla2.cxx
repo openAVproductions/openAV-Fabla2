@@ -562,7 +562,6 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
     printf("DSP has note on from UI: %i, %i, %i\n", b, p, l);
   }
   */
-  
   Pad* pad = library->bank( b )->pad( p );
   Sample* s = pad->layer( l );
   if( !s )
@@ -685,6 +684,12 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
     writePadsState( b, p, pad );
     writeSampleState( b, p, l, pad, s );
   }
+
+}
+
+void Fabla2DSP::auxBus( int bus, float value )
+{
+  //printf("auxBus() %i, %f\n", bus, value ); 
 }
 
 void Fabla2DSP::startRecordToPad( int b, int p )

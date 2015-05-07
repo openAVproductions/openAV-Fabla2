@@ -81,6 +81,9 @@ class Fabla2DSP
     /// called with UI Atom data
     void uiMessage( int bank, int pad, int layer, int URI, float value );
     
+    /// called with AuxBus messages
+    void auxBus( int bus, float value );
+
     /// called when a sample is removed or added to a Pad, and the UI needs the
     /// update the layer info
     void padRefreshLayers( int bank, int pad );
