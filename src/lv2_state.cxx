@@ -87,7 +87,11 @@ fabla2_save(LV2_Handle                 instance,
     // Is there any? Keep "bank" concept anyway, for loading banks seperate
     // from an entire session.
     
-    pjBank["name"]     = picojson::value( "padTestName" );
+    pjBank["name"]      = picojson::value( "bank name test" );
+    pjBank["auxbus1vol"]= picojson::value( self->dsp->auxBusVol[0] );
+    pjBank["auxbus2vol"]= picojson::value( self->dsp->auxBusVol[1] );
+    pjBank["auxbus3vol"]= picojson::value( self->dsp->auxBusVol[2] );
+    pjBank["auxbus4vol"]= picojson::value( self->dsp->auxBusVol[3] );
     
     for(int p = 0; p < 16; p++ )
     {
@@ -253,6 +257,16 @@ fabla2_restore(LV2_Handle                  instance,
           continue;
         }
         
+        // set auxbus values - TODO split values to each bank and load/restore
+        if( pjBanks.get("auxbus1vol").get<double>() )
+          self->dsp->auxBusVol[0] = (float)pjBanks.get("auxbus1vol").get<double>();
+        if( pjBanks.get("auxbus2vol").get<double>() )
+          self->dsp->auxBusVol[1] = (float)pjBanks.get("auxbus2vol").get<double>();
+        if( pjBanks.get("auxbus3vol").get<double>() )
+          self->dsp->auxBusVol[2] = (float)pjBanks.get("auxbus3vol").get<double>();
+        if( pjBanks.get("auxbus4vol").get<double>() )
+          self->dsp->auxBusVol[3] = (float)pjBanks.get("auxbus4vol").get<double>();
+          
         for(int p = 0; p < 16; p ++)
         {
           Pad* pad = bank->pad( p );
