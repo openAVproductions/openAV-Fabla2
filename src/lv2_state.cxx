@@ -258,13 +258,13 @@ fabla2_restore(LV2_Handle                  instance,
         }
         
         // set auxbus values - TODO split values to each bank and load/restore
-        if( pjBanks.get("auxbus1vol").get<double>() )
+        if( pjBanks.get("auxbus1vol").is<double>() )
           self->dsp->auxBusVol[0] = (float)pjBanks.get("auxbus1vol").get<double>();
-        if( pjBanks.get("auxbus2vol").get<double>() )
+        if( pjBanks.get("auxbus2vol").is<double>() )
           self->dsp->auxBusVol[1] = (float)pjBanks.get("auxbus2vol").get<double>();
-        if( pjBanks.get("auxbus3vol").get<double>() )
+        if( pjBanks.get("auxbus3vol").is<double>() )
           self->dsp->auxBusVol[2] = (float)pjBanks.get("auxbus3vol").get<double>();
-        if( pjBanks.get("auxbus4vol").get<double>() )
+        if( pjBanks.get("auxbus4vol").is<double>() )
           self->dsp->auxBusVol[3] = (float)pjBanks.get("auxbus4vol").get<double>();
           
         for(int p = 0; p < 16; p ++)

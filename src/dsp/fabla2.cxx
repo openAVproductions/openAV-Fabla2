@@ -690,7 +690,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 void Fabla2DSP::auxBus( int bus, float value )
 {
   auxBusVol[bus] = value;
-  printf("auxBus() %i, %f\n", bus, auxBusVol[bus] ); 
+  printf("(nonRT) : auxBus() %i, %f\n", bus, auxBusVol[bus] ); 
 }
 
 void Fabla2DSP::startRecordToPad( int b, int p )
