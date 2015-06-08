@@ -76,12 +76,23 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
     Pad* tmpPad = new Pad( this, rate, i % 16 );
     tmpPad->bank( i / 16 );
     
-    // add a Sample* based on a static (compiled in) audio buffer
-    // for loading in the MOD Quadra, which doesn't have file load
-    //Sample* samp = new Sample( this, rate, "sampleName", 
+
 
     library->bank( bankID )->pad( tmpPad );
   }
+  
+  // statically load 8 samples
+  for(int i = 0; i < 8; i++)
+  {
+    Pad* p = library->bank( 0 )->pad( i );
+    // add a Sample* based on a static (compiled in) audio buffer
+    // for loading in the MOD Quadra, which doesn't have file load
+    printf("loading static samples... %i, %p, first float %f\n", samps[0].size, samps[0].data, samps[0].data[0] );
+    Sample* samp = new Sample( this, rate, "sampleName", samps[0].size, samps[0].data ); 
+    p->add( samp );
+    printf("samp %p, pad %p\n", samp, p );
+  }
+  printf("done creating pads, and loading static samples\n");
   
   // for debugging null pointers etc
   //library->checkAll();
@@ -475,7 +486,7 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
 void Fabla2DSP::padRefreshLayers( int bank, int pad )
 {
   Pad* p = library->bank( bank )->pad( pad );
-  //printf("%s, p = %i\n", __PRETTY_FUNCTION__, p );
+  printf("%s, p = %p\n", __PRETTY_FUNCTION__, p );
   
   for(int i = 0; i < p->nLayers(); i++)
   {
