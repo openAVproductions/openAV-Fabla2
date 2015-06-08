@@ -220,11 +220,11 @@ void Sample::init()
   //recacheWaveform();
 }
 
-Sample::Sample( Fabla2DSP* d, int rate, const char* nme, int size, float* data ) :
+Sample::Sample( Fabla2DSP* d, int rate, const char* nme, int size, float* data, int chans ) :
   dsp( d ),
   sr(rate),
   name( nme ),
-  channels( 2 ),
+  channels( chans ),
   frames( size / 2 ),
   velLow( 0 ),
   velHigh( 1 ),

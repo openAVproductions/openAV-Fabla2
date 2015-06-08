@@ -88,7 +88,7 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
     // add a Sample* based on a static (compiled in) audio buffer
     // for loading in the MOD Quadra, which doesn't have file load
     printf("loading static samples... %i, %p, first float %f\n", samps[i].size, samps[i].data, samps[i].data[0] );
-    Sample* samp = new Sample( this, rate, "sampleName", samps[i].size, samps[i].data ); 
+    Sample* samp = new Sample( this, rate, "sampleName", samps[i].size, samps[i].data, 1 ); 
     p->add( samp );
     printf("samp %p, pad %p\n", samp, p );
   }
