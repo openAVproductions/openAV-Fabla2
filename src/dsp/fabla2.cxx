@@ -41,6 +41,8 @@
 
 #include "plotter.hxx"
 
+#include "staticKit/kit.hxx"
+
 namespace Fabla2
 {
 
@@ -74,6 +76,10 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
     Pad* tmpPad = new Pad( this, rate, i % 16 );
     tmpPad->bank( i / 16 );
     
+    // add a Sample* based on a static (compiled in) audio buffer
+    // for loading in the MOD Quadra, which doesn't have file load
+    //Sample* samp = new Sample( this, rate, "sampleName", 
+
     library->bank( bankID )->pad( tmpPad );
   }
   
