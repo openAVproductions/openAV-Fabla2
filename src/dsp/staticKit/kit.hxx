@@ -17,11 +17,40 @@ struct Samp
   float* data;
 };
 
-static Samp samps[1] = {
+static Samp samps[8] = {
+{
+  kick::size,
+  kick::wavetable
+},
+{
+  snare::size,
+  snare::wavetable
+},
+{
+  snare_clean::size,
+  snare_clean::wavetable
+},
 {
   hat::size,
   hat::wavetable
 },
+{
+  ride::size,
+  ride::wavetable
+},
+{
+  snare_rim_clean::size,
+  snare_rim_clean::wavetable
+},
+{
+  hat_sizzle::size,
+  hat_sizzle::wavetable
+},
+{
+  hat_open::size,
+  hat_open::wavetable
+},
+
 };
 
 #endif /* FABLA2_STATIC_KIT_HXX */
