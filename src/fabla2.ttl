@@ -22,7 +22,7 @@
   a ui:X11UI;
   ui:binary <fabla2ui.so>;
   
-  ui:requiredFeature  ui:makeResident ;
+  lv2:requiredFeature ui:makeSONameResident ;
   lv2:extensionData   ui:idleInterface ;
   lv2:requiredFeature ui:idleInterface ;
   
@@ -42,17 +42,51 @@
   rdfs:label "Sample" ;
   rdfs:range atom:Path .
 
+<http://www.openavproductions.com/fabla2#mainIn>
+  a pg:InputGroup ,
+    pg:StereoGroup ;
+  lv2:name "Main Input" ;
+  lv2:symbol "main_in" .
+
+<http://www.openavproductions.com/fabla2#mainOut>
+  a pg:OutputGroup ,
+    pg:StereoGroup ;
+  lv2:name "Main Output" ;
+  lv2:symbol "main_out" .
+
+<http://www.openavproductions.com/fabla2#auxBus1>
+  a pg:OutputGroup ,
+    pg:StereoGroup ;
+  lv2:name "Auxiliary Bus 1" ;
+  lv2:symbol "aux_bus_1" .
+
+<http://www.openavproductions.com/fabla2#auxBus2>
+  a pg:OutputGroup ,
+    pg:StereoGroup ;
+  lv2:name "Auxiliary Bus 2" ;
+  lv2:symbol "aux_bus_2" .
+
+<http://www.openavproductions.com/fabla2#auxBus3>
+  a pg:OutputGroup ,
+    pg:StereoGroup ;
+  lv2:name "Auxiliary Bus 3" ;
+  lv2:symbol "aux_bus_3" .
+
+<http://www.openavproductions.com/fabla2#auxBus4>
+  a pg:OutputGroup ,
+    pg:StereoGroup ;
+  lv2:name "Auxiliary Bus 4" ;
+  lv2:symbol "aux_bus_4" .
 
 <http://www.openavproductions.com/fabla2>
   a lv2:Plugin,
     lv2:InstrumentPlugin ;
   
   doap:name "Fabla 2.0" ;
-  doap:maintainer [ foaf:name "OpenAV Productions" ] ;
 
   lv2:binary <fabla2.so> ;
   
-  lv2:project <http://www.openavproductions.com> ;
+  lv2:project [ doap:maintainer [ foaf:name "OpenAV Productions" ] ] ;
   
   lv2:requiredFeature urid:map;
   lv2:requiredFeature work:schedule ;
@@ -66,11 +100,6 @@
   ui:ui <http://www.openavproductions.com/fabla2#gui>;
   
   patch:writable fabla2:SampleLoad;
-  pg:mainOutput  fabla2:mainOut;
-  pg:StereoGroup fabla2:auxBus1;
-  pg:StereoGroup fabla2:auxBus2;
-  pg:StereoGroup fabla2:auxBus3;
-  pg:StereoGroup fabla2:auxBus4;
   
   lv2:port
   [
@@ -103,26 +132,32 @@
       lv2:index 2 ;
       lv2:symbol "in_l" ;
       lv2:name "Input Left" ;
+      lv2:designation pg:left ;
+      pg:group fabla2:mainIn ;
   ] , [
       a lv2:AudioPort ;
       a lv2:InputPort ;
       lv2:index 3 ;
       lv2:symbol "in_r" ;
       lv2:name "Input Right" ;
+      lv2:designation pg:right ;
+      pg:group fabla2:mainIn ;
   ] , [
       a lv2:AudioPort ;
       a lv2:OutputPort ;
       lv2:index 4 ;
       lv2:symbol "master_l" ;
       lv2:name "Master Left" ;
-      pg:group fabla2:mainOut;
+      lv2:designation pg:left ;
+      pg:group fabla2:mainOut ;
   ] , [
       a lv2:AudioPort ;
       a lv2:OutputPort ;
       lv2:index 5 ;
       lv2:symbol "master_r" ;
       lv2:name "Master Right" ;
-      pg:group fabla2:mainOut;
+      lv2:designation pg:right ;
+      pg:group fabla2:mainOut ;
   ]
   , # AuxBus 1
   [
@@ -132,6 +167,7 @@
       lv2:symbol "aux1_l" ;
       lv2:name "AuxBus1 Left" ;
       lv2:portProperty lv2:connectionOptional;
+      lv2:designation pg:left ;
       pg:group fabla2:auxBus1;
   ] , [
       a lv2:AudioPort ;
@@ -140,6 +176,7 @@
       lv2:symbol "aux1_r" ;
       lv2:name "AuxBus1 Right" ;
       lv2:portProperty lv2:connectionOptional;
+      lv2:designation pg:right ;
       pg:group fabla2:auxBus1;
   ]
   , # AuxBus 2
@@ -150,6 +187,7 @@
       lv2:symbol "aux2_l" ;
       lv2:name "AuxBus2 Left" ;
       lv2:portProperty lv2:connectionOptional;
+      lv2:designation pg:left ;
       pg:group fabla2:auxBus2;
   ] , [
       a lv2:AudioPort ;
@@ -158,6 +196,7 @@
       lv2:symbol "aux2_r" ;
       lv2:name "AuxBus2 Right" ;
       lv2:portProperty lv2:connectionOptional;
+      lv2:designation pg:right ;
       pg:group fabla2:auxBus2;
   ]
   , # AuxBus 3
@@ -168,6 +207,7 @@
       lv2:symbol "aux3_l" ;
       lv2:name "AuxBus3 Left" ;
       lv2:portProperty lv2:connectionOptional;
+      lv2:designation pg:left ;
       pg:group fabla2:auxBus3;
   ] , [
       a lv2:AudioPort ;
@@ -176,6 +216,7 @@
       lv2:symbol "aux3_r" ;
       lv2:name "AuxBus3 Right" ;
       lv2:portProperty lv2:connectionOptional;
+      lv2:designation pg:right ;
       pg:group fabla2:auxBus3;
   ]
   , # AuxBus 4
@@ -186,6 +227,7 @@
       lv2:symbol "aux4_l" ;
       lv2:name "AuxBus4 Left" ;
       lv2:portProperty lv2:connectionOptional;
+      lv2:designation pg:left ;
       pg:group fabla2:auxBus4;
   ] , [
       a lv2:AudioPort ;
@@ -194,6 +236,7 @@
       lv2:symbol "aux4_r" ;
       lv2:name "AuxBus4 Right" ;
       lv2:portProperty lv2:connectionOptional;
+      lv2:designation pg:right ;
       pg:group fabla2:auxBus4;
   ]
   
