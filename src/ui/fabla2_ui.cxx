@@ -941,7 +941,7 @@ int TestUI::handle( const PuglEvent* e )
       int uri = e->type == PUGL_KEY_PRESS ? uris.fabla2_PadPlay : uris.fabla2_PadStop; 
       currentPad = pad;
       writeAtom( uri, 1 );
-      printf("playing pad %i, uri %i\n", pad, uri );
+      //printf("playing pad %i, uri %i\n", pad, uri );
       //writePadPlayStop( true, currentBank, pad, 0 );
       return 1; // handled
     }
