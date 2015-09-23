@@ -12,7 +12,7 @@ set(FABLA2_VERSION "${FABLA2_VERSION_MAJOR}.${FABLA2_VERSION_MINOR}.${FABLA2_VER
 option(FABLA2_RELEASE_BUILD   "Build for releasing"         ON )
 option(FABLA2_DEBUG_PRINTS    "Build with debugging prints" ON )
 option(FABLA2_TESTS           "Build component tests"       OFF)
-option(BUILD_GUI              "Build GUI"                   OFF )
+option(BUILD_GUI              "Build GUI"                   ON )
 
 
 ################################################################################
