@@ -22,7 +22,6 @@
   a ui:X11UI;
   ui:binary <fabla2ui.so>;
   
-  lv2:requiredFeature ui:makeSONameResident ;
   lv2:extensionData   ui:idleInterface ;
   lv2:requiredFeature ui:idleInterface ;
   
