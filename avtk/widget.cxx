@@ -125,10 +125,12 @@ int Widget::handle( const PuglEvent* event )
             {
               auditionValue_ = value_;
               value( defaultValue_ );
+              callback( this, callbackUD );
             }
             else
             {
               value( auditionValue_ );
+              callback( this, callbackUD );
             }
             
             AVTK_DEV("rclick - reset to default - value( %f )\n", defaultValue_ );
@@ -346,7 +348,9 @@ void Widget::value( float v )
 
 void Widget::defaultValue( float dv )
 {
+  // store new default value as both default and audition
   defaultValue_ = dv;
+  auditionValue_ = dv;
 }
 
 bool Widget::touches( int inx, int iny )
