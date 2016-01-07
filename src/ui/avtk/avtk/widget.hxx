@@ -80,6 +80,7 @@ class Widget
     virtual void h(int h__){ h_ = h__; }
     
     std::string label_;     /// widget name - sometimes shown in UI
+    bool  label_visible;    /// When true, label gets drawn
     bool  visible_;         /// widget visibility
     
     enum ClickMode {

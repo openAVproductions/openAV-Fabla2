@@ -52,6 +52,7 @@ Widget::Widget( Avtk::UI* ui_, int x, int y, int w, int h, std::string label__) 
   initH( h ),
   
   label_( label__ ),
+  label_visible(true),
   visible_( true ),
   
   value_( 0 ),
