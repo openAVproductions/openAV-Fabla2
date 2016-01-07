@@ -29,6 +29,9 @@ extern "C" {
 #include "sofd/libsofd.h"
 }
 
+// AVTK themes
+#include "themes.hxx"
+
 static void fabla2_widgetCB(Avtk::Widget* w, void* ud);
 
 TestUI::TestUI( PuglNativeWindow parent ):
@@ -38,10 +41,10 @@ TestUI::TestUI( PuglNativeWindow parent ):
   currentLayer(0),
   followPad( true )
 {
-  themes.push_back( new Avtk::Theme( this, "orange.avtk" ) );
-  themes.push_back( new Avtk::Theme( this, "green.avtk" ) );
-  themes.push_back( new Avtk::Theme( this, "yellow.avtk" ) );
-  themes.push_back( new Avtk::Theme( this, "red.avtk" ) );
+  themes.push_back( new Avtk::Theme( this, ORANGE ) );
+  themes.push_back( new Avtk::Theme( this, GREEN ) );
+  themes.push_back( new Avtk::Theme( this, YELLOW ) );
+  themes.push_back( new Avtk::Theme( this, BLUE ) );
   
   Avtk::Image* headerImage = 0;
   headerImage = new Avtk::Image( this, 0, 0, 200, 36, "Header Image - Fabla" );
