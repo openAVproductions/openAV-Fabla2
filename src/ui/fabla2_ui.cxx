@@ -160,9 +160,11 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
   velocityStartPoint = new Avtk::Dial( this, wx     , wy, 40, 40, "Velocity Low" );
+  velocityStartPoint->label_visible = 0;
   velocityEndPoint   = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Velocity High" );
   velocityStartPoint->value( 0 );
   velocityEndPoint  ->value( 1 );
+  velocityEndPoint->label_visible = 0;
   wy += 40;
   
   /*
@@ -185,7 +187,9 @@ TestUI::TestUI( PuglNativeWindow parent ):
   
   wy += 14;
   filterFrequency = new Avtk::Dial( this, wx, wy, 40, 40, "Filter Frequency" );
+  filterFrequency->label_visible = 0;
   filterResonance = new Avtk::Dial( this, wx + divider + 10, wy, 40, 40, "Filter Resonance" );
+  filterResonance->label_visible = 0;
   
   
   
@@ -198,9 +202,11 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waste->clickMode( Widget::CLICK_NONE );
   wy += 16;
   sampleGain = new Avtk::Dial( this, wx + 4, wy, 40, 40, "Gain" );
+  sampleGain->label_visible = false;
   sampleGain->value( 0.75 );
   samplePan  = new Avtk::Dial( this, wx + 46, wy, 40, 40, "Pan" );
   samplePan->value( 0.5 );
+  samplePan->label_visible = false;
   wy += 38;
   
   /// start / end point dials
@@ -208,7 +214,9 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
   sampleStartPoint = new Avtk::Dial( this, wx     , wy, 40, 40, "Sample Start Point" );
+  sampleStartPoint->label_visible = false;
   sampleEndPoint   = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Sample End Point" );
+  sampleEndPoint->label_visible = false;
   sampleEndPoint->value( true );
   wy += 40;
   
@@ -217,8 +225,10 @@ TestUI::TestUI( PuglNativeWindow parent ):
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
   samplePitch = new Avtk::Dial( this, wx     , wy, 40, 40, "Pitch" );
+  samplePitch->label_visible = false;
   samplePitch->value( 0.5 );
   sampleTime   = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Time" );
+  sampleTime->label_visible = false;
   sampleTime->clickMode( Widget::CLICK_NONE );
   sampleTime->theme( theme(2) );
   
@@ -232,6 +242,10 @@ TestUI::TestUI( PuglNativeWindow parent ):
   adsrD = new Avtk::Dial( this, wx + 21, wy+10, 32, 32, "adsrD" );
   adsrS = new Avtk::Dial( this, wx + 42, wy   , 32, 32, "adsrS" );
   adsrR = new Avtk::Dial( this, wx + 63, wy+10, 32, 32, "adsrR" );
+  adsrA->label_visible = false;
+  adsrD->label_visible = false;
+  adsrS->label_visible = false;
+  adsrR->label_visible = false;
   adsrS->value( 1.0 );
   wy += 40;
   
@@ -240,17 +254,21 @@ TestUI::TestUI( PuglNativeWindow parent ):
   wy += 14;
   send1 = new Avtk::Dial( this, wx     , wy, 40, 40, "AuxBus 1" );
   send1->theme( theme(1) );
+  send1->label_visible = false;
   send2 = new Avtk::Dial( this, wx + 44, wy, 40, 40, "AuxBus 2" );
   send2->theme( theme(2) );
+  send2->label_visible = false;
   wy += 40;
   
   waste = new Avtk::Box( this, wx, wy, colWidth, 50,  "AuxBus 3 4" );
   waste->clickMode( Widget::CLICK_NONE );
   wy += 14;
   send3 = new Avtk::Dial( this, wx     , wy, 40, 40, "AuxBus 3" );
+  send3->label_visible = false;
   send3->theme( theme(3) );
   send4 = new Avtk::Dial( this, wx + 44, wy, 40, 40, "AuxBus 4" );
   send4->theme( theme(4) );
+  send4->label_visible = false;
   wy += 40;
   
   ///  pad master
@@ -389,6 +407,11 @@ TestUI::TestUI( PuglNativeWindow parent ):
     auxDials[16+i]->theme( theme( 2 ) );
     auxDials[32+i]->theme( theme( 3 ) );
     auxDials[48+i]->theme( theme( 4 ) );
+    
+    auxDials[ 0+i]->label_visible = false;
+    auxDials[16+i]->label_visible = false;
+    auxDials[32+i]->label_visible = false;
+    auxDials[48+i]->label_visible = false;
     
     my += mw*5;
     
