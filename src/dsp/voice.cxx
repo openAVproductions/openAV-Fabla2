@@ -86,7 +86,7 @@ void Voice::playLayer( Pad* p, int layer )
   }
   else
   {
-    printf("Voice::playLayer() %i, sampler->play() returns NULL sample! Setting active to false\n", ID );
+    //printf("Voice::playLayer() %i, sampler->play() returns NULL sample! Setting active to false\n", ID );
     // *hard* set the sample to not play: we don't have a sample!
     active_ = false;
     return;
@@ -287,7 +287,7 @@ void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
   
   
   adsrOffCounter = releaseSamps;
-  printf("voice playing with start-end %i,  adsrOffCounter %i\n", totalSamps, adsrOffCounter );
+  //printf("voice playing with start-end %i, adsrOffCounter %i\n", totalSamps, adsrOffCounter );
   
   adsr->setAttackRate  ( attackSamps );
   adsr->setDecayRate   ( decaySamps  );
@@ -358,7 +358,7 @@ void Voice::process()
   if( activeCountdown )
   {
     nframes = nframes - activeCountdown;
-    printf("process() with activeCountdown = %i\n", activeCountdown ); 
+    //printf("process() with activeCountdown = %i\n", activeCountdown ); 
   }
   
   // check if we need to trigger ADSR off
@@ -366,7 +366,7 @@ void Voice::process()
   {
     if( adsr->getState() != ADSR::ENV_RELEASE )
     {
-      printf("remaining frames + nframes < adsrOffCounter : ADSR OFF\n");
+      //printf("remaining frames + nframes < adsrOffCounter : ADSR OFF\n");
       adsr->gate( false );
     }
   }
@@ -387,13 +387,14 @@ void Voice::process()
   
   if( done || adsr->getState() == ADSR::ENV_IDLE )
   {
-    printf("Voice done\n");
+    //printf("Voice done\n");
     active_ = false;
     pad_ = 0;
     return;
   }
   
   // filter details setup in play()
+  /*
   if( filterActive_ )
   {
     filterL->setResonance( ( s->filterResonance) );
@@ -410,6 +411,7 @@ void Voice::process()
         &voiceBuffer[dsp->nframes+activeCountdown],
         &voiceBuffer[dsp->nframes+activeCountdown] );
   }
+  */
   
   float* outL = dsp->controlPorts[OUTPUT_L];
   float* outR = dsp->controlPorts[OUTPUT_R];
@@ -455,12 +457,12 @@ void Voice::process()
   }
   
   
-  // for testing sample-accurate voice note-on
+  /* // for testing sample-accurate voice note-on
   if( activeCountdown )
   {
     Plotter::plot( "active.dat", dsp->nframes, dsp->controlPorts[OUTPUT_L] );
   }
-  
+  */
   
   activeCountdown = 0;
 }

@@ -59,7 +59,7 @@ void Sampler::playLayer( Pad* p, int layer )
   pad = p;
   
   padVol = pad->volume;
-  printf("sampler playLayer with vol %f\n", padVol );
+  //printf("sampler playLayer with vol %f\n", padVol );
   
   sample = pad->layer( layer );
 }
@@ -89,7 +89,7 @@ void Sampler::play( Pad* p, float velocity )
   
   // trigger audio playback here
   playIndex = sample->getStartPoint();
-  printf("playing sample with start point of %li\n", playIndex );
+  //printf("playing sample with start point of %li\n", playIndex );
 }
 
 long Sampler::getRemainingFrames()
@@ -118,7 +118,7 @@ int Sampler::process(int nframes, float* L, float* R)
   
   if( playIndex + 4 >= frames || playIndex < 0 )
   {
-    printf("%s : ERROR : Sampler click stop, ran out of frames!\n", __PRETTY_FUNCTION__ );
+    //printf("%s : ERROR : Sampler click stop, ran out of frames!\n", __PRETTY_FUNCTION__ );
     return 1;
   }
   
@@ -169,7 +169,7 @@ int Sampler::process(int nframes, float* L, float* R)
       
       if( playIndex + 4 >= frames )
       {
-        printf("%s : ERROR : Sampler click stop, ran out of frames!\n", __PRETTY_FUNCTION__ );
+        //printf("%s : ERROR : Sampler click stop, ran out of frames!\n", __PRETTY_FUNCTION__ );
         return 1;
       }
     }
@@ -212,7 +212,7 @@ int Sampler::process(int nframes, float* L, float* R)
       
       if( playIndex + 4 >= frames )
       {
-        printf("%s : ERROR : Sampler click stop, ran out of frames!\n", __PRETTY_FUNCTION__ );
+        //printf("%s : ERROR : Sampler click stop, ran out of frames!\n", __PRETTY_FUNCTION__ );
         return 1;
       }
       
