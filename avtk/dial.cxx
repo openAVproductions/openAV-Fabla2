@@ -34,7 +34,7 @@ void Dial::draw( cairo_t* cr )
   cairo_set_line_width(cr, w_ / 7.f);
   cairo_stroke(cr);
  
-  if( true ) // show label?
+  if( label_visible )
   {
     cairo_text_extents_t ext;
     cairo_text_extents( cr, label(), &ext );
