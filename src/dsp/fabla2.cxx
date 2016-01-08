@@ -522,7 +522,8 @@ void Fabla2DSP::tx_waveform( int b, int p, int l, const float* data )
   LV2_Atom_Forge_Frame frame;
   
   lv2_atom_forge_frame_time(&lv2->forge, 0);
-  lv2_atom_forge_object(&lv2->forge, &frame, 0, uris->fabla2_SampleAudioData);
+  lv2_atom_forge_object(&lv2->forge, &frame, 0,
+			uris->fabla2_SampleAudioData);
   
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_bank);
   lv2_atom_forge_int(&lv2->forge, b );
@@ -533,11 +534,12 @@ void Fabla2DSP::tx_waveform( int b, int p, int l, const float* data )
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_layer);
   lv2_atom_forge_int(&lv2->forge, l );
   
-  //Plotter::plot( "tx_waveform", FABLA2_UI_WAVEFORM_PX, data );
+  Plotter::plot( "tx_waveform", FABLA2_UI_WAVEFORM_PX, data );
   
   // Add vector of floats 'audioData' property
   lv2_atom_forge_key(&lv2->forge, uris->fabla2_audioData);
-  lv2_atom_forge_vector( &lv2->forge, sizeof(float), uris->atom_Float, FABLA2_UI_WAVEFORM_PX, data);
+  lv2_atom_forge_vector( &lv2->forge, sizeof(float), uris->atom_Float,
+			 FABLA2_UI_WAVEFORM_PX, data);
 
   // Close off object
   lv2_atom_forge_pop(&lv2->forge, &frame);

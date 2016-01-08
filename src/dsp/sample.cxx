@@ -45,7 +45,9 @@ extern QUnit::UnitTest qunit;
 namespace Fabla2
 {
 
-static void fabla2_deinterleave( int size, const float* all, std::vector<float>& L, std::vector<float>& R )
+static void fabla2_deinterleave( int size, const float* all,
+				 std::vector<float>& L,
+				 std::vector<float>& R )
 {
   L.resize( size / 2 );
   R.resize( size / 2 );
@@ -79,11 +81,11 @@ void Sample::recacheWaveform()
   printf("recaching waveform... \n" );
 #endif
   
-  
-  printf("Recache waveform with %i frames\n", frames );
+  //printf("Recache waveform with %i frames\n", frames );
   memset( waveformData, 0 , sizeof(float) * FABLA2_UI_WAVEFORM_PX );
-  printf("Recache returning!\n" );
-  return;
+  
+  //printf("Recache returning!\n" );
+  //return;
   
   int sampsPerPix = frames / FABLA2_UI_WAVEFORM_PX;
   
@@ -98,12 +100,14 @@ void Sample::recacheWaveform()
   
   // counts pixels in output waveform
   int p = 0;
-  
-  if( frames > 50000 )
+ 
+  /*
+  if( frames > 250000 )
   {
     printf("too many samples to show waveform\n");
     return;
   }
+  */
   
   for( int f = 0; f < frames; f++ )
   {
@@ -121,35 +125,35 @@ void Sample::recacheWaveform()
       waveformData[p] = t;
     
     p = f / sampsPerPix;
-    /*
-    if( p >= FABLA2_UI_WAVEFORM_PX )
-      p = FABLA2_UI_WAVEFORM_PX - 1;
-    */
+
+    if(waveformData[p] > highestPeak)
+	highestPeak = waveformData[p];
   }
   
-  printf("RECACHE: done, frames %i, sampsPerPx %i,  p %i\n", frames, sampsPerPix, p );
+  //printf("RECACHE: done, frames %i, sampsPerPx %i,  p %i\n", frames, sampsPerPix, p );
   
-  Plotter::plot( "forLoop", FABLA2_UI_WAVEFORM_PX, &waveformData[0] );
+  //Plotter::plot( "forLoop", FABLA2_UI_WAVEFORM_PX, &waveformData[0] );
   
   
   float normalizeFactor = 1;
-  if( highestPeak > 0.001 ) // avoid divide-by-zero
-    normalizeFactor = 1+(1.f / highestPeak);
-  printf("normalizing with highestPeak %f: nomalizeFactor %f\n", highestPeak, normalizeFactor );
+  normalizeFactor += 1-(1-highestPeak);
+
+  //printf("normalizing with highestPeak %f: nomalizeFactor %f\n", highestPeak, normalizeFactor );
   
   // loop over each pixel and normalize it
   for( int p = 0; p < FABLA2_UI_WAVEFORM_PX; p++ )
   {
-    waveformData[p] = (waveformData[p] * normalizeFactor)-1.0;
+    waveformData[p] = (waveformData[p] * normalizeFactor);
+    /*
     if( waveformData[p] > 1.0 )
     {
       printf("Recache error on px %i\n", p );
     }
+    */
   }
   
-  Plotter::plot( "recache", FABLA2_UI_WAVEFORM_PX, &waveformData[0] );
-  
-  printf("Recache waveform with %i frames : DONE!\n", frames );
+  //Plotter::plot( "recache", FABLA2_UI_WAVEFORM_PX, &waveformData[0] );
+  //printf("Recache waveform with %i frames : DONE!\n", frames );
 }
 
 
