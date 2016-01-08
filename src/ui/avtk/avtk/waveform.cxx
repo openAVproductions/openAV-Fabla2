@@ -142,9 +142,10 @@ void Waveform::draw( cairo_t* cr )
           average += tmp;
         }
         average = (average / withZoomSPP);
-        
-        //cairo_move_to( waveformCr, p, (h/2) - (averageL * (h/2.2f) )  );
-        cairo_line_to( waveformCr, p, h_/2.f - average*(h_-40)/2.f );
+       
+	// draw full white block of waveform
+        cairo_move_to( waveformCr, p,(h_/2.f) + average*(h_-50)/2.f);
+        cairo_line_to( waveformCr, p, h_/2.f  - average*(h_-50)/2.f );
         
         if( p % 128 == 0 )
         {
