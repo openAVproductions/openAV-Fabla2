@@ -113,7 +113,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
   int waveX = 355;
   int waveY = 42;
   int waveTW = 120;
-  sampleName = new Avtk::Text( this, waveX + 8, waveY + 8, waveTW, 14, "-" );
+  sampleName = new Avtk::Text( this, waveX + 8, waveY + 100, waveTW, 14, "-" );
   
   waveformGroup->end();
   
