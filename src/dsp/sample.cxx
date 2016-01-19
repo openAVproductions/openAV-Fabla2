@@ -187,9 +187,9 @@ void Sample::resample( int fromSr, std::vector<float>& buf )
   // resample quality taken from config file, 
   int ret = src_simple ( &data, q, 1 );
   if ( ret == 0 )
-    printf("%s%i%s%i", "Resampling finished, from ", data.input_frames_used, " to ", data.output_frames_gen );
+    printf("%s%ld%s%ld", "Resampling finished, from ", data.input_frames_used, " to ", data.output_frames_gen );
   else
-    printf("%s%i%s%i", "Resampling finished, from ", data.input_frames_used, " to ", data.output_frames_gen );
+    printf("%s%ld%s%ld", "Resampling finished, from ", data.input_frames_used, " to ", data.output_frames_gen );
   
   /// exchange buffers, so buf contains the resampled audio
   buf.swap( resampled );
@@ -282,11 +282,11 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
   
   if( frames < 200 )
   {
-    printf("Fabla2: Refusing to load sample with %i frames - too short\n", frames );
+    printf("Fabla2: Refusing to load sample with %ld frames - too short\n", frames );
   }
   
   
-  printf("Loading sample with %i frames\n", frames );
+  printf("Loading sample with %ld frames\n", frames );
   
   if( channels > 2 || channels <= 0 )
   {

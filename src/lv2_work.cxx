@@ -24,8 +24,8 @@ static inline const LV2_Atom* read_set_file(FablaLV2* self,
   }
   
   // get data from atom
-  const LV2_Atom* b = 0;
-  const LV2_Atom* p = 0;
+  const LV2_Atom_Int* b = 0;
+  const LV2_Atom_Int* p = 0;
   const LV2_Atom* property = NULL;
   
   lv2_atom_object_get(obj,
@@ -34,7 +34,7 @@ static inline const LV2_Atom* read_set_file(FablaLV2* self,
       uris->fabla2_pad    , &p,
       0);
   
-  printf(" %i, %i, %i\n", property, b, p );
+  //printf(" %i, %i, %i\n", property, b, p );
   
   if( property && b && p )
   {
@@ -103,7 +103,7 @@ fabla2_work( LV2_Handle                  instance,
     std::string file = (const char*)LV2_ATOM_BODY_CONST(file_path);
     Fabla2::Sample* s = new Fabla2::Sample( self->dsp, 44100, "LoadedSample", file );
     
-    lv2_log_note(&self->logger,"Work() - B: %i, P %i: Loading %s: Sample() has %i frames\n",
+    lv2_log_note(&self->logger,"Work() - B: %i, P %i: Loading %s: Sample() has %ld frames\n",
         bank, pad, file.c_str(), s->getFrames() );
     
     if ( s && s->getFrames() )

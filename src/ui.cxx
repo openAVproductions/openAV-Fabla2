@@ -386,7 +386,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
           ui->pads[pad]->loaded( false );
         else
         {
-          printf("Fabla2 UI pad is invalid : FIXME : %s , %s", __FILE__ , __LINE__ );
+          printf("Fabla2 UI pad is invalid : FIXME : %s , %d", __FILE__ , __LINE__ );
         }
         ui->blankSampleState();
       }
