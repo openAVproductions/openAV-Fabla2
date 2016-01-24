@@ -9,16 +9,16 @@ namespace Avtk
 
 class Pad : public Widget
 {
-  public:
+public:
     Pad( Avtk::UI* ui, int x, int y, int w, int h, std::string label);
-    
+
     virtual void draw( cairo_t* cr );
-    
+
     void loaded( bool l )
     {
-      loaded_ = l;
+        loaded_ = l;
     }
-    
+
     bool loaded_;
 };
 

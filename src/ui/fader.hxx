@@ -9,10 +9,10 @@ namespace Avtk
 
 class Fader : public Widget
 {
-  public:
+public:
     Fader( Avtk::UI* ui, int x, int y, int w, int h, std::string label);
-    virtual ~Fader(){}
-    
+    virtual ~Fader() {}
+
     virtual void draw( cairo_t* cr );
 };
 
