@@ -82,8 +82,13 @@ void Sample::recacheWaveform()
     //printf("Recache waveform with %i frames\n", frames );
     memset( waveformData, 0 , sizeof(float) * FABLA2_UI_WAVEFORM_PX );
 
-    //printf("Recache returning!\n" );
-    //return;
+    // TODO FIXME: Refactor *ALL* of this waveform caching code, there's a
+    // memory corruption bug in here! Test with loading a sample, pushing
+    // it to the UI by clicking the Pad (with Follow on) and then loading
+    // another sample. The code will fail in lv2_work(), saying operator
+    // new() failed blah blah: in short - memory corruption from here!!
+    printf("Recache returning!\n" );
+    return;
 
     int sampsPerPix = frames / FABLA2_UI_WAVEFORM_PX;
 

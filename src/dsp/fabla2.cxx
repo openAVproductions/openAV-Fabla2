@@ -557,7 +557,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
         return;
     }
 
-    if(       URI == uris->fabla2_SampleUnload ) {
+    if( URI == uris->fabla2_SampleUnload ) {
         // remove a sample from the engine
         printf("Fabla2-DSP *Deleteing* sample %s now!\n", s->getName() );
 

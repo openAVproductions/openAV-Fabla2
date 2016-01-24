@@ -43,6 +43,7 @@ Pad::Pad( Fabla2DSP* d, int rate, int ID ) :
     offGroup_( 0 ),
     triggerMode_( TM_GATED ),
     loaded_( false ),
+    name("Empty"),
 
     sampleSwitchSystem( SS_NONE ),
     sampleLayerCounter(0)
@@ -114,6 +115,7 @@ Sample* Pad::layer( int id )
 {
     if( id < samples.size() && id >= 0 )
         return samples.at(id);
+    //printf("%s: returning 0, this is expected when a pad has no sample loaded\n", __PRETTY_FUNCTION__);
     return 0;
 }
 
