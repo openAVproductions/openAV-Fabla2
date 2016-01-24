@@ -73,8 +73,9 @@ fabla2_work( LV2_Handle                  instance,
              const void*                 data)
 {
     FablaLV2* self = (FablaLV2*)instance;
-
     const LV2_Atom* atom = (const LV2_Atom*)data;
+    assert(self);
+    assert(atom);
     if( atom->type == self->uris.patch_Set ) {
 
     } else {
@@ -123,8 +124,9 @@ fabla2_work_response(LV2_Handle  instance,
                      const void* data)
 {
     FablaLV2* self = (FablaLV2*)instance;
-
     const LV2_Atom* atom = (const LV2_Atom*)data;
+    assert(self);
+    assert(atom);
 
     //printf("Work:resonse() Got type : %s\n", self->unmap->unmap( self->unmap->handle, atom->type ) );
 

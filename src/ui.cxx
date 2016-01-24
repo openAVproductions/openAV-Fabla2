@@ -46,7 +46,7 @@ static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descript
         return 0;
     }
 
-    TestUI* t = new TestUI( parentXwindow );
+    Fabla2UI* t = new Fabla2UI( parentXwindow );
 
     t->map = map;
     t->write_function = write_function;
@@ -70,7 +70,7 @@ static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descript
 
 static void fabla2_cleanup(LV2UI_Handle ui)
 {
-    delete (TestUI*)ui;
+    delete (Fabla2UI*)ui;
 }
 
 static void fabla2_port_event(LV2UI_Handle handle,
@@ -79,7 +79,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
                               uint32_t format,
                               const void * buffer)
 {
-    TestUI* ui = (TestUI*)handle;
+    Fabla2UI* ui = (Fabla2UI*)handle;
 
     /* Check type of data received
      *  - format == 0: Control port event (float)
@@ -366,7 +366,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
 static int fabla2_idle(LV2UI_Handle handle)
 {
     //printf("idle()\n");
-    TestUI* ui = (TestUI*)handle;
+    Fabla2UI* ui = (Fabla2UI*)handle;
     ui->idle();
     return 0;
 }

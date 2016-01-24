@@ -34,7 +34,7 @@ extern "C" {
 
 static void fabla2_widgetCB(Avtk::Widget* w, void* ud);
 
-TestUI::TestUI( PuglNativeWindow parent ):
+Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
     Avtk::UI( 856, 322, parent ),
     currentBank( 0 ),
     currentPad( 0 ),
@@ -72,7 +72,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
 
     panicButton = new Avtk::Button( this, wx, wy, s * 2 + 6, 32,  "PANIC" );
     panicButton->clickMode( Avtk::Widget::CLICK_MOMENTARY );
-    panicButton->theme( theme(4) );
+    panicButton->theme( theme(0) );
     wy += 32 + 10;
 
     waste = new Avtk::Box( this, wx, wy, 70, 74,  "Views" );
@@ -495,7 +495,7 @@ TestUI::TestUI( PuglNativeWindow parent ):
     deleteLayer = new Avtk::Dialog( this, 0, 0, 320, 120, "Delete Sample?" );
 }
 
-void TestUI::blankSampleState()
+void Fabla2UI::blankSampleState()
 {
     padVolume       ->value( 0 );
 
@@ -544,7 +544,7 @@ void TestUI::blankSampleState()
 }
 
 
-void TestUI::loadNewDir( std::string newDir )
+void Fabla2UI::loadNewDir( std::string newDir )
 {
     printf("loadNewDir() %s\n", newDir.c_str() );
     std::vector< std::string > tmp;
@@ -580,7 +580,7 @@ void TestUI::loadNewDir( std::string newDir )
     }
 }
 
-void TestUI::showLiveView()
+void Fabla2UI::showLiveView()
 {
     padsGroup         ->visible( false );
     waveformGroup     ->visible( false );
@@ -590,7 +590,7 @@ void TestUI::showLiveView()
     liveGroup         ->visible( true  );
 }
 
-void TestUI::showPadsView()
+void Fabla2UI::showPadsView()
 {
     liveGroup         ->visible( false );
     sampleBrowseGroup ->visible( false );
@@ -650,7 +650,7 @@ std::string fabla2_showFileBrowser( std::string dir )
     return ret;
 }
 
-void TestUI::showFileView()
+void Fabla2UI::showFileView()
 {
     liveGroup->visible( false );
     padsGroup->visible( false );
@@ -685,7 +685,7 @@ void TestUI::showFileView()
 }
 
 
-void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
+void Fabla2UI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
 {
     if( pad < 0 || pad >= 16 ) {
         return; // invalid pad number
@@ -761,7 +761,7 @@ void TestUI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
 }
 
 
-void TestUI::requestSampleState( int bank, int pad, int layer )
+void Fabla2UI::requestSampleState( int bank, int pad, int layer )
 {
     uint8_t obj_buf[UI_ATOM_BUF_SIZE];
     lv2_atom_forge_set_buffer(&forge, obj_buf, UI_ATOM_BUF_SIZE);
@@ -787,7 +787,7 @@ void TestUI::requestSampleState( int bank, int pad, int layer )
     write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 }
 
-void TestUI::setBank( int bank )
+void Fabla2UI::setBank( int bank )
 {
     bankBtns[currentBank]->value( false );
     currentBank = bank;
@@ -810,7 +810,7 @@ void TestUI::setBank( int bank )
     */
 }
 
-void TestUI::writePadPlayStop( bool noteOn, int bank, int pad, int layer )
+void Fabla2UI::writePadPlayStop( bool noteOn, int bank, int pad, int layer )
 {
     uint8_t obj_buf[UI_ATOM_BUF_SIZE];
     lv2_atom_forge_set_buffer(&forge, obj_buf, UI_ATOM_BUF_SIZE);
@@ -837,7 +837,7 @@ void TestUI::writePadPlayStop( bool noteOn, int bank, int pad, int layer )
     write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 }
 
-void TestUI::writeAtomForPad( int eventURI, int pad, float value )
+void Fabla2UI::writeAtomForPad( int eventURI, int pad, float value )
 {
     uint8_t obj_buf[UI_ATOM_BUF_SIZE];
     lv2_atom_forge_set_buffer(&forge, obj_buf, UI_ATOM_BUF_SIZE);
@@ -855,7 +855,7 @@ void TestUI::writeAtomForPad( int eventURI, int pad, float value )
     write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 }
 
-void TestUI::writeAuxBus( int uri, int bus, float value )
+void Fabla2UI::writeAuxBus( int uri, int bus, float value )
 {
     uint8_t obj_buf[UI_ATOM_BUF_SIZE];
     lv2_atom_forge_set_buffer(&forge, obj_buf, UI_ATOM_BUF_SIZE);
@@ -873,7 +873,7 @@ void TestUI::writeAuxBus( int uri, int bus, float value )
     write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 }
 
-void TestUI::writeAtom( int eventURI, float value )
+void Fabla2UI::writeAtom( int eventURI, float value )
 {
     uint8_t obj_buf[UI_ATOM_BUF_SIZE];
     lv2_atom_forge_set_buffer(&forge, obj_buf, UI_ATOM_BUF_SIZE);
@@ -903,7 +903,7 @@ void TestUI::writeAtom( int eventURI, float value )
     write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 }
 
-int TestUI::handle( const PuglEvent* e )
+int Fabla2UI::handle( const PuglEvent* e )
 {
     // handle key presses here, playing pads press/release
     if( e->type == PUGL_KEY_PRESS ||
@@ -972,7 +972,7 @@ int TestUI::handle( const PuglEvent* e )
     return 0;
 }
 
-void TestUI::widgetValueCB( Avtk::Widget* w)
+void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 {
     float tmp = w->value();
 

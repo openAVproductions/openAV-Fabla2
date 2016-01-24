@@ -19,11 +19,11 @@ class MixStrip;
 
 #define UI_ATOM_BUF_SIZE 128*128
 
-class TestUI : public Avtk::UI
+class Fabla2UI : public Avtk::UI
 {
 public:
     /// Set a NativeWindow for embedding: ignore for standalone
-    TestUI(PuglNativeWindow parent = 0);
+    Fabla2UI(PuglNativeWindow parent = 0);
 
     /// init function, called by LV2 UI wrapper after setting map, forge etc
     void init()
