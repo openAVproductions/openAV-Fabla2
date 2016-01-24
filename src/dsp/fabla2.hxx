@@ -1,17 +1,17 @@
 /*
  * Author: Harry van Haaren 2014
  *         harryhaaren@gmail.com
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
@@ -45,87 +45,90 @@ class Library;
  * This class contains the main DSP functionality of Fabla2. It handles incoming
  * audio and MIDI streams, controls voice-allocation, interacts with the host
  * for save() and worker-thread() implementations etc.
- * 
+ *
  */
 class Fabla2DSP
 {
-  public:
+public:
     /// URIs pointer for understanding messages sent in from UI
     Fabla2DSP( int rate, URIs* uris );
     ~Fabla2DSP();
-    
+
     // set by DSP
     FablaLV2* lv2;
-    
+
     /// public read / write, plugin format wrapper writes audio port pointers
     /// while each voice can access incoming audio
     int sr;
     int nframes;
-    
+
     /// turns off all voices, silencing output
     void panic();
-    
+
     /// audition voice details
     void auditionPlay( int bank, int pad, int layer );
     void auditionStop();
-    
+
     /// control values
     float* controlPorts[PORT_COUNT];
-    
+
     /// main process callback
     void process( int nframes );
-    
+
     /// plugin format wrapper calls this for each MIDI event that arrives
     void midi( int frame, const uint8_t* );
-    
+
     /// called with UI Atom data
     void uiMessage( int bank, int pad, int layer, int URI, float value );
-    
+
     /// called with AuxBus messages
     void auxBus( int bus, float value );
 
     /// called when a sample is removed or added to a Pad, and the UI needs the
     /// update the layer info
     void padRefreshLayers( int bank, int pad );
-    
+
     /// lv2 convienience function to write a samples state to the UI
     void writePadsState( int b, int p, Pad* pad );
     void writeSampleState( int b, int p, int l, Pad* pad, Sample* );
     void tx_waveform( int bank, int pad, int layer, const float* data );
-    
-    Library* getLibrary(){return library;}
-    
+
+    Library* getLibrary()
+    {
+        return library;
+    }
+
     float auxBusVol[4];
 
-  private:
+private:
     URIs* uris;
-    
+
     /// when true, AuxBus audio ports can be used
     bool useAuxbus;
-    
+
     /// used to audition samples, and deal with layer-playing from UI
     Voice* auditionVoice;
-    
+
     /// voices store all the voices available for use
     std::vector<Voice*> voices;
-    
+
     /// Library stores all data
     Library* library;
-    
+
     /// map from MIDI number to pad instance
     std::map< int, Pad* > midiToPad;
-    
+
     /// record buffer: when a record operation begins, it uses this buffer
     void startRecordToPad(int bank, int pad);
     void stopRecordToPad();
-    
+
     bool recordEnable;
     int  recordBank;
     int  recordPad;
     long recordIndex;
     std::vector<float> recordBuffer;
-    
-    
+
+
 };
 
 }; // Fabla2
