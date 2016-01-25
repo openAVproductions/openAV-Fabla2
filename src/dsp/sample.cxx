@@ -219,8 +219,6 @@ void Sample::init()
 
     // set to true so we recacheWaveform() when requested for it
     dirty = true;
-
-    //recacheWaveform();
 }
 
 Sample::Sample( Fabla2DSP* d, int rate, const char* nme, int size, float* data ) :
@@ -330,10 +328,8 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
     init();
 
 #ifdef FABLA2_COMPONENT_TEST
-    if( false ) {
-        Plotter::plot( path, frames * channels, loadBuffer );
-        printf("Sample %s loaded OK: Channels = %i, Frames = %i\n", path.c_str(), channels, frames );
-    }
+    Plotter::plot( path, frames * channels, loadBuffer );
+    printf("Sample %s loaded OK: Channels = %i, Frames = %ld\n", path.c_str(), channels, frames );
     QUNIT_IS_TRUE( info.frames > 0 );
     QUNIT_IS_TRUE( samplRead == info.frames * info.channels );
 #endif

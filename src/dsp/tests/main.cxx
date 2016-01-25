@@ -6,12 +6,11 @@
 
 QUnit::UnitTest qunit = QUnit::UnitTest( QUnit::normal, true );
 
-#include "plotter.h"
+#include "../plotter.hxx"
 
 #include "../sampler.hxx"
 #include "../pad.hxx"
 #include "../sample.hxx"
-#include "../yasper.hxx"
 #include "../voice.hxx"
 
 using namespace Fabla2;
@@ -44,12 +43,15 @@ int main()
 
     for(int i = 0; i < 1; i++ ) {
         s->process( FABLA2_TEST_BUF_SIZE, audioL, audioR );
+        if( (int)audioL[i] == 0.000000001032) {} // for valgrind condition check
     }
 
-    plotter_write( "out.dat", FABLA2_TEST_BUF_SIZE, audioL );
+    //Plotter::plot("out.dat", FABLA2_TEST_BUF_SIZE, audioL );
 
+    delete v;
     delete s;
     delete p;
+    delete samp;
 
     return 0;
 }
