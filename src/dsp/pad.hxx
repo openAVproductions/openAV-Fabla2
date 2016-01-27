@@ -45,123 +45,121 @@ class Fabla2DSP;
 class Pad
 {
 public:
-    Pad( Fabla2DSP* dsp, int rate, int ID );
-    ~Pad();
+	Pad( Fabla2DSP* dsp, int rate, int ID );
+	~Pad();
 
-    /// position of pad (0 - 15) drum pads layout where 0 is bottom left
-    int ID()
-    {
-        return ID_;
-    }
+	/// position of pad (0 - 15) drum pads layout where 0 is bottom left
+	int ID()
+	{
+		return ID_;
+	}
 
-    // arbitrary limit of 20 chars max for names
-    void setName( const char* n );
-    const char* getName()
-    {
-        return name;
-    }
+	// arbitrary limit of 20 chars max for names
+	void setName( const char* n );
+	const char* getName()
+	{
+		return name;
+	}
 
-    /// the bank this Pad is on
-    void bank(int b)
-    {
-        bank_ = b;
-    }
-    int bank()
-    {
-        return bank_;
-    }
+	/// the bank this Pad is on
+	void bank(int b)
+	{
+		bank_ = b;
+	}
+	int bank()
+	{
+		return bank_;
+	}
 
-    /// library functions
-    void add( Sample* );
-    void remove( Sample* s );
+	/// library functions
+	void add( Sample* );
+	void remove( Sample* s );
 
-    void clearAllSamples();
-    bool loaded()
-    {
-        return loaded_;
-    }
+	void clearAllSamples();
+	bool loaded()
+	{
+		return loaded_;
+	}
 
-    void muteGroup( int mg )
-    {
-        muteGroup_ = mg;
-    }
-    int  muteGroup()
-    {
-        return muteGroup_;
-    }
+	void muteGroup( int mg )
+	{
+		muteGroup_ = mg;
+	}
+	int  muteGroup()
+	{
+		return muteGroup_;
+	}
 
-    void offGroup( int og )
-    {
-        offGroup_ = og;
-    }
-    int  offGroup()
-    {
-        return offGroup_;
-    }
+	void offGroup( int og )
+	{
+		offGroup_ = og;
+	}
+	int  offGroup()
+	{
+		return offGroup_;
+	}
 
-    /// Sets play method for samples: gated or one-shot
-    enum TRIGGER_MODE {
-        TM_GATED = 0,       /// Note on starts, note off does ADSR->release()
-        TM_ONE_SHOT,        /// Always plays samples until end
-    };
+	/// Sets play method for samples: gated or one-shot
+	enum TRIGGER_MODE {
+		TM_GATED = 0,       /// Note on starts, note off does ADSR->release()
+		TM_ONE_SHOT,        /// Always plays samples until end
+	};
 
-    void triggerMode( TRIGGER_MODE tm )
-    {
-        triggerMode_ = tm;
-    }
-    int triggerMode()
-    {
-        return triggerMode_;
-    }
+	void triggerMode( TRIGGER_MODE tm )
+	{
+		triggerMode_ = tm;
+	}
+	int triggerMode()
+	{
+		return triggerMode_;
+	}
 
-    /// get a layer: wether its velocity or Round-robin doesn't matter: this
-    /// is for UI interaction
-    int nLayers()
-    {
-        return samples.size();
-    }
-    Sample* layer( int id );
+	/// get a layer: wether its velocity or Round-robin doesn't matter: this
+	/// is for UI interaction
+	int nLayers()
+	{
+		return samples.size();
+	}
+	Sample* layer( int id );
 
-    /// playback functions
-    int lastPlayedLayer();
-    Sample* getPlaySample( float velocity );
+	/// playback functions
+	int lastPlayedLayer();
+	Sample* getPlaySample( float velocity );
 
-    /// Sets the switch system between samples
-    enum SAMPLE_SWITCH_SYSTEM {
-        SS_NONE = 0,        /// always plays selected sample
-        SS_ROUND_ROBIN,     /// iterates over all samples incrementally
-        SS_VELOCITY_LAYERS, /// takes velocity into account, and plays a sample
-    };
-    void switchSystem( SAMPLE_SWITCH_SYSTEM sss );
-    int switchSystem()
-    {
-        return sampleSwitchSystem;
-    }
+	/// Sets the switch system between samples
+	enum SAMPLE_SWITCH_SYSTEM {
+		SS_NONE = 0,        /// always plays selected sample
+		SS_ROUND_ROBIN,     /// iterates over all samples incrementally
+		SS_VELOCITY_LAYERS, /// takes velocity into account, and plays a sample
+	};
+	void switchSystem( SAMPLE_SWITCH_SYSTEM sss );
+	int switchSystem() { return sampleSwitchSystem; }
+	void layersDistribute();
 
-    /// testing func
-    void checkAll();
+	/// testing func
+	void checkAll();
 
-    /// volume: is used by Sampler to multiply into each sample. Default 0.75.
-    float volume;
-    float sends[4];
+	/// volume: is used by Sampler to multiply into each sample. Default 0.75.
+	float volume;
+	float sends[4];
 
 private:
-    Fabla2DSP* dsp;
-    int sr;
-    int bank_;// pad bank
-    int ID_; // pad place within Bank
-    int muteGroup_;
-    int offGroup_;
-    int triggerMode_;
-    bool loaded_;
+	Fabla2DSP* dsp;
+	int sr;
+	int bank_;// pad bank
+	int ID_; // pad place within Bank
+	int muteGroup_;
+	int offGroup_;
+	int triggerMode_;
+	bool loaded_;
 
-    char name[21];
+	char name[21];
 
-    SAMPLE_SWITCH_SYSTEM sampleSwitchSystem;
-    int sampleLayerCounter;
+	SAMPLE_SWITCH_SYSTEM sampleSwitchSystem;
+	int sampleLayerCounter;
 
-    /// shared pointer to each of the samples available on this pad
-    std::vector<Sample*> samples;
+	/// shared pointer to each of the samples available on this pad
+	std::vector<Sample*> samples;
 };
 
 };

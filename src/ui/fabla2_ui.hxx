@@ -22,181 +22,181 @@ class MixStrip;
 class Fabla2UI : public Avtk::UI
 {
 public:
-    /// Set a NativeWindow for embedding: ignore for standalone
-    Fabla2UI(PuglNativeWindow parent = 0);
+	/// Set a NativeWindow for embedding: ignore for standalone
+	Fabla2UI(PuglNativeWindow parent = 0);
 
-    /// init function, called by LV2 UI wrapper after setting map, forge etc
-    void init()
-    {
-        setBank( 0 );
-        currentLayer = 1; // invalidate, so request updates
-        requestSampleState( 0, 0, 0 );
-        blankSampleState();
-    }
+	/// init function, called by LV2 UI wrapper after setting map, forge etc
+	void init()
+	{
+		setBank( 0 );
+		currentLayer = 1; // invalidate, so request updates
+		requestSampleState( 0, 0, 0 );
+		blankSampleState();
+	}
 
-    void blankSampleState();
+	void blankSampleState();
 
-    /// widget value callback
-    void widgetValueCB( Avtk::Widget* widget);
+	/// widget value callback
+	void widgetValueCB( Avtk::Widget* widget);
 
-    /// handle() fucntion for keybindings
-    int handle( const PuglEvent* event );
+	/// handle() fucntion for keybindings
+	int handle( const PuglEvent* event );
 
-    // left: always visible widgets
-    Avtk::Widget* bankBtns[4];
+	// left: always visible widgets
+	Avtk::Widget* bankBtns[4];
 
-    Avtk::Button* panicButton;
+	Avtk::Button* panicButton;
 
-    Avtk::List*  uiViewGroup;
-    Avtk::ListItem* liveView;
-    Avtk::ListItem* padsView;
-    Avtk::ListItem* fileView;
+	Avtk::List*  uiViewGroup;
+	Avtk::ListItem* liveView;
+	Avtk::ListItem* padsView;
+	Avtk::ListItem* fileView;
 
-    Avtk::Widget* followPadBtn;
-    Avtk::Widget* recordOverPad;
+	Avtk::Widget* followPadBtn;
+	Avtk::Widget* recordOverPad;
 
-    Avtk::Dial* masterPitch; // not shown
+	Avtk::Dial* masterPitch; // not shown
 
-    // Right
-    Avtk::Fader*  masterVolume;
-    Avtk::Fader*  masterAuxFader1;
-    Avtk::Fader*  masterAuxFader2;
-    Avtk::Fader*  masterAuxFader3;
-    Avtk::Fader*  masterAuxFader4;
+	// Right
+	Avtk::Fader*  masterVolume;
+	Avtk::Fader*  masterAuxFader1;
+	Avtk::Fader*  masterAuxFader2;
+	Avtk::Fader*  masterAuxFader3;
+	Avtk::Fader*  masterAuxFader4;
 
-    // sample info
-    Avtk::Text* sampleName;
+	// sample info
+	Avtk::Text* sampleName;
 
-    // delete layer dialog
-    Avtk::Dialog* deleteLayer;
+	// delete layer dialog
+	Avtk::Dialog* deleteLayer;
 
-    // sample edit view
-    Avtk::Number* muteGroup;
-    Avtk::Number* offGroup;
-    Avtk::Number* triggerMode;
-    Avtk::Number* switchType;
-    Avtk::List* layers;
-    Avtk::Widget* adsr;
+	// sample edit view
+	Avtk::Number* muteGroup;
+	Avtk::Number* offGroup;
+	Avtk::Number* triggerMode;
+	Avtk::Number* switchType;
+	Avtk::List* layers;
+	Avtk::Widget* adsr;
 
-    Avtk::Widget* filt1;
-    Avtk::Number* filterType;
-    Avtk::Widget* filterFrequency;
-    Avtk::Widget* filterResonance;
+	Avtk::Widget* filt1;
+	Avtk::Number* filterType;
+	Avtk::Widget* filterFrequency;
+	Avtk::Widget* filterResonance;
 
-    Avtk::Widget* filt2;
-    Avtk::Widget* bitcrusDist;
-    Avtk::Widget* eq;
-    Avtk::Widget* comp;
-    Avtk::Widget* gainPitch;
-    Avtk::Dial* sampleGain;
-    Avtk::Dial* samplePan;
-    Avtk::Dial* samplePitch;
-    Avtk::Dial* sampleTime;
-    Avtk::Dial* sampleStartPoint;
-    Avtk::Dial* sampleEndPoint;
+	Avtk::Widget* filt2;
+	Avtk::Widget* bitcrusDist;
+	Avtk::Widget* eq;
+	Avtk::Widget* comp;
+	Avtk::Widget* gainPitch;
+	Avtk::Dial* sampleGain;
+	Avtk::Dial* samplePan;
+	Avtk::Dial* samplePitch;
+	Avtk::Dial* sampleTime;
+	Avtk::Dial* sampleStartPoint;
+	Avtk::Dial* sampleEndPoint;
 
-    Avtk::Dial* velocityStartPoint;
-    Avtk::Dial* velocityEndPoint;
+	Avtk::Dial* velocityStartPoint;
+	Avtk::Dial* velocityEndPoint;
 
-    Avtk::Dial* send1;
-    Avtk::Dial* send2;
-    Avtk::Dial* send3;
-    Avtk::Dial* send4;
+	Avtk::Dial* send1;
+	Avtk::Dial* send2;
+	Avtk::Dial* send3;
+	Avtk::Dial* send4;
 
-    Avtk::Dial* adsrA;
-    Avtk::Dial* adsrD;
-    Avtk::Dial* adsrS;
-    Avtk::Dial* adsrR;
+	Avtk::Dial* adsrA;
+	Avtk::Dial* adsrD;
+	Avtk::Dial* adsrS;
+	Avtk::Dial* adsrR;
 
-    Avtk::Button* padPlay;
-    Avtk::Button* padMute;
-    Avtk::Fader* padVolume;
+	Avtk::Button* padPlay;
+	Avtk::Button* padMute;
+	Avtk::Fader* padVolume;
 
-    Avtk::Widget* padSends;
-    Avtk::Widget* padMaster;
+	Avtk::Widget* padSends;
+	Avtk::Widget* padMaster;
 
-    // Sample / File loading screen
-    Avtk::Box*    sampleViewHeader;
-    Avtk::Scroll* sampleDirScroll;
-    Avtk::List*   listSampleDirs;
-    Avtk::Scroll* sampleFileScroll;
-    Avtk::List*   listSampleFiles;
-    Avtk::Button* fileViewHome;
-    Avtk::Button* fileViewUp;
+	// Sample / File loading screen
+	Avtk::Box*    sampleViewHeader;
+	Avtk::Scroll* sampleDirScroll;
+	Avtk::List*   listSampleDirs;
+	Avtk::Scroll* sampleFileScroll;
+	Avtk::List*   listSampleFiles;
+	Avtk::Button* fileViewHome;
+	Avtk::Button* fileViewUp;
 
-    // Live view
-    Avtk::Group* liveGroup;
-    Avtk::Widget* padsHeaderBox;
+	// Live view
+	Avtk::Group* liveGroup;
+	Avtk::Widget* padsHeaderBox;
 
-    // pad - tracks
-    Avtk::MixStrip* mixStrip [16];
-    Avtk::Fader*    padFaders[16];
-    Avtk::Dial*     auxDials [16*4];
+	// pad - tracks
+	Avtk::MixStrip* mixStrip [16];
+	Avtk::Fader*    padFaders[16];
+	Avtk::Dial*     auxDials [16*4];
 
-    // AuxBus tracks
-    Avtk::MixStrip* auxbus[4];
-    Avtk::Fader*    auxFaders[4];
+	// AuxBus tracks
+	Avtk::MixStrip* auxbus[4];
+	Avtk::Fader*    auxFaders[4];
 
 
-    // shared between views!
-    /// holds all waveform related widgets: sample name, sample duration etc
-    Avtk::Group*    waveformGroup;
-    Avtk::Waveform* waveform;
+	// shared between views!
+	/// holds all waveform related widgets: sample name, sample duration etc
+	Avtk::Group*    waveformGroup;
+	Avtk::Waveform* waveform;
 
-    Avtk::Group*    sampleBrowseGroup;
-    Avtk::Group*    sampleControlGroup;
+	Avtk::Group*    sampleBrowseGroup;
+	Avtk::Group*    sampleControlGroup;
 
-    void padEvent( int bank, int pad, int layer, bool noteOn, int velocity );
+	void padEvent( int bank, int pad, int layer, bool noteOn, int velocity );
 
-    Avtk::Group* padsGroup;
-    Avtk::Pad* pads[16];
+	Avtk::Group* padsGroup;
+	Avtk::Pad* pads[16];
 
-    // bank/pad/layer currently shown in UI
-    int currentBank;
-    int currentPad;
-    int currentLayer;
+	// bank/pad/layer currently shown in UI
+	int currentBank;
+	int currentPad;
+	int currentLayer;
 
-    // LV2 ports
-    LV2UI_Controller controller;
-    LV2UI_Write_Function write_function;
+	// LV2 ports
+	LV2UI_Controller controller;
+	LV2UI_Write_Function write_function;
 
-    // LV2 Atom
-    URIs uris;
-    LV2_URID_Map* map;
-    LV2_Atom_Forge forge;
+	// LV2 Atom
+	URIs uris;
+	LV2_URID_Map* map;
+	LV2_Atom_Forge forge;
 
 private:
-    /// default directories / file loading
-    std::string defaultDir;
-    std::string currentDir;
-    std::string currentFilesDir;
+	/// default directories / file loading
+	std::string defaultDir;
+	std::string currentDir;
+	std::string currentFilesDir;
 
-    /// holds the stripped start of the filename, as presented in List. To build
-    /// the loadable /path/filename, we do << currentDir << strippedFilenameStart;
-    std::string strippedFilenameStart;
+	/// holds the stripped start of the filename, as presented in List. To build
+	/// the loadable /path/filename, we do << currentDir << strippedFilenameStart;
+	std::string strippedFilenameStart;
 
-    /// followPad allows the UI to update to the last played PAD.
-    bool followPad;
+	/// followPad allows the UI to update to the last played PAD.
+	bool followPad;
 
-    /// shows the sample browser window instead of the pads
-    void showLiveView();
-    void showPadsView();
-    void showFileView();
+	/// shows the sample browser window instead of the pads
+	void showLiveView();
+	void showPadsView();
+	void showFileView();
 
-    /// updates the UI to a specifc bank
-    void setBank( int bank );
-    /// write a value to an AuxBus
-    void writeAuxBus( int uri, int bus, float value );
-    /// writes event/value identified by eventURI using currentBank / currentPad
-    void writeAtom( int eventURI, float value );
-    /// writes "live view" atoms for a specific pad
-    void writeAtomForPad( int eventURI, int pad, float value );
-    /// writes a pad play/stop event
-    void writePadPlayStop( bool noteOn, int bank, int pad, int layer );
-    /// request the state of a sample from the DSP, to show in the UI
-    void requestSampleState( int bank, int pad, int layer );
-    /// list sample dirs
-    void loadNewDir( std::string newDir );
+	/// updates the UI to a specifc bank
+	void setBank( int bank );
+	/// write a value to an AuxBus
+	void writeAuxBus( int uri, int bus, float value );
+	/// writes event/value identified by eventURI using currentBank / currentPad
+	void writeAtom( int eventURI, float value );
+	/// writes "live view" atoms for a specific pad
+	void writeAtomForPad( int eventURI, int pad, float value );
+	/// writes a pad play/stop event
+	void writePadPlayStop( bool noteOn, int bank, int pad, int layer );
+	/// request the state of a sample from the DSP, to show in the UI
+	void requestSampleState( int bank, int pad, int layer );
+	/// list sample dirs
+	void loadNewDir( std::string newDir );
 };
 
 

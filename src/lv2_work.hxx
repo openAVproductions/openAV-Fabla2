@@ -45,10 +45,10 @@ fabla2_work_response(LV2_Handle  instance,
 
 /// events that can be sent to the worker thread
 typedef struct {
-    LV2_Atom atom;
-    int bank;
-    int pad;
-    Fabla2::Sample*  sample;
+	LV2_Atom atom;
+	int bank;
+	int pad;
+	Fabla2::Sample*  sample;
 } SampleLoadUnload;
 
 #endif // OPENAV_FABLA2_LV2_WORK_HXX

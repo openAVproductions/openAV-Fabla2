@@ -27,20 +27,20 @@
 class MidiMessage
 {
 public:
-    MidiMessage() :
-        frame( -1 )
-    {
-        memset( msg, 0, sizeof(uint8_t)*3 );
-    }
+	MidiMessage() :
+		frame( -1 )
+	{
+		memset( msg, 0, sizeof(uint8_t)*3 );
+	}
 
-    MidiMessage( int frame_, uint8_t* msg_ ) :
-        frame ( frame_ )
-    {
-        memcpy( msg, msg_, sizeof(uint8_t)*3 );
-    }
+	MidiMessage( int frame_, uint8_t* msg_ ) :
+		frame ( frame_ )
+	{
+		memcpy( msg, msg_, sizeof(uint8_t)*3 );
+	}
 
-    int frame;
-    uint8_t msg[3];
+	int frame;
+	uint8_t msg[3];
 };
 
 #endif // OPENAV_FABLA2_MIDI_HXX

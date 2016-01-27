@@ -38,47 +38,47 @@ class Fabla2DSP;
 class Sampler
 {
 public:
-    Sampler( Fabla2DSP* dsp, int rate );
-    ~Sampler();
+	Sampler( Fabla2DSP* dsp, int rate );
+	~Sampler();
 
-    /// the Pad to play
-    void play( Pad*, float velocity );
+	/// the Pad to play
+	void play( Pad*, float velocity );
 
-    /// for auditioning from UI
-    void playLayer( Pad*, int layer );
+	/// for auditioning from UI
+	void playLayer( Pad*, int layer );
 
-    /// process function, passing in the voice buffers for FX
-    int process(int nframes, float* L, float* R);
+	/// process function, passing in the voice buffers for FX
+	int process(int nframes, float* L, float* R);
 
-    long    getRemainingFrames();
-    Pad*    getPad()
-    {
-        return pad   ;
-    }
-    Sample* getSample()
-    {
-        return sample;
-    }
+	long    getRemainingFrames();
+	Pad*    getPad()
+	{
+		return pad   ;
+	}
+	Sample* getSample()
+	{
+		return sample;
+	}
 
 private:
-    Fabla2DSP* dsp;
-    int sr;
+	Fabla2DSP* dsp;
+	int sr;
 
-    /// Pad pointer, which contains the audio data and triggering types that are
-    /// needed in order to process this sampler object
-    Pad* pad;
+	/// Pad pointer, which contains the audio data and triggering types that are
+	/// needed in order to process this sampler object
+	Pad* pad;
 
-    /// store the volume of the pad and use it: saves a seperate multiply later
-    float padVol;
+	/// store the volume of the pad and use it: saves a seperate multiply later
+	float padVol;
 
-    /// Sample pointer, retrieved from Pad when the note started playing
-    Sample* sample;
+	/// Sample pointer, retrieved from Pad when the note started playing
+	Sample* sample;
 
-    /// playback-speed: 2x is a double in pitch, 0.5 is half the pitch
-    float playheadDelta;
+	/// playback-speed: 2x is a double in pitch, 0.5 is half the pitch
+	float playheadDelta;
 
-    /// audio playback variables
-    float playIndex;
+	/// audio playback variables
+	float playIndex;
 };
 
 };

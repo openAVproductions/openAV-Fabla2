@@ -37,19 +37,19 @@ class Fabla2DSP;
 class Library
 {
 public:
-    Library( Fabla2DSP* dsp, int rate );
-    ~Library();
+	Library( Fabla2DSP* dsp, int rate );
+	~Library();
 
-    /// add resources for a certain bank/pad
-    void bank( Bank* b );
-    Bank* bank( int ID );
+	/// add resources for a certain bank/pad
+	void bank( Bank* b );
+	Bank* bank( int ID );
 
-    /// testing function, to see if there are null pointers in the system
-    void checkAll();
+	/// testing function, to see if there are null pointers in the system
+	void checkAll();
 
 private:
-    Fabla2DSP* dsp;
-    std::vector<Bank*> banks;
+	Fabla2DSP* dsp;
+	std::vector<Bank*> banks;
 };
 
 };

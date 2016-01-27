@@ -29,54 +29,54 @@ namespace Fabla2
 {
 
 Bank::Bank( Fabla2DSP* d, int rate, int ID, const char* name ) :
-    dsp( d ),
-    ID_( ID )
+	dsp( d ),
+	ID_( ID )
 {
 }
 
 void Bank::name( const char* name )
 {
-    memcpy( name_, name, 20 );
-    name_[20] = '\n';
+	memcpy( name_, name, 20 );
+	name_[20] = '\n';
 }
 
 void Bank::pad( Pad* p )
 {
-    assert( p );
+	assert( p );
 #ifdef FABLA2_DEBUG
-    //printf("%s : %i : Adding pad %i\n", __PRETTY_FUNCTION__, ID_, p->ID() );
+	//printf("%s : %i : Adding pad %i\n", __PRETTY_FUNCTION__, ID_, p->ID() );
 #endif // FABLA2_DEBUG
-    pads.push_back( p );
+	pads.push_back( p );
 }
 
 void Bank::checkAll()
 {
-    printf("%s : Starting...\n", __PRETTY_FUNCTION__ );
-    for(int bi = 0; bi < 4; bi++ ) {
-        Pad* p = pad( bi );
-        if( !p ) {
-            printf("%s : Pad %i == 0\n", __PRETTY_FUNCTION__, bi );
-        } else {
+	printf("%s : Starting...\n", __PRETTY_FUNCTION__ );
+	for(int bi = 0; bi < 4; bi++ ) {
+		Pad* p = pad( bi );
+		if( !p ) {
+			printf("%s : Pad %i == 0\n", __PRETTY_FUNCTION__, bi );
+		} else {
 
-        }
-    }
-    printf("%s : Done.\n", __PRETTY_FUNCTION__ );
+		}
+	}
+	printf("%s : Done.\n", __PRETTY_FUNCTION__ );
 }
 
 Pad* Bank::pad( int n )
 {
-    if( n < pads.size() && n >= 0 ) {
-        return pads.at(n);
-    }
+	if( n < pads.size() && n >= 0 ) {
+		return pads.at(n);
+	}
 
-    return 0;
+	return 0;
 }
 
 Bank::~Bank()
 {
-    for(int i = 0; i < pads.size(); i++) {
-        delete pads.at(i);
-    }
+	for(int i = 0; i < pads.size(); i++) {
+		delete pads.at(i);
+	}
 }
 
 }; // Fabla2

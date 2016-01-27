@@ -36,32 +36,32 @@ class Fabla2DSP;
 class Bank
 {
 public:
-    Bank( Fabla2DSP* dsp, int rate, int ID, const char* name );
-    ~Bank();
+	Bank( Fabla2DSP* dsp, int rate, int ID, const char* name );
+	~Bank();
 
-    int ID()
-    {
-        return ID_;
-    }
+	int ID()
+	{
+		return ID_;
+	}
 
-    /// add resources for a certain bank/pad
-    void pad( Pad* p );
+	/// add resources for a certain bank/pad
+	void pad( Pad* p );
 
-    /// get a pad based on its location in the grid
-    Pad* pad( int num );
+	/// get a pad based on its location in the grid
+	Pad* pad( int num );
 
-    void name( const char* name );
+	void name( const char* name );
 
-    /// testing function, to see if there are null pointers in the system
-    void checkAll();
+	/// testing function, to see if there are null pointers in the system
+	void checkAll();
 
 private:
-    Fabla2DSP* dsp;
-    int ID_; ///< Bank ABCD id
-    char name_[21]; // 20 letters + \n
+	Fabla2DSP* dsp;
+	int ID_; ///< Bank ABCD id
+	char name_[21]; // 20 letters + \n
 
 
-    std::vector<Pad*> pads;
+	std::vector<Pad*> pads;
 };
 
 };

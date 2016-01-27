@@ -50,67 +50,67 @@ class Fabla2DSP;
 class Voice
 {
 public:
-    Voice( Fabla2DSP* dsp, int rate );
-    ~Voice();
+	Voice( Fabla2DSP* dsp, int rate );
+	~Voice();
 
-    bool active()
-    {
-        return active_;
-    }
+	bool active()
+	{
+		return active_;
+	}
 
-    /// start playing a sample on this voice
-    void play( int time, int bank, int pad, Pad*, float velocity );
+	/// start playing a sample on this voice
+	void play( int time, int bank, int pad, Pad*, float velocity );
 
-    void stop();
-    void stopIfSample( Sample* s );
+	void stop();
+	void stopIfSample( Sample* s );
 
-    /// used to audition samples from UI
-    void playLayer( Pad* p, int layer );
+	/// used to audition samples from UI
+	void playLayer( Pad* p, int layer );
 
-    /// the main audio callback: since we have the dsp pointer, we can access the
-    /// audio buffers etc from there: no need to pass them around.
-    void process();
+	/// the main audio callback: since we have the dsp pointer, we can access the
+	/// audio buffers etc from there: no need to pass them around.
+	void process();
 
-    /// checks if the bank/pad match to that which the voice was play()-ed with.
-    /// Useful for mute-groups and note-off events
-    bool matches( int bank, int pad );
+	/// checks if the bank/pad match to that which the voice was play()-ed with.
+	/// Useful for mute-groups and note-off events
+	bool matches( int bank, int pad );
 
-    Pad* getPad()
-    {
-        return pad_;
-    }
+	Pad* getPad()
+	{
+		return pad_;
+	}
 
-    float* getVoiceBuffer()
-    {
-        return &voiceBuffer[0];
-    }
+	float* getVoiceBuffer()
+	{
+		return &voiceBuffer[0];
+	}
 
 private:
-    static int privateID;
-    int ID;
+	static int privateID;
+	int ID;
 
-    Fabla2DSP* dsp;
-    int sr;
+	Fabla2DSP* dsp;
+	int sr;
 
-    int bankInt_;
-    int padInt_;
-    Pad* pad_;
+	int bankInt_;
+	int padInt_;
+	Pad* pad_;
 
-    /// a counter to count down frames until note-on event
-    int activeCountdown;
+	/// a counter to count down frames until note-on event
+	int activeCountdown;
 
-    /// a counter to check if we should trigger ADSR gate off due to end of sample
-    int adsrOffCounter;
+	/// a counter to check if we should trigger ADSR gate off due to end of sample
+	int adsrOffCounter;
 
-    bool active_;
-    bool filterActive_;
+	bool active_;
+	bool filterActive_;
 
-    ADSR*       adsr;
-    Sampler*    sampler;
-    FiltersSVF* filterL;
-    FiltersSVF* filterR;
+	ADSR*       adsr;
+	Sampler*    sampler;
+	FiltersSVF* filterL;
+	FiltersSVF* filterR;
 
-    std::vector<float> voiceBuffer;
+	std::vector<float> voiceBuffer;
 
 };
 

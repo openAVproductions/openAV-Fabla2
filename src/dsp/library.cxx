@@ -28,51 +28,51 @@ namespace Fabla2
 {
 
 Library::Library( Fabla2DSP* d, int rate ) :
-    dsp( d )
+	dsp( d )
 {
-    // add the 4 initial banks
-    bank( new Bank( d, rate, 0, "A" ) );
-    bank( new Bank( d, rate, 1, "B" ) );
-    bank( new Bank( d, rate, 2, "C" ) );
-    bank( new Bank( d, rate, 3, "D" ) );
+	// add the 4 initial banks
+	bank( new Bank( d, rate, 0, "A" ) );
+	bank( new Bank( d, rate, 1, "B" ) );
+	bank( new Bank( d, rate, 2, "C" ) );
+	bank( new Bank( d, rate, 3, "D" ) );
 }
 
 void Library::bank( Bank* b )
 {
-    assert( b );
-    banks.push_back( b );
+	assert( b );
+	banks.push_back( b );
 }
 
 void Library::checkAll()
 {
-    printf("%s : Starting...\n", __PRETTY_FUNCTION__ );
-    for(int bi = 0; bi < 4; bi++ ) {
-        Bank* b = bank( bi );
-        if( !b ) {
-            printf("%s : Bank %i == 0\n", __PRETTY_FUNCTION__, bi );
-        } else {
-            b->checkAll();
-        }
-    }
-    printf("%s : Done.\n", __PRETTY_FUNCTION__ );
+	printf("%s : Starting...\n", __PRETTY_FUNCTION__ );
+	for(int bi = 0; bi < 4; bi++ ) {
+		Bank* b = bank( bi );
+		if( !b ) {
+			printf("%s : Bank %i == 0\n", __PRETTY_FUNCTION__, bi );
+		} else {
+			b->checkAll();
+		}
+	}
+	printf("%s : Done.\n", __PRETTY_FUNCTION__ );
 }
 
 Bank* Library::bank( int id )
 {
-    //for (std::list< yasper::ptr<Bank> >::iterator it= banks.begin(); it != banks.end(); ++it)
-    for(int i = 0; i < banks.size(); i++) {
-        if( banks.at(i)->ID() == id ) {
-            return banks.at(i);
-        }
-    }
-    return 0;
+	//for (std::list< yasper::ptr<Bank> >::iterator it= banks.begin(); it != banks.end(); ++it)
+	for(int i = 0; i < banks.size(); i++) {
+		if( banks.at(i)->ID() == id ) {
+			return banks.at(i);
+		}
+	}
+	return 0;
 }
 
 Library::~Library()
 {
-    for( int i = 0; i < banks.size(); i++) {
-        delete banks.at(i);
-    }
+	for( int i = 0; i < banks.size(); i++) {
+		delete banks.at(i);
+	}
 }
 
 }; // Fabla2

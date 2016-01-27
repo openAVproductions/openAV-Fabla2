@@ -43,35 +43,35 @@
 class Plotter
 {
 public:
-    Plotter() :
-        plotNum( 0 )
-    {
-    }
+	Plotter() :
+		plotNum( 0 )
+	{
+	}
 
-    static void plot( std::string name, long samples, const float* data )
-    {
-        printf("Plotter::plot() writing %s to %s\n", name.c_str(), getenv("PWD") );
+	static void plot( std::string name, long samples, const float* data )
+	{
+		printf("Plotter::plot() writing %s to %s\n", name.c_str(), getenv("PWD") );
 
-        std::stringstream s;
-        s << name << ".dat";
+		std::stringstream s;
+		s << name << ".dat";
 
-        std::ofstream outFile;
-        outFile.open ( s.str().c_str() );
+		std::ofstream outFile;
+		outFile.open ( s.str().c_str() );
 
-        for(long i = 0; i < samples; i++ )
-            outFile << data[i] << "\n";
+		for(long i = 0; i < samples; i++ )
+			outFile << data[i] << "\n";
 
-        outFile.close();
-    }
+		outFile.close();
+	}
 
-    void showLast()
-    {
-        const char* pycommand = "";
-        system( pycommand );
-    }
+	void showLast()
+	{
+		const char* pycommand = "";
+		system( pycommand );
+	}
 
 private:
-    int plotNum;
+	int plotNum;
 
 };
 

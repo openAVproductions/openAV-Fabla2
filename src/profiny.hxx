@@ -108,470 +108,451 @@
 
 namespace profiny
 {
-	class Timer
-	{
-	public:
-		Timer();
+class Timer
+{
+public:
+	Timer();
 
-		void start();
+	void start();
 
-		void stop();
+	void stop();
 
-		double getElapsedTime();
+	double getElapsedTime();
 
-	private:
-		double m_startTime;
+private:
+	double m_startTime;
 
-		double m_stopTime;
+	double m_stopTime;
 
-		bool m_running;
+	bool m_running;
 
 #ifdef _WIN32
-		double m_reciprocalFrequency;
+	double m_reciprocalFrequency;
 #endif
 
-		double getTime();
-	};
+	double getTime();
+};
 
-	/**********************************************************************/
+/**********************************************************************/
 
-	class BaseObject
-	{
-	public:
-		BaseObject();
+class BaseObject
+{
+public:
+	BaseObject();
 
-		virtual ~BaseObject();
+	virtual ~BaseObject();
 
-		void incrRef();
+	void incrRef();
 
-		void decrRef();
+	void decrRef();
 
-		int getRef() const;
+	int getRef() const;
 
-	private:
-		int m_ref;
-	};
+private:
+	int m_ref;
+};
 
-	/**********************************************************************/
+/**********************************************************************/
 
-	class Profile : public BaseObject
-	{
-		friend class ScopedProfile;
-		friend class Profiler;
+class Profile : public BaseObject
+{
+	friend class ScopedProfile;
+	friend class Profiler;
 
-	private:
-		Profile(const std::string& name);
+private:
+	Profile(const std::string& name);
 
-		~Profile();
+	~Profile();
 
-		bool start();
+	bool start();
 
-		bool stop();
+	bool stop();
 
-		unsigned int getCallCount() const;
+	unsigned int getCallCount() const;
 
-		std::string getName() const;
+	std::string getName() const;
 
-		void getTimes(double& wall) const;
+	void getTimes(double& wall) const;
 
 #ifdef PROFINY_CALL_GRAPH_PROFILER
-		std::map<std::string, Profile*>& getSubProfiles();
+	std::map<std::string, Profile*>& getSubProfiles();
 
-		std::map<std::string, Profile*> m_subProfiles;
+	std::map<std::string, Profile*> m_subProfiles;
 #else
-		bool m_timeStarted;
+	bool m_timeStarted;
 #endif
 
-		std::string m_name;
+	std::string m_name;
 
-		unsigned int m_callCount;
+	unsigned int m_callCount;
 
-		double m_wallTime;
+	double m_wallTime;
 
-		Timer m_timer;
-	};
+	Timer m_timer;
+};
 
-	/**********************************************************************/
+/**********************************************************************/
 
-	class ScopedProfile : public BaseObject
-	{
-	public:
-		ScopedProfile(const std::string& name);
+class ScopedProfile : public BaseObject
+{
+public:
+	ScopedProfile(const std::string& name);
 
-		~ScopedProfile();
+	~ScopedProfile();
 
-	private:
-		Profile* m_profile;
-	};
+private:
+	Profile* m_profile;
+};
 
-	/**********************************************************************/
+/**********************************************************************/
 
-	class Profiler : public BaseObject
-	{
-		friend class Profile;
-		friend class ScopedProfile;
+class Profiler : public BaseObject
+{
+	friend class Profile;
+	friend class ScopedProfile;
 
-	public:
-		static void printStats(const std::string& filename);
+public:
+	static void printStats(const std::string& filename);
 
 #ifdef PROFINY_CALL_GRAPH_PROFILER
-		static void setOmitRecursiveCalls(bool omit);
+	static void setOmitRecursiveCalls(bool omit);
 
-		static bool getOmitRecursiveCalls();
+	static bool getOmitRecursiveCalls();
 #endif
 
-	private:
-		Profiler();
+private:
+	Profiler();
 
-		~Profiler();
+	~Profiler();
 
-		static Profiler* getInstance();
+	static Profiler* getInstance();
 
-		Profile* getProfile(const std::string& name);
+	Profile* getProfile(const std::string& name);
 
-		static void printStats();
+	static void printStats();
 
-		static void printStats(std::ofstream& fs, std::map<std::string, Profile*>* p, int depth);
+	static void printStats(std::ofstream& fs, std::map<std::string, Profile*>* p, int depth);
 
 #ifdef PROFINY_CALL_GRAPH_PROFILER
-		std::map<std::string, Profile*>& getCurrentProfilesRoot();
+	std::map<std::string, Profile*>& getCurrentProfilesRoot();
 
-		void pushProfile(Profile* p);
+	void pushProfile(Profile* p);
 
-		void popProfile();
+	void popProfile();
 
-		bool isInStack(const std::string& name);
+	bool isInStack(const std::string& name);
 #endif
 
-		std::map<std::string, Profile*> m_profiles;
+	std::map<std::string, Profile*> m_profiles;
 
-		static Profiler* m_instance;
+	static Profiler* m_instance;
 
 #ifdef PROFINY_CALL_GRAPH_PROFILER
-		std::vector<Profile*> m_profileStack;
+	std::vector<Profile*> m_profileStack;
 
-		bool m_omitRecursiveCalls;
+	bool m_omitRecursiveCalls;
 #endif
-	};
+};
 
-	/**********************************************************************/
+/**********************************************************************/
 
-	Timer::Timer()
-		: m_startTime(0.0f), m_stopTime(0.0f), m_running(false)
-	{
+Timer::Timer()
+	: m_startTime(0.0f), m_stopTime(0.0f), m_running(false)
+{
 #ifdef _WIN32
-		LARGE_INTEGER freq;
-		QueryPerformanceFrequency(&freq);
-		m_reciprocalFrequency = 1.0f / freq.QuadPart;
+	LARGE_INTEGER freq;
+	QueryPerformanceFrequency(&freq);
+	m_reciprocalFrequency = 1.0f / freq.QuadPart;
 #endif
-	}
+}
 
-	void Timer::start()
-	{
-		m_running = true;
-		m_startTime = getTime();
-	}
+void Timer::start()
+{
+	m_running = true;
+	m_startTime = getTime();
+}
 
-	void Timer::stop()
-	{
-		m_running = false;
-		m_stopTime = getTime() - m_startTime;
-	}
+void Timer::stop()
+{
+	m_running = false;
+	m_stopTime = getTime() - m_startTime;
+}
 
-	double Timer::getElapsedTime()
-	{
-		if (m_running)
-			return getTime() - m_startTime;
+double Timer::getElapsedTime()
+{
+	if (m_running)
+		return getTime() - m_startTime;
 
-		return m_stopTime;
-	}
+	return m_stopTime;
+}
 
-	double Timer::getTime()
-	{
+double Timer::getTime()
+{
 #ifdef _WIN32
-		LARGE_INTEGER count;
-		QueryPerformanceCounter(&count);
-		double time = count.QuadPart * m_reciprocalFrequency;
+	LARGE_INTEGER count;
+	QueryPerformanceCounter(&count);
+	double time = count.QuadPart * m_reciprocalFrequency;
 #else
-		struct timespec interval;
-		clock_gettime(CLOCK_MONOTONIC, &interval);
-		double time = interval.tv_sec + interval.tv_nsec * 0.000000001f;
+	struct timespec interval;
+	clock_gettime(CLOCK_MONOTONIC, &interval);
+	double time = interval.tv_sec + interval.tv_nsec * 0.000000001f;
 #endif
 
-		return time;
-	};
+	return time;
+};
 
-	/**********************************************************************/
+/**********************************************************************/
 
-	inline BaseObject::BaseObject() :
-			m_ref(0)
-	{
-	}
+inline BaseObject::BaseObject() :
+	m_ref(0)
+{
+}
 
-	inline BaseObject::~BaseObject()
-	{
-	}
+inline BaseObject::~BaseObject()
+{
+}
 
-	inline void BaseObject::incrRef()
-	{
-		++m_ref;
-	}
+inline void BaseObject::incrRef()
+{
+	++m_ref;
+}
 
-	inline void BaseObject::decrRef()
-	{
-		--m_ref;
-	}
+inline void BaseObject::decrRef()
+{
+	--m_ref;
+}
 
-	inline int BaseObject::getRef() const
-	{
-		return m_ref;
-	}
+inline int BaseObject::getRef() const
+{
+	return m_ref;
+}
 
-	/**********************************************************************/
+/**********************************************************************/
 
-	inline Profile::Profile(const std::string& name) :
+inline Profile::Profile(const std::string& name) :
 #ifndef PROFINY_CALL_GRAPH_PROFILER
-			m_timeStarted(false),
+	m_timeStarted(false),
 #endif
-			m_name(name), m_callCount(0), m_wallTime(0.0)
-	{
-	}
+	m_name(name), m_callCount(0), m_wallTime(0.0)
+{
+}
 
-	inline Profile::~Profile()
-	{
-	}
+inline Profile::~Profile()
+{
+}
 
-	inline bool Profile::start()
-	{
+inline bool Profile::start()
+{
 #ifdef PROFINY_CALL_GRAPH_PROFILER
-		Profiler::getInstance()->pushProfile(this);
+	Profiler::getInstance()->pushProfile(this);
 #else
-		if (m_timeStarted)
-		{
-			return false;
-		}
-		m_timeStarted = true;
-#endif
-		m_timer.start();
-		return true;
-	}
-
-	inline bool Profile::stop()
-	{
-#ifdef PROFINY_CALL_GRAPH_PROFILER
-		Profiler::getInstance()->popProfile();
-#else
-		if (!m_timeStarted)
-		{
-			return false;
-		}
-		m_timeStarted = false;
-#endif
-		m_timer.stop(); // TODO: check if we need this line
-		m_wallTime += m_timer.getElapsedTime();
-		++m_callCount;
-		return true;
-	}
-
-	inline unsigned int Profile::getCallCount() const
-	{
-		return m_callCount;
-	}
-
-	inline std::string Profile::getName() const
-	{
-		return m_name;
-	}
-
-	inline void Profile::getTimes(double& wall) const
-	{
-		wall = m_wallTime;
-	}
-
-#ifdef PROFINY_CALL_GRAPH_PROFILER
-	inline std::map<std::string, Profile*>& Profile::getSubProfiles()
-	{
-		return m_subProfiles;
-	}
-#endif
-
-	/**********************************************************************/
-
-	inline ScopedProfile::ScopedProfile(const std::string& name) : m_profile(NULL)
-	{
-		std::string n(name);
-
-#ifdef PROFINY_CALL_GRAPH_PROFILER
-		if (Profiler::getInstance()->isInStack(n))
-		{ // profile is already in stack (probably a recursive call)
-			if (Profiler::getInstance()->getOmitRecursiveCalls())
-			{
-				return;
-			}
-			else
-			{
-				n = "RECURSIVE@" + n;
-			}
-		}
-#endif
-
-		m_profile = Profiler::getInstance()->getProfile(n);
-		if (m_profile != NULL)
-		{
-			if (!m_profile->start())
-			{ // cannot start profiler (probably a recursive call for flat profiler)
-				delete m_profile;
-				m_profile = NULL;
-			}
-		}
-		else
-		{
-			std::cerr << "Cannot start scoped profiler: " << n << std::endl;
-		}
-	}
-
-	inline ScopedProfile::~ScopedProfile()
-	{
-		if (m_profile != NULL)
-		{
-			m_profile->stop();
-		}
-	}
-
-	/**********************************************************************/
-
-	Profiler* Profiler::m_instance = NULL;
-
-	inline Profiler::Profiler()
-#ifdef PROFINY_CALL_GRAPH_PROFILER
-		: m_omitRecursiveCalls(true)
-#endif
-	{
-	}
-
-	inline Profiler::~Profiler()
-	{
-	}
-
-	inline Profiler* Profiler::getInstance()
-	{
-		if (m_instance == NULL)
-		{
-			m_instance = new Profiler;
-			atexit(printStats);
-		}
-		return m_instance;
-	}
-
-	inline Profile* Profiler::getProfile(const std::string& name)
-	{
-#ifdef PROFINY_CALL_GRAPH_PROFILER
-		std::map<std::string, Profile*>& profiles = getCurrentProfilesRoot();
-#else
-		std::map<std::string, Profile*>& profiles = m_profiles;
-#endif
-		std::map<std::string, Profile*>::iterator it = profiles.find(name);
-		if (it != profiles.end())
-		{
-			return it->second;
-		}
-		else
-		{
-			Profile* result = new Profile(name);
-			profiles[name] = result;
-			return result;
-		}
-	}
-
-#ifdef PROFINY_CALL_GRAPH_PROFILER
-	inline std::map<std::string, Profile*>& Profiler::getCurrentProfilesRoot()
-	{
-		return m_profileStack.empty() ? m_profiles : m_profileStack.back()->getSubProfiles();
-	}
-
-	inline void Profiler::pushProfile(Profile* p)
-	{
-		m_profileStack.push_back(p);
-	}
-
-	inline void Profiler::popProfile()
-	{
-		if (!m_profileStack.empty())
-		{
-			m_profileStack.pop_back();
-		}
-	}
-
-	inline bool Profiler::isInStack(const std::string& name)
-	{
-		for (unsigned int i=0; i<m_profileStack.size(); ++i)
-		{
-			if (m_profileStack[i]->getName() == name)
-			{
-				return true;
-			}
-		}
+	if (m_timeStarted) {
 		return false;
 	}
+	m_timeStarted = true;
 #endif
+	m_timer.start();
+	return true;
+}
 
-	inline void Profiler::printStats(std::ofstream& fs, std::map<std::string, Profile*>* p, int depth)
-	{
+inline bool Profile::stop()
+{
 #ifdef PROFINY_CALL_GRAPH_PROFILER
-		std::ostringstream oss;
-		for (int i=0; i<depth; ++i)
-		{
-			oss << "\t";
-		}
-#endif
-
-		std::map<std::string, Profile*>::iterator it = p->begin();
-		for (; it != p->end(); ++it)
-		{
-			unsigned int cc = it->second->getCallCount();
-			double wall;
-			it->second->getTimes(wall);
-#ifdef PROFINY_CALL_GRAPH_PROFILER
-			fs << oss.str() << it->second->getName() << "  T:" << wall << "  #:" << cc << std::endl;
-			printStats(fs, &(it->second->getSubProfiles()), depth+1);
+	Profiler::getInstance()->popProfile();
 #else
-			fs << it->second->getName() << "  T:" << wall << "  #:" << cc << std::endl;
+	if (!m_timeStarted) {
+		return false;
+	}
+	m_timeStarted = false;
 #endif
-			delete it->second;
-		}
-	}
+	m_timer.stop(); // TODO: check if we need this line
+	m_wallTime += m_timer.getElapsedTime();
+	++m_callCount;
+	return true;
+}
 
-	inline void Profiler::printStats()
-	{
-		printStats("profiny.out");
+inline unsigned int Profile::getCallCount() const
+{
+	return m_callCount;
+}
 
-		delete m_instance;
-		m_instance = NULL;
-	}
+inline std::string Profile::getName() const
+{
+	return m_name;
+}
 
-	inline void Profiler::printStats(const std::string& filename)
-	{
-		std::ofstream fs;
-		fs.open(filename.c_str());
-		if (!fs.is_open())
-		{
-			std::cerr << "Cannot open profiler output file: " << filename << std::endl;
-			return;
-		}
-		Profiler::printStats(fs, &(getInstance()->m_profiles), 0);
-		fs.close();
-	}
+inline void Profile::getTimes(double& wall) const
+{
+	wall = m_wallTime;
+}
 
 #ifdef PROFINY_CALL_GRAPH_PROFILER
-	inline void Profiler::setOmitRecursiveCalls(bool omit)
-	{
-		getInstance()->m_omitRecursiveCalls = omit;
-	}
+inline std::map<std::string, Profile*>& Profile::getSubProfiles()
+{
+	return m_subProfiles;
+}
+#endif
 
-	inline bool Profiler::getOmitRecursiveCalls()
-	{
-		return getInstance()->m_omitRecursiveCalls;
+/**********************************************************************/
+
+inline ScopedProfile::ScopedProfile(const std::string& name) : m_profile(NULL)
+{
+	std::string n(name);
+
+#ifdef PROFINY_CALL_GRAPH_PROFILER
+	if (Profiler::getInstance()->isInStack(n)) {
+		// profile is already in stack (probably a recursive call)
+		if (Profiler::getInstance()->getOmitRecursiveCalls()) {
+			return;
+		} else {
+			n = "RECURSIVE@" + n;
+		}
 	}
+#endif
+
+	m_profile = Profiler::getInstance()->getProfile(n);
+	if (m_profile != NULL) {
+		if (!m_profile->start()) {
+			// cannot start profiler (probably a recursive call for flat profiler)
+			delete m_profile;
+			m_profile = NULL;
+		}
+	} else {
+		std::cerr << "Cannot start scoped profiler: " << n << std::endl;
+	}
+}
+
+inline ScopedProfile::~ScopedProfile()
+{
+	if (m_profile != NULL) {
+		m_profile->stop();
+	}
+}
+
+/**********************************************************************/
+
+Profiler* Profiler::m_instance = NULL;
+
+inline Profiler::Profiler()
+#ifdef PROFINY_CALL_GRAPH_PROFILER
+	: m_omitRecursiveCalls(true)
+#endif
+{
+}
+
+inline Profiler::~Profiler()
+{
+}
+
+inline Profiler* Profiler::getInstance()
+{
+	if (m_instance == NULL) {
+		m_instance = new Profiler;
+		atexit(printStats);
+	}
+	return m_instance;
+}
+
+inline Profile* Profiler::getProfile(const std::string& name)
+{
+#ifdef PROFINY_CALL_GRAPH_PROFILER
+	std::map<std::string, Profile*>& profiles = getCurrentProfilesRoot();
+#else
+	std::map<std::string, Profile*>& profiles = m_profiles;
+#endif
+	std::map<std::string, Profile*>::iterator it = profiles.find(name);
+	if (it != profiles.end()) {
+		return it->second;
+	} else {
+		Profile* result = new Profile(name);
+		profiles[name] = result;
+		return result;
+	}
+}
+
+#ifdef PROFINY_CALL_GRAPH_PROFILER
+inline std::map<std::string, Profile*>& Profiler::getCurrentProfilesRoot()
+{
+	return m_profileStack.empty() ? m_profiles : m_profileStack.back()->getSubProfiles();
+}
+
+inline void Profiler::pushProfile(Profile* p)
+{
+	m_profileStack.push_back(p);
+}
+
+inline void Profiler::popProfile()
+{
+	if (!m_profileStack.empty()) {
+		m_profileStack.pop_back();
+	}
+}
+
+inline bool Profiler::isInStack(const std::string& name)
+{
+	for (unsigned int i=0; i<m_profileStack.size(); ++i) {
+		if (m_profileStack[i]->getName() == name) {
+			return true;
+		}
+	}
+	return false;
+}
+#endif
+
+inline void Profiler::printStats(std::ofstream& fs, std::map<std::string, Profile*>* p, int depth)
+{
+#ifdef PROFINY_CALL_GRAPH_PROFILER
+	std::ostringstream oss;
+	for (int i=0; i<depth; ++i) {
+		oss << "\t";
+	}
+#endif
+
+	std::map<std::string, Profile*>::iterator it = p->begin();
+	for (; it != p->end(); ++it) {
+		unsigned int cc = it->second->getCallCount();
+		double wall;
+		it->second->getTimes(wall);
+#ifdef PROFINY_CALL_GRAPH_PROFILER
+		fs << oss.str() << it->second->getName() << "  T:" << wall << "  #:" << cc << std::endl;
+		printStats(fs, &(it->second->getSubProfiles()), depth+1);
+#else
+		fs << it->second->getName() << "  T:" << wall << "  #:" << cc << std::endl;
+#endif
+		delete it->second;
+	}
+}
+
+inline void Profiler::printStats()
+{
+	printStats("profiny.out");
+
+	delete m_instance;
+	m_instance = NULL;
+}
+
+inline void Profiler::printStats(const std::string& filename)
+{
+	std::ofstream fs;
+	fs.open(filename.c_str());
+	if (!fs.is_open()) {
+		std::cerr << "Cannot open profiler output file: " << filename << std::endl;
+		return;
+	}
+	Profiler::printStats(fs, &(getInstance()->m_profiles), 0);
+	fs.close();
+}
+
+#ifdef PROFINY_CALL_GRAPH_PROFILER
+inline void Profiler::setOmitRecursiveCalls(bool omit)
+{
+	getInstance()->m_omitRecursiveCalls = omit;
+}
+
+inline bool Profiler::getOmitRecursiveCalls()
+{
+	return getInstance()->m_omitRecursiveCalls;
+}
 #endif
 
 } // namespace profiny
@@ -580,22 +561,22 @@ namespace profiny
 
 inline void intrusive_ptr_add_ref(profiny::BaseObject* p)
 {
-    if (p != NULL)
-    { // pointer is not NULL
-        p->incrRef();
-    }
+	if (p != NULL) {
+		// pointer is not NULL
+		p->incrRef();
+	}
 }
 
 inline void intrusive_ptr_release(profiny::BaseObject* p)
 {
-    if (p != NULL)
-    { // pointer is not NULL
-        p->decrRef();
-        if (p->getRef() <= 0)
-        { // reference count is zero or less
-            delete p;
-        }
-    }
+	if (p != NULL) {
+		// pointer is not NULL
+		p->decrRef();
+		if (p->getRef() <= 0) {
+			// reference count is zero or less
+			delete p;
+		}
+	}
 }
 
 #endif /* PROFINY_H_ */
