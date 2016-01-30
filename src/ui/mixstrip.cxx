@@ -19,14 +19,11 @@ void MixStrip::draw( cairo_t* cr )
 
 	cairo_rectangle( cr, x_+1, y_, w_-2, h_ );
 	theme_->color( cr, BG_DARK );
-	cairo_fill( cr );
 
 	if( value() > 0.4999 ) {
-		cairo_set_source_rgba( cr, 1,1,1, 0.1 );
-		//theme_->color( cr, HIGHLIGHT, 0.2 );
+		theme_->color( cr, HIGHLIGHT, 0.2 );
 		cairo_fill_preserve(cr);
-		cairo_set_source_rgba( cr, 1,1,1, 0.75 );
-		//theme_->color( cr, HIGHLIGHT, 0.8 );
+		theme_->color( cr, HIGHLIGHT, 0.8 );
 		cairo_set_line_width(cr, theme_->lineWidthWide() );
 		cairo_stroke(cr);
 	} else {

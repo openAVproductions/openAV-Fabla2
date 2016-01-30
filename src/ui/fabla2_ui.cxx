@@ -691,6 +691,8 @@ void Fabla2UI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity
 		return; // invalid pad number
 	}
 
+	mixStrip[pad]->value(noteOn);
+
 	if( noteOn && bank == currentBank ) {
 		pads[pad]->value( true );
 		pads[pad]->theme( theme( bank ) );
