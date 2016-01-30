@@ -489,7 +489,7 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 
 	// initial values
 	bankBtns[0]->value( true );
-	followPadBtn->value(true );
+	followPadBtn->value( followPad );
 
 	/// created last, so its on top
 	deleteLayer = new Avtk::Dialog( this, 0, 0, 320, 120, "Delete Sample?" );
@@ -695,14 +695,8 @@ void Fabla2UI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity
 	pads[pad]->value( noteOn );
 	mixStrip[pad]->value(noteOn);
 
-	// request update for state from DSP
-	if( followPad &&
-	    pad   != currentPad   &&
-	    layer != currentLayer &&
-	    bank  != currentBank) {
-		printf("%s: UI requesting %i %i %i\n", __PRETTY_FUNCTION__, bank, pad, layer );
-		requestSampleState( currentBank, currentPad, currentLayer );
-	}
+	// Sample view, highlight the layer
+	layers->value(layer);
 
 	currentBank  = bank;
 	currentLayer = layer;
