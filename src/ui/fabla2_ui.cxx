@@ -691,75 +691,22 @@ void Fabla2UI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity
 		return; // invalid pad number
 	}
 
+	// change widget properties
+	pads[pad]->value( noteOn );
 	mixStrip[pad]->value(noteOn);
 
-	if( noteOn && bank == currentBank ) {
-		pads[pad]->value( true );
-		pads[pad]->theme( theme( bank ) );
+	currentLayer = layer;
+	currentPad  = pad;
 
-		if( pad == currentPad ) {
-			if( followPad ) {
-				// light up pad play button
-				padPlay->value( true );
-			}
-
-			// set the theme (ensure revert highlighting)
-			pads[pad]->theme( theme( bank ) );
-		} else {
-			pads[currentPad]->theme( theme( bank ) );
-		}
-	} else {
-		padPlay->value( false );
-		pads[pad]-> value( false );
-
-		// if the current note-off event is *also* the current pad:
-		// then highlight it as the selected pad
-		if( pad == currentPad && bank == currentBank && followPad ) {
-			pads[pad]-> value( 0.78900 );
-			pads[pad]->theme( theme( bank+1%3 ) );
-		}
-	}
-
-	layers->value( layer );
-
-	bool newLayer = ( pad   != currentPad   ||
-	                  layer != currentLayer  );
-
-	if( followPad && noteOn && newLayer ) {
-		if( bank != currentBank ) {
-			bankBtns[currentBank]->value( false );
-			currentBank = bank;
-			bankBtns[currentBank]->value( true );
-			/*
-			// all pads off if we're going to a new bank
-			for(int i = 0; i < 16; i++)
-			{
-			  if( i != pad ) // except current pad
-			    pads[i]->value( false );
-			}
-			*/
-			waveform->theme( theme( bank ) );
-		}
-
-		// if currentPad is highlighted, turn it off
-		if( int(pads[currentPad]->value() * 1000) == 789 ) {
-			pads[currentPad]->value( false );
-			pads[currentPad]->theme( theme(bank) );
-		}
-
-		currentLayer = layer;
-
-		currentPad  = pad;
-		pads[currentPad]->theme( theme(bank) );
-
-		padPlay->value( true );
-
-		// request update for state from DSP
-		//printf("UI requesting %i %i %i\n", bank, pad, layer );
+	// request update for state from DSP
+	if( followPad ) {
+		printf("%s: UI requesting %i %i %i\n", __PRETTY_FUNCTION__, bank, pad, layer );
 		requestSampleState( currentBank, currentPad, currentLayer );
 	}
 
 	redraw();
+
+	return;
 }
 
 
@@ -801,15 +748,10 @@ void Fabla2UI::setBank( int bank )
 	for(int i = 0; i < 16; i++)
 		mixStrip[i]->theme( t );
 
-	//padsHeaderBox->theme( t );
-
-
-	/*
 	for(int i = 0; i < 16; i++)
 	{
 	  pads[i]->theme( t );
 	}
-	*/
 }
 
 void Fabla2UI::writePadPlayStop( bool noteOn, int bank, int pad, int layer )
