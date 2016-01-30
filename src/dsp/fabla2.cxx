@@ -446,8 +446,14 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
 
 void Fabla2DSP::padRefreshLayers( int bank, int pad )
 {
-	Pad* p = library->bank( bank )->pad( pad );
-	//printf("%s, p = %i\n", __PRETTY_FUNCTION__, p );
+	Bank* b = library->bank(bank);
+	if( !b )
+		return;
+	Pad* p = b->pad( pad );
+	if( !p )
+		return;
+	
+	printf("%s, p = %p\n", __PRETTY_FUNCTION__, p );
 
 	for(int i = 0; i < p->nLayers(); i++) {
 		LV2_Atom_Forge_Frame frame;
@@ -470,10 +476,6 @@ void Fabla2DSP::padRefreshLayers( int bank, int pad )
 		const char* name = p->layer( i )->getName();
 		lv2_atom_forge_key(&lv2->forge, uris->fabla2_name);
 		lv2_atom_forge_string(&lv2->forge, name, strlen( name ) );
-
-		//printf("writing layer with name %s\n", name );
-
-		// Close off object
 		lv2_atom_forge_pop(&lv2->forge, &frame);
 	}
 

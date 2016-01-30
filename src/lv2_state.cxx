@@ -154,7 +154,6 @@ fabla2_save(LV2_Handle                 instance,
 			pjBank[ padStream.str() ] = picojson::value( pjPad );
 		} // pads
 
-
 		// finally add the current bank to the whole JSON
 		std::stringstream bankStr;
 		bankStr << "bank_" << char('A' + i); // hack to bank letters
@@ -391,6 +390,9 @@ fabla2_restore(LV2_Handle                  instance,
 	} else {
 		printf("Fabla2:State() Warning, no JSON : not loading preset.\n" );
 	}
+
+	for(int i = 0; i < 16; i++)
+		self->dsp->padRefreshLayers(i,0);
 
 	return LV2_STATE_SUCCESS;
 }

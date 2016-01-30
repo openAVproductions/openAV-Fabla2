@@ -93,10 +93,7 @@ public:
 	void writeSampleState( int b, int p, int l, Pad* pad, Sample* );
 	void tx_waveform( int bank, int pad, int layer, const float* data );
 
-	Library* getLibrary()
-	{
-		return library;
-	}
+	Library* getLibrary() {return library;}
 
 	float auxBusVol[4];
 

@@ -695,17 +695,20 @@ void Fabla2UI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity
 	pads[pad]->value( noteOn );
 	mixStrip[pad]->value(noteOn);
 
-	currentLayer = layer;
-	currentPad  = pad;
-
 	// request update for state from DSP
-	if( followPad ) {
+	if( followPad &&
+	    pad   != currentPad   &&
+	    layer != currentLayer &&
+	    bank  != currentBank) {
 		printf("%s: UI requesting %i %i %i\n", __PRETTY_FUNCTION__, bank, pad, layer );
 		requestSampleState( currentBank, currentPad, currentLayer );
 	}
 
-	redraw();
+	currentBank  = bank;
+	currentLayer = layer;
+	currentPad   = pad;
 
+	redraw();
 	return;
 }
 
