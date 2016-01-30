@@ -392,7 +392,7 @@ fabla2_restore(LV2_Handle                  instance,
 	}
 
 	for(int i = 0; i < 16; i++)
-		self->dsp->padRefreshLayers(i,0);
+		self->dsp->padRefreshLayers(0,i);
 
 	return LV2_STATE_SUCCESS;
 }

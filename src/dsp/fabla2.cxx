@@ -258,6 +258,9 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
 					// FIXME: only when UI is visible?
 					// force push updates to UI
 					padRefreshLayers(bank, pad);
+					int l = p->lastPlayedLayer();
+					Sample* s = p->layer( l );
+					writeSampleState(bank, pad, l, p, s);
 
 					allocd = true;
 				}
@@ -494,6 +497,11 @@ void Fabla2DSP::padRefreshLayers( int bank, int pad )
 	lv2_atom_forge_int(&lv2->forge, pad );
 	lv2_atom_forge_key(&lv2->forge, uris->fabla2_layer);
 	lv2_atom_forge_int(&lv2->forge, p->lastPlayedLayer() );
+	/*
+	// might needs "sampleState" anyway if in sample view?
+	lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadVolume);
+	lv2_atom_forge_float(&lv2->forge, p->volume );
+	*/
 
 	lv2_atom_forge_pop(&lv2->forge, &frame);
 }
