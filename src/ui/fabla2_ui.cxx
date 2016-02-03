@@ -32,6 +32,9 @@ extern "C" {
 // AVTK themes
 #include "themes.hxx"
 
+// The default OSC port used by Maschine.rs userspace driver
+const int PORT_NUM = 42435;
+
 static void fabla2_widgetCB(Avtk::Widget* w, void* ud);
 
 Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
@@ -493,6 +496,53 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 
 	/// created last, so its on top
 	deleteLayer = new Avtk::Dialog( this, 0, 0, 320, 120, "Delete Sample?" );
+
+	sock.bindTo(PORT_NUM);
+	if(!sock.isOk()) {
+		printf("Fabla2UI: Error opening OSC port %d: %s\n",
+		       PORT_NUM, &sock.errorMessage()[0]);
+		printf("=> Maschine devices OSC interface wont work!\n");
+	} else {
+		printf("=> Maschine devices OSC interface OK!\n");
+	}
+}
+
+void Fabla2UI::handleMaschine()
+{
+	PacketReader pr;
+	if (sock.receiveNextPacket(0 /* timeout, in ms */)) {
+		pr.init(sock.packetData(), sock.packetSize());
+		oscpkt::Message *msg;
+		while (pr.isOk() && (msg = pr.popMessage()) != 0) {
+			//handle_message(&sock, msg);
+			int press;
+			msg->arg().popInt32(press);
+
+			PacketWriter pw;
+			Message repl;
+			repl.init(&msg->address[0]).pushInt32(press);
+			pw.init().addMessage(repl);
+			sock.sendPacketTo(pw.packetData(), pw.packetSize(), sock.packetOrigin());
+
+			/* Handle press + release events */
+			if(strcmp(&msg->address[0],"/maschine/button/rec") == 0) {
+				float tmp = press;
+				write_function(controller, Fabla2::RECORD_OVER_LAST_PLAYED_PAD, sizeof(float), 0, &tmp);
+			}
+
+			if(!press)
+				break; // button release
+			if(       strcmp(&msg->address[0],"/maschine/button/f1") == 0) {
+				showLiveView();
+			} else if(strcmp(&msg->address[0],"/maschine/button/f2") == 0) {
+				showPadsView();
+			} else if(strcmp(&msg->address[0],"/maschine/button/f3") == 0) {
+				showFileView();
+				showPadsView();
+			}
+
+		}
+	}
 }
 
 void Fabla2UI::blankSampleState()
@@ -588,6 +638,7 @@ void Fabla2UI::showLiveView()
 	sampleControlGroup->visible( false );
 
 	liveGroup         ->visible( true  );
+	redraw();
 }
 
 void Fabla2UI::showPadsView()
@@ -603,6 +654,7 @@ void Fabla2UI::showPadsView()
 
 	// info could be outdated from live view
 	requestSampleState( currentBank, currentPad, currentLayer );
+	redraw();
 }
 
 /// taken from SOFD example - thanks x42 for this awesome library!
@@ -682,6 +734,7 @@ void Fabla2UI::showFileView()
 		showPadsView();
 		//uiViewGroup->value( 1 );
 	}
+	redraw();
 }
 
 
@@ -745,9 +798,8 @@ void Fabla2UI::setBank( int bank )
 	for(int i = 0; i < 16; i++)
 		mixStrip[i]->theme( t );
 
-	for(int i = 0; i < 16; i++)
-	{
-	  pads[i]->theme( t );
+	for(int i = 0; i < 16; i++) {
+		pads[i]->theme( t );
 	}
 }
 
@@ -1115,8 +1167,7 @@ void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 			// check pads
 			if( w == pads[i] ) {
 				if( w->mouseButton() == 3 ) {
-					// rename pad
-
+					// rename pad?
 				} else {
 					if( tmp ) {
 						currentPad = i;

@@ -368,6 +368,9 @@ void Fabla2DSP::writePadsState( int b, int p, Pad* pad )
 
 void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
 {
+	if( !pad || !s )
+		return;
+
 	assert( pad );
 	assert( s );
 
@@ -589,6 +592,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 		panic();
 	} else if(       URI == uris->fabla2_PadVolume ) {
 		pad->volume = v;
+		printf("pad volume chaned %f\n", pad->volume);
 		writePadsState( b, p, pad );
 	} else if(       URI == uris->fabla2_PadAuxBus1 ) {
 		pad->sends[0] = v;
@@ -642,10 +646,10 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 		s->dirty = 1;
 		s->release = v;
 	} else if(  URI == uris->fabla2_PadMuteGroup ) {
-		printf("setting start point to %f\n", v );
+		printf("setting mute group to %f\n", v );
 		pad->muteGroup( int(v) );
 	} else if(  URI == uris->fabla2_PadOffGroup ) {
-		printf("setting start point to %f\n", v );
+		printf("setting off group to %f\n", v );
 		pad->offGroup( int(v) );
 	} else if(  URI == uris->fabla2_PadSwitchType ) {
 		int c = int(v);

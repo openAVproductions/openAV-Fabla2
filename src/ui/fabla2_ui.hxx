@@ -3,8 +3,12 @@
 #define OPENAV_AVTK_TEST_UI_HXX
 
 #include "avtk.hxx"
-
 #include "../shared.hxx"
+
+#define OSCPKT_OSTREAM_OUTPUT
+#include "oscpkt/oscpkt.hh"
+#include "oscpkt/udp.hh"
+using namespace oscpkt;
 
 // for write_function and controller
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
@@ -33,6 +37,8 @@ public:
 		requestSampleState( 0, 0, 0 );
 		blankSampleState();
 	}
+	
+	void handleMaschine();
 
 	void blankSampleState();
 
@@ -166,6 +172,9 @@ public:
 	LV2_Atom_Forge forge;
 
 private:
+	// OSC interface for Maschine interfaces
+	UdpSocket sock;
+
 	/// default directories / file loading
 	std::string defaultDir;
 	std::string currentDir;

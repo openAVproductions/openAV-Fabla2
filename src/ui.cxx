@@ -365,9 +365,9 @@ static void fabla2_port_event(LV2UI_Handle handle,
 
 static int fabla2_idle(LV2UI_Handle handle)
 {
-	//printf("idle()\n");
 	Fabla2UI* ui = (Fabla2UI*)handle;
 	ui->idle();
+	ui->handleMaschine();
 	return 0;
 }
 
