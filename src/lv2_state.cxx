@@ -98,6 +98,7 @@ fabla2_save(LV2_Handle                 instance,
 			pjPad["triggerMode"]   = picojson::value( (double)pad->triggerMode() );
 			pjPad["switchMode"]    = picojson::value( (double)pad->switchSystem() );
 			pjPad["volume"]        = picojson::value( (double)pad->volume );
+			printf("pad volume saved as %d : %f\n", p, pad->volume);
 
 			pjPad["auxbus1"]        = picojson::value( (double)pad->sends[0] );
 			pjPad["auxbus2"]        = picojson::value( (double)pad->sends[1] );
@@ -113,13 +114,12 @@ fabla2_save(LV2_Handle                 instance,
 				/// write Layer / Sample specific things
 				pjLayer["name"            ] = picojson::value( s->getName() );
 
-				// save Sample audio data as <pad_num>_<layer_num>.wav
 				std::stringstream padName;
-				padName << "pad" << p << "_layer" << l << ".wav";
+				padName << s->getName();
+
 				char* savePath = make_path->path(make_path->handle, padName.str().c_str() );
 				s->write( savePath );
 				free( savePath );
-				// write the portable <padX_layerY.wav> form to the JSON
 				pjLayer["filename"        ] = picojson::value( padName.str().c_str() );
 
 				pjLayer["gain"            ] = picojson::value( (double)s->gain );
@@ -281,8 +281,12 @@ fabla2_restore(LV2_Handle                  instance,
 					if( pjPad.get("switchMode").is<double>() )
 						pad->switchSystem( (Fabla2::Pad::SAMPLE_SWITCH_SYSTEM)pjPad.get("switchMode" ).get<double>() );
 
-					if( pjPad.get("volume").is<double>() )
+					if( pjPad.get("volume").is<double>() ) {
 						pad->volume = pjPad.get("volume").get<double>();
+					}
+					else {
+						printf("pad volume not restored on %d\n", p);
+					}
 
 					if( pjPad.get("auxbus1").is<double>() )
 						pad->sends[0] = pjPad.get("auxbus1").get<double>();
