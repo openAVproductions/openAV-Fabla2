@@ -425,7 +425,8 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
 	lv2_atom_forge_float(&lv2->forge, s->pan );
 
 	lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleStartPoint );
-	lv2_atom_forge_float(&lv2->forge, s->startPoint / s->getFrames() );
+	lv2_atom_forge_float(&lv2->forge, s->startPoint);
+	printf("dsp writing start point: %f\n", s->startPoint);
 
 	lv2_atom_forge_key(&lv2->forge, uris->fabla2_SampleVelStartPnt );
 	lv2_atom_forge_float(&lv2->forge, s->velLow );
@@ -615,9 +616,10 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 		s->pan = v;
 	} else if(  URI == uris->fabla2_SampleStartPoint ) {
 		s->dirty = 1;
-		s->startPoint = v * s->getFrames();
+		s->startPoint = v;
+		printf("dsp set startpoint %f\n", s->startPoint);
 	} else if(  URI == uris->fabla2_SampleEndPoint ) {
-		//s->dirty = 1; s->startPoint = v * s->getFrames();
+		printf("%s: STUB\n", __PRETTY_FUNCTION__);
 	} else if(  URI == uris->fabla2_SampleVelStartPnt ) {
 		s->dirty = 1;
 		s->velocityLow( v );

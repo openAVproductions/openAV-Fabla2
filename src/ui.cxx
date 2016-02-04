@@ -332,7 +332,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
 				ui->samplePan       ->value( ((const LV2_Atom_Float*)aPan )->body );
 				ui->samplePitch     ->value( ((const LV2_Atom_Float*)aPitch)->body);
 
-				ui->sampleStartPoint->value( ((const LV2_Atom_Float*)aStartPoint)->body*2); // 2* as dial offsets on write too!
+				ui->sampleStartPoint->value( ((const LV2_Atom_Float*)aStartPoint)->body);
 				ui->waveform->setStartPoint( ((const LV2_Atom_Float*)aStartPoint)->body);
 
 				ui->velocityStartPoint->value(((const LV2_Atom_Float*)aVelLow)->body  );

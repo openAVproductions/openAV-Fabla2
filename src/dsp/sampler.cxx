@@ -87,14 +87,16 @@ void Sampler::play( Pad* p, float velocity )
 	}
 
 	// trigger audio playback here
-	playIndex = sample->getStartPoint();
-	//printf("playing sample with start point of %li\n", playIndex );
+	float start = sample->getStartPoint();
+	long frames = sample->getFrames();
+	playIndex = start * frames;
+	printf("sample play() with start point %f : total : %ld, playIndex: %f\n", start, frames, playIndex);
+
 }
 
 long Sampler::getRemainingFrames()
 {
-	// getFrames() returns playable number of frames
-	long totalPlayFrames = sample->getFrames()  - playIndex;
+	long totalPlayFrames = sample->getFrames() - playIndex;
 	return totalPlayFrames;
 }
 

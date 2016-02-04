@@ -1069,9 +1069,8 @@ void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 	} else if( w == samplePan ) {
 		writeAtom( uris.fabla2_SamplePan, tmp );
 	} else if( w == sampleStartPoint ) {
-		float fin = tmp * 0.5;
-		waveform->setStartPoint( fin );
-		writeAtom( uris.fabla2_SampleStartPoint, fin );
+		waveform->setStartPoint( tmp );
+		writeAtom( uris.fabla2_SampleStartPoint, tmp );
 	} else if( w == filterType ) {
 		writeAtom( uris.fabla2_SampleFilterType, tmp );
 	} else if( w == filterFrequency ) {

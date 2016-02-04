@@ -62,14 +62,11 @@ public:
 	}
 	const long    getFrames()
 	{
-		return (endPoint - startPoint)*frames;
+		return frames;
 	}
 	/// returns the buffer for the provided channel
 	const float*  getAudio(int channel);
-	const int     getStartPoint()
-	{
-		return startPoint*frames;
-	}
+	const int     getStartPoint() { return startPoint; }
 
 	/// returns the waveform buffer, a mono-mixdown resampled to fit the window
 	const float* getWaveform();
