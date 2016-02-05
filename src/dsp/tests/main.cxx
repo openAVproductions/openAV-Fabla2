@@ -46,7 +46,7 @@ int main()
 		if( (int)audioL[i] == 0.000000001032) {} // for valgrind condition check
 	}
 
-	//Plotter::plot("out.dat", FABLA2_TEST_BUF_SIZE, audioL );
+	Plotter::plot("out.dat", FABLA2_TEST_BUF_SIZE, audioL );
 
 	delete v;
 	delete s;
