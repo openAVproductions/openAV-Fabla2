@@ -178,7 +178,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
 				int32_t layer    = ((const LV2_Atom_Int*)lay)->body;
 				std::string n    = (const char*) LV2_ATOM_BODY_CONST( name );
 
-				printf("UI got PadRefresh: layer = %i, name = %s\n", layer, n.c_str() );
+				//printf("UI got PadRefresh: layer = %i, name = %s\n", layer, n.c_str() );
 
 				if( layer == 0 ) { // starting from start: reset
 					ui->layers->clear();

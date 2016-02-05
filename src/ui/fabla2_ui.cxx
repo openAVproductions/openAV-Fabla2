@@ -967,7 +967,7 @@ void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 {
 	float tmp = w->value();
 
-	printf("widgetCB : %s, value: %f\n", w->label(), tmp );
+	//printf("widgetCB : %s, value: %f\n", w->label(), tmp );
 
 	if( w == recordOverPad ) {
 		write_function( controller, Fabla2::RECORD_OVER_LAST_PLAYED_PAD, sizeof(float), 0, &tmp );

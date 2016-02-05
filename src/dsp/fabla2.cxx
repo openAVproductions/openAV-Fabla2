@@ -140,7 +140,7 @@ void Fabla2DSP::process( int nf )
 				lv2_atom_forge_int(&lv2->forge, p->loaded() );
 				lv2_atom_forge_pop(&lv2->forge, &frame);
 			} else {
-				printf("%s - pad not valid!\n", __PRETTY_FUNCTION__);
+				//printf("%s - pad not valid!\n", __PRETTY_FUNCTION__);
 			}
 		}
 		// FIXME Pad = 0
@@ -151,7 +151,7 @@ void Fabla2DSP::process( int nf )
 	}
 
 	if( recordEnable && recordPad != -1 && recordIndex + nframes < sr * 4 ) {
-		printf("recording...\n" );
+		//printf("recording...\n" );
 		for(int i = 0; i < nframes; i++) {
 			recordBuffer[recordIndex++] = controlPorts[INPUT_L][i];
 			recordBuffer[recordIndex++] = controlPorts[INPUT_R][i];
@@ -490,15 +490,15 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
 
 void Fabla2DSP::padRefreshLayers( int bank, int pad)
 {
-	printf("%s, %d %d\n", __PRETTY_FUNCTION__, bank, pad);
+	//printf("%s, %d %d\n", __PRETTY_FUNCTION__, bank, pad);
 	Bank* b = library->bank(bank);
 	if( !b ) {
-		printf("%s no bank\n", __PRETTY_FUNCTION__);
+		//printf("%s no bank\n", __PRETTY_FUNCTION__);
 		return;
 	}
 	Pad* p = b->pad( pad );
 	if( !p ) {
-		printf("%s  no pad\n", __PRETTY_FUNCTION__);
+		//printf("%s  no pad\n", __PRETTY_FUNCTION__);
 		return; 
 	}
 
@@ -544,8 +544,6 @@ void Fabla2DSP::padRefreshLayers( int bank, int pad)
 void Fabla2DSP::tx_waveform( int b, int p, int l, const float* data )
 {
 	assert( data );
-	printf("%s - returning", __PRETTY_FUNCTION__);
-	return;
 
 	LV2_Atom_Forge_Frame frame;
 

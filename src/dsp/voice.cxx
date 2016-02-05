@@ -337,7 +337,7 @@ void Voice::process()
 	// check if we need to trigger ADSR off
 	if( sampler->getRemainingFrames() + nframes < adsrOffCounter ) {
 		if( adsr->getState() != ADSR::ENV_RELEASE ) {
-			printf("remaining frames + nframes < adsrOffCounter : ADSR OFF\n");
+			//printf("remaining frames + nframes < adsrOffCounter : ADSR OFF\n");
 			adsr->gate( false );
 		}
 	}
