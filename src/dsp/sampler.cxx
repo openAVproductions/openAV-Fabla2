@@ -72,11 +72,7 @@ void Sampler::play( Pad* p, float velocity )
 	printf("%s : Pad ID %i\n", __PRETTY_FUNCTION__, p->ID() );
 #endif
 	pad = p;
-
-	//frames = 0;
-
 	sample = pad->getPlaySample( velocity );
-
 	padVol = pad->volume;
 
 	if( !sample ) {
@@ -90,8 +86,6 @@ void Sampler::play( Pad* p, float velocity )
 	float start = sample->getStartPoint();
 	long frames = sample->getFrames();
 	playIndex = start * frames;
-	printf("sample play() with start point %f : total : %ld, playIndex: %f\n", start, frames, playIndex);
-
 }
 
 long Sampler::getRemainingFrames()

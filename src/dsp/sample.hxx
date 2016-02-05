@@ -50,20 +50,12 @@ public:
 	bool write( const char* filename );
 
 	/// gives the name of the sample
-	const char*   getName()
-	{
-		return name.c_str();
-	}
+	const char*   getName() { return name.c_str(); }
 
 	/// data get functions
-	const int     getChannels()
-	{
-		return channels    ;
-	}
-	const long    getFrames()
-	{
-		return frames;
-	}
+	const int     getChannels() { return channels; }
+	const long    getFrames() { return frames; }
+
 	/// returns the buffer for the provided channel
 	const float*  getAudio(int channel);
 	const int     getStartPoint() { return startPoint; }
