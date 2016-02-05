@@ -178,7 +178,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
 				int32_t layer    = ((const LV2_Atom_Int*)lay)->body;
 				std::string n    = (const char*) LV2_ATOM_BODY_CONST( name );
 
-				//printf("UI got PadRefresh: layer = %i, name = %s\n", layer, n.c_str() );
+				printf("UI got PadRefresh: layer = %i, name = %s\n", layer, n.c_str() );
 
 				if( layer == 0 ) { // starting from start: reset
 					ui->layers->clear();
@@ -187,6 +187,22 @@ static void fabla2_port_event(LV2UI_Handle handle,
 				ui->pads[p]->loaded( true );
 				ui->mixStrip[p]->label( n.c_str() );
 			}
+		} else if( obj->body.otype == ui->uris.fabla2_PadHasSample ) {
+			const LV2_Atom* bank = 0;
+			const LV2_Atom* pad  = 0;
+			const LV2_Atom* loaded = 0;
+			const int n_props = lv2_atom_object_get( obj,
+				     ui->uris.fabla2_bank    , &bank,
+				     ui->uris.fabla2_pad    , &pad,
+				     ui->uris.fabla2_PadHasSample, &loaded,
+				     NULL );
+			if(n_props != 3)
+				return;
+			const int32_t b  = ((const LV2_Atom_Int*)bank)->body;
+			const int32_t p  = ((const LV2_Atom_Int*)pad)->body;
+			const int32_t l  = ((const LV2_Atom_Int*)loaded)->body;
+			ui->pads[p]->loaded( l );
+			ui->redraw();
 		} else if( obj->body.otype == ui->uris.fabla2_UiPadsState ) {
 			const LV2_Atom* aBank       = 0;
 			const LV2_Atom* aPad        = 0;
@@ -218,12 +234,13 @@ static void fabla2_port_event(LV2UI_Handle handle,
 					float a2 = ((const LV2_Atom_Float*)aux2)->body;
 					float a3 = ((const LV2_Atom_Float*)aux3)->body;
 					float a4 = ((const LV2_Atom_Float*)aux4)->body;
+					int load = ((const LV2_Atom_Int*)aLoaded)->body;
 
 					if( ui->currentPad == pad )
 						ui->padVolume->value( vol );
-
 					ui->padFaders[pad]->value( vol );
-					ui->pads[pad]->loaded( ((const LV2_Atom_Int*)aLoaded)->body );
+					ui->padFaders[pad]->value( vol );
+					ui->pads[pad]->loaded( load );
 
 					ui->auxDials[16*0+pad]->value( a1 );
 					ui->auxDials[16*1+pad]->value( a2 );

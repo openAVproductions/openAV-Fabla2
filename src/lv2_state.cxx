@@ -395,8 +395,7 @@ fabla2_restore(LV2_Handle                  instance,
 		printf("Fabla2:State() Warning, no JSON : not loading preset.\n" );
 	}
 
-	for(int i = 0; i < 16; i++)
-		self->dsp->padRefreshLayers(0,i);
+	self->dsp->refreshUI();
 
 	return LV2_STATE_SUCCESS;
 }

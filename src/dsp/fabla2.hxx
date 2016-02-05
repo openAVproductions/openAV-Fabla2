@@ -81,6 +81,9 @@ public:
 	/// called with UI Atom data
 	void uiMessage( int bank, int pad, int layer, int URI, float value );
 
+	// Push loaded preset / state to UI
+	void refreshUI();
+
 	/// called with AuxBus messages
 	void auxBus( int bus, float value );
 
@@ -102,6 +105,9 @@ private:
 
 	/// when true, AuxBus audio ports can be used
 	bool useAuxbus;
+
+	/// when true, the UI should be updated of pad stats / refreshed
+	bool refresh_UI;
 
 	/// used to audition samples, and deal with layer-playing from UI
 	Voice* auditionVoice;

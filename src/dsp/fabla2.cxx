@@ -99,6 +99,8 @@ void Fabla2DSP::process( int nf )
 		}
 	}
 
+
+
 	// clear the audio buffers
 	memset( controlPorts[OUTPUT_L],  0, sizeof(float) * nframes );
 	memset( controlPorts[OUTPUT_R],  0, sizeof(float) * nframes );
@@ -119,6 +121,33 @@ void Fabla2DSP::process( int nf )
 		memset( controlPorts[AUXBUS3_R], 0, sizeof(float) * nframes );
 		memset( controlPorts[AUXBUS4_L], 0, sizeof(float) * nframes );
 		memset( controlPorts[AUXBUS4_R], 0, sizeof(float) * nframes );
+	}
+
+	if( refresh_UI ) {
+		int bank = 0;
+		for(int i = 0; i < 16; i++) {
+			// TODO FIXME: Bank here needs to be the loaded one 
+			Pad* p = library->bank( bank )->pad( i );
+			if(p) {
+				LV2_Atom_Forge_Frame frame;
+				lv2_atom_forge_frame_time( &lv2->forge, 0 );
+				lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_PadHasSample );
+				lv2_atom_forge_key(&lv2->forge, uris->fabla2_bank);
+				lv2_atom_forge_int(&lv2->forge, bank );
+				lv2_atom_forge_key(&lv2->forge, uris->fabla2_pad);
+				lv2_atom_forge_int(&lv2->forge, i );
+				lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadHasSample);
+				lv2_atom_forge_int(&lv2->forge, p->loaded() );
+				lv2_atom_forge_pop(&lv2->forge, &frame);
+			} else {
+				printf("%s - pad not valid!\n", __PRETTY_FUNCTION__);
+			}
+		}
+		// FIXME Pad = 0
+		Pad* p = library->bank( bank )->pad( 0 );
+		writePadsState(bank, 0, p );
+		writeSampleState(bank, 0, 0, p, p->layer(0) );
+		refresh_UI = 0;
 	}
 
 	if( recordEnable && recordPad != -1 && recordIndex + nframes < sr * 4 ) {
@@ -187,6 +216,11 @@ static void fabla2_dsp_getDetailsFromNote( const uint8_t* msg, int& bank, int& p
 		//printf( "more banks %i\n", nMoreBanks );
 		bank += nMoreBanks;
 	}
+}
+
+void Fabla2DSP::refreshUI()
+{
+	refresh_UI = true;
 }
 
 void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
@@ -454,14 +488,19 @@ void Fabla2DSP::writeSampleState( int b, int p, int l, Pad* pad, Sample* s )
 	lv2_atom_forge_pop(&lv2->forge, &frame);
 }
 
-void Fabla2DSP::padRefreshLayers( int bank, int pad )
+void Fabla2DSP::padRefreshLayers( int bank, int pad)
 {
+	printf("%s, %d %d\n", __PRETTY_FUNCTION__, bank, pad);
 	Bank* b = library->bank(bank);
-	if( !b )
+	if( !b ) {
+		printf("%s no bank\n", __PRETTY_FUNCTION__);
 		return;
+	}
 	Pad* p = b->pad( pad );
-	if( !p )
-		return;
+	if( !p ) {
+		printf("%s  no pad\n", __PRETTY_FUNCTION__);
+		return; 
+	}
 
 	for(int i = 0; i < p->nLayers(); i++) {
 		LV2_Atom_Forge_Frame frame;
@@ -498,11 +537,6 @@ void Fabla2DSP::padRefreshLayers( int bank, int pad )
 	lv2_atom_forge_int(&lv2->forge, pad );
 	lv2_atom_forge_key(&lv2->forge, uris->fabla2_layer);
 	lv2_atom_forge_int(&lv2->forge, p->lastPlayedLayer() );
-	/*
-	// might needs "sampleState" anyway if in sample view?
-	lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadVolume);
-	lv2_atom_forge_float(&lv2->forge, p->volume );
-	*/
 
 	lv2_atom_forge_pop(&lv2->forge, &frame);
 }
@@ -510,6 +544,8 @@ void Fabla2DSP::padRefreshLayers( int bank, int pad )
 void Fabla2DSP::tx_waveform( int b, int p, int l, const float* data )
 {
 	assert( data );
+	printf("%s - returning", __PRETTY_FUNCTION__);
+	return;
 
 	LV2_Atom_Forge_Frame frame;
 
