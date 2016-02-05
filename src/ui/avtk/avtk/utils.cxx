@@ -109,8 +109,6 @@ int directoryContents( std::string d, std::vector< std::string >& files, std::st
 		smartShortStrings = false;
 	}
 
-	smartShortStrings = false;
-
 	// for smartShortStrings, we keep the shortest common string from a directory,
 	// and take those characters away from each item: providing a neat listing.
 	std::string commonStart;
@@ -155,7 +153,6 @@ int directoryContents( std::string d, std::vector< std::string >& files, std::st
 
 					if( nCharSame == 0 ) {
 						tryCommonStart = false;
-						strippedFilenameStart = "";
 					} else {
 						commonStart = commonStart.substr( 0, nCharSame );
 #ifdef AVTK_DEBUG_FILE_OPS
@@ -201,8 +198,6 @@ int directoryContents( std::string d, std::vector< std::string >& files, std::st
 			printf("i : %s\n", files.at(i).c_str() );
 #endif
 		}
-	} else {
-		strippedFilenameStart = "";
 	}
 
 	// sort them alphabetically

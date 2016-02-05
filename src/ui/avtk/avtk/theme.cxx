@@ -52,7 +52,6 @@ Theme::Theme( Avtk::UI* ui_, std::string colour ) :
 
 int Theme::load( std::string theme )
 {
-	//printf("%s : jsonTheme = %s\n", __FUNCTION__, theme.c_str() );
 	try {
 		picojson::value v;
 		std::stringstream ifs;
@@ -72,7 +71,7 @@ int Theme::load( std::string theme )
 			int colNum = 0;
 
 			if( !v.is<picojson::object>() ) {
-				printf("Error %s: v is NOT array\n", __PRETTY_FUNCTION__);
+				printf("%s : Error  v is NOT array\n", __PRETTY_FUNCTION__);
 				return -1;
 			}
 

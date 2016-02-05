@@ -13,9 +13,9 @@ TestUI::TestUI( PuglNativeWindow parent ):
 	//themes.push_back( new Avtk::Theme( this, "default.avtk" ) );
 	//themes.push_back( new Avtk::Theme( this, "orange.avtk" ) );
 	//themes.push_back( new Avtk::Theme( this, "green.avtk" ) );
-	themes.push_back( new Avtk::Theme( this, "yellow.avtk" ) );
+	//themes.push_back( new Avtk::Theme( this, "yellow.avtk" ) );
 
-	Widget::theme_ = themes.front();
+	//Widget::theme_ = themes.front();
 
 	Avtk::Widget* w = 0;
 
