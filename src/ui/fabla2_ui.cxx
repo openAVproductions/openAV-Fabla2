@@ -35,8 +35,6 @@ extern "C" {
 // The default OSC port used by Maschine.rs userspace driver
 const int PORT_NUM = 42435;
 
-static void fabla2_widgetCB(Avtk::Widget* w, void* ud);
-
 Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	Avtk::UI( 856, 322, parent ),
 	currentBank( 0 ),

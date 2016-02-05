@@ -255,7 +255,7 @@ void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
 	printf("ADR > total! new decay :
 	%i\n", decaySamps );
 	}
-	/*
+	/ *
 	else if( attackSamps + decaySamps + releaseSamps >totalSamps )
 	{
 	// release reduced to max length

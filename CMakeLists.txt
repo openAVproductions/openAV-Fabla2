@@ -58,7 +58,7 @@ IF(BUILD_GUI)
 ENDIF(BUILD_GUI)
 
 SET(CMAKE_C_FLAGS "-fPIC" ${CFLAGS}  )
-SET(CMAKE_CXX_FLAGS "-g -trigraphs -Wuninitialized -Wl,-z,nodelete  -Wl,--no-undefined -fPIC -shared ")
+SET(CMAKE_CXX_FLAGS "-Wall -Wno-sign-compare -g -trigraphs -Wno-unused-function -Wno-unused-variable -Wno-reorder -Wuninitialized -Wl,-z,nodelete  -Wl,--no-undefined -fPIC -shared ")
 
 # for profiling runtime
 #ADD_DEFINITIONS( "-DOPENAV_PROFILE" )
