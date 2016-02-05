@@ -462,8 +462,6 @@ void Fabla2DSP::padRefreshLayers( int bank, int pad )
 	Pad* p = b->pad( pad );
 	if( !p )
 		return;
-	
-	printf("%s, p = %p\n", __PRETTY_FUNCTION__, p );
 
 	for(int i = 0; i < p->nLayers(); i++) {
 		LV2_Atom_Forge_Frame frame;
