@@ -11,7 +11,7 @@ set(AVTK_VERSION "${AVTK_VERSION_MAJOR}.${AVTK_VERSION_MINOR}.${AVTK_VERSION_PAT
 
 option(AVTK_RELEASE_BUILD   "Build for releasing"          ON  )
 option(AVTK_DEBUG_PRINTS    "Build with debugging prints"  OFF )
-option(AVTK_DEMO_AND_TEST   "Build demo and test programs" OFF )
+option(AVTK_DEMO_AND_TEST   "Build demo and test programs" ON )
 option(AVTK_SNDFILE_SUPPORT "Build with sndfile library"   OFF )
 option(AVTK_TESTER_SUPPORT  "Build with Tester Rec/Play"   OFF )
 
@@ -77,10 +77,5 @@ IF(AVTK_DEMO_AND_TEST)
     target_link_libraries( avtk ${SNDFILE_LIBRARIES}    )
   ENDIF()
 ENDIF()
-
-configure_file( "avtk/themes/default.avtk"  "default.avtk" COPYONLY)
-configure_file( "avtk/themes/green.avtk"    "green.avtk"   COPYONLY)
-configure_file( "avtk/themes/orange.avtk"   "orange.avtk"  COPYONLY)
-configure_file( "avtk/themes/yellow.avtk"   "yellow.avtk"  COPYONLY)
 
 
