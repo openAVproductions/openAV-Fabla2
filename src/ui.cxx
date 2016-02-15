@@ -119,8 +119,13 @@ static void fabla2_port_event(LV2UI_Handle handle,
 				if( vel )
 					v = ((const LV2_Atom_Int*)vel)->body;
 
-				//printf("UI pad event %i, %i, %i\n", b, p, layer );
-				ui->padEvent( b, p, layer, !padStop, v );
+				// Trying to hack the UI pad play feedback issue
+				// - now MIDI notes won't show the pads :/
+				if(ui->redrawRev != ui->redrawRevDone) {
+					//printf("UI pad event %i, %i, %i\n", b, p, layer );
+					ui->padEvent( b, p, layer, !padStop, v );
+					ui->redrawRevDone = ui->redrawRev;
+				}
 			}
 		} else if( obj->body.otype == ui->uris.fabla2_SampleAudioData ) {
 			const LV2_Atom* data_val = NULL;

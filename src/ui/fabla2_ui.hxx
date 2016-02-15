@@ -48,6 +48,10 @@ public:
 	/// handle() fucntion for keybindings
 	int handle( const PuglEvent* event );
 
+	/// A revision so the UI can drop update messages when not needed
+	int redrawRev;
+	int redrawRevDone;
+
 	// left: always visible widgets
 	Avtk::Widget* bankBtns[4];
 

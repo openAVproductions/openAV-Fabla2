@@ -492,6 +492,8 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	bankBtns[0]->value( true );
 	followPadBtn->value( followPad );
 
+	redrawRev = 0;
+
 	/// created last, so its on top
 	deleteLayer = new Avtk::Dialog( this, 0, 0, 320, 120, "Delete Sample?" );
 
@@ -738,6 +740,7 @@ void Fabla2UI::showFileView()
 
 void Fabla2UI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
 {
+	//printf("pad event %d\n", pad);
 	if( pad < 0 || pad >= 16 ) {
 		return; // invalid pad number
 	}
@@ -753,8 +756,9 @@ void Fabla2UI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity
 	currentLayer = layer;
 	currentPad   = pad;
 
+	requestSampleState( currentBank, currentPad, currentLayer );
+
 	redraw();
-	return;
 }
 
 
@@ -781,6 +785,7 @@ void Fabla2UI::requestSampleState( int bank, int pad, int layer )
 	lv2_atom_forge_pop(&forge, &frame);
 
 	// send it
+	redrawRev++;
 	write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 }
 
