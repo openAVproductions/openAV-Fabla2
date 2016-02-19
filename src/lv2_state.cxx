@@ -23,6 +23,7 @@
 #include <string>
 #include <sstream>
 #include <assert.h>
+#include <unistd.h>
 
 #include "dsp.hxx"
 #include "picojson.hxx"
@@ -118,8 +119,33 @@ fabla2_save(LV2_Handle                 instance,
 				padName << s->getName();
 
 				char* savePath = make_path->path(make_path->handle, padName.str().c_str() );
-				s->write( savePath );
-				free( savePath );
+				std::stringstream pathName;
+				pathName << savePath;
+				free(savePath);
+
+				std::stringstream appended;
+				std::stringstream newName;
+				int count = 1;
+				newName << pathName.str() << "-" << count << ".wav";
+				while( 1 ) {
+					printf("testing %s\n", newName.str().c_str() );
+					newName.str(std::string());
+					appended.str(std::string());
+					appended << "-" << count << ".wav";
+					newName << pathName.str() << appended.str();
+					printf("newName now %s\n", newName.str().c_str());
+					count++;
+
+					if( access(newName.str().c_str(), F_OK ) != -1 )
+					{
+					}
+					else
+						break;
+				}
+				s->write( newName.str().c_str() );
+				padName << appended.str();
+				printf("padName final %s\n", padName.str().c_str() );
+
 				pjLayer["filename"        ] = picojson::value( padName.str().c_str() );
 
 				pjLayer["gain"            ] = picojson::value( (double)s->gain );
