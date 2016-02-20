@@ -121,7 +121,8 @@ static void fabla2_port_event(LV2UI_Handle handle,
 
 				// Trying to hack the UI pad play feedback issue
 				// - now MIDI notes won't show the pads :/
-				if(ui->redrawRev != ui->redrawRevDone) {
+				//if(ui->redrawRev != ui->redrawRevDone) {
+				{
 					//printf("UI pad event %i, %i, %i\n", b, p, layer );
 					ui->padEvent( b, p, layer, !padStop, v );
 					ui->redrawRevDone = ui->redrawRev;

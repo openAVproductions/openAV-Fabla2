@@ -757,7 +757,7 @@ void Fabla2UI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity
 	currentLayer = layer;
 	currentPad   = pad;
 
-	requestSampleState( currentBank, currentPad, currentLayer );
+	//requestSampleState( currentBank, currentPad, currentLayer );
 
 	redraw();
 }
