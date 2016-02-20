@@ -8,6 +8,7 @@ This is the repository for Fabla 2, a multi-purpose advanced LV2 sampler plugin.
 Currents Status
 ---------------
 [![Stories in Ready](https://badge.waffle.io/harryhaaren/openAV-Fabla2.png?label=ready&title=Ready)](http://waffle.io/harryhaaren/openAV-Fabla2)
+[![Stories in Progress](https://badge.waffle.io/harryhaaren/openAV-Fabla2.png?label=In%20Progress&title=Progress)](http://waffle.io/harryhaaren/openAV-Fabla2)
 
 Beta testing - users who have expressed interest in testing beta software for
 OpenAV currently compile and test the code.
