@@ -66,6 +66,7 @@ void Sampler::playLayer( Pad* p, int layer )
 
 void Sampler::play( Pad* p, float velocity )
 {
+	//printf("%s\n", __PRETTY_FUNCTION__);
 	assert( p );
 
 #ifdef FABLA2_COMPONENT_TEST
@@ -76,6 +77,7 @@ void Sampler::play( Pad* p, float velocity )
 	padVol = pad->volume;
 
 	if( !sample ) {
+		printf("%s ERROR : pad->getPlaySample() returned 0!\n", __PRETTY_FUNCTION__ );
 #ifdef FABLA2_COMPONENT_TEST
 		printf("%s ERROR : pad->getPlaySample() returned 0!\n", __PRETTY_FUNCTION__ );
 #endif
