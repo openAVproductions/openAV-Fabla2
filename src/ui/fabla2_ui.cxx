@@ -46,6 +46,7 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	themes.push_back( new Avtk::Theme( this, GREEN ) );
 	themes.push_back( new Avtk::Theme( this, YELLOW ) );
 	themes.push_back( new Avtk::Theme( this, BLUE ) );
+	themes.push_back( new Avtk::Theme( this, RED ) );
 
 	Avtk::Image* headerImage = 0;
 	headerImage = new Avtk::Image( this, 0, 0, 200, 36, "Header Image - Fabla" );
@@ -73,7 +74,7 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 
 	panicButton = new Avtk::Button( this, wx, wy, s * 2 + 6, 32,  "PANIC" );
 	panicButton->clickMode( Avtk::Widget::CLICK_MOMENTARY );
-	panicButton->theme( theme(0) );
+	panicButton->theme( theme(5) );
 	wy += 32 + 10;
 
 	waste = new Avtk::Box( this, wx, wy, 70, 74,  "Views" );
@@ -103,7 +104,7 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	wy += 26;
 
 	recordOverPad = new Avtk::Button( this, wx, wy, 70, 30,  "REC" );
-	recordOverPad->theme( theme( 4 ) );
+	recordOverPad->theme( theme(5) );
 	recordOverPad->clickMode( Avtk::Widget::CLICK_TOGGLE );
 
 
