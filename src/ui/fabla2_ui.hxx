@@ -39,6 +39,8 @@ public:
 	}
 	
 	void handleMaschine();
+	void updateMaschine(int pad, int r, int g, int b, int a);
+
 
 	void blankSampleState();
 
@@ -178,6 +180,7 @@ public:
 private:
 	// OSC interface for Maschine interfaces
 	UdpSocket sock;
+	std::string maschine_addr;
 
 	/// default directories / file loading
 	std::string defaultDir;

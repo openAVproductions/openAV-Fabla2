@@ -506,6 +506,7 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	} else {
 		printf("=> Maschine devices OSC interface OK!\n");
 	}
+	maschine_addr = std::string();
 }
 
 void Fabla2UI::handleMaschine()
@@ -525,6 +526,21 @@ void Fabla2UI::handleMaschine()
 			pw.init().addMessage(repl);
 			sock.sendPacketTo(pw.packetData(), pw.packetSize(), sock.packetOrigin());
 
+			// Save the address, then return
+			if( strlen(&maschine_addr[0]) == 0)  {
+				maschine_addr = sock.remote_addr.asString();
+				printf("got maschine address - %s\n", &maschine_addr[0]);
+				PacketWriter pw;
+				Message repl;
+				repl.init("/maschine/midi_note_base").pushInt32(36);
+				pw.init().addMessage(repl);
+				sock.sendPacketTo(pw.packetData(), pw.packetSize(), sock.packetOrigin());
+
+				for(int i = 0; i < 16; i++)
+					updateMaschine(i, 0, 81, 0xFF, 5);
+				break;
+			}
+
 			/* Handle press + release events */
 			if(strcmp(&msg->address[0],"/maschine/button/rec") == 0) {
 				float tmp = press;
@@ -541,8 +557,29 @@ void Fabla2UI::handleMaschine()
 				showFileView();
 				showPadsView();
 			}
-
 		}
+	}
+}
+
+void Fabla2UI::updateMaschine(int pad, int r, int g, int b, int a)
+{
+	PacketWriter pw;
+	Message repl;
+	// TODO different banks?
+
+	// convert to maschine way of counting pads
+	int col = pad % 4;
+	int row = 4 - (pad/4);
+	int p = (row-1)*4 + col;
+	if( p < 16 && p >= 0 )
+	{
+		uint32_t color = 0;
+		color += r << 16;
+		color += g << 8;
+		color += b;
+		repl.init("/maschine/pad").pushInt32(p).pushInt32(color).pushFloat(a/255.f);
+		pw.init().addMessage(repl);
+		sock.sendPacketTo(pw.packetData(), pw.packetSize(), sock.packetOrigin());
 	}
 }
 
@@ -757,6 +794,9 @@ void Fabla2UI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity
 	currentLayer = layer;
 	currentPad   = pad;
 
+	float fin = noteOn * (velocity/255.f);
+	printf("sending pad %d : alpha %f tl maschine\n", pad, fin );
+	updateMaschine(pad, 0, 255, 255, fin );
 	//requestSampleState( currentBank, currentPad, currentLayer );
 
 	redraw();
@@ -962,6 +1002,10 @@ int Fabla2UI::handle( const PuglEvent* e )
 			writeAtom( uri, 1 );
 			//printf("playing pad %i, uri %i\n", pad, uri );
 			//writePadPlayStop( true, currentBank, pad, 0 );
+			if( e->type == PUGL_KEY_PRESS )
+				updateMaschine(pad, 0, 51, 255, 255);
+			else
+				updateMaschine(pad, 0, 51, 255, 25);
 			return 1; // handled
 		}
 	}
@@ -1176,8 +1220,10 @@ void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 						currentPad = i;
 						requestSampleState( currentBank, currentPad, currentLayer );
 						writeAtom( uris.fabla2_PadPlay, w->value() );
+						updateMaschine(i, 0, 51, 255, 255);
 					} else {
 						writeAtom( uris.fabla2_PadStop, 0 );
+						updateMaschine(i, 0, 51, 255, 20);
 					}
 				}
 				return;
