@@ -21,8 +21,15 @@
  * THE SOFTWARE.
  */
 
+#ifndef LIBSOFD_H
+#define LIBSOFD_H 1
+
 #ifdef HAVE_X11
 #include <X11/Xlib.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 /* public API */
@@ -67,6 +74,17 @@ int x_fib_status ();
  */
 char *x_fib_filename ();
 
+/** callback for when the selected file changes
+ * @param file is the file that is now selected
+ */
+typedef void (*x_file_changed_cb_t)(const char*, void *userdata);
+
+/** set the callback to be called when the selected file changes
+ * @param cb the callback to be called
+ * @param userdata A void *userdata to return to your struct/class
+ */
+void x_fib_file_changed_cb(x_file_changed_cb_t cb, void *userdata);
+
 /** customize/configure the dialog before calling \ref x_fib_show
  * changes only have any effect if the dialog is not visible.
  * @param k key to change
@@ -108,7 +126,15 @@ int x_fib_cfg_buttons (int k, int v);
  */
 int x_fib_cfg_filter_callback (int (*cb)(const char*));
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* END X11 specific functions */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* 'recently used' API. x-platform
  * NOTE: all functions use a static cache and are not reentrant.
@@ -171,3 +197,9 @@ unsigned int x_fib_recent_count ();
  * @return pointer to static string
  */
 const char *x_fib_recent_at (unsigned int i);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // header guard

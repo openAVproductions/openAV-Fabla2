@@ -64,20 +64,18 @@ static FibRecentFile *_recentlist = NULL;
 static unsigned int   _recentcnt = 0;
 static uint8_t        _recentlock = 0;
 
-static int fib_isxdigit (const char x)
-{
+static int fib_isxdigit (const char x) {
 	if (
-	        (x >= '0' && x <= '9')
-	        ||
-	        (x >= 'a' && x <= 'f')
-	        ||
-	        (x >= 'A' && x <= 'F')
-	) return 1;
+			(x >= '0' && x <= '9')
+			||
+			(x >= 'a' && x <= 'f')
+			||
+			(x >= 'A' && x <= 'F')
+		 ) return 1;
 	return 0;
 }
 
-static void decode_3986 (char *str)
-{
+static void decode_3986 (char *str) {
 	int len = strlen (str);
 	int idx = 0;
 	while (idx + 2 < len) {
@@ -96,8 +94,7 @@ static void decode_3986 (char *str)
 	}
 }
 
-static char *encode_3986 (const char *str)
-{
+static char *encode_3986 (const char *str) {
 	size_t alloc, newlen;
 	char *ns = NULL;
 	unsigned char in;
@@ -116,85 +113,31 @@ static char *encode_3986 (const char *str)
 		in = *str;
 
 		switch (in) {
-		case '0':
-		case '1':
-		case '2':
-		case '3':
-		case '4':
-		case '5':
-		case '6':
-		case '7':
-		case '8':
-		case '9':
-		case 'a':
-		case 'b':
-		case 'c':
-		case 'd':
-		case 'e':
-		case 'f':
-		case 'g':
-		case 'h':
-		case 'i':
-		case 'j':
-		case 'k':
-		case 'l':
-		case 'm':
-		case 'n':
-		case 'o':
-		case 'p':
-		case 'q':
-		case 'r':
-		case 's':
-		case 't':
-		case 'u':
-		case 'v':
-		case 'w':
-		case 'x':
-		case 'y':
-		case 'z':
-		case 'A':
-		case 'B':
-		case 'C':
-		case 'D':
-		case 'E':
-		case 'F':
-		case 'G':
-		case 'H':
-		case 'I':
-		case 'J':
-		case 'K':
-		case 'L':
-		case 'M':
-		case 'N':
-		case 'O':
-		case 'P':
-		case 'Q':
-		case 'R':
-		case 'S':
-		case 'T':
-		case 'U':
-		case 'V':
-		case 'W':
-		case 'X':
-		case 'Y':
-		case 'Z':
-		case '_':
-		case '~':
-		case '.':
-		case '-':
-		case '/':
-		case ',': // XXX not in RFC3986
-			ns[i++] = in;
-			break;
-		default:
-			newlen += 2; /* this'll become a %XX */
-			if (newlen > alloc) {
-				alloc *= 2;
-				ns = (char*) realloc (ns, alloc);
-			}
-			snprintf (&ns[i], 4, "%%%02X", in);
-			i += 3;
-			break;
+			case '0': case '1': case '2': case '3': case '4':
+			case '5': case '6': case '7': case '8': case '9':
+			case 'a': case 'b': case 'c': case 'd': case 'e':
+			case 'f': case 'g': case 'h': case 'i': case 'j':
+			case 'k': case 'l': case 'm': case 'n': case 'o':
+			case 'p': case 'q': case 'r': case 's': case 't':
+			case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
+			case 'A': case 'B': case 'C': case 'D': case 'E':
+			case 'F': case 'G': case 'H': case 'I': case 'J':
+			case 'K': case 'L': case 'M': case 'N': case 'O':
+			case 'P': case 'Q': case 'R': case 'S': case 'T':
+			case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
+			case '_': case '~': case '.': case '-':
+			case '/': case ',': // XXX not in RFC3986
+				ns[i++] = in;
+				break;
+			default:
+				newlen += 2; /* this'll become a %XX */
+				if (newlen > alloc) {
+					alloc *= 2;
+					ns = (char*) realloc (ns, alloc);
+				}
+				snprintf (&ns[i], 4, "%%%02X", in);
+				i += 3;
+				break;
 		}
 		++str;
 	}
@@ -202,28 +145,23 @@ static char *encode_3986 (const char *str)
 	return ns;
 }
 
-void x_fib_free_recent ()
-{
+void x_fib_free_recent () {
 	free (_recentlist);
 	_recentlist = NULL;
 	_recentcnt = 0;
 }
 
-static int cmp_recent (const void *p1, const void *p2)
-{
+static int cmp_recent (const void *p1, const void *p2) {
 	FibRecentFile *a = (FibRecentFile*) p1;
 	FibRecentFile *b = (FibRecentFile*) p2;
 	if (a->atime == b->atime) return 0;
 	return a->atime < b->atime;
 }
 
-int x_fib_add_recent (const char *path, time_t atime)
-{
+int x_fib_add_recent (const char *path, time_t atime) {
 	unsigned int i;
 	struct stat fs;
-	if (_recentlock) {
-		return -1;
-	}
+	if (_recentlock) { return -1; }
 	if (access (path, R_OK)) {
 		return -1;
 	}
@@ -268,8 +206,7 @@ int x_fib_add_recent (const char *path, time_t atime)
 #define DIRSEP '/'
 #endif
 
-static void mkpath(const char *dir)
-{
+static void mkpath(const char *dir) {
 	char tmp[1024];
 	char *p;
 	size_t len;
@@ -295,17 +232,10 @@ static void mkpath(const char *dir)
 #endif
 }
 
-int x_fib_save_recent (const char *fn)
-{
-	if (_recentlock) {
-		return -1;
-	}
-	if (!fn) {
-		return -1;
-	}
-	if (_recentcnt < 1 || !_recentlist) {
-		return -1;
-	}
+int x_fib_save_recent (const char *fn) {
+	if (_recentlock) { return -1; }
+	if (!fn) { return -1; }
+	if (_recentcnt < 1 || !_recentlist) { return -1; }
 	unsigned int i;
 	char *dn = strdup (fn);
 	mkpath (dirname (dn));
@@ -324,15 +254,10 @@ int x_fib_save_recent (const char *fn)
 	return 0;
 }
 
-int x_fib_load_recent (const char *fn)
-{
+int x_fib_load_recent (const char *fn) {
 	char tmp[1024];
-	if (_recentlock) {
-		return -1;
-	}
-	if (!fn) {
-		return -1;
-	}
+	if (_recentlock) { return -1; }
+	if (!fn) { return -1; }
 	x_fib_free_recent ();
 	if (access (fn, R_OK)) {
 		return -1;
@@ -340,8 +265,9 @@ int x_fib_load_recent (const char *fn)
 	FILE *rf = fopen (fn, "r");
 	if (!rf) return -1;
 	while (fgets (tmp, sizeof(tmp), rf)
-	       && strlen (tmp) > 1
-	       && strlen (tmp) < sizeof(tmp)) {
+			&& strlen (tmp) > 1
+			&& strlen (tmp) < sizeof(tmp))
+	{
 		char *s;
 		tmp[strlen (tmp) - 1] = '\0'; // strip newline
 		if (!(s = strchr (tmp, ' '))) { // find name <> atime sep
@@ -356,13 +282,11 @@ int x_fib_load_recent (const char *fn)
 	return 0;
 }
 
-unsigned int x_fib_recent_count ()
-{
+unsigned int x_fib_recent_count () {
 	return _recentcnt;
 }
 
-const char *x_fib_recent_at (unsigned int i)
-{
+const char *x_fib_recent_at (unsigned int i) {
 	if (i >= _recentcnt)
 		return NULL;
 	return _recentlist[i].path;
@@ -374,8 +298,7 @@ const char *x_fib_recent_at (unsigned int i)
 #define PATHSEP "/"
 #endif
 
-const char *x_fib_recent_file(const char *appname)
-{
+const char *x_fib_recent_file(const char *appname) {
 	static char recent_file[1024];
 	assert(!strchr(appname, '/'));
 	const char *xdg = getenv("XDG_DATA_HOME");
@@ -475,6 +398,12 @@ static char     _fib_cfg_custom_places[1024] = "";
 static char     _fib_cfg_custom_font[256] = "";
 static char     _fib_cfg_title[128] = "xjadeo - Open Video File";
 
+/* This is the 2nd typedef, the other is in the header file. This solves a
+ * problem with extern "C" includes, but is not an elegant solution. */
+typedef void (*x_file_changed_cb_t)(const char*, void *userdata);
+static x_file_changed_cb_t  _x_file_changed_cb;
+static void                *_x_file_changed_ud;
+
 typedef struct {
 	char name[256];
 	int x0;
@@ -551,15 +480,12 @@ static int (*_fib_filter_function)(const char *filename);
 #define DRAW_OUTLINE
 #define DOUBLE_BUFFER
 
-static int query_font_geometry (Display *dpy, GC gc, const char *txt, int *w, int *h, int *a, int *d)
-{
+static int query_font_geometry (Display *dpy, GC gc, const char *txt, int *w, int *h, int *a, int *d) {
 	XCharStruct text_structure;
 	int font_direction, font_ascent, font_descent;
 	XFontStruct *fontinfo = XQueryFont (dpy, XGContextFromGC (gc));
 
-	if (!fontinfo) {
-		return -1;
-	}
+	if (!fontinfo) { return -1; }
 	XTextExtents (fontinfo, txt, strlen (txt), &font_direction, &font_ascent, &font_descent, &text_structure);
 	if (w) *w = XTextWidth (fontinfo, txt, strlen (txt));
 	if (h) *h = text_structure.ascent + text_structure.descent;
@@ -569,8 +495,7 @@ static int query_font_geometry (Display *dpy, GC gc, const char *txt, int *w, in
 	return 0;
 }
 
-static void VDrawRectangle (Display *dpy, Drawable d, GC gc, int x, int y, unsigned int w, unsigned int h)
-{
+static void VDrawRectangle (Display *dpy, Drawable d, GC gc, int x, int y, unsigned int w, unsigned int h) {
 	const unsigned long blackColor = BlackPixel (dpy, DefaultScreen (dpy));
 #ifdef DRAW_OUTLINE
 	XSetForeground (dpy, gc, _c_gray5.pixel);
@@ -586,8 +511,7 @@ static void VDrawRectangle (Display *dpy, Drawable d, GC gc, int x, int y, unsig
 #endif
 }
 
-static void fib_expose (Display *dpy, Window realwin)
-{
+static void fib_expose (Display *dpy, Window realwin) {
 	int i;
 	XID win;
 	const unsigned long whiteColor = WhitePixel (dpy, DefaultScreen (dpy));
@@ -596,9 +520,10 @@ static void fib_expose (Display *dpy, Window realwin)
 
 	if (_fib_resized
 #ifdef DOUBLE_BUFFER
-	    || !_pixbuffer
+			|| !_pixbuffer
 #endif
-	   ) {
+			)
+	{
 #ifdef DOUBLE_BUFFER
 		unsigned int w = 0, h = 0;
 		if (_pixbuffer != None) {
@@ -664,13 +589,13 @@ static void fib_expose (Display *dpy, Window realwin)
 			XSetForeground (dpy, _fib_gc, _c_gray2.pixel);
 		}
 		XFillRectangle (dpy, win, _fib_gc,
-		                ppx + 1, PATHBTNTOP - _fib_font_ascent,
-		                _pathbtn[i].xw - 1, _fib_font_height);
+				ppx + 1, PATHBTNTOP - _fib_font_ascent,
+				_pathbtn[i].xw - 1, _fib_font_height);
 		VDrawRectangle (dpy, win, _fib_gc,
-		                ppx, PATHBTNTOP - _fib_font_ascent,
-		                _pathbtn[i].xw, _fib_font_height);
+				ppx, PATHBTNTOP - _fib_font_ascent,
+				_pathbtn[i].xw, _fib_font_height);
 		XDrawString (dpy, win, _fib_gc, ppx + 1 + BTNPADDING, PATHBTNTOP,
-		             _pathbtn[i].name, strlen (_pathbtn[i].name));
+				_pathbtn[i].name, strlen (_pathbtn[i].name));
 		_pathbtn[i].x0 = ppx; // current position
 		ppx += _pathbtn[i].xw + PSEP;
 		++i;
@@ -718,20 +643,20 @@ static void fib_expose (Display *dpy, Window realwin)
 #endif
 
 	switch (_hov_h) {
-	case 1:
-		XSetForeground (dpy, _fib_gc, _c_gray0.pixel);
-		XFillRectangle (dpy, win, _fib_gc, t_x + _fib_dir_indent - TEXTSEP + 1, ltop - _fib_font_vsep, t_t - t_x - _fib_dir_indent - 1, _fib_font_vsep);
-		break;
-	case 2:
-		XSetForeground (dpy, _fib_gc, _c_gray0.pixel);
-		XFillRectangle (dpy, win, _fib_gc, t_t - TEXTSEP + 1, ltop - _fib_font_vsep, _fib_font_size_width + TEXTSEP - 1, _fib_font_vsep);
-		break;
-	case 3:
-		XSetForeground (dpy, _fib_gc, _c_gray0.pixel);
-		XFillRectangle (dpy, win, _fib_gc, t_s - TEXTSEP + 1, ltop - _fib_font_vsep, TEXTSEP + TEXTSEP + _fib_font_time_width - 1, _fib_font_vsep);
-		break;
-	default:
-		break;
+		case 1:
+			XSetForeground (dpy, _fib_gc, _c_gray0.pixel);
+			XFillRectangle (dpy, win, _fib_gc, t_x + _fib_dir_indent - TEXTSEP + 1, ltop - _fib_font_vsep, t_t - t_x - _fib_dir_indent - 1, _fib_font_vsep);
+			break;
+		case 2:
+			XSetForeground (dpy, _fib_gc, _c_gray0.pixel);
+			XFillRectangle (dpy, win, _fib_gc, t_t - TEXTSEP + 1, ltop - _fib_font_vsep, _fib_font_size_width + TEXTSEP - 1, _fib_font_vsep);
+			break;
+		case 3:
+			XSetForeground (dpy, _fib_gc, _c_gray0.pixel);
+			XFillRectangle (dpy, win, _fib_gc, t_s - TEXTSEP + 1, ltop - _fib_font_vsep, TEXTSEP + TEXTSEP + _fib_font_time_width - 1, _fib_font_vsep);
+			break;
+		default:
+			break;
 	}
 
 	// column headings and sort order
@@ -744,46 +669,46 @@ static void fib_expose (Display *dpy, Window realwin)
 		ptri[3].y *= -1;
 	}
 	switch (_sort) {
-	case 0:
-	case 1:
-		ptri[0].x = t_t + SORTBTNOFF + 2 - arp;
-		XSetForeground (dpy, _fib_gc, _c_gray6.pixel);
-		XFillPolygon (dpy, win, _fib_gc, ptri, 3, Convex, CoordModePrevious);
-		XDrawLines (dpy, win, _fib_gc, ptri, 4, CoordModePrevious);
-		break;
-	case 2:
-	case 3:
-		if (_columns & 1) {
-			ptri[0].x = t_s + SORTBTNOFF + 2 - arp;
+		case 0:
+		case 1:
+			ptri[0].x = t_t + SORTBTNOFF + 2 - arp;
 			XSetForeground (dpy, _fib_gc, _c_gray6.pixel);
 			XFillPolygon (dpy, win, _fib_gc, ptri, 3, Convex, CoordModePrevious);
 			XDrawLines (dpy, win, _fib_gc, ptri, 4, CoordModePrevious);
-		}
-		break;
-	case 4:
-	case 5:
-		if (_columns & 2) {
-			ptri[0].x = FAREATEXTL + fsel_width + SORTBTNOFF + 2 - arp;
-			XSetForeground (dpy, _fib_gc, _c_gray6.pixel);
-			XFillPolygon (dpy, win, _fib_gc, ptri, 3, Convex, CoordModePrevious);
-			XDrawLines (dpy, win, _fib_gc, ptri, 4, CoordModePrevious);
-		}
-		break;
+			break;
+		case 2:
+		case 3:
+			if (_columns & 1) {
+				ptri[0].x = t_s + SORTBTNOFF + 2 - arp;
+				XSetForeground (dpy, _fib_gc, _c_gray6.pixel);
+				XFillPolygon (dpy, win, _fib_gc, ptri, 3, Convex, CoordModePrevious);
+				XDrawLines (dpy, win, _fib_gc, ptri, 4, CoordModePrevious);
+			}
+			break;
+		case 4:
+		case 5:
+			if (_columns & 2) {
+				ptri[0].x = FAREATEXTL + fsel_width + SORTBTNOFF + 2 - arp;
+				XSetForeground (dpy, _fib_gc, _c_gray6.pixel);
+				XFillPolygon (dpy, win, _fib_gc, ptri, 3, Convex, CoordModePrevious);
+				XDrawLines (dpy, win, _fib_gc, ptri, 4, CoordModePrevious);
+			}
+			break;
 	}
 
 #if 0 // bottom header bottom border
 	XSetForeground (dpy, _fib_gc, _c_gray5.pixel);
 	XSetLineAttributes (dpy, _fib_gc, 1, LineOnOffDash, CapButt, JoinMiter);
 	XDrawLine (dpy, win, _fib_gc,
-	           FAREAMRGL + 1, ltop,
-	           FAREAMRGL + fsel_width, ltop);
+			FAREAMRGL + 1, ltop,
+			FAREAMRGL + fsel_width, ltop);
 	XSetLineAttributes (dpy, _fib_gc, 1, LineSolid, CapButt, JoinMiter);
 #endif
 
 	XSetForeground (dpy, _fib_gc, _c_gray4.pixel);
 	XDrawLine (dpy, win, _fib_gc,
-	           t_x + _fib_dir_indent - TEXTSEP, ltop - _fib_font_vsep + 3,
-	           t_x + _fib_dir_indent - TEXTSEP, ltop - 3);
+			t_x + _fib_dir_indent - TEXTSEP, ltop - _fib_font_vsep + 3,
+			t_x + _fib_dir_indent - TEXTSEP, ltop - 3);
 
 	XSetForeground (dpy, _fib_gc, blackColor);
 	XDrawString (dpy, win, _fib_gc, t_x + _fib_dir_indent, ttop, "Name", 4);
@@ -791,8 +716,8 @@ static void fib_expose (Display *dpy, Window realwin)
 	if (_columns & 1) {
 		XSetForeground (dpy, _fib_gc, _c_gray4.pixel);
 		XDrawLine (dpy, win, _fib_gc,
-		           t_t - TEXTSEP, ltop - _fib_font_vsep + 3,
-		           t_t - TEXTSEP, ltop - 3);
+				t_t - TEXTSEP, ltop - _fib_font_vsep + 3,
+				t_t - TEXTSEP, ltop - 3);
 		XSetForeground (dpy, _fib_gc, blackColor);
 		XDrawString (dpy, win, _fib_gc, t_t, ttop, "Size", 4);
 	}
@@ -800,8 +725,8 @@ static void fib_expose (Display *dpy, Window realwin)
 	if (_columns & 2) {
 		XSetForeground (dpy, _fib_gc, _c_gray4.pixel);
 		XDrawLine (dpy, win, _fib_gc,
-		           t_s - TEXTSEP, ltop - _fib_font_vsep + 3,
-		           t_s - TEXTSEP, ltop - 3);
+				t_s - TEXTSEP, ltop - _fib_font_vsep + 3,
+				t_s - TEXTSEP, ltop - 3);
 		XSetForeground (dpy, _fib_gc, blackColor);
 		if (_pathparts > 0)
 			XDrawString (dpy, win, _fib_gc, t_s, ttop, "Last Modified", 13);
@@ -814,13 +739,13 @@ static void fib_expose (Display *dpy, Window realwin)
 		const int sx0 = _fib_width - SCROLLBARW - FAREAMRGR;
 		XSetForeground (dpy, _fib_gc, _c_gray4.pixel);
 		XDrawLine (dpy, win, _fib_gc,
-		           sx0 - 1, ltop - _fib_font_vsep,
+				sx0 - 1, ltop - _fib_font_vsep,
 #ifdef DRAW_OUTLINE
-		           sx0 - 1, ltop + fsel_height
+				sx0 - 1, ltop + fsel_height
 #else
-		           sx0 - 1, ltop - 1
+				sx0 - 1, ltop - 1
 #endif
-		          );
+				);
 	}
 
 	// clip area for file-name
@@ -837,7 +762,7 @@ static void fib_expose (Display *dpy, Window realwin)
 		if (_dirlist[j].flags & 2) {
 			XSetForeground (dpy, _fib_gc, blackColor);
 			XFillRectangle (dpy, win, _fib_gc,
-			                FAREAMRGL, t_y - _fib_font_ascent, fsel_width, _fib_font_height);
+					FAREAMRGL, t_y - _fib_font_ascent, fsel_width, _fib_font_height);
 			XSetForeground (dpy, _fib_gc, whiteColor);
 		}
 		if (_hov_f == j && !(_dirlist[j].flags & 2)) {
@@ -848,18 +773,18 @@ static void fib_expose (Display *dpy, Window realwin)
 		}
 		XSetClipRectangles (dpy, _fib_gc, 0, 0, &clp, 1, Unsorted);
 		XDrawString (dpy, win, _fib_gc,
-		             t_x + _fib_dir_indent, t_y,
-		             _dirlist[j].name, strlen (_dirlist[j].name));
+				t_x + _fib_dir_indent, t_y,
+				_dirlist[j].name, strlen (_dirlist[j].name));
 		XSetClipMask (dpy, _fib_gc, None);
 
 		if (_columns & 1) // right-aligned 'size'
 			XDrawString (dpy, win, _fib_gc,
-			             t_s - TEXTSEP - 2 - _dirlist[j].ssizew, t_y,
-			             _dirlist[j].strsize, strlen (_dirlist[j].strsize));
+					t_s - TEXTSEP - 2 - _dirlist[j].ssizew, t_y,
+					_dirlist[j].strsize, strlen (_dirlist[j].strsize));
 		if (_columns & 2)
 			XDrawString (dpy, win, _fib_gc,
-			             t_s, t_y,
-			             _dirlist[j].strtime, strlen (_dirlist[j].strtime));
+					t_s, t_y,
+					_dirlist[j].strtime, strlen (_dirlist[j].strtime));
 	}
 
 	// scrollbar
@@ -923,7 +848,7 @@ static void fib_expose (Display *dpy, Window realwin)
 		XFillRectangle (dpy, win, _fib_gc, FAREAMRGB, ltop, PLACESW - TEXTSEP, fsel_height);
 
 #ifdef DRAW_OUTLINE
-		VDrawRectangle (dpy, win, _fib_gc, FAREAMRGB, ltop - _fib_font_vsep -1, PLACESW - TEXTSEP, fsel_height + _fib_font_vsep + 1);
+	VDrawRectangle (dpy, win, _fib_gc, FAREAMRGB, ltop - _fib_font_vsep -1, PLACESW - TEXTSEP, fsel_height + _fib_font_vsep + 1);
 #endif
 
 		XSetForeground (dpy, _fib_gc, blackColor);
@@ -940,8 +865,8 @@ static void fib_expose (Display *dpy, Window realwin)
 				XSetForeground (dpy, _fib_gc, blackColor);
 			}
 			XDrawString (dpy, win, _fib_gc,
-			             plx, ply,
-			             _placelist[i].name, strlen (_placelist[i].name));
+					plx, ply,
+					_placelist[i].name, strlen (_placelist[i].name));
 			if (_placelist[i].flags & 4) {
 				XSetForeground (dpy, _fib_gc, _c_gray3.pixel);
 				const int plly = ply - _fib_font_ascent + _fib_font_height;
@@ -973,9 +898,7 @@ static void fib_expose (Display *dpy, Window realwin)
 
 	int bx = FAREAMRGB;
 	for (i = 0; i < numb; ++i) {
-		if (_btns[i]->flags & 8) {
-			continue;
-		}
+		if (_btns[i]->flags & 8) { continue; }
 		if (_btns[i]->flags & 4) {
 			// checkbutton
 			const int cby0 = bbase - cbox + 1 + BTNPADDING;
@@ -985,7 +908,7 @@ static void fib_expose (Display *dpy, Window realwin)
 				XSetForeground (dpy, _fib_gc, blackColor);
 			}
 			XDrawRectangle (dpy, win, _fib_gc,
-			                bx, cby0 - 1, cbox + 1, cbox + 1);
+					bx, cby0 - 1, cbox + 1, cbox + 1);
 
 			if (i == _hov_b) {
 				XSetForeground (dpy, _fib_gc, _c_gray5.pixel);
@@ -993,7 +916,7 @@ static void fib_expose (Display *dpy, Window realwin)
 				XSetForeground (dpy, _fib_gc, blackColor);
 			}
 			XDrawString (dpy, win, _fib_gc, BTNPADDING + bx + _fib_font_ascent, 1 + bbase + BTNPADDING,
-			             _btns[i]->text, strlen (_btns[i]->text));
+					_btns[i]->text, strlen (_btns[i]->text));
 
 			if (i == _hov_b) {
 				XSetForeground (dpy, _fib_gc, _c_gray0.pixel);
@@ -1005,17 +928,17 @@ static void fib_expose (Display *dpy, Window realwin)
 				}
 			}
 			XFillRectangle (dpy, win, _fib_gc,
-			                bx+1, cby0, cbox, cbox);
+					bx+1, cby0, cbox, cbox);
 
 			if (_btns[i]->flags & 2) {
 				XSetLineAttributes (dpy, _fib_gc, cblw, LineSolid, CapRound, JoinMiter);
 				XSetForeground (dpy, _fib_gc, _c_gray6.pixel);
 				XDrawLine (dpy, win, _fib_gc,
-				           bx + 2, cby0 + 1,
-				           bx + cbox - 1, cby0 + cbox - 2);
+						bx + 2, cby0 + 1,
+						bx + cbox - 1, cby0 + cbox - 2);
 				XDrawLine (dpy, win, _fib_gc,
-				           bx + cbox - 1, cby0 + 1,
-				           bx + 2, cby0 + cbox - 2);
+						bx + cbox - 1, cby0 + 1,
+						bx + 2, cby0 + cbox - 2);
 				XSetLineAttributes (dpy, _fib_gc, 1, LineSolid, CapButt, JoinMiter);
 			}
 		} else {
@@ -1038,13 +961,13 @@ static void fib_expose (Display *dpy, Window realwin)
 				XSetForeground (dpy, _fib_gc, _c_gray2.pixel);
 			}
 			XFillRectangle (dpy, win, _fib_gc,
-			                bx + 1, bbase - _fib_font_ascent,
-			                _btn_w - 1, _fib_font_height + BTNPADDING + BTNPADDING);
+					bx + 1, bbase - _fib_font_ascent,
+					_btn_w - 1, _fib_font_height + BTNPADDING + BTNPADDING);
 			VDrawRectangle (dpy, win, _fib_gc,
-			                bx, bbase - _fib_font_ascent,
-			                _btn_w, _fib_font_height + BTNPADDING + BTNPADDING);
+					bx, bbase - _fib_font_ascent,
+					_btn_w, _fib_font_height + BTNPADDING + BTNPADDING);
 			XDrawString (dpy, win, _fib_gc, bx + (_btn_w - _btns[i]->tw) * .5, 1 + bbase + BTNPADDING,
-			             _btns[i]->text, strlen (_btns[i]->text));
+					_btns[i]->text, strlen (_btns[i]->text));
 		}
 		_btns[i]->x0 = bx;
 		bx += _btns[i]->xw + DSEP;
@@ -1056,15 +979,13 @@ static void fib_expose (Display *dpy, Window realwin)
 	XFlush (dpy);
 }
 
-static void fib_reset ()
-{
+static void fib_reset () {
 	_hov_p = _hov_f = _hov_h = _hov_l = -1;
 	_scrl_f = 0;
 	_fib_resized = 1;
 }
 
-static int cmp_n_up (const void *p1, const void *p2)
-{
+static int cmp_n_up (const void *p1, const void *p2) {
 	FibFileEntry *a = (FibFileEntry*) p1;
 	FibFileEntry *b = (FibFileEntry*) p2;
 	if ((a->flags & 4) && !(b->flags & 4)) return -1;
@@ -1072,8 +993,7 @@ static int cmp_n_up (const void *p1, const void *p2)
 	return strcmp (a->name, b->name);
 }
 
-static int cmp_n_down (const void *p1, const void *p2)
-{
+static int cmp_n_down (const void *p1, const void *p2) {
 	FibFileEntry *a = (FibFileEntry*) p1;
 	FibFileEntry *b = (FibFileEntry*) p2;
 	if ((a->flags & 4) && !(b->flags & 4)) return -1;
@@ -1081,8 +1001,7 @@ static int cmp_n_down (const void *p1, const void *p2)
 	return strcmp (b->name, a->name);
 }
 
-static int cmp_t_up (const void *p1, const void *p2)
-{
+static int cmp_t_up (const void *p1, const void *p2) {
 	FibFileEntry *a = (FibFileEntry*) p1;
 	FibFileEntry *b = (FibFileEntry*) p2;
 	if ((a->flags & 4) && !(b->flags & 4)) return -1;
@@ -1091,8 +1010,7 @@ static int cmp_t_up (const void *p1, const void *p2)
 	return a->mtime > b->mtime ? -1 : 1;
 }
 
-static int cmp_t_down (const void *p1, const void *p2)
-{
+static int cmp_t_down (const void *p1, const void *p2) {
 	FibFileEntry *a = (FibFileEntry*) p1;
 	FibFileEntry *b = (FibFileEntry*) p2;
 	if ((a->flags & 4) && !(b->flags & 4)) return -1;
@@ -1101,8 +1019,7 @@ static int cmp_t_down (const void *p1, const void *p2)
 	return a->mtime > b->mtime ? 1 : -1;
 }
 
-static int cmp_s_up (const void *p1, const void *p2)
-{
+static int cmp_s_up (const void *p1, const void *p2) {
 	FibFileEntry *a = (FibFileEntry*) p1;
 	FibFileEntry *b = (FibFileEntry*) p2;
 	if ((a->flags & 4) && (b->flags & 4)) return 0; // dir, no size, retain order
@@ -1112,8 +1029,7 @@ static int cmp_s_up (const void *p1, const void *p2)
 	return a->size > b->size ? -1 : 1;
 }
 
-static int cmp_s_down (const void *p1, const void *p2)
-{
+static int cmp_s_down (const void *p1, const void *p2) {
 	FibFileEntry *a = (FibFileEntry*) p1;
 	FibFileEntry *b = (FibFileEntry*) p2;
 	if ((a->flags & 4) && (b->flags & 4)) return 0; // dir, no size, retain order
@@ -1123,26 +1039,32 @@ static int cmp_s_down (const void *p1, const void *p2)
 	return a->size > b->size ? 1 : -1;
 }
 
-static void fmt_size (Display *dpy, FibFileEntry *f)
-{
+static void fmt_size (Display *dpy, FibFileEntry *f) {
 	if (f->size > 10995116277760) {
 		sprintf (f->strsize, "%.0f TB", f->size / 1099511627776.f);
 	}
 	if (f->size > 1099511627776) {
 		sprintf (f->strsize, "%.1f TB", f->size / 1099511627776.f);
-	} else if (f->size > 10737418240) {
+	}
+	else if (f->size > 10737418240) {
 		sprintf (f->strsize, "%.0f GB", f->size / 1073741824.f);
-	} else if (f->size > 1073741824) {
+	}
+	else if (f->size > 1073741824) {
 		sprintf (f->strsize, "%.1f GB", f->size / 1073741824.f);
-	} else if (f->size > 10485760) {
+	}
+	else if (f->size > 10485760) {
 		sprintf (f->strsize, "%.0f MB", f->size / 1048576.f);
-	} else if (f->size > 1048576) {
+	}
+	else if (f->size > 1048576) {
 		sprintf (f->strsize, "%.1f MB", f->size / 1048576.f);
-	} else if (f->size > 10240) {
+	}
+	else if (f->size > 10240) {
 		sprintf (f->strsize, "%.0f KB", f->size / 1024.f);
-	} else if (f->size >= 1000) {
+	}
+	else if (f->size >= 1000) {
 		sprintf (f->strsize, "%.1f KB", f->size / 1024.f);
-	} else {
+	}
+	else {
 		sprintf (f->strsize, "%.0f  B", f->size / 1.f);
 	}
 	int sw = 0;
@@ -1153,8 +1075,7 @@ static void fmt_size (Display *dpy, FibFileEntry *f)
 	f->ssizew = sw;
 }
 
-static void fmt_time (Display *dpy, FibFileEntry *f)
-{
+static void fmt_time (Display *dpy, FibFileEntry *f) {
 	struct tm *tmp;
 	tmp = localtime (&f->mtime);
 	if (!tmp) {
@@ -1169,31 +1090,18 @@ static void fmt_time (Display *dpy, FibFileEntry *f)
 	}
 }
 
-static void fib_resort (const char * sel)
-{
-	if (_dircount < 1) {
-		return;
-	}
+static void fib_resort (const char * sel) {
+	if (_dircount < 1) { return; }
 	int (*sortfn)(const void *p1, const void *p2);
 	switch (_sort) {
-	case 1:
-		sortfn = &cmp_n_down;
-		break;
-	case 2:
-		sortfn = &cmp_s_down;
-		break;
-	case 3:
-		sortfn = &cmp_s_up;
-		break;
-	case 4:
-		sortfn = &cmp_t_down;
-		break;
-	case 5:
-		sortfn = &cmp_t_up;
-		break;
-	default:
-		sortfn = &cmp_n_up;
-		break;
+		case 1: sortfn = &cmp_n_down; break;
+		case 2: sortfn = &cmp_s_down; break;
+		case 3: sortfn = &cmp_s_up; break;
+		case 4: sortfn = &cmp_t_down; break;
+		case 5: sortfn = &cmp_t_up; break;
+		default:
+						sortfn = &cmp_n_up;
+						break;
 	}
 	qsort (_dirlist, _dircount, sizeof(_dirlist[0]), sortfn);
 	int i;
@@ -1205,8 +1113,14 @@ static void fib_resort (const char * sel)
 	}
 }
 
-static void fib_select (Display *dpy, int item)
+void x_fib_file_changed_cb(x_file_changed_cb_t cb, void *userdata)
 {
+	_x_file_changed_cb = cb;
+	_x_file_changed_ud = userdata;
+}
+
+
+static void fib_select (Display *dpy, int item) {
 	if (_fsel >= 0) {
 		_dirlist[_fsel].flags &= ~2;
 	}
@@ -1216,18 +1130,29 @@ static void fib_select (Display *dpy, int item)
 		const int llen = (_fib_height - LISTBOT * _fib_font_vsep) / _fib_font_vsep;
 		if (_fsel < _scrl_f) {
 			_scrl_f = _fsel;
-		} else if (_fsel >= _scrl_f + llen) {
+		}
+		else if (_fsel >= _scrl_f + llen) {
 			_scrl_f = 1 + _fsel - llen;
 		}
 	} else {
 		_fsel = -1;
 	}
 
+	if(_x_file_changed_cb && _fsel >= 0) {
+		int i = 0;
+		char path[1024] = "/";
+		while (++i <= _pathparts) {
+			strcat (path, _pathbtn[i].name);
+			strcat (path, "/");
+		}
+		strcat (path, _dirlist[_fsel].name);
+		_x_file_changed_cb( path, _x_file_changed_ud);
+	}
+
 	fib_expose (dpy, _fib_win);
 }
 
-static inline int fib_filter (const char *name)
-{
+static inline int fib_filter (const char *name) {
 	if (_fib_filter_function) {
 		return _fib_filter_function (name);
 	} else {
@@ -1235,8 +1160,7 @@ static inline int fib_filter (const char *name)
 	}
 }
 
-static void fib_pre_opendir (Display *dpy)
-{
+static void fib_pre_opendir (Display *dpy) {
 	if (_dirlist) free (_dirlist);
 	if (_pathbtn) free (_pathbtn);
 	_dirlist = NULL;
@@ -1248,8 +1172,7 @@ static void fib_pre_opendir (Display *dpy)
 	_fsel = -1;
 }
 
-static void fib_post_opendir (Display *dpy, const char *sel)
-{
+static void fib_post_opendir (Display *dpy, const char *sel) {
 	if (_dircount > 0)
 		_fsel = 0; // select first
 	else
@@ -1263,8 +1186,7 @@ static void fib_post_opendir (Display *dpy, const char *sel)
 	}
 }
 
-static int fib_dirlistadd (Display *dpy, const int i, const char* path, const char *name, time_t mtime)
-{
+static int fib_dirlistadd (Display *dpy, const int i, const char* path, const char *name, time_t mtime) {
 	char tp[1024];
 	struct stat fs;
 	if (!_fib_hidden_fn && name[0] == '.') return -1;
@@ -1282,7 +1204,8 @@ static int fib_dirlistadd (Display *dpy, const int i, const char* path, const ch
 	if (i >= _dircount) return -1;
 	if (S_ISDIR (fs.st_mode)) {
 		_dirlist[i].flags |= 4;
-	} else if (S_ISREG (fs.st_mode)) {
+	}
+	else if (S_ISREG (fs.st_mode)) {
 		if (!fib_filter (name)) return -1;
 	}
 #if 0 // only needed with lstat()
@@ -1302,8 +1225,7 @@ static int fib_dirlistadd (Display *dpy, const int i, const char* path, const ch
 	return 0;
 }
 
-static int fib_openrecent (Display *dpy, const char *sel)
-{
+static int fib_openrecent (Display *dpy, const char *sel) {
 	int i;
 	unsigned int j;
 	assert (_recentcnt > 0);
@@ -1329,8 +1251,7 @@ static int fib_openrecent (Display *dpy, const char *sel)
 	return _dircount;
 }
 
-static int fib_opendir (Display *dpy, const char* path, const char *sel)
-{
+static int fib_opendir (Display *dpy, const char* path, const char *sel) {
 	char *t0, *t1;
 	int i;
 
@@ -1406,8 +1327,7 @@ static int fib_opendir (Display *dpy, const char* path, const char *sel)
 	return _dircount;
 }
 
-static int fib_open (Display *dpy, int item)
-{
+static int fib_open (Display *dpy, int item) {
 	char tp[1024];
 	if (_dirlist[item].flags & 8) {
 		assert (_dirlist[item].rfp);
@@ -1427,20 +1347,17 @@ static int fib_open (Display *dpy, int item)
 	return 0;
 }
 
-static void cb_cancel (Display *dpy)
-{
+static void cb_cancel (Display *dpy) {
 	_status = -1;
 }
 
-static void cb_open (Display *dpy)
-{
+static void cb_open (Display *dpy) {
 	if (_fsel >= 0 && _fsel < _dircount) {
 		fib_open (dpy, _fsel);
 	}
 }
 
-static void sync_button_states ()
-{
+static void sync_button_states () {
 	if (_fib_show_places)
 		_btn_places.flags |= 2;
 	else
@@ -1455,8 +1372,7 @@ static void sync_button_states ()
 		_btn_hidden.flags &= ~2;
 }
 
-static void cb_places (Display *dpy)
-{
+static void cb_places (Display *dpy) {
 	_fib_show_places = ! _fib_show_places;
 	if (_placecnt < 1)
 		_fib_show_places = 0;
@@ -1465,8 +1381,7 @@ static void cb_places (Display *dpy)
 	fib_expose (dpy, _fib_win);
 }
 
-static void cb_filter (Display *dpy)
-{
+static void cb_filter (Display *dpy) {
 	_fib_filter_fn = ! _fib_filter_fn;
 	sync_button_states ();
 	char *sel = _fsel >= 0 ? strdup (_dirlist[_fsel].name) : NULL;
@@ -1474,8 +1389,7 @@ static void cb_filter (Display *dpy)
 	free (sel);
 }
 
-static void cb_hidden (Display *dpy)
-{
+static void cb_hidden (Display *dpy) {
 	_fib_hidden_fn = ! _fib_hidden_fn;
 	sync_button_states ();
 	char *sel = _fsel >= 0 ? strdup (_dirlist[_fsel].name) : NULL;
@@ -1483,8 +1397,7 @@ static void cb_hidden (Display *dpy)
 	free (sel);
 }
 
-static int fib_widget_at_pos (Display *dpy, int x, int y, int *it)
-{
+static int fib_widget_at_pos (Display *dpy, int x, int y, int *it) {
 	const int btop = _fib_height - BTNBTMMARGIN * _fib_font_vsep - _fib_font_ascent - BTNPADDING;
 	const int bbot = btop + _fib_font_height + BTNPADDING + BTNPADDING;
 	const int llen = (_fib_height - LISTBOT * _fib_font_vsep) / _fib_font_vsep;
@@ -1521,9 +1434,7 @@ static int fib_widget_at_pos (Display *dpy, int x, int y, int *it)
 		*it = -1;
 		for (i = 0; i < sizeof(_btns) / sizeof(FibButton*); ++i) {
 			const int bx = _btns[i]->x0;
-			if (_btns[i]->flags & 8) {
-				continue;
-			}
+			if (_btns[i]->flags & 8) { continue; }
 			if (x > bx && x < bx + _btns[i]->xw) {
 				*it = i;
 			}
@@ -1554,7 +1465,8 @@ static int fib_widget_at_pos (Display *dpy, int x, int y, int *it)
 			}
 			if (*it >= 0) return 2;
 			else return 0;
-		} else {
+		}
+		else {
 			*it = -1;
 			const int fsel_width = _fib_width - FAREAMRGL - FAREAMRGR - (llen < _dircount ? SCROLLBARW : 0);
 			const int t_s = FAREAMRGL + fsel_width - _fib_font_time_width - TEXTSEP - TEXTSEP;
@@ -1570,20 +1482,19 @@ static int fib_widget_at_pos (Display *dpy, int x, int y, int *it)
 
 	// places list
 	if (_fib_show_places && y >= ltop && y < fbot && x > FAREAMRGB && x < FAREAMRGL - FAREAMRGB) {
-		const int item = (y - ltop) / _fib_font_vsep;
-		*it = -1;
-		if (item >= 0 && item < _placecnt) {
-			*it = item;
-		}
-		if (*it >= 0) return 6;
-		else return 0;
+			const int item = (y - ltop) / _fib_font_vsep;
+			*it = -1;
+			if (item >= 0 && item < _placecnt) {
+				*it = item;
+			}
+			if (*it >= 0) return 6;
+			else return 0;
 	}
 
 	return 0;
 }
 
-static void fib_update_hover (Display *dpy, int need_expose, const int type, const int item)
-{
+static void fib_update_hover (Display *dpy, int need_expose, const int type, const int item) {
 	int hov_p = -1;
 	int hov_b = -1;
 	int hov_h = -1;
@@ -1594,63 +1505,31 @@ static void fib_update_hover (Display *dpy, int need_expose, const int type, con
 #endif
 
 	switch (type) {
-	case 1:
-		hov_p = item;
-		break;
-	case 3:
-		hov_b = item;
-		break;
-	case 4:
-		hov_s = item;
-		break;
-	case 5:
-		hov_h = item;
-		break;
+		case 1: hov_p = item; break;
+		case 3: hov_b = item; break;
+		case 4: hov_s = item; break;
+		case 5: hov_h = item; break;
 #ifdef LIST_ENTRY_HOVER
-	case 6:
-		hov_l = item;
-		break;
-	case 2:
-		hov_f = item;
-		break;
+		case 6: hov_l = item; break;
+		case 2: hov_f = item; break;
 #endif
-	default:
-		break;
+		default: break;
 	}
 #ifdef LIST_ENTRY_HOVER
-	if (hov_f != _hov_f) {
-		_hov_f = hov_f;
-		need_expose = 1;
-	}
-	if (hov_l != _hov_l) {
-		_hov_l = hov_l;
-		need_expose = 1;
-	}
+	if (hov_f != _hov_f) { _hov_f = hov_f; need_expose = 1; }
+	if (hov_l != _hov_l) { _hov_l = hov_l; need_expose = 1; }
 #endif
-	if (hov_b != _hov_b) {
-		_hov_b = hov_b;
-		need_expose = 1;
-	}
-	if (hov_p != _hov_p) {
-		_hov_p = hov_p;
-		need_expose = 1;
-	}
-	if (hov_h != _hov_h) {
-		_hov_h = hov_h;
-		need_expose = 1;
-	}
-	if (hov_s != _hov_s) {
-		_hov_s = hov_s;
-		need_expose = 1;
-	}
+	if (hov_b != _hov_b) { _hov_b = hov_b; need_expose = 1; }
+	if (hov_p != _hov_p) { _hov_p = hov_p; need_expose = 1; }
+	if (hov_h != _hov_h) { _hov_h = hov_h; need_expose = 1; }
+	if (hov_s != _hov_s) { _hov_s = hov_s; need_expose = 1; }
 
 	if (need_expose) {
 		fib_expose (dpy, _fib_win);
 	}
 }
 
-static void fib_motion (Display *dpy, int x, int y)
-{
+static void fib_motion (Display *dpy, int x, int y) {
 	int it = -1;
 
 	if (_scrl_my >= 0) {
@@ -1673,135 +1552,124 @@ static void fib_motion (Display *dpy, int x, int y)
 	fib_update_hover (dpy, 0, type, it);
 }
 
-static void fib_mousedown (Display *dpy, int x, int y, int btn, unsigned long time)
-{
+static void fib_mousedown (Display *dpy, int x, int y, int btn, unsigned long time) {
 	int it;
 	switch (fib_widget_at_pos (dpy, x, y, &it)) {
-	case 4: // scrollbar
-		if (btn == 1) {
-			_dblclk = 0;
-			if (it == 0) {
-				_scrl_my = y;
-				_scrl_mf = _scrl_f;
-			} else {
-				int llen = (_fib_height - LISTBOT * _fib_font_vsep) / _fib_font_vsep;
-				if (llen < 2) llen = 2;
-				int news = _scrl_f;
-				if (it == 1) {
-					news -= llen - 1;
+		case 4: // scrollbar
+			if (btn == 1) {
+				_dblclk = 0;
+				if (it == 0) {
+					_scrl_my = y;
+					_scrl_mf = _scrl_f;
 				} else {
-					news += llen - 1;
+					int llen = (_fib_height - LISTBOT * _fib_font_vsep) / _fib_font_vsep;
+					if (llen < 2) llen = 2;
+					int news = _scrl_f;
+					if (it == 1) {
+						news -= llen - 1;
+					} else {
+						news += llen - 1;
+					}
+					if (news < 0) news = 0;
+					if (news >= (_dircount - llen)) news = _dircount - llen;
+					if (news != _scrl_f && _scrl_y0 >= 0) {
+						assert (news >=0);
+						_scrl_f = news;
+						fib_update_hover (dpy, 1, 4, it);
+					}
 				}
+			}
+			break;
+		case 2: // file-list
+			if (btn == 4 || btn == 5) {
+				const int llen = (_fib_height - LISTBOT * _fib_font_vsep) / _fib_font_vsep;
+				int news = _scrl_f + ((btn == 4) ? - 1 : 1);
 				if (news < 0) news = 0;
 				if (news >= (_dircount - llen)) news = _dircount - llen;
 				if (news != _scrl_f && _scrl_y0 >= 0) {
 					assert (news >=0);
 					_scrl_f = news;
-					fib_update_hover (dpy, 1, 4, it);
+					fib_update_hover (dpy, 1, 0, 0);
+				}
+				_dblclk = 0;
+			}
+			else if (btn == 1 && it >= 0 && it < _dircount) {
+				if (_fsel == it) {
+					if (time - _dblclk < DBLCLKTME) {
+						fib_open (dpy, it);
+						_dblclk = 0;
+					}
+					_dblclk = time;
+				} else {
+					fib_select (dpy, it);
+					_dblclk = time;
+				}
+				if (_fsel >= 0) {
+					if (!(_dirlist[_fsel].flags & 4));
 				}
 			}
-		}
-		break;
-	case 2: // file-list
-		if (btn == 4 || btn == 5) {
-			const int llen = (_fib_height - LISTBOT * _fib_font_vsep) / _fib_font_vsep;
-			int news = _scrl_f + ((btn == 4) ? - 1 : 1);
-			if (news < 0) news = 0;
-			if (news >= (_dircount - llen)) news = _dircount - llen;
-			if (news != _scrl_f && _scrl_y0 >= 0) {
-				assert (news >=0);
-				_scrl_f = news;
-				fib_update_hover (dpy, 1, 0, 0);
-			}
-			_dblclk = 0;
-		} else if (btn == 1 && it >= 0 && it < _dircount) {
-			if (_fsel == it) {
-				if (time - _dblclk < DBLCLKTME) {
-					fib_open (dpy, it);
-					_dblclk = 0;
+			break;
+		case 1: // paths
+			assert (_fsel < _dircount);
+			assert (it >= 0 && it < _pathparts);
+			{
+				int i = 0;
+				char path[1024] = "/";
+				while (++i <= it) {
+					strcat (path, _pathbtn[i].name);
+					strcat (path, "/");
 				}
-				_dblclk = time;
-			} else {
-				fib_select (dpy, it);
-				_dblclk = time;
-			}
-			if (_fsel >= 0) {
-				if (!(_dirlist[_fsel].flags & 4));
-			}
-		}
-		break;
-	case 1: // paths
-		assert (_fsel < _dircount);
-		assert (it >= 0 && it < _pathparts);
-		{
-			int i = 0;
-			char path[1024] = "/";
-			while (++i <= it) {
-				strcat (path, _pathbtn[i].name);
-				strcat (path, "/");
-			}
-			char *sel = NULL;
-			if (i < _pathparts)
-				sel = strdup (_pathbtn[i].name);
-			else if (i == _pathparts && _fsel >= 0)
-				sel = strdup (_dirlist[_fsel].name);
-			fib_opendir (dpy, path, sel);
-			free (sel);
-		}
-		break;
-	case 3: // btn
-		if (btn == 1 && _btns[it]->callback) {
-			_btns[it]->callback (dpy);
-		}
-		break;
-	case 5: // sort
-		if (btn == 1) {
-			switch (it) {
-			case 1:
-				if (_sort == 0) _sort = 1;
-				else _sort = 0;
-				break;
-			case 2:
-				if (_sort == 2) _sort = 3;
-				else _sort = 2;
-				break;
-			case 3:
-				if (_sort == 4) _sort = 5;
-				else _sort = 4;
-				break;
-			}
-			if (_fsel >= 0) {
-				assert (_dirlist && _dircount >= _fsel);
-				_dirlist[_fsel].flags &= ~2;
-				char *sel = strdup (_dirlist[_fsel].name);
-				fib_resort (sel);
+				char *sel = NULL;
+				if (i < _pathparts)
+					sel = strdup (_pathbtn[i].name);
+				else if (i == _pathparts && _fsel >= 0)
+					sel = strdup (_dirlist[_fsel].name);
+				fib_opendir (dpy, path, sel);
 				free (sel);
-			} else {
-				fib_resort (NULL);
-				_fsel = -1;
 			}
-			fib_reset ();
-			_hov_h = it;
-			fib_select (dpy, _fsel);
-		}
-		break;
-	case 6:
-		if (btn == 1 && it >= 0 && it < _placecnt) {
-			fib_opendir (dpy, _placelist[it].path, NULL);
-		}
-		break;
-	default:
-		break;
+			break;
+		case 3: // btn
+			if (btn == 1 && _btns[it]->callback) {
+				_btns[it]->callback (dpy);
+			}
+			break;
+		case 5: // sort
+			if (btn == 1) {
+				switch (it) {
+					case 1: if (_sort == 0) _sort = 1; else _sort = 0; break;
+					case 2: if (_sort == 2) _sort = 3; else _sort = 2; break;
+					case 3: if (_sort == 4) _sort = 5; else _sort = 4; break;
+				}
+				if (_fsel >= 0) {
+					assert (_dirlist && _dircount >= _fsel);
+					_dirlist[_fsel].flags &= ~2;
+					char *sel = strdup (_dirlist[_fsel].name);
+					fib_resort (sel);
+					free (sel);
+				} else {
+					fib_resort (NULL);
+					_fsel = -1;
+				}
+				fib_reset ();
+				_hov_h = it;
+				fib_select (dpy, _fsel);
+			}
+			break;
+		case 6:
+			if (btn == 1 && it >= 0 && it < _placecnt) {
+				fib_opendir (dpy, _placelist[it].path, NULL);
+			}
+			break;
+		default:
+			break;
 	}
 }
 
-static void fib_mouseup (Display *dpy, int x, int y, int btn, unsigned long time)
-{
+static void fib_mouseup (Display *dpy, int x, int y, int btn, unsigned long time) {
 	_scrl_my = -1;
 }
 
-static void add_place_raw (Display *dpy, const char *name, const char *path)
-{
+static void add_place_raw (Display *dpy, const char *name, const char *path) {
 	_placelist = (FibPlace*) realloc (_placelist, (_placecnt + 1) * sizeof(FibPlace));
 	strcpy (_placelist[_placecnt].path, path);
 	strcpy (_placelist[_placecnt].name, name);
@@ -1815,8 +1683,7 @@ static void add_place_raw (Display *dpy, const char *name, const char *path)
 	++_placecnt;
 }
 
-static int add_place_places (Display *dpy, const char *name, const char *url)
-{
+static int add_place_places (Display *dpy, const char *name, const char *url) {
 	char const * path;
 	struct stat fs;
 	int i;
@@ -1824,9 +1691,11 @@ static int add_place_places (Display *dpy, const char *name, const char *url)
 	if (!name || strlen (name) < 1) return -1;
 	if (url[0] == '/') {
 		path = url;
-	} else if (!strncmp (url, "file:///", 8)) {
+	}
+	else if (!strncmp (url, "file:///", 8)) {
 		path = &url[7];
-	} else {
+	}
+	else {
 		return -1;
 	}
 
@@ -1849,8 +1718,7 @@ static int add_place_places (Display *dpy, const char *name, const char *url)
 	return 0;
 }
 
-static int parse_gtk_bookmarks (Display *dpy, const char *fn)
-{
+static int parse_gtk_bookmarks (Display *dpy, const char *fn) {
 	char tmp[1024];
 	if (access (fn, R_OK)) {
 		return -1;
@@ -1859,8 +1727,9 @@ static int parse_gtk_bookmarks (Display *dpy, const char *fn)
 	if (!bm) return -1;
 	int found = 0;
 	while (fgets (tmp, sizeof(tmp), bm)
-	       && strlen (tmp) > 1
-	       && strlen (tmp) < sizeof(tmp)) {
+			&& strlen (tmp) > 1
+			&& strlen (tmp) < sizeof(tmp))
+	{
 		char *s, *n;
 		tmp[strlen (tmp) - 1] = '\0'; // strip newline
 		if ((s = strchr (tmp, ' '))) {
@@ -1911,8 +1780,7 @@ static const char *ignore_devices[] = {
 	"/dev/loop", "/dev/vn"
 };
 
-static int check_mount (const char *mountpoint, const char *fs, const char *device)
-{
+static int check_mount (const char *mountpoint, const char *fs, const char *device) {
 	size_t i;
 	if (!mountpoint || !fs || !device) return -1;
 	//printf("%s %s %s\n", mountpoint, fs, device);
@@ -1937,8 +1805,7 @@ static int check_mount (const char *mountpoint, const char *fs, const char *devi
 	return 0;
 }
 
-static int read_mtab (Display *dpy, const char *mtab)
-{
+static int read_mtab (Display *dpy, const char *mtab) {
 	FILE *mt = fopen (mtab, "r");
 	if (!mt) return -1;
 	int found = 0;
@@ -1961,8 +1828,7 @@ static int read_mtab (Display *dpy, const char *mtab)
 	return found;
 }
 
-static void populate_places (Display *dpy)
-{
+static void populate_places (Display *dpy) {
 	char tmp[1024];
 	int spacer = -1;
 	if (_placecnt > 0) return;
@@ -2024,14 +1890,12 @@ static void populate_places (Display *dpy)
 }
 
 static uint8_t font_err = 0;
-static int x_error_handler (Display *d, XErrorEvent *e)
-{
+static int x_error_handler (Display *d, XErrorEvent *e) {
 	font_err = 1;
 	return 0;
 }
 
-int x_fib_show (Display *dpy, Window parent, int x, int y)
-{
+int x_fib_show (Display *dpy, Window parent, int x, int y) {
 	if (_fib_win) {
 		XSetInputFocus (dpy, _fib_win, RevertToParent, CurrentTime);
 		return -1;
@@ -2063,19 +1927,17 @@ int x_fib_show (Display *dpy, Window parent, int x, int y)
 	attr.border_pixel = _c_gray2.pixel;
 
 	attr.event_mask = ExposureMask | KeyPressMask
-	                  | ButtonPressMask | ButtonReleaseMask
-	                  | ConfigureNotify | StructureNotifyMask
-	                  | PointerMotionMask | LeaveWindowMask;
+		| ButtonPressMask | ButtonReleaseMask
+		| ConfigureNotify | StructureNotifyMask
+		| PointerMotionMask | LeaveWindowMask;
 
 	_fib_win = XCreateWindow (
-	                   dpy, DefaultRootWindow (dpy),
-	                   x, y, _fib_width, _fib_height,
-	                   1, CopyFromParent, InputOutput, CopyFromParent,
-	                   CWEventMask | CWBorderPixel, &attr);
+			dpy, DefaultRootWindow (dpy),
+			x, y, _fib_width, _fib_height,
+			1, CopyFromParent, InputOutput, CopyFromParent,
+			CWEventMask | CWBorderPixel, &attr);
 
-	if (!_fib_win) {
-		return 1;
-	}
+	if (!_fib_win) { return 1; }
 
 	if (parent)
 		XSetTransientForHint (dpy, _fib_win, parent);
@@ -2151,9 +2013,7 @@ int x_fib_show (Display *dpy, Window parent, int x, int y)
 	_btn_w = 0;
 	_btn_span = 0;
 	for (i = 0; i < sizeof(_btns) / sizeof(FibButton*); ++i) {
-		if (_btns[i]->flags & 8) {
-			continue;
-		}
+		if (_btns[i]->flags & 8) { continue; }
 		query_font_geometry (dpy, _fib_gc, _btns[i]->text, &_btns[i]->tw, NULL, NULL, NULL);
 		if (_btns[i]->flags & 4) {
 			_btn_span += _btns[i]->tw + _fib_font_ascent + TEXTSEP;
@@ -2168,9 +2028,7 @@ int x_fib_show (Display *dpy, Window parent, int x, int y)
 	_btn_span += _btn_w  * btncnt + DSEP * (i - 1) + FAREAMRGR + FAREAMRGB;
 
 	for (i = 0; i < sizeof(_btns) / sizeof(FibButton*); ++i) {
-		if (_btns[i]->flags & 8) {
-			continue;
-		}
+		if (_btns[i]->flags & 8) { continue; }
 		if (_btns[i]->flags & 4) {
 			_btns[i]->xw = _btns[i]->tw + _fib_font_ascent + TEXTSEP;
 		} else {
@@ -2198,7 +2056,8 @@ int x_fib_show (Display *dpy, Window parent, int x, int y)
 	wmhints.input = True;
 	wmhints.flags = InputHint;
 	if (XStringListToTextProperty (&w_name, 1, &x_wname) &&
-	    XStringListToTextProperty (&w_name, 1, &x_iname)) {
+			XStringListToTextProperty (&w_name, 1, &x_iname))
+	{
 		XSetWMProperties (dpy, _fib_win, &x_wname, &x_iname, NULL, 0, &hints, &wmhints, NULL);
 		XFree (x_wname.value);
 		XFree (x_iname.value);
@@ -2215,8 +2074,8 @@ int x_fib_show (Display *dpy, Window parent, int x, int y)
 
 #if 0
 	XGrabPointer (dpy, _fib_win, True,
-	              ButtonReleaseMask | ButtonPressMask | EnterWindowMask | LeaveWindowMask | PointerMotionMask | StructureNotifyMask,
-	              GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
+			ButtonReleaseMask | ButtonPressMask | EnterWindowMask | LeaveWindowMask | PointerMotionMask | StructureNotifyMask,
+			GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
 	XGrabKeyboard (dpy, _fib_win, True, GrabModeAsync, GrabModeAsync, CurrentTime);
 	//XSetInputFocus (dpy, parent, RevertToNone, CurrentTime);
 #endif
@@ -2224,8 +2083,7 @@ int x_fib_show (Display *dpy, Window parent, int x, int y)
 	return 0;
 }
 
-void x_fib_close (Display *dpy)
-{
+void x_fib_close (Display *dpy) {
 	if (!_fib_win) return;
 	XFreeGC (dpy, _fib_gc);
 	XDestroyWindow (dpy, _fib_win);
@@ -2254,8 +2112,7 @@ void x_fib_close (Display *dpy)
 	_recentlock = 0;
 }
 
-int x_fib_handle_events (Display *dpy, XEvent *event)
-{
+int x_fib_handle_events (Display *dpy, XEvent *event) {
 	if (!_fib_win) return 0;
 	if (_status) return 0;
 	if (event->xany.window != _fib_win) {
@@ -2263,126 +2120,126 @@ int x_fib_handle_events (Display *dpy, XEvent *event)
 	}
 
 	switch (event->type) {
-	case MapNotify:
-		_fib_mapped = 1;
-		break;
-	case UnmapNotify:
-		_fib_mapped = 0;
-		break;
-	case LeaveNotify:
-		fib_update_hover (dpy, 1, 0, 0);
-		break;
-	case ClientMessage:
-		if (!strcmp (XGetAtomName (dpy, event->xclient.message_type), "WM_PROTOCOLS")) {
-			_status = -1;
-		}
-	case ConfigureNotify:
-		if (
-		        (event->xconfigure.width > 1 && event->xconfigure.height > 1)
-		        &&
-		        (event->xconfigure.width != _fib_width || event->xconfigure.height != _fib_height)
-		) {
-			_fib_width = event->xconfigure.width;
-			_fib_height = event->xconfigure.height;
-			_fib_resized = 1;
-		}
-		break;
-	case Expose:
-		if (event->xexpose.count == 0) {
-			fib_expose (dpy, event->xany.window);
-		}
-		break;
-	case MotionNotify:
-		fib_motion (dpy, event->xmotion.x, event->xmotion.y);
-		if (event->xmotion.is_hint == NotifyHint) {
-			XGetMotionEvents (dpy, event->xany.window, CurrentTime, CurrentTime, NULL);
-		}
-		break;
-	case ButtonPress:
-		fib_mousedown (dpy, event->xbutton.x, event->xbutton.y, event->xbutton.button, event->xbutton.time);
-		break;
-	case ButtonRelease:
-		fib_mouseup (dpy, event->xbutton.x, event->xbutton.y, event->xbutton.button, event->xbutton.time);
-		break;
-	case KeyRelease:
-		break;
-	case KeyPress: {
-		KeySym key;
-		char buf[100];
-		static XComposeStatus stat;
-		XLookupString (&event->xkey, buf, sizeof(buf), &key, &stat);
-		switch (key) {
-		case XK_Escape:
-			_status = -1;
+		case MapNotify:
+			_fib_mapped = 1;
 			break;
-		case XK_Up:
-			if (_fsel > 0) {
-				fib_select (dpy, _fsel - 1);
+		case UnmapNotify:
+			_fib_mapped = 0;
+			break;
+		case LeaveNotify:
+			fib_update_hover (dpy, 1, 0, 0);
+			break;
+		case ClientMessage:
+			if (!strcmp (XGetAtomName (dpy, event->xclient.message_type), "WM_PROTOCOLS")) {
+				_status = -1;
+			}
+		case ConfigureNotify:
+			if (
+					(event->xconfigure.width > 1 && event->xconfigure.height > 1)
+					&&
+					(event->xconfigure.width != _fib_width || event->xconfigure.height != _fib_height)
+				 )
+			{
+				_fib_width = event->xconfigure.width;
+				_fib_height = event->xconfigure.height;
+				_fib_resized = 1;
 			}
 			break;
-		case XK_Down:
-			if (_fsel < _dircount -1) {
-				fib_select ( dpy, _fsel + 1);
+		case Expose:
+			if (event->xexpose.count == 0) {
+				fib_expose (dpy, event->xany.window);
 			}
 			break;
-		case XK_Page_Up:
-			if (_fsel > 0) {
-				int llen = (_fib_height - LISTBOT * _fib_font_vsep) / _fib_font_vsep;
-				if (llen < 1) llen = 1;
-				else --llen;
-				int fs = MAX (0, _fsel - llen);
-				fib_select ( dpy, fs);
+		case MotionNotify:
+			fib_motion (dpy, event->xmotion.x, event->xmotion.y);
+			if (event->xmotion.is_hint == NotifyHint) {
+				XGetMotionEvents (dpy, event->xany.window, CurrentTime, CurrentTime, NULL);
 			}
 			break;
-		case XK_Page_Down:
-			if (_fsel < _dircount) {
-				int llen = (_fib_height - LISTBOT * _fib_font_vsep) / _fib_font_vsep;
-				if (llen < 1) llen = 1;
-				else --llen;
-				int fs = MIN (_dircount - 1, _fsel + llen);
-				fib_select ( dpy, fs);
-			}
+		case ButtonPress:
+			fib_mousedown (dpy, event->xbutton.x, event->xbutton.y, event->xbutton.button, event->xbutton.time);
 			break;
-		case XK_Left:
-			if (_pathparts > 1) {
-				int i = 0;
-				char path[1024] = "/";
-				while (++i < _pathparts - 1) {
-					strcat (path, _pathbtn[i].name);
-					strcat (path, "/");
-				}
-				char *sel = strdup (_pathbtn[_pathparts-1].name);
-				fib_opendir (dpy, path, sel);
-				free (sel);
-			}
+		case ButtonRelease:
+			fib_mouseup (dpy, event->xbutton.x, event->xbutton.y, event->xbutton.button, event->xbutton.time);
 			break;
-		case XK_Right:
-			if (_fsel >= 0 && _fsel < _dircount) {
-				if (_dirlist[_fsel].flags & 4) {
-					cb_open (dpy);
-				}
-			}
+		case KeyRelease:
 			break;
-		case XK_Return:
-			cb_open (dpy);
-			break;
-		default:
-			if ((key >= XK_a && key <= XK_z) || (key >= XK_0 && key <= XK_9)) {
-				int i;
-				for (i = 0; i < _dircount; ++i) {
-					int j = (_fsel + i + 1) % _dircount;
-					char kcmp = _dirlist[j].name[0];
-					if (kcmp > 0x40 && kcmp <= 0x5A) kcmp |= 0x20;
-					if (kcmp == (char)key) {
-						fib_select ( dpy, j);
+		case KeyPress:
+			{
+				KeySym key;
+				char buf[100];
+				static XComposeStatus stat;
+				XLookupString (&event->xkey, buf, sizeof(buf), &key, &stat);
+				switch (key) {
+					case XK_Escape:
+						_status = -1;
 						break;
-					}
+					case XK_Up:
+						if (_fsel > 0) {
+							fib_select (dpy, _fsel - 1);
+						}
+						break;
+					case XK_Down:
+						if (_fsel < _dircount -1) {
+							fib_select ( dpy, _fsel + 1);
+						}
+						break;
+					case XK_Page_Up:
+						if (_fsel > 0) {
+							int llen = (_fib_height - LISTBOT * _fib_font_vsep) / _fib_font_vsep;
+							if (llen < 1) llen = 1; else --llen;
+							int fs = MAX (0, _fsel - llen);
+							fib_select ( dpy, fs);
+						}
+						break;
+					case XK_Page_Down:
+						if (_fsel < _dircount) {
+							int llen = (_fib_height - LISTBOT * _fib_font_vsep) / _fib_font_vsep;
+							if (llen < 1) llen = 1; else --llen;
+							int fs = MIN (_dircount - 1, _fsel + llen);
+							fib_select ( dpy, fs);
+						}
+						break;
+					case XK_Left:
+						if (_pathparts > 1) {
+							int i = 0;
+							char path[1024] = "/";
+							while (++i < _pathparts - 1) {
+								strcat (path, _pathbtn[i].name);
+								strcat (path, "/");
+							}
+							char *sel = strdup (_pathbtn[_pathparts-1].name);
+							fib_opendir (dpy, path, sel);
+							free (sel);
+						}
+						break;
+					case XK_Right:
+						if (_fsel >= 0 && _fsel < _dircount) {
+							if (_dirlist[_fsel].flags & 4) {
+								cb_open (dpy);
+							}
+						}
+						break;
+					case XK_Return:
+						cb_open (dpy);
+						break;
+					default:
+						if ((key >= XK_a && key <= XK_z) || (key >= XK_0 && key <= XK_9)) {
+							int i;
+							for (i = 0; i < _dircount; ++i) {
+								int j = (_fsel + i + 1) % _dircount;
+								char kcmp = _dirlist[j].name[0];
+								if (kcmp > 0x40 && kcmp <= 0x5A) kcmp |= 0x20;
+								if (kcmp == (char)key) {
+									fib_select ( dpy, j);
+									break;
+								}
+							}
+						}
+						break;
 				}
 			}
 			break;
-		}
-	}
-	break;
 	}
 
 	if (_status) {
@@ -2391,108 +2248,97 @@ int x_fib_handle_events (Display *dpy, XEvent *event)
 	return _status;
 }
 
-int x_fib_status ()
-{
+int x_fib_status () {
 	return _status;
 }
 
-int x_fib_configure (int k, const char *v)
-{
-	if (_fib_win) {
-		return -1;
-	}
+int x_fib_configure (int k, const char *v) {
+	if (_fib_win) { return -1; }
 	switch (k) {
-	case 0:
-		if (strlen (v) >= sizeof(_cur_path) -1) return -2;
-		if (strlen (v) < 1) return -2;
-		if (v[0] != '/') return -2;
-		if (strstr (v, "//")) return -2;
-		strncpy (_cur_path, v, sizeof(_cur_path));
-		break;
-	case 1:
-		if (strlen (v) >= sizeof(_fib_cfg_title) -1) return -2;
-		strncpy (_fib_cfg_title, v, sizeof(_fib_cfg_title));
-		break;
-	case 2:
-		if (strlen (v) >= sizeof(_fib_cfg_custom_font) -1) return -2;
-		strncpy (_fib_cfg_custom_font, v, sizeof(_fib_cfg_custom_font));
-		break;
-	case 3:
-		if (strlen (v) >= sizeof(_fib_cfg_custom_places) -1) return -2;
-		strncpy (_fib_cfg_custom_places, v, sizeof(_fib_cfg_custom_places));
-		break;
-	default:
-		return -2;
+		case 0:
+			if (strlen (v) >= sizeof(_cur_path) -1) return -2;
+			if (strlen (v) < 1) return -2;
+			if (v[0] != '/') return -2;
+			if (strstr (v, "//")) return -2;
+			strncpy (_cur_path, v, sizeof(_cur_path));
+			break;
+		case 1:
+			if (strlen (v) >= sizeof(_fib_cfg_title) -1) return -2;
+			strncpy (_fib_cfg_title, v, sizeof(_fib_cfg_title));
+			break;
+		case 2:
+			if (strlen (v) >= sizeof(_fib_cfg_custom_font) -1) return -2;
+			strncpy (_fib_cfg_custom_font, v, sizeof(_fib_cfg_custom_font));
+			break;
+		case 3:
+			if (strlen (v) >= sizeof(_fib_cfg_custom_places) -1) return -2;
+			strncpy (_fib_cfg_custom_places, v, sizeof(_fib_cfg_custom_places));
+			break;
+		default:
+			return -2;
 	}
 	return 0;
 }
 
-int x_fib_cfg_buttons (int k, int v)
-{
-	if (_fib_win) {
-		return -1;
-	}
+int x_fib_cfg_buttons (int k, int v) {
+	if (_fib_win) { return -1; }
 	switch (k) {
-	case 1:
-		if (v < 0) {
-			_btn_hidden.flags |= 8;
-		} else {
-			_btn_hidden.flags &= ~8;
-		}
-		if (v == 1) {
-			_btn_hidden.flags |= 2;
-			_fib_hidden_fn = 1;
-		} else if (v == 0) {
-			_btn_hidden.flags &= 2;
-			_fib_hidden_fn = 0;
-		}
-		break;
-	case 2:
-		if (v < 0) {
-			_btn_places.flags |= 8;
-		} else {
-			_btn_places.flags &= ~8;
-		}
-		if (v == 1) {
-			_btn_places.flags |= 2;
-			_fib_show_places = 1;
-		} else if (v == 0) {
-			_btn_places.flags &= ~2;
-			_fib_show_places = 0;
-		}
-		break;
-	case 3:
-		// NB. filter button is automatically hidden
-		// IFF the filter-function is NULL.
-		if (v < 0) {
-			_btn_filter.flags |= 8;
-		} else {
-			_btn_filter.flags &= ~8;
-		}
-		if (v == 1) {
-			_btn_filter.flags &= ~2; // inverse - 'show all' = !filter
-			_fib_filter_fn = 1;
-		} else if (v == 0) {
-			_btn_filter.flags |= 2;
-			_fib_filter_fn = 0;
-		}
-	default:
-		return -2;
+		case 1:
+			if (v < 0) {
+				_btn_hidden.flags |= 8;
+			} else {
+				_btn_hidden.flags &= ~8;
+			}
+			if (v == 1) {
+				_btn_hidden.flags |= 2;
+				_fib_hidden_fn = 1;
+			} else if (v == 0) {
+				_btn_hidden.flags &= 2;
+				_fib_hidden_fn = 0;
+			}
+			break;
+		case 2:
+			if (v < 0) {
+				_btn_places.flags |= 8;
+			} else {
+				_btn_places.flags &= ~8;
+			}
+			if (v == 1) {
+				_btn_places.flags |= 2;
+				_fib_show_places = 1;
+			} else if (v == 0) {
+				_btn_places.flags &= ~2;
+				_fib_show_places = 0;
+			}
+			break;
+		case 3:
+			// NB. filter button is automatically hidden
+			// IFF the filter-function is NULL.
+			if (v < 0) {
+				_btn_filter.flags |= 8;
+			} else {
+				_btn_filter.flags &= ~8;
+			}
+			if (v == 1) {
+				_btn_filter.flags &= ~2; // inverse - 'show all' = !filter
+				_fib_filter_fn = 1;
+			} else if (v == 0) {
+				_btn_filter.flags |= 2;
+				_fib_filter_fn = 0;
+			}
+		default:
+			return -2;
 	}
 	return 0;
 }
 
-int x_fib_cfg_filter_callback (int (*cb)(const char*))
-{
-	if (_fib_win) {
-		return -1;
-	}
+int x_fib_cfg_filter_callback (int (*cb)(const char*)) {
+	if (_fib_win) { return -1; }
 	_fib_filter_function = cb;
 	return 0;
 }
 
-char *x_fib_filename ()
-{
+char *x_fib_filename () {
 	if (_status > 0 && !_fib_win)
 		return strdup (_rv_open);
 	else
@@ -2504,8 +2350,7 @@ char *x_fib_filename ()
 /* example usage */
 #ifdef SOFD_TEST
 
-static int fib_filter_movie_filename (const char *name)
-{
+static int fib_filter_movie_filename (const char *name) {
 	if (!_fib_filter_fn) return 1;
 	const int l3 = strlen (name) - 3;
 	const int l4 = l3 - 1;
@@ -2513,44 +2358,49 @@ static int fib_filter_movie_filename (const char *name)
 	const int l6 = l5 - 1;
 	const int l9 = l6 - 3;
 	if (
-	        (l4 > 0 && (
-	                 !strcasecmp (&name[l4], ".avi")
-	                 || !strcasecmp (&name[l4], ".mov")
-	                 || !strcasecmp (&name[l4], ".ogg")
-	                 || !strcasecmp (&name[l4], ".ogv")
-	                 || !strcasecmp (&name[l4], ".mpg")
-	                 || !strcasecmp (&name[l4], ".mov")
-	                 || !strcasecmp (&name[l4], ".mp4")
-	                 || !strcasecmp (&name[l4], ".mkv")
-	                 || !strcasecmp (&name[l4], ".vob")
-	                 || !strcasecmp (&name[l4], ".asf")
-	                 || !strcasecmp (&name[l4], ".avs")
-	                 || !strcasecmp (&name[l4], ".dts")
-	                 || !strcasecmp (&name[l4], ".flv")
-	                 || !strcasecmp (&name[l4], ".m4v")
-	         )) ||
-	        (l5 > 0 && (
-	                 !strcasecmp (&name[l5], ".h264")
-	                 || !strcasecmp (&name[l5], ".webm")
-	         )) ||
-	        (l6 > 0 && (
-	                 !strcasecmp (&name[l6], ".dirac")
-	         )) ||
-	        (l9 > 0 && (
-	                 !strcasecmp (&name[l9], ".matroska")
-	         )) ||
-	        (l3 > 0 && (
-	                 !strcasecmp (&name[l3], ".dv")
-	                 || !strcasecmp (&name[l3], ".ts")
-	         ))
-	) {
-		return 1;
-	}
+			(l4 > 0 && (
+				   !strcasecmp (&name[l4], ".avi")
+				|| !strcasecmp (&name[l4], ".mov")
+				|| !strcasecmp (&name[l4], ".ogg")
+				|| !strcasecmp (&name[l4], ".ogv")
+				|| !strcasecmp (&name[l4], ".mpg")
+				|| !strcasecmp (&name[l4], ".mov")
+				|| !strcasecmp (&name[l4], ".mp4")
+				|| !strcasecmp (&name[l4], ".mkv")
+				|| !strcasecmp (&name[l4], ".vob")
+				|| !strcasecmp (&name[l4], ".asf")
+				|| !strcasecmp (&name[l4], ".avs")
+				|| !strcasecmp (&name[l4], ".dts")
+				|| !strcasecmp (&name[l4], ".flv")
+				|| !strcasecmp (&name[l4], ".m4v")
+				)) ||
+			(l5 > 0 && (
+				   !strcasecmp (&name[l5], ".h264")
+				|| !strcasecmp (&name[l5], ".webm")
+				)) ||
+			(l6 > 0 && (
+				   !strcasecmp (&name[l6], ".dirac")
+				)) ||
+			(l9 > 0 && (
+				   !strcasecmp (&name[l9], ".matroska")
+				)) ||
+			(l3 > 0 && (
+				   !strcasecmp (&name[l3], ".dv")
+				|| !strcasecmp (&name[l3], ".ts")
+				))
+			)
+			{
+				return 1;
+			}
 	return 0;
 }
 
-int main (int argc, char **argv)
+void sofd_file_change_cb(const char *file, void *userdata)
 {
+	printf("SOFD file changed callback: %s\n", file);
+}
+
+int main (int argc, char **argv) {
 	Display* dpy = XOpenDisplay (0);
 	if (!dpy) return -1;
 
@@ -2558,6 +2408,8 @@ int main (int argc, char **argv)
 	x_fib_configure (1, "Open Movie File");
 	x_fib_load_recent ("/tmp/sofd.recent");
 	x_fib_show (dpy, 0, 300, 300);
+
+	x_fib_file_changed_cb(sofd_file_change_cb, 0);
 
 	while (1) {
 		XEvent event;
