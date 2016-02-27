@@ -210,7 +210,7 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
 						msg[1] = 36 + pad;
 						msg[2] = 90;
 						// use normal MIDI function for playing notes
-						self->dsp->midi( 0, msg );
+						self->dsp->midi( 0, msg, 1);
 					}
 				}
 			}

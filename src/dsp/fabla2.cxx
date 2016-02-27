@@ -179,6 +179,10 @@ void Fabla2DSP::auditionStop()
 	auditionVoice->stop();
 }
 
+void Fabla2DSP::auditionPlay( const char* path )
+{
+}
+
 void Fabla2DSP::auditionPlay( int bank, int pad, int layer )
 {
 	if ( bank < 0 || bank >=  4 ) return;
@@ -223,7 +227,7 @@ void Fabla2DSP::refreshUI()
 	refresh_UI = true;
 }
 
-void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
+void Fabla2DSP::midi( int eventTime, const uint8_t* msg, bool fromUI )
 {
 	//printf("MIDI: %i, %i, %i\n", (int)msg[0], (int)msg[1], (int)msg[2] );
 
@@ -291,10 +295,16 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg )
 
 					// FIXME: only when UI is visible?
 					// force push updates to UI
-					padRefreshLayers(bank, pad);
-					int l = p->lastPlayedLayer();
-					Sample* s = p->layer( l );
-					writeSampleState(bank, pad, l, p, s);
+					if(!fromUI) {
+						padRefreshLayers(bank, pad);
+						int l = p->lastPlayedLayer();
+						Sample* s = p->layer( l );
+						writeSampleState(bank, pad, l, p, s);
+					}
+					else
+					{
+						printf("Skipping UI update for MIDI event\n");
+					}
 
 					allocd = true;
 				}
@@ -593,6 +603,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 	Sample* s = pad->layer( l );
 	if( !s ) {
 		// abuse the error handling in UI to blank the sample view of UI
+		printf("%s : sample not valid! Fix this.\n", __PRETTY_FUNCTION__);
 		LV2_Atom_Forge_Frame frame;
 		lv2_atom_forge_frame_time( &lv2->forge, 0 );
 		lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_ReplyUiSampleState );

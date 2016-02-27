@@ -70,6 +70,7 @@
 #define FABLA2_PadAuxBus3           FABLA2_URI "#PadAuxBus3"
 #define FABLA2_PadAuxBus4           FABLA2_URI "#PadAuxBus4"
 
+#define FABLA2_SampleAudition       FABLA2_URI "#SampleAudition"
 #define FABLA2_SampleFilterType     FABLA2_URI "#SampleFilterType"
 #define FABLA2_SampleFilterFrequency FABLA2_URI"#SampleFilterFrequency"
 #define FABLA2_SampleFilterResonance FABLA2_URI"#SampleFilterResonance"
@@ -145,6 +146,7 @@ typedef struct {
 	LV2_URID fabla2_PadAuxBus3;
 	LV2_URID fabla2_PadAuxBus4;
 
+	LV2_URID fabla2_SampleAudition;
 	LV2_URID fabla2_SampleFilterType;
 	LV2_URID fabla2_SampleFilterFrequency;
 	LV2_URID fabla2_SampleFilterResonance;
@@ -222,7 +224,7 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
 	uris->fabla2_PadAuxBus3           = map->map(map->handle, FABLA2_PadAuxBus3);
 	uris->fabla2_PadAuxBus4           = map->map(map->handle, FABLA2_PadAuxBus4);
 
-
+	uris->fabla2_SampleAudition       = map->map(map->handle, FABLA2_SampleAudition);
 	uris->fabla2_SampleFilterType     = map->map(map->handle, FABLA2_SampleFilterType);
 	uris->fabla2_SampleFilterFrequency= map->map(map->handle, FABLA2_SampleFilterFrequency);
 	uris->fabla2_SampleFilterResonance= map->map(map->handle, FABLA2_SampleFilterResonance);

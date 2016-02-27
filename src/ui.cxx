@@ -91,9 +91,12 @@ static void fabla2_port_event(LV2UI_Handle handle,
 
 		const LV2_Atom_Object* obj = (const LV2_Atom_Object*)atom;
 
-		bool padStop = (obj->body.otype == ui->uris.fabla2_PadStop);
-		if (obj->body.otype == ui->uris.fabla2_PadPlay || padStop) {
-			//printf("UI: Fabla Pad Event\n");
+		int padStop = (obj->body.otype == ui->uris.fabla2_PadStop);
+		int padPlay = 0;
+		if(obj->body.otype == ui->uris.fabla2_PadPlay)
+			padPlay = 1;
+		if (padPlay || padStop) {
+			printf("UI: Fabla Pad Event: play %d, stop %d\n", padPlay, padStop);
 			const LV2_Atom* bank = NULL;
 			const LV2_Atom* pad  = NULL;
 			const LV2_Atom* lay  = NULL;
@@ -123,8 +126,8 @@ static void fabla2_port_event(LV2UI_Handle handle,
 				// - now MIDI notes won't show the pads :/
 				//if(ui->redrawRev != ui->redrawRevDone) {
 				{
-					//printf("UI pad event %i, %i, %i\n", b, p, layer );
-					ui->padEvent( b, p, layer, !padStop, v );
+					printf("UI pad event bank: %i, pad: %i, layer: %i, velo: %d, noteOn: %d\n", b, p, layer, v, padPlay);
+					ui->padEvent( b, p, layer, padPlay, v );
 					ui->redrawRevDone = ui->redrawRev;
 				}
 			}

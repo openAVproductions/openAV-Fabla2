@@ -33,7 +33,7 @@ static LV2_Atom* writePadPlay( LV2_Atom_Forge* forge, URIs* uris, int bank, int 
 	return set;
 }
 
-static LV2_Atom* writeSetFile( LV2_Atom_Forge* forge, URIs* uris, int bank, int pad, std::string file )
+static LV2_Atom* writeSetFile( LV2_Atom_Forge* forge, URIs* uris, int bank, int pad, std::string file, bool audition = 0)
 {
 	LV2_Atom_Forge_Frame frame;
 	LV2_Atom* set = (LV2_Atom*)lv2_atom_forge_object( forge, &frame, 0, uris->patch_Set);
@@ -49,6 +49,9 @@ static LV2_Atom* writeSetFile( LV2_Atom_Forge* forge, URIs* uris, int bank, int 
 
 	lv2_atom_forge_key(forge, uris->patch_value);
 	lv2_atom_forge_path(forge, file.c_str(), strlen(file.c_str()) );
+
+	lv2_atom_forge_key(forge, uris->fabla2_SampleAudition);
+	lv2_atom_forge_urid(forge, audition);
 
 	lv2_atom_forge_pop(forge, &frame);
 

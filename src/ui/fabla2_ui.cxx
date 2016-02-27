@@ -695,8 +695,24 @@ void Fabla2UI::showPadsView()
 	redraw();
 }
 
+static void fabla2_file_select_callback(const char *c, void *userdata)
+{
+	Fabla2UI* self = (Fabla2UI*)userdata;
+	printf("FROM CALLBACK %s\n", c);
+
+#define OBJ_BUF_SIZE 1024
+	uint8_t obj_buf[OBJ_BUF_SIZE];
+	lv2_atom_forge_set_buffer(&self->forge, obj_buf, OBJ_BUF_SIZE);
+	// true = audtion sample only flag
+	LV2_Atom* msg = writeSetFile( &self->forge, &self->uris, -1, -1, c, true);
+	self->write_function(self->controller, 0, lv2_atom_total_size(msg), self->uris.atom_eventTransfer, msg);
+}
+
 /// taken from SOFD example - thanks x42 for this awesome library!
-std::string fabla2_showFileBrowser( std::string dir )
+// TODO: This can probably be "non-modal" to allow UI redraws in BG
+// by using x_fib_handle_events() without the loop, and calling it
+// using a wrapper-widget or else just manually hack it :)
+std::string fabla2_showFileBrowser(std::string dir, Fabla2UI* t)
 {
 	Display* dpy = XOpenDisplay(0);
 	if (!dpy) {
@@ -706,6 +722,7 @@ std::string fabla2_showFileBrowser( std::string dir )
 	x_fib_configure (1, "Open File");
 	x_fib_load_recent ("/tmp/sofd.recent");
 	x_fib_show (dpy, 0, 400, 320);
+	x_fib_file_changed_cb( fabla2_file_select_callback, (void *)t);
 
 	// stores result to return
 	std::string ret;
@@ -717,7 +734,6 @@ std::string fabla2_showFileBrowser( std::string dir )
 			if (x_fib_handle_events (dpy, &event)) {
 				if (x_fib_status () > 0) {
 					char *fn = x_fib_filename ();
-					//printf ("OPEN '%s'\n", fn);
 					x_fib_add_recent (fn, time (NULL));
 
 					ret = fn;
@@ -758,7 +774,7 @@ void Fabla2UI::showFileView()
 	sampleFileScroll->set( listSampleFiles );
 	*/
 	//printf("spawming SOFD now!\n");
-	std::string chosen = fabla2_showFileBrowser( currentDir );
+	std::string chosen = fabla2_showFileBrowser( currentDir, this );
 
 	if( chosen.size() > 0 ) {
 		//printf("SOFD returned %s\n", chosen.c_str() );
@@ -794,7 +810,7 @@ void Fabla2UI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity
 	currentLayer = layer;
 	currentPad   = pad;
 
-	float fin = noteOn * (velocity/255.f);
+	float fin = noteOn ? 255 : 25;
 	printf("sending pad %d : alpha %f tl maschine\n", pad, fin );
 	updateMaschine(pad, 0, 255, 255, fin );
 	//requestSampleState( currentBank, currentPad, currentLayer );

@@ -66,6 +66,7 @@ public:
 	void panic();
 
 	/// audition voice details
+	void auditionPlay( const char* path );
 	void auditionPlay( int bank, int pad, int layer );
 	void auditionStop();
 
@@ -76,7 +77,8 @@ public:
 	void process( int nframes );
 
 	/// plugin format wrapper calls this for each MIDI event that arrives
-	void midi( int frame, const uint8_t* );
+	/// if fromUI == 1, do not send updates back to UI
+	void midi( int frame, const uint8_t*, bool fromUI = 0 );
 
 	/// called with UI Atom data
 	void uiMessage( int bank, int pad, int layer, int URI, float value );
@@ -111,6 +113,7 @@ private:
 
 	/// used to audition samples, and deal with layer-playing from UI
 	Voice* auditionVoice;
+	Pad* auditionPad;
 
 	/// voices store all the voices available for use
 	std::vector<Voice*> voices;
