@@ -16,7 +16,8 @@ static inline const LV2_Atom* read_set_file(FablaLV2* self,
                 const URIs*     uris,
                 const LV2_Atom_Object* obj,
                 int& bank,
-                int& pad )
+                int& pad,
+		int& auditionOnly)
 {
 	if (obj->body.otype != uris->patch_Set) {
 		lv2_log_note(&self->logger,"Ignoring unknown message type %d\n", obj->body.otype);
@@ -26,15 +27,18 @@ static inline const LV2_Atom* read_set_file(FablaLV2* self,
 	// get data from atom
 	const LV2_Atom_Int* b = 0;
 	const LV2_Atom_Int* p = 0;
+	const LV2_Atom_Int* a = 0;
 	const LV2_Atom* property = NULL;
 
 	lv2_atom_object_get(obj,
-	                    uris->patch_property, &property,
-	                    uris->fabla2_bank   , &b,
-	                    uris->fabla2_pad    , &p,
+	                    uris->patch_property       , &property,
+	                    uris->fabla2_bank          , &b,
+	                    uris->fabla2_pad           , &p,
+	                    uris->fabla2_SampleAudition, &a,
 	                    0);
 
-	//printf(" %i, %i, %i\n", property, b, p );
+	auditionOnly = ((const LV2_Atom_Int*)a)->body;
+	printf("worker: audition: %i\n", auditionOnly);
 
 	if( property && b && p ) {
 		lv2_log_note(&self->logger,"Work() : Getting Bank / Pad data from Atom.\n");
@@ -54,6 +58,18 @@ static inline const LV2_Atom* read_set_file(FablaLV2* self,
 			lv2_log_note(&self->logger,"Set message value is not a Path.\n");
 			return 0;
 		}
+		return file_path;
+	} else if( property && a ) {
+		const LV2_Atom* file_path = NULL;
+		lv2_atom_object_get(obj, uris->patch_value, &file_path, 0);
+		if (!file_path) {
+			lv2_log_note(&self->logger,"AUDITION: Malformed set message has no value.\n");
+			return 0;
+		} else if (file_path->type != uris->atom_Path) {
+			lv2_log_note(&self->logger,"AUDITION: Set message value is not a Path.\n");
+			return 0;
+		}
+		auditionOnly = ((const LV2_Atom_Int*)p)->body;
 		return file_path;
 	} else {
 		lv2_log_error(&self->logger,"Fabla2: Work() sample-load: error parsting Atom: abort.\n");
@@ -84,12 +100,18 @@ fabla2_work( LV2_Handle                  instance,
 
 		int bank = 0;
 		int pad  = 0;
-		const LV2_Atom* file_path = read_set_file( self, &self->uris, obj, bank, pad );
+		int auditionOnly = 0;
+		const LV2_Atom* file_path = read_set_file( self, &self->uris, obj, bank, pad, auditionOnly );
 
-		if (!file_path || bank == -1 || pad == -1 ) {
+		if(file_path && auditionOnly)
+		{
+			printf("auditioning sample %s\n", (char*)file_path);
+		}
+		else if (!file_path || bank == -1 || pad == -1 ) {
 			lv2_log_note(&self->logger,"Fabla2: Work() !file_path || !bank || !pad: aborting sample load.\n" );
 			return LV2_WORKER_ERR_UNKNOWN;
 		}
+
 
 		std::string file = (const char*)LV2_ATOM_BODY_CONST(file_path);
 		Fabla2::Sample* s = new Fabla2::Sample( self->dsp, 44100, "LoadedSample", file );
@@ -104,6 +126,7 @@ fabla2_work( LV2_Handle                  instance,
 
 			msg.bank   = bank;
 			msg.pad    = pad;
+			msg.auditionOnly = auditionOnly;
 			msg.sample = s;
 
 			// Loaded sample, send it to run() to be applied.

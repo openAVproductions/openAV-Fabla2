@@ -48,6 +48,7 @@ typedef struct {
 	LV2_Atom atom;
 	int bank;
 	int pad;
+	int auditionOnly;
 	Fabla2::Sample*  sample;
 } SampleLoadUnload;
 

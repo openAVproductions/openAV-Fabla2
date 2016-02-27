@@ -703,7 +703,7 @@ static void fabla2_file_select_callback(const char *c, void *userdata)
 #define OBJ_BUF_SIZE 1024
 	uint8_t obj_buf[OBJ_BUF_SIZE];
 	lv2_atom_forge_set_buffer(&self->forge, obj_buf, OBJ_BUF_SIZE);
-	// true = audtion sample only flag
+	// true = audition sample only flag
 	LV2_Atom* msg = writeSetFile( &self->forge, &self->uris, -1, -1, c, true);
 	self->write_function(self->controller, 0, lv2_atom_total_size(msg), self->uris.atom_eventTransfer, msg);
 }
@@ -781,7 +781,7 @@ void Fabla2UI::showFileView()
 #define OBJ_BUF_SIZE 1024
 		uint8_t obj_buf[OBJ_BUF_SIZE];
 		lv2_atom_forge_set_buffer(&forge, obj_buf, OBJ_BUF_SIZE);
-		LV2_Atom* msg = writeSetFile( &forge, &uris, currentBank, currentPad, chosen.c_str() );
+		LV2_Atom* msg = writeSetFile( &forge, &uris, currentBank, currentPad, chosen.c_str(), 0);
 		write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 
 		// return to pads view for triggering
