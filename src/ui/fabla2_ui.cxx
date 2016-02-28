@@ -571,7 +571,7 @@ void Fabla2UI::handleMaschine()
 				sock.sendPacketTo(pw.packetData(), pw.packetSize(), sock.packetOrigin());
 
 				for(int i = 0; i < 16; i++)
-					updateMaschine(i, 0, 81, 0xFF, 5);
+					updateMaschine(i, 10, 31, 0xFF, 15);
 				break;
 			}
 
@@ -858,9 +858,9 @@ void Fabla2UI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity
 	currentLayer = layer;
 	currentPad   = pad;
 
-	float fin = noteOn ? 255 : 25;
+	float fin = noteOn ? 255 : 15;
 	printf("sending pad %d : alpha %f tl maschine\n", pad, fin );
-	updateMaschine(pad, 0, 255, 255, fin );
+	updateMaschine(pad, 10, 31, 0xFF, fin);
 	//requestSampleState( currentBank, currentPad, currentLayer );
 
 	redraw();
@@ -1312,10 +1312,10 @@ void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 						currentPad = i;
 						requestSampleState( currentBank, currentPad, currentLayer );
 						writeAtom( uris.fabla2_PadPlay, w->value() );
-						updateMaschine(i, 0, 51, 255, 255);
+						updateMaschine(i, 10, 31, 255, 255);
 					} else {
 						writeAtom( uris.fabla2_PadStop, 0 );
-						updateMaschine(i, 0, 51, 255, 20);
+						updateMaschine(i, 10, 31, 255, 10);
 					}
 				}
 				return;
