@@ -1,5 +1,5 @@
 /*
- * Author: Harry van Haaren 2014
+ * Author: Harry van Haaren 2014 - 2016
  *         harryhaaren@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
@@ -107,6 +107,11 @@ private:
 
 	/// when true, AuxBus audio ports can be used
 	bool useAuxbus;
+
+	/// when true, the internal patterns will be played back
+	bool patternPlay;
+	int  patternBank;
+	int  patternChoice;
 
 	/// when true, the UI should be updated of pad stats / refreshed
 	bool refresh_UI;

@@ -36,6 +36,7 @@
 #include "voice.hxx"
 #include "sample.hxx"
 #include "sampler.hxx"
+#include "pattern.hxx"
 #include "library.hxx"
 #include "midi_helper.hxx"
 
@@ -48,6 +49,9 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
 	sr( rate ),
 	uris( u ),
 	useAuxbus( false ),
+	patternPlay( false ),
+	patternBank( 0 ),
+	patternChoice( 0 ),
 	recordEnable( false ),
 	recordBank( 0 ),
 	recordPad( 0 )
@@ -99,8 +103,6 @@ void Fabla2DSP::process( int nf )
 			stopRecordToPad();
 		}
 	}
-
-
 
 	// clear the audio buffers
 	memset( controlPorts[OUTPUT_L],  0, sizeof(float) * nframes );
@@ -162,6 +164,13 @@ void Fabla2DSP::process( int nf )
 		printf("record stopped: out of space! %li\n", recordIndex );
 	}
 
+	// Process internal sequencer
+	if( patternPlay ) {
+		// TODO: Refactor to use patternChoice
+		library->bank(patternBank)->getPattern()->process( nf );
+	}
+
+	// Process voices
 	for( int i = 0; i < voices.size(); i++ ) {
 		Voice* v = voices.at(i);
 		if( v->active() ) {
@@ -170,9 +179,8 @@ void Fabla2DSP::process( int nf )
 		}
 	}
 
-	// finally run the audition voice
+	// Process audition voice
 	auditionVoice->process();
-
 }
 
 void Fabla2DSP::auditionStop()

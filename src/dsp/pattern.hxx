@@ -1,6 +1,7 @@
 /*
- * Author: Harry van Haaren 2014
+ * Author: Harry van Haaren 2016
  *         harryhaaren@gmail.com
+ *         OpenAV Productions
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,56 +19,41 @@
  * MA 02110-1301, USA.
  */
 
-#ifndef OPENAV_FABLA2_BANK_HXX
-#define OPENAV_FABLA2_BANK_HXX
+#ifndef OPENAV_FABLA2_PATTERN_HXX
+#define OPENAV_FABLA2_PATTERN_HXX
 
 #include <vector>
+
+struct Sequencer;
 
 namespace Fabla2
 {
 
-class Pad;
-class Pattern;
 class Fabla2DSP;
 
-/** Bank
- * The Bank class contains resources: 16 pads, and some settings like MIDI
- * channel for control-change values etc.
+#define N_SEQS 16
+
+/** Pattern
+ * The pattern class allows creating and playback of sequences.
  */
-class Bank
+class Pattern
 {
 public:
-	Bank( Fabla2DSP* dsp, int rate, int ID, const char* name );
-	~Bank();
+	Pattern(Fabla2DSP* dsp, int rate);
+	~Pattern();
 
-	int ID()
-	{
-		return ID_;
-	}
+	void process(int nframes);
 
-	Pattern* getPattern() {return pattern;}
-
-	/// add resources for a certain bank/pad
-	void pad( Pad* p );
-
-	/// get a pad based on its location in the grid
-	Pad* pad( int num );
-
-	void name( const char* name );
-
-	/// testing function, to see if there are null pointers in the system
-	void checkAll();
+	// Used by static sequencer write callback to send events to F2
+	void writeEvent(int frame, int note, int velo);
 
 private:
 	Fabla2DSP* dsp;
-	int ID_; ///< Bank ABCD id
-	char name_[21]; // 20 letters + \n
+	int rate; /// samplerate - used for timing
+	Sequencer* seqs[N_SEQS];
 
-	Pattern* pattern;
-
-	std::vector<Pad*> pads;
 };
 
 };
 
-#endif // OPENAV_FABLA2_BANK_HXX
+#endif // OPENAV_FABLA2_PATTERN_HXX

@@ -21,6 +21,7 @@
 #include "bank.hxx"
 
 #include "pad.hxx"
+#include "pattern.hxx"
 #include <assert.h>
 #include <stdio.h>
 #include <cstring>
@@ -32,6 +33,7 @@ Bank::Bank( Fabla2DSP* d, int rate, int ID, const char* name ) :
 	dsp( d ),
 	ID_( ID )
 {
+	pattern = new Pattern(d, rate);
 }
 
 void Bank::name( const char* name )
