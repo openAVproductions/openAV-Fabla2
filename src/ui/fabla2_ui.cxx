@@ -96,6 +96,9 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	fileView = new Avtk::ListItem( this, wx, 10, 70, 16,  "File" );
 	fileView->clickMode( Avtk::Widget::CLICK_TOGGLE );
 
+	seqView = new Avtk::ListItem( this, wx, 10, 70, 16,  "Seq" );
+	seqView->clickMode( Avtk::Widget::CLICK_TOGGLE );
+
 	uiViewGroup->end();
 	wy += 78;
 

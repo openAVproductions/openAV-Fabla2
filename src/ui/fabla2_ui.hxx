@@ -63,6 +63,7 @@ public:
 	Avtk::ListItem* liveView;
 	Avtk::ListItem* padsView;
 	Avtk::ListItem* fileView;
+	Avtk::ListItem* seqView;
 
 	Avtk::Widget* followPadBtn;
 	Avtk::Widget* recordOverPad;
