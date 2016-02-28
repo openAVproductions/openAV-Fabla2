@@ -37,6 +37,7 @@ extern "C" {
 
 static void fabla2_ui_seqStepValueCB( Avtk::Widget* w, void* ud )
 {
+	printf("ud = %p", ud);
 	((Fabla2UI*)ud)->seqStepValueCB(w);
 }
 
@@ -1076,10 +1077,30 @@ int Fabla2UI::handle( const PuglEvent* e )
 	return 0;
 }
 
-void Fabla2UI::seqStepValueCB( Avtk::Widget* w)
+void Fabla2UI::seqStepValueCB(Avtk::Widget* w)
 {
 	Avtk::Step* s = (Avtk::Step*) w;
-	printf("step callback %d, %d\n", s->row, s->col);
+	// TODO write Atom here, setting step to value
+	uint8_t obj_buf[UI_ATOM_BUF_SIZE];
+	lv2_atom_forge_set_buffer(&forge, obj_buf, UI_ATOM_BUF_SIZE);
+	LV2_Atom_Forge_Frame frame;
+	LV2_Atom* msg = (LV2_Atom*)lv2_atom_forge_object( &forge, &frame, 3, uris.fabla2_SeqStepState);
+	if( !msg )
+		printf("message not valid!!\n");
+
+	lv2_atom_forge_key(&forge, uris.fabla2_bank);
+	lv2_atom_forge_int(&forge, 0 );
+	lv2_atom_forge_key(&forge, uris.fabla2_pad);
+	lv2_atom_forge_int(&forge, s->row );
+	lv2_atom_forge_key(&forge, uris.fabla2_value);
+	int tmp = int(w->value()+0.5);
+	lv2_atom_forge_float(&forge, tmp);
+
+	lv2_atom_forge_pop(&forge, &frame);
+
+	printf("this = %p, seq step cb: pad %d, step, %d, value %d\n", this, s->row, s->col, tmp);
+	printf("message size %d\n", lv2_atom_total_size(msg));
+	write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 }
 
 void Fabla2UI::widgetValueCB( Avtk::Widget* w)

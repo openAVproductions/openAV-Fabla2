@@ -55,6 +55,8 @@
 #define FABLA2_AuxBus               FABLA2_URI "#AuxBus"
 #define FABLA2_auxBusNumber         FABLA2_URI "#auxBusNumber"
 
+#define FABLA2_SeqStepState         FABLA2_URI "#SeqStepState"
+
 #define FABLA2_PadSwitchType        FABLA2_URI "#PadSwitchType"
 #define FABLA2_PadMuteGroup         FABLA2_URI "#PadMuteGroup"
 #define FABLA2_PadOffGroup          FABLA2_URI "#PadOffByGroup"
@@ -127,6 +129,8 @@ typedef struct {
 	LV2_URID fabla2_ReplyUiSampleState;
 	LV2_URID fabla2_UiLiveState;
 	LV2_URID fabla2_UiPadsState;
+
+	LV2_URID fabla2_SeqStepState;
 
 	LV2_URID fabla2_PadSwitchType;
 	LV2_URID fabla2_PadMuteGroup;
@@ -205,6 +209,8 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
 	uris->fabla2_ReplyUiSampleState   = map->map(map->handle, FABLA2_replyUiSampleState);
 	uris->fabla2_UiLiveState          = map->map(map->handle, FABLA2_UiLiveState );
 	uris->fabla2_UiPadsState          = map->map(map->handle, FABLA2_UiPadsState );
+
+	uris->fabla2_SeqStepState         = map->map(map->handle, FABLA2_SeqStepState);
 
 	uris->fabla2_PadSwitchType        = map->map(map->handle, FABLA2_PadSwitchType);
 	uris->fabla2_PadTriggerMode       = map->map(map->handle, FABLA2_PadTriggerMode);
