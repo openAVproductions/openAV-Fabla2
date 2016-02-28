@@ -33,7 +33,12 @@ extern "C" {
 #include "themes.hxx"
 
 // The default OSC port used by Maschine.rs userspace driver
-const int PORT_NUM = 42435;
+#define PORT_NUM 42435
+
+static void fabla2_ui_seqStepValueCB( Avtk::Widget* w, void* ud )
+{
+	((Fabla2UI*)ud)->seqStepValueCB(w);
+}
 
 Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	Avtk::UI( 856, 322, parent ),
@@ -86,12 +91,12 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	uiViewGroup->mode      ( Group::WIDTH_EQUAL );
 	uiViewGroup->valueMode ( Group::VALUE_SINGLE_CHILD );
 
-	liveView = new Avtk::ListItem( this, wx, 10, 70, 16,  "Live" );
-	liveView->clickMode( Avtk::Widget::CLICK_TOGGLE );
-
 	padsView = new Avtk::ListItem( this, wx, 10, 70, 16,  "Pads" );
 	padsView->clickMode( Avtk::Widget::CLICK_TOGGLE );
 	padsView->value( 1 );
+
+	liveView = new Avtk::ListItem( this, wx, 10, 70, 16,  "Live" );
+	liveView->clickMode( Avtk::Widget::CLICK_TOGGLE );
 
 	fileView = new Avtk::ListItem( this, wx, 10, 70, 16,  "File" );
 	fileView->clickMode( Avtk::Widget::CLICK_TOGGLE );
@@ -293,8 +298,6 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	padVolume->clickMode( Widget::CLICK_NONE );
 	padVolume->value( 0.75 );
 
-
-
 	//sampleControlGroup->visible( false );
 	sampleControlGroup->end();
 
@@ -302,8 +305,6 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	/// load defaults config dir
 	loadConfigFile( defaultDir );
 	currentDir = defaultDir;
-
-
 
 	/// Sample Browser panes =====================================================
 	wx = 82;
@@ -474,6 +475,35 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	liveGroup->visible( false );
 	liveGroup->end();
 
+	/// sequencer view ===============================================
+	wx = 82;
+	wy = 43;
+	seqGroup = new Avtk::Group( this, wx, wy, 266, 276, "SequencerView");
+
+	int totalX = 650;
+	int totalY = 276;
+	int stepSize = 276 / (SEQ_ROWS+3);
+	for(int i = 0; i < SEQ_ROWS; i++) {
+		for(int j = 0; j < SEQ_STEPS; j++) {
+			Avtk::Step* s = new Avtk::Step(this,
+						 wx + j * (stepSize+3), wy,
+						 stepSize, stepSize, "-");
+			s->clickMode( Widget::CLICK_TOGGLE );
+			s->row = i;
+			s->col = j;
+			s->callback = fabla2_ui_seqStepValueCB;
+			if( j % 4 == 0) {
+				s->theme(ui->theme(3));
+				if(i == SEQ_ROWS-1)
+					s->value(3);
+			}
+			seqSteps[i*SEQ_STEPS+j] = (Avtk::Step*)s;
+		}
+		wy += stepSize +3;
+	}
+
+	seqGroup->end();
+	seqGroup->visible( false );
 
 	/// Master view on right
 	wx = 782;
@@ -671,14 +701,29 @@ void Fabla2UI::loadNewDir( std::string newDir )
 	}
 }
 
+void Fabla2UI::showSeqView()
+{
+	padsGroup         ->visible( false );
+	waveformGroup     ->visible( false );
+	sampleBrowseGroup ->visible( false );
+	sampleControlGroup->visible( false );
+	liveGroup         ->visible( false );
+
+	seqGroup          ->visible( true );
+	uiViewGroup->value( 3 );
+	redraw();
+}
+
 void Fabla2UI::showLiveView()
 {
 	padsGroup         ->visible( false );
 	waveformGroup     ->visible( false );
 	sampleBrowseGroup ->visible( false );
 	sampleControlGroup->visible( false );
+	seqGroup          ->visible( false );
 
 	liveGroup         ->visible( true  );
+	uiViewGroup->value( 1 );
 	redraw();
 }
 
@@ -686,12 +731,13 @@ void Fabla2UI::showPadsView()
 {
 	liveGroup         ->visible( false );
 	sampleBrowseGroup ->visible( false );
+	seqGroup          ->visible( false );
 
 	padsGroup         ->visible( true );
 	waveformGroup     ->visible( true );
 	sampleControlGroup->visible( true );
 
-	uiViewGroup->value( 1 );
+	uiViewGroup->value( 0 );
 
 	// info could be outdated from live view
 	requestSampleState( currentBank, currentPad, currentLayer );
@@ -713,8 +759,7 @@ static void fabla2_file_select_callback(const char *c, void *userdata)
 
 /// taken from SOFD example - thanks x42 for this awesome library!
 // TODO: This can probably be "non-modal" to allow UI redraws in BG
-// by using x_fib_handle_events() without the loop, and calling it
-// using a wrapper-widget or else just manually hack it :)
+// by using x_fib_handle_events() without the loop, and calling it // using a wrapper-widget or else just manually hack it :)
 std::string fabla2_showFileBrowser(std::string dir, Fabla2UI* t)
 {
 	Display* dpy = XOpenDisplay(0);
@@ -1031,6 +1076,12 @@ int Fabla2UI::handle( const PuglEvent* e )
 	return 0;
 }
 
+void Fabla2UI::seqStepValueCB( Avtk::Widget* w)
+{
+	Avtk::Step* s = (Avtk::Step*) w;
+	printf("step callback %d, %d\n", s->row, s->col);
+}
+
 void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 {
 	float tmp = w->value();
@@ -1090,6 +1141,8 @@ void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 		}
 	} else if( w == liveView ) {
 		showLiveView();
+	} else if( w == seqView ) {
+		showSeqView();
 	} else if( w == padsView ) {
 		showPadsView();
 	} else if( w == fileView ) {

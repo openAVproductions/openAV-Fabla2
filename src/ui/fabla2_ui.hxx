@@ -3,6 +3,7 @@
 #define OPENAV_AVTK_TEST_UI_HXX
 
 #include "avtk.hxx"
+#include "step.hxx"
 #include "../shared.hxx"
 
 #define OSCPKT_OSTREAM_OUTPUT
@@ -13,15 +14,20 @@ using namespace oscpkt;
 // for write_function and controller
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 
+
 namespace Avtk
 {
 class Pad;
+class Step;
 class Fader;
 class Widget;
 class MixStrip;
 };
 
 #define UI_ATOM_BUF_SIZE 128*128
+// Sequencer view controls
+#define SEQ_ROWS 16
+#define SEQ_STEPS 32
 
 class Fabla2UI : public Avtk::UI
 {
@@ -46,6 +52,8 @@ public:
 
 	/// widget value callback
 	void widgetValueCB( Avtk::Widget* widget);
+	/// step-sequencer step button callback
+	void seqStepValueCB( Avtk::Widget* w);
 
 	/// handle() fucntion for keybindings
 	int handle( const PuglEvent* event );
@@ -140,6 +148,10 @@ public:
 	// Live view
 	Avtk::Group* liveGroup;
 	Avtk::Widget* padsHeaderBox;
+	
+	// Sequencer view
+	Avtk::Group* seqGroup;
+	Avtk::Step*  seqSteps[SEQ_ROWS*SEQ_STEPS];
 
 	// pad - tracks
 	Avtk::MixStrip* mixStrip [16];
@@ -196,9 +208,10 @@ private:
 	bool followPad;
 
 	/// shows the sample browser window instead of the pads
-	void showLiveView();
 	void showPadsView();
+	void showLiveView();
 	void showFileView();
+	void showSeqView();
 
 	/// updates the UI to a specifc bank
 	void setBank( int bank );
