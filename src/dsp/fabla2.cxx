@@ -55,6 +55,7 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
 	library = new Library( this, rate );
 
 	auditionVoice = new Voice( this, rate );
+	auditionPad = new Pad( this, rate, -1 );
 
 	for( int i = 0; i < 16; i++ )
 		voices.push_back( new Voice( this, rate ) );
@@ -179,8 +180,13 @@ void Fabla2DSP::auditionStop()
 	auditionVoice->stop();
 }
 
-void Fabla2DSP::auditionPlay( const char* path )
+Fabla2::Sample* Fabla2DSP::auditionPlay( Fabla2::Sample* sample )
 {
+	auditionVoice->stop();
+	auditionPad->clearAllSamples();
+	auditionPad->add(sample);
+	auditionVoice->playLayer( auditionPad, 0 );
+	return 0;
 }
 
 void Fabla2DSP::auditionPlay( int bank, int pad, int layer )
@@ -199,7 +205,6 @@ void Fabla2DSP::auditionPlay( int bank, int pad, int layer )
 	auditionVoice->stop();
 
 	auditionVoice->playLayer( p, layer );
-	printf("auditionPlay()\n");
 }
 
 static void fabla2_dsp_getDetailsFromNote( const uint8_t* msg, int& bank, int& pad )
@@ -300,10 +305,6 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg, bool fromUI )
 						int l = p->lastPlayedLayer();
 						Sample* s = p->layer( l );
 						writeSampleState(bank, pad, l, p, s);
-					}
-					else
-					{
-						printf("Skipping UI update for MIDI event\n");
 					}
 
 					allocd = true;

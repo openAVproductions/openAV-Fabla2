@@ -161,20 +161,32 @@ fabla2_work_response(LV2_Handle  instance,
 		const SampleLoadUnload* msg = (const SampleLoadUnload*)data;
 		//printf( "Work Response, sample load/unload. Name: %s. Frames: %i \n", msg->sample->getName(), msg->sample->getFrames() );
 
-		int bank = msg->bank;
-		int pad  = msg->pad;
-
-		if(bank < 0 || bank >=  4) {
-			delete msg->sample;
-			return LV2_WORKER_ERR_UNKNOWN;
+		if( msg->auditionOnly ) {
+			printf("audition only mesasge\n");
+			void* ret = self->dsp->auditionPlay( msg->sample );
+			if(ret)
+			{
+				// TODO free sample here (currently freed
+				// in DSP thread - not good )
+			}
 		}
-		if(pad  < 0 || pad  >= 16) {
-			delete msg->sample;
-			return LV2_WORKER_ERR_UNKNOWN;
+		else {
+			int bank = msg->bank;
+			int pad  = msg->pad;
+			if(bank < 0 || bank >=  4) {
+				// TODO FIXME: Non RT safe here?
+				delete msg->sample;
+				return LV2_WORKER_ERR_UNKNOWN;
+			}
+			if(pad  < 0 || pad  >= 16) {
+				// TODO FIXME: Non RT safe here?
+				delete msg->sample;
+				return LV2_WORKER_ERR_UNKNOWN;
+			}
+			// add() of pad writes LV2 update: we don't have layer information here yet.
+			self->dsp->getLibrary()->bank( bank )->pad( pad )->add( msg->sample );
 		}
 
-		// add() of pad writes LV2 update: we don't have layer information here yet.
-		self->dsp->getLibrary()->bank( bank )->pad( pad )->add( msg->sample );
 	}
 
 

@@ -783,7 +783,6 @@ void Fabla2UI::showFileView()
 		lv2_atom_forge_set_buffer(&forge, obj_buf, OBJ_BUF_SIZE);
 		LV2_Atom* msg = writeSetFile( &forge, &uris, currentBank, currentPad, chosen.c_str(), 0);
 		write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
-
 		// return to pads view for triggering
 		showPadsView();
 		//uiViewGroup->value( 1 );

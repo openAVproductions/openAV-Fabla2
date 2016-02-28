@@ -115,6 +115,9 @@ void Pad::add( Sample* s )
 	//printf( "Pad::add() %s, total #samples on pad = %i\n", s->getName(), samples.size() );
 	samples.push_back( s );
 
+	if(ID_ < 0) // Audition pad
+		return;
+
 	// request DSP to refresh UI layers for this pad
 	if( dsp ) {
 		dsp->padRefreshLayers( bank_, ID_ );
@@ -204,6 +207,7 @@ Sample* Pad::getPlaySample( float velocity )
 
 void Pad::clearAllSamples()
 {
+	// TODO FIXME NONRT Safe delete here
 	for(int i = 0; i < samples.size(); i++) {
 		delete samples.at(i);
 	}

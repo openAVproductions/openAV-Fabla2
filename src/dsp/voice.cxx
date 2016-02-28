@@ -74,13 +74,16 @@ void Voice::playLayer( Pad* p, int layer )
 {
 	assert( p );
 
+	play(0, -1, -1, p, 0.75);
+
+	return;
+
 	pad_ = p;
 
 	sampler->playLayer( p, layer );
 
 	Sample* s = sampler->getSample();
 	if( s ) {
-		//printf("Voice::playLayer() %i, on Sample %s\n", ID, s->getName() );
 		active_ = true;
 	} else {
 		//printf("Voice::playLayer() %i, sampler->play() returns NULL sample! Setting active to false\n", ID );
@@ -112,8 +115,6 @@ void Voice::playLayer( Pad* p, int layer )
 	adsr->setDecayRate   ( s->decay * sr );
 	adsr->setSustainLevel( s->sustain  );
 	adsr->setReleaseRate ( (0.05+s->release) * sr );
-
-
 	adsr->reset();
 	adsr->gate( true );
 }
@@ -335,10 +336,14 @@ void Voice::process()
 	}
 
 	// check if we need to trigger ADSR off
+	if( ID == 0 )
+		printf("Voice 0 - samples remaining %ld\n",
+		       sampler->getRemainingFrames() );
 	if( sampler->getRemainingFrames() + nframes < adsrOffCounter ) {
 		if( adsr->getState() != ADSR::ENV_RELEASE ) {
-			//printf("remaining frames + nframes < adsrOffCounter : ADSR OFF\n");
-			adsr->gate( false );
+			//printf("voice %d remaining frames + nframes < adsrOffCounter : ADSR OFF\n", ID);
+			if( ID != 0 )
+				adsr->gate( false );
 		}
 	}
 
@@ -356,7 +361,7 @@ void Voice::process()
 	}
 
 	if( done || adsr->getState() == ADSR::ENV_IDLE ) {
-		//printf("Voice done\n");
+		//printf("Voice %d done\n", ID);
 		active_ = false;
 		pad_ = 0;
 		return;

@@ -65,8 +65,8 @@ public:
 	/// turns off all voices, silencing output
 	void panic();
 
-	/// audition voice details
-	void auditionPlay( const char* path );
+	/// audition a sample, free the one being returned.
+	Fabla2::Sample* auditionPlay( Fabla2::Sample* sample );
 	void auditionPlay( int bank, int pad, int layer );
 	void auditionStop();
 
