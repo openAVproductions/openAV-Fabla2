@@ -1092,12 +1092,12 @@ void Fabla2UI::seqStepValueCB(Avtk::Widget* w)
 	lv2_atom_forge_key(&forge, uris.fabla2_bank);
 	lv2_atom_forge_int(&forge, 0 );
 	lv2_atom_forge_key(&forge, uris.fabla2_pad);
-	lv2_atom_forge_int(&forge, s->row );
+	lv2_atom_forge_int(&forge, 15 - s->row );
 	lv2_atom_forge_key(&forge, uris.fabla2_step);
 	lv2_atom_forge_int(&forge, s->col );
 	lv2_atom_forge_key(&forge, uris.fabla2_value);
 	int tmp = int(w->value()+0.5);
-	lv2_atom_forge_float(&forge, tmp);
+	lv2_atom_forge_int(&forge, tmp);
 
 	lv2_atom_forge_pop(&forge, &frame);
 	write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);

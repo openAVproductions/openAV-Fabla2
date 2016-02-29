@@ -269,6 +269,24 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
 					float val= ((const LV2_Atom_Float*)value)->body;
 					self->dsp->auxBus( num, val );
 				}
+			} else if (obj->body.otype == self->uris.fabla2_SeqStepState) {
+				const LV2_Atom* bank = 0;
+				const LV2_Atom* pad  = 0;
+				const LV2_Atom* step = 0;
+				const LV2_Atom* value = 0;
+				lv2_atom_object_get(obj,self->uris.fabla2_bank, &bank,
+						    self->uris.fabla2_pad     , &pad,
+						    self->uris.fabla2_step    , &step,
+						    self->uris.fabla2_value   , &value, 0);
+				if( bank && pad && step && value ) {
+					int b = ((const LV2_Atom_Int*)bank)->body;
+					int p = ((const LV2_Atom_Int*)pad )->body;
+					int s = ((const LV2_Atom_Int*)step)->body;
+					int v = ((const LV2_Atom_Int*)value)->body;
+					self->dsp->stepSeq(b, p, s, v);
+				} else {
+					lv2_log_trace(&self->logger, "Fabla2 DSP: Malformed StepSeq atom\n");
+				}
 			} else if (obj->body.otype == self->uris.patch_Set) {
 				// Received a set message, send it to the worker.
 				//lv2_log_trace(&self->logger, "Queueing set message\n");

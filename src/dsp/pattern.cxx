@@ -52,13 +52,8 @@ Pattern::Pattern( Fabla2DSP* d, int r) :
 		sequencer_set_callback(s, pattern_seq_cb, this);
 		sequencer_set_note(s, 36 + i);
 		sequencer_set_num_steps(s, 32);
-		sequencer_set_length(s, r / 2); // 120 bpm
+		sequencer_set_length(s, r * 4 ); // 4 seconds = 32 steps
 		seqs[i] = s;
-
-		sequencer_set_step( seqs[0],  0, 64 );
-		//sequencer_set_step( seqs[0],  8, 65 );
-		sequencer_set_step( seqs[0], 16, 66 );
-		//sequencer_set_step( seqs[0], 24, 67 );
 	}
 }
 

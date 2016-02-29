@@ -93,6 +93,9 @@ public:
 	/// update the layer info
 	void padRefreshLayers( int bank, int pad );
 
+	/// step sequencer control functions
+	void stepSeq(int bank, int pad, int step, int value);
+
 	/// lv2 convienience function to write a samples state to the UI
 	void writePadsState( int b, int p, Pad* pad );
 	void writeSampleState( int b, int p, int l, Pad* pad, Sample* );

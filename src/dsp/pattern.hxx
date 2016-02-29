@@ -44,6 +44,8 @@ public:
 
 	void process(int nframes);
 
+	Sequencer* getSequencer(int seq){return seqs[seq];}
+
 	// Used by static sequencer write callback to send events to F2
 	void writeEvent(int frame, int note, int velo);
 

@@ -38,6 +38,7 @@
 #include "sampler.hxx"
 #include "pattern.hxx"
 #include "library.hxx"
+#include "sequencer.h"
 #include "midi_helper.hxx"
 
 #include "plotter.hxx"
@@ -82,6 +83,13 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
 
 	// for debugging null pointers etc
 	//library->checkAll();
+}
+
+void Fabla2DSP::stepSeq(int bank, int pad, int step, int value)
+{
+	Sequencer* s = library->bank(bank)->getPattern()->getSequencer(pad);
+	sequencer_set_step(s, step, value);
+	patternPlay = true;
 }
 
 void Fabla2DSP::process( int nf )
