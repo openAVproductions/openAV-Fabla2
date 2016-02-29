@@ -492,12 +492,13 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 			s->clickMode( Widget::CLICK_TOGGLE );
 			s->row = i;
 			s->col = j;
-			s->callback = fabla2_ui_seqStepValueCB;
 			if( j % 4 == 0) {
 				s->theme(ui->theme(3));
 				if(i == SEQ_ROWS-1)
 					s->value(3);
 			}
+			s->callback = fabla2_ui_seqStepValueCB;
+			s->callbackUD = this;
 			seqSteps[i*SEQ_STEPS+j] = (Avtk::Step*)s;
 		}
 		wy += stepSize +3;
@@ -1092,23 +1093,20 @@ void Fabla2UI::seqStepValueCB(Avtk::Widget* w)
 	lv2_atom_forge_int(&forge, 0 );
 	lv2_atom_forge_key(&forge, uris.fabla2_pad);
 	lv2_atom_forge_int(&forge, s->row );
+	lv2_atom_forge_key(&forge, uris.fabla2_step);
+	lv2_atom_forge_int(&forge, s->col );
 	lv2_atom_forge_key(&forge, uris.fabla2_value);
 	int tmp = int(w->value()+0.5);
 	lv2_atom_forge_float(&forge, tmp);
 
 	lv2_atom_forge_pop(&forge, &frame);
-
-	printf("this = %p, seq step cb: pad %d, step, %d, value %d\n", this, s->row, s->col, tmp);
-	printf("message size %d\n", lv2_atom_total_size(msg));
 	write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 }
 
 void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 {
 	float tmp = w->value();
-
 	//printf("widgetCB : %s, value: %f\n", w->label(), tmp );
-
 	if( w == recordOverPad ) {
 		write_function( controller, Fabla2::RECORD_OVER_LAST_PLAYED_PAD, sizeof(float), 0, &tmp );
 	}

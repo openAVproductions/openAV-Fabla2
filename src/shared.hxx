@@ -97,6 +97,7 @@
 #define FABLA2_sample               FABLA2_URI "#sample"
 #define FABLA2_bank                 FABLA2_URI "#bank"
 #define FABLA2_pad                  FABLA2_URI "#pad"
+#define FABLA2_step                 FABLA2_URI "#step"
 #define FABLA2_layer                FABLA2_URI "#layer"
 #define FABLA2_velocity             FABLA2_URI "#velocity"
 #define FABLA2_value                FABLA2_URI "#value"
@@ -177,6 +178,7 @@ typedef struct {
 	LV2_URID fabla2_velocity;
 	LV2_URID fabla2_bank;
 	LV2_URID fabla2_pad;
+	LV2_URID fabla2_step;
 	LV2_URID fabla2_layer;
 	LV2_URID fabla2_value;
 	LV2_URID fabla2_audioData;
@@ -257,6 +259,7 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
 	uris->fabla2_velocity             = map->map(map->handle, FABLA2_velocity);
 	uris->fabla2_bank                 = map->map(map->handle, FABLA2_bank);
 	uris->fabla2_pad                  = map->map(map->handle, FABLA2_pad);
+	uris->fabla2_step                 = map->map(map->handle, FABLA2_step);
 	uris->fabla2_layer                = map->map(map->handle, FABLA2_layer);
 	uris->fabla2_value                = map->map(map->handle, FABLA2_value);
 	uris->fabla2_audioData            = map->map(map->handle, FABLA2_audioData);
