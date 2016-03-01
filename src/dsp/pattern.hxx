@@ -44,6 +44,8 @@ public:
 
 	void process(int nframes);
 
+	void setBPM(int bpm);
+
 	Sequencer* getSequencer(int seq){return seqs[seq];}
 
 	// Used by static sequencer write callback to send events to F2

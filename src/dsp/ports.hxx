@@ -49,6 +49,8 @@ typedef enum {
 	MASTER_PITCH,
 	RECORD_OVER_LAST_PLAYED_PAD,
 
+	SEQUENCER_BPM,
+
 	PORT_COUNT
 } Fabla2Ports;
 

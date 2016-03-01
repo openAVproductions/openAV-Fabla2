@@ -481,9 +481,11 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	wy = 43;
 	seqGroup = new Avtk::Group( this, wx, wy, 266, 276, "SequencerView");
 
-	int totalX = 650;
-	int totalY = 276;
 	int stepSize = 276 / (SEQ_ROWS+3);
+	waste = new Avtk::Button(this, wx, wy, 58, (stepSize+3)*16, "Pads");
+
+	wx = 82 + 62;
+	wy = 43;
 	for(int i = 0; i < SEQ_ROWS; i++) {
 		for(int j = 0; j < SEQ_STEPS; j++) {
 			Avtk::Step* s = new Avtk::Step(this,
@@ -503,6 +505,10 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 		}
 		wy += stepSize +3;
 	}
+
+	wx = 82 + 62 + (stepSize+3)*SEQ_STEPS + 3;
+	wy = 43;
+	seq_bpm = new Avtk::Dial(this, wx, wy, 40, 40, "BPM");
 
 	seqGroup->end();
 	seqGroup->visible( false );
@@ -1254,6 +1260,9 @@ void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 	} else if( w == masterAuxFader4 ) {
 		auxFaders[3]->value( tmp );
 		writeAuxBus( uris.fabla2_AuxBus, 3, tmp );
+	} else if( w == seq_bpm ) {
+		float v = (200*tmp)+40;
+		write_function( controller, Fabla2::SEQUENCER_BPM, sizeof(float), 0, &v );
 	} else {
 		// check bank buttons
 		for(int i = 0; i < 4; i++) {

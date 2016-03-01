@@ -172,8 +172,12 @@ void Fabla2DSP::process( int nf )
 		printf("record stopped: out of space! %li\n", recordIndex );
 	}
 
+
 	// Process internal sequencer
 	if( patternPlay ) {
+		// Updated Sequencer BPM from controlport value
+		float bpm = *controlPorts[SEQUENCER_BPM];
+		library->bank(patternBank)->getPattern()->setBPM( bpm );
 		// TODO: Refactor to use patternChoice
 		library->bank(patternBank)->getPattern()->process( nf );
 	}

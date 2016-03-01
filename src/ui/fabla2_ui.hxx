@@ -152,6 +152,7 @@ public:
 	// Sequencer view
 	Avtk::Group* seqGroup;
 	Avtk::Step*  seqSteps[SEQ_ROWS*SEQ_STEPS];
+	Avtk::Dial*  seq_bpm;
 
 	// pad - tracks
 	Avtk::MixStrip* mixStrip [16];

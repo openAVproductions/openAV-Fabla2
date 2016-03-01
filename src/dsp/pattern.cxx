@@ -57,6 +57,12 @@ Pattern::Pattern( Fabla2DSP* d, int r) :
 	}
 }
 
+void Pattern::setBPM(int bpm)
+{
+	for(int i = 0; i < N_SEQS; i++)
+		sequencer_set_length(seqs[i], rate/(bpm/2/60.f));
+}
+
 void Pattern::process(int nf)
 {
 	for(int i = 0; i < N_SEQS; i++) {

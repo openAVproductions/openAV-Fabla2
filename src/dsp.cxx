@@ -303,7 +303,6 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
 		}
 	}
 
-
 	self->dsp->process( nframes );
 
 	return;
