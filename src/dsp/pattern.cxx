@@ -57,6 +57,12 @@ Pattern::Pattern( Fabla2DSP* d, int r) :
 	}
 }
 
+void Pattern::rewind_to_start()
+{
+	for(int i = 0; i < N_SEQS; i++)
+		sequencer_reset_playhead(seqs[i]);
+}
+
 void Pattern::setBPM(int bpm)
 {
 	for(int i = 0; i < N_SEQS; i++)

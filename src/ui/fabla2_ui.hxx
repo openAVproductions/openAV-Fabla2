@@ -150,9 +150,10 @@ public:
 	Avtk::Widget* padsHeaderBox;
 	
 	// Sequencer view
-	Avtk::Group* seqGroup;
-	Avtk::Step*  seqSteps[SEQ_ROWS*SEQ_STEPS];
-	Avtk::Dial*  seq_bpm;
+	Avtk::Group*  seqGroup;
+	Avtk::Step*   seqSteps[SEQ_ROWS*SEQ_STEPS];
+	Avtk::Dial*   transport_bpm;
+	Avtk::Button* transport_play;
 
 	// pad - tracks
 	Avtk::MixStrip* mixStrip [16];

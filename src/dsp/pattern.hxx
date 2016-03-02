@@ -42,6 +42,8 @@ public:
 	Pattern(Fabla2DSP* dsp, int rate);
 	~Pattern();
 
+	void rewind_to_start();
+
 	void process(int nframes);
 
 	void setBPM(int bpm);

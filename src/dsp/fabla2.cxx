@@ -89,7 +89,6 @@ void Fabla2DSP::stepSeq(int bank, int pad, int step, int value)
 {
 	Sequencer* s = library->bank(bank)->getPattern()->getSequencer(pad);
 	sequencer_set_step(s, step, value);
-	patternPlay = true;
 }
 
 void Fabla2DSP::process( int nf )
@@ -173,13 +172,21 @@ void Fabla2DSP::process( int nf )
 	}
 
 
-	// Process internal sequencer
-	if( patternPlay ) {
-		// Updated Sequencer BPM from controlport value
-		float bpm = *controlPorts[SEQUENCER_BPM];
-		library->bank(patternBank)->getPattern()->setBPM( bpm );
+	float transport_play = *controlPorts[TRANSPORT_PLAY];
+	if( transport_play ) {
 		// TODO: Refactor to use patternChoice
-		library->bank(patternBank)->getPattern()->process( nf );
+		Pattern* p = library->bank(patternBank)->getPattern();
+		if(patternPlay == false) {
+			// start playing, so reset to start of loop/pattern
+			p->rewind_to_start();
+		}
+		p->setBPM( *controlPorts[TRANSPORT_BPM] );
+		p->process( nf );
+		// keep state of playback
+		patternPlay = true;
+	}
+	else {
+		patternPlay = false;
 	}
 
 	// Process voices

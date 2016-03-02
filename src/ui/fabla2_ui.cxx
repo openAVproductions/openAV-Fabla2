@@ -496,8 +496,6 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 			s->col = j;
 			if( j % 4 == 0) {
 				s->theme(ui->theme(3));
-				if(i == SEQ_ROWS-1)
-					s->value(3);
 			}
 			s->callback = fabla2_ui_seqStepValueCB;
 			s->callbackUD = this;
@@ -507,8 +505,6 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	}
 
 	wx = 82 + 62 + (stepSize+3)*SEQ_STEPS + 3;
-	wy = 43;
-	seq_bpm = new Avtk::Dial(this, wx, wy, 40, 40, "BPM");
 
 	seqGroup->end();
 	seqGroup->visible( false );
@@ -529,6 +525,14 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	//masterVolume->clickMode( Widget::CLICK_NONE );
 	masterVolume->value( 0.75 );
 
+
+	// Transport layer (always visible on top)
+	wy = 8;
+	wx = 170;
+	transport_play = new Avtk::Button(this, wx, wy, 60, 28, "Play");
+	wx += 62;
+	transport_bpm  = new Avtk::Dial(this, wx, wy-6, 34, 34, "BPM");
+	transport_play->clickMode( Widget::CLICK_TOGGLE );
 
 	// initial values
 	bankBtns[0]->value( true );
@@ -1260,9 +1264,11 @@ void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 	} else if( w == masterAuxFader4 ) {
 		auxFaders[3]->value( tmp );
 		writeAuxBus( uris.fabla2_AuxBus, 3, tmp );
-	} else if( w == seq_bpm ) {
+	} else if( w == transport_bpm ) {
 		float v = (200*tmp)+40;
-		write_function( controller, Fabla2::SEQUENCER_BPM, sizeof(float), 0, &v );
+		write_function( controller, Fabla2::TRANSPORT_BPM, sizeof(float), 0, &v );
+	} else if( w == transport_play ) {
+		write_function( controller, Fabla2::TRANSPORT_PLAY, sizeof(float), 0, &tmp );
 	} else {
 		// check bank buttons
 		for(int i = 0; i < 4; i++) {
