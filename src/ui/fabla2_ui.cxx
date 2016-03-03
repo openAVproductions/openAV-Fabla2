@@ -533,6 +533,7 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	wx += 62;
 	transport_bpm  = new Avtk::Dial(this, wx, wy-6, 34, 34, "BPM");
 	transport_play->clickMode( Widget::CLICK_TOGGLE );
+	transport_play->theme( theme(2) );
 
 	// initial values
 	bankBtns[0]->value( true );
@@ -590,6 +591,18 @@ void Fabla2UI::handleMaschine()
 			if(strcmp(&msg->address[0],"/maschine/button/rec") == 0) {
 				float tmp = press;
 				write_function(controller, Fabla2::RECORD_OVER_LAST_PLAYED_PAD, sizeof(float), 0, &tmp);
+			}
+			else if(strcmp(&msg->address[0],"/maschine/button/play") == 0) {
+				float now_play = 1;
+				if(transport_play->value() > 0.5) {
+					now_play = 0;
+				}
+				write_function(controller, Fabla2::TRANSPORT_PLAY, sizeof(float), 0, &now_play);
+				PacketWriter pw;
+				Message repl;
+				repl.init("/maschine/button/play").pushInt32(int(now_play));
+				pw.init().addMessage(repl);
+				sock.sendPacketTo(pw.packetData(), pw.packetSize(), sock.packetOrigin());
 			}
 
 			if(!press)

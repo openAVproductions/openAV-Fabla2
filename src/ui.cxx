@@ -81,6 +81,9 @@ static void fabla2_port_event(LV2UI_Handle handle,
 {
 	Fabla2UI* ui = (Fabla2UI*)handle;
 
+	if(port_index == Fabla2::TRANSPORT_PLAY)
+		printf("transport UI");
+
 	/* Check type of data received
 	 *  - format == 0: Control port event (float)
 	 *  - format > 0:  Message (atom)
