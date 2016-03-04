@@ -250,7 +250,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
 
 					if( ui->currentPad == pad )
 						ui->padVolume->value( vol );
-					ui->padFaders[pad]->value( vol );
+
 					ui->padFaders[pad]->value( vol );
 					ui->pads[pad]->loaded( load );
 

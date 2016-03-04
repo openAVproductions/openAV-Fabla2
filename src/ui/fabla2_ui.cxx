@@ -973,6 +973,9 @@ void Fabla2UI::writeAtomForPad( int eventURI, int pad, float value )
 	lv2_atom_forge_int(&forge, currentBank );
 	lv2_atom_forge_key(&forge, uris.fabla2_pad);
 	lv2_atom_forge_int(&forge, pad );
+	lv2_atom_forge_key(&forge, uris.fabla2_layer);
+	// layer not used in pad message, but needs to be a valid one.
+	lv2_atom_forge_int(&forge, 0 );
 	lv2_atom_forge_key(&forge, uris.fabla2_value);
 	lv2_atom_forge_float(&forge, value );
 	lv2_atom_forge_pop(&forge, &frame);
