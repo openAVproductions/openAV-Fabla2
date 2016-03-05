@@ -9,7 +9,8 @@
 using namespace Avtk;
 
 Fader::Fader( Avtk::UI* ui, int x_, int y_, int w_, int h_, std::string label_) :
-	Widget( ui, x_, y_, w_, h_, label_ )
+	Widget( ui, x_, y_, w_, h_, label_ ),
+	useCustomTheme(0)
 {
 	dragMode( DM_DRAG_VERTICAL );
 
@@ -41,10 +42,13 @@ void Fader::draw( cairo_t* cr )
 
 	float a = 0.2;
 	cairo_set_source_rgb( cr, 1*a, 1*a, 1*a );
-	//theme_->color( cr, HIGHLIGHT, 0.2 );
+	if(useCustomTheme)
+		theme_->color( cr, HIGHLIGHT, 0.2 );
 	cairo_fill_preserve(cr);
 	cairo_set_source_rgba( cr, 1, 1, 1, 0.8 );
-	//theme_->color( cr, HIGHLIGHT );
+
+	if(useCustomTheme)
+		theme_->color( cr, HIGHLIGHT );
 	cairo_set_line_width(cr, 1.2);
 	cairo_stroke(cr);
 }

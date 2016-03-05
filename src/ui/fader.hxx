@@ -14,6 +14,10 @@ public:
 	virtual ~Fader() {}
 
 	virtual void draw( cairo_t* cr );
+
+	// workaround for colours
+	int useCustomTheme;
+
 };
 
 };

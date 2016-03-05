@@ -42,6 +42,15 @@ static void fabla2_ui_seqStepValueCB( Avtk::Widget* w, void* ud )
 	((Fabla2UI*)ud)->seqStepValueCB(w);
 }
 
+enum FABLA2_THEMES {
+	THEME_BLUE = 0,
+	THEME_ORANGE,
+	THEME_GREEN,
+	THEME_YELLOW,
+	THEME_BLUE_2,
+	THEME_RED,
+};
+
 Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	Avtk::UI( 856, 322, parent ),
 	currentBank( 0 ),
@@ -63,13 +72,12 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 
 	int s = 32;
 	bankBtns[0] = new Avtk::Button( this, 5      , 43    , s, s, "A" );
-
 	bankBtns[1] = new Avtk::Button( this, 5 + s+6, 43    , s, s, "B" );
-	bankBtns[1]->theme( theme( 1 ) );
+	bankBtns[1]->theme( theme( THEME_ORANGE ) );
 	bankBtns[2] = new Avtk::Button( this, 5      , 43+s+6, s, s, "C" );
-	bankBtns[2]->theme( theme( 2 ) );
+	bankBtns[2]->theme( theme( THEME_GREEN ) );
 	bankBtns[3] = new Avtk::Button( this, 5 + s+6, 43+s+6, s, s, "D" );
-	bankBtns[3]->theme( theme( 3 ) );
+	bankBtns[3]->theme( theme( THEME_YELLOW ) );
 
 	for(int i = 0; i < 4; i++)
 		bankBtns[i]->clickMode( Avtk::Widget::CLICK_TOGGLE );
@@ -81,7 +89,7 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 
 	panicButton = new Avtk::Button( this, wx, wy, s * 2 + 6, 32,  "PANIC" );
 	panicButton->clickMode( Avtk::Widget::CLICK_MOMENTARY );
-	panicButton->theme( theme(5) );
+	panicButton->theme( theme(THEME_RED) );
 	wy += 32 + 10;
 
 	waste = new Avtk::Box( this, wx, wy, 70, 74,  "Views" );
@@ -114,7 +122,7 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	wy += 26;
 
 	recordOverPad = new Avtk::Button( this, wx, wy, 70, 30,  "REC" );
-	recordOverPad->theme( theme(5) );
+	recordOverPad->theme( theme(THEME_RED) );
 	recordOverPad->clickMode( Avtk::Widget::CLICK_TOGGLE );
 
 
@@ -242,7 +250,7 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	sampleTime   = new Avtk::Dial( this, wx + 44, wy, 40, 40, "Time" );
 	sampleTime->label_visible = false;
 	sampleTime->clickMode( Widget::CLICK_NONE );
-	sampleTime->theme( theme(2) );
+	sampleTime->theme( theme(THEME_GREEN) );
 
 	/// next col
 	wx += colWidth + spacer;
@@ -265,10 +273,10 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	waste->clickMode( Widget::CLICK_NONE );
 	wy += 14;
 	send1 = new Avtk::Dial( this, wx     , wy, 40, 40, "AuxBus 1" );
-	send1->theme( theme(1) );
+	send1->theme( theme(THEME_ORANGE) );
 	send1->label_visible = false;
 	send2 = new Avtk::Dial( this, wx + 44, wy, 40, 40, "AuxBus 2" );
-	send2->theme( theme(2) );
+	send2->theme( theme(THEME_GREEN) );
 	send2->label_visible = false;
 	wy += 40;
 
@@ -277,9 +285,9 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	wy += 14;
 	send3 = new Avtk::Dial( this, wx     , wy, 40, 40, "AuxBus 3" );
 	send3->label_visible = false;
-	send3->theme( theme(3) );
+	send3->theme( theme(THEME_YELLOW) );
 	send4 = new Avtk::Dial( this, wx + 44, wy, 40, 40, "AuxBus 4" );
-	send4->theme( theme(4) );
+	send4->theme( theme(THEME_RED) );
 	send4->label_visible = false;
 	wy += 40;
 
@@ -289,12 +297,12 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	waste = new Avtk::Box( this, wx, wy, colWidth/2, (14+40)*3-4,  "Pad" );
 	waste->clickMode( Widget::CLICK_NONE );
 	wy += 18;
-	padPlay = new Avtk::Button( this, wx+3.5, wy, 38, 16,  "Play" );
-	//padPlay->theme( theme( 2 ) ); // green?
-	wy += 18;
-	padMute = new Avtk::Button( this, wx+3.5, wy, 38, 16,  "Mute" );
+	padPlay = new Avtk::Button( this, wx+3, wy, 38, 15,  "Play" );
+	padPlay->theme( theme( THEME_GREEN ) );
+	wy += 19;
+	padMute = new Avtk::Button( this, wx+3, wy, 38, 15,  "Mute" );
 	padMute->clickMode( Widget::CLICK_TOGGLE );
-	padMute->theme( theme( 1 ) );
+	padMute->theme( theme( THEME_ORANGE ) );
 	wy += 55-36;
 	padVolume = new Avtk::Fader( this, wx+10, wy, 25, 100,  "PadVolume" );
 	padVolume->clickMode( Widget::CLICK_NONE );
@@ -408,10 +416,10 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 		auxDials[32+i] = new Avtk::Dial( this, mx, my + mw*2, size, size, "Aux3" );
 		auxDials[48+i] = new Avtk::Dial( this, mx, my + mw*3, size, size, "Aux4" );
 
-		auxDials[ 0+i]->theme( theme( 1 ) );
-		auxDials[16+i]->theme( theme( 2 ) );
-		auxDials[32+i]->theme( theme( 3 ) );
-		auxDials[48+i]->theme( theme( 4 ) );
+		auxDials[ 0+i]->theme( theme( THEME_ORANGE ) );
+		auxDials[16+i]->theme( theme( THEME_GREEN  ) );
+		auxDials[32+i]->theme( theme( THEME_YELLOW ) );
+		auxDials[48+i]->theme( theme( THEME_RED    ) );
 
 		auxDials[ 0+i]->label_visible = false;
 		auxDials[16+i]->label_visible = false;
@@ -441,10 +449,10 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 		s << i + 1;
 
 		const char* names[] = {
-			"Reverb",
+			"Reverb / Delay",
 			"Compression",
-			"Sidechain",
-			"Delay",
+			"Sidechain Key",
+			"Monitor / Rec",
 		};
 
 		auxbus[i] = new Avtk::MixStrip( this, mx, my, mw, mh, names[i] );
@@ -452,28 +460,36 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 		auxbus[i]->setNum( s.str().c_str() );
 
 		// buttons
-		waste = new Avtk::Button( this, mx+3.5, my+2, mw - 7, 16,  "Solo" );
+		int high = 19;
+		my += 4;
+		waste = new Avtk::Button( this, mx + 4, my, mw - 8, high,  "Solo" );
 		waste->clickMode( Widget::CLICK_TOGGLE );
-		waste->theme( theme( 3 ) );
-		//waste->value( 1 );
-		waste = new Avtk::Button( this, mx+3.5, my+22, mw - 7, 16,  "Mute" );
+		waste->theme( theme( THEME_ORANGE ) );
+		my += high + 4;
+
+		waste = new Avtk::Button( this, mx + 4, my, mw - 8, high,  "Mute" );
 		waste->clickMode( Widget::CLICK_TOGGLE );
-		waste->theme( theme( 1 ) );
-		//waste->value( 1 );
-		waste = new Avtk::Button( this, mx+3.5, my+42, mw - 7, 16,  "Audit" );
+		waste->theme( theme( THEME_GREEN ) );
+		my += high + 4;
+
+		waste = new Avtk::Button( this, mx + 4, my, mw - 8, high,  "Audit" );
 		waste->clickMode( Widget::CLICK_TOGGLE );
-		waste->theme( theme( 5 ) );
-		// waste->value( 1 );
-		waste = new Avtk::Button( this, mx+3.5, my+62, mw - 7, 16,  "Meta" );
+		waste->theme( theme( THEME_YELLOW ) );
+		my += high + 4;
+
+		waste = new Avtk::Button( this, mx + 4, my, mw - 8, high,  "Meta" );
 		waste->clickMode( Widget::CLICK_TOGGLE );
-		waste->theme( theme( 2 ) );
-		// waste->value( 1 );
+		waste->theme( theme( THEME_RED ) );
+		my += high + 4;
 
 		// fader
 		mw -= 6;
-		my += 115;
+		my += 24;
 		auxFaders[i] = new Avtk::Fader( this, mx + 8, my, 30, 140, names[i] );
+		auxFaders[i]->theme( theme( THEME_ORANGE+i) ); // hack for theme indexs
+		auxFaders[i]->useCustomTheme = true;
 	}
+	auxFaders[3]->theme( theme( THEME_RED )); // fix last one
 	liveGroup->visible( false );
 	liveGroup->end();
 
@@ -518,12 +534,24 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	wy += 18;
 
 	masterAuxFader1 = new Avtk::Fader( this, wx+ 1, wy+3, 15, 90, "Master Aux 1" );
+	masterAuxFader1->theme( theme(THEME_ORANGE) );
+	masterAuxFader1->useCustomTheme = true;
+
 	masterAuxFader2 = new Avtk::Fader( this, wx+19, wy+3, 15, 90, "Master Aux 2" );
+	masterAuxFader2->theme( theme(THEME_GREEN) );
+	masterAuxFader2->useCustomTheme = true;
+
 	masterAuxFader3 = new Avtk::Fader( this, wx+37, wy+3, 15, 90, "Master Aux 3" );
+	masterAuxFader3->theme( theme(THEME_YELLOW) );
+	masterAuxFader3->useCustomTheme = true;
+
 	masterAuxFader4 = new Avtk::Fader( this, wx+55, wy+3, 15, 90, "Master Aux 4" );
+	masterAuxFader4->theme( theme(THEME_RED) );
+	masterAuxFader4->useCustomTheme = true;
 
 	masterDB = new Avtk::Volume( this, wx+4, wy+96,38, 160,  "MasterDB");
-	masterDB->theme( theme(2) );
+	// FIXME : add white theme to AVTK, then update this
+	masterDB->theme( theme(THEME_BLUE) );
 
 	masterVolume = new Avtk::Fader( this, wx+4, wy+96,38, 160,  "Master Vol" );
 	//masterVolume->clickMode( Widget::CLICK_NONE );
@@ -536,7 +564,6 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	wx += 62;
 	transport_bpm  = new Avtk::Dial(this, wx, wy-6, 34, 34, "BPM");
 	transport_play->clickMode( Widget::CLICK_TOGGLE );
-	transport_play->theme( theme(2) );
 
 	// initial values
 	bankBtns[0]->value( true );

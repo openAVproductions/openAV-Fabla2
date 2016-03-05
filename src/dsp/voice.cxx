@@ -59,6 +59,7 @@ Voice::Voice( Fabla2DSP* d, int r ) :
 	adsr->setAttackRate  ( 0.001 * r );
 	adsr->setDecayRate   ( 0.25 * r );
 	adsr->setSustainLevel( 0.5  );
+	adsr->setReleaseRate ( 0.005 * r  );
 
 	int releaseSamps = 0.05 * r;
 	adsr->setReleaseRate ( releaseSamps );
