@@ -202,7 +202,10 @@ void Fabla2DSP::process( int nf )
 	// Process audition voice
 	auditionVoice->process();
 
-	dbMeter.process(nf, &controlPorts[OUTPUT_L], &controlPorts[OUTPUT_R]);
+	float* buf[2];
+	buf[0] = controlPorts[OUTPUT_L];
+	buf[1] = controlPorts[OUTPUT_R];
+	dbMeter.process(nf, &buf[0], &buf[0] );
 	// send UI message
 	LV2_Atom_Forge_Frame frame;
 	lv2_atom_forge_frame_time( &lv2->forge, 0 );

@@ -85,12 +85,12 @@ public:
 			float fTemp0 = float(input0[i]);
 			fRec0[0] = max_((fRec0[1] - fConst0), min_(10.f, (20.f * log10f(max_(1.58489e-05f, fabsf(fTemp0))))));
 			fvbargraph0 = fRec0[0];
-			output0[i] = float(fTemp0);
+			//output0[i] = float(fTemp0);
 
 			float fTemp1 = float(input1[i]);
 			fRec1[0] = max_((fRec1[1] - fConst0), min_(10.f, (20.f * log10f(max_(1.58489e-05f, fabsf(fTemp1))))));
 			fvbargraph1 = fRec1[0];
-			output1[i] = float(fTemp1);
+			//output1[i] = float(fTemp1);
 
 			fRec0[1] = fRec0[0];
 			fRec1[1] = fRec1[0];
