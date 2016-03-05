@@ -338,8 +338,7 @@ void Voice::process()
 
 	// check if we need to trigger ADSR off
 	if( ID == 0 )
-		printf("Voice 0 - samples remaining %ld\n",
-		       sampler->getRemainingFrames() );
+		//printf("Voice 0 - samples remaining %ld\n", sampler->getRemainingFrames() );
 	if( sampler->getRemainingFrames() + nframes < adsrOffCounter ) {
 		if( adsr->getState() != ADSR::ENV_RELEASE ) {
 			//printf("voice %d remaining frames + nframes < adsrOffCounter : ADSR OFF\n", ID);

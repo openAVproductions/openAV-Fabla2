@@ -100,7 +100,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
 		if(obj->body.otype == ui->uris.fabla2_PadPlay)
 			padPlay = 1;
 		if (padPlay || padStop) {
-			printf("UI: Fabla Pad Event: play %d, stop %d\n", padPlay, padStop);
+			//printf("UI: Fabla Pad Event: play %d, stop %d\n", padPlay, padStop);
 			const LV2_Atom* bank = NULL;
 			const LV2_Atom* pad  = NULL;
 			const LV2_Atom* lay  = NULL;
@@ -130,7 +130,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
 				// - now MIDI notes won't show the pads :/
 				//if(ui->redrawRev != ui->redrawRevDone) {
 				{
-					printf("UI pad event bank: %i, pad: %i, layer: %i, velo: %d, noteOn: %d\n", b, p, layer, v, padPlay);
+					//printf("UI pad event bank: %i, pad: %i, layer: %i, velo: %d, noteOn: %d\n", b, p, layer, v, padPlay);
 					ui->padEvent( b, p, layer, padPlay, v );
 					ui->redrawRevDone = ui->redrawRev;
 				}
@@ -211,7 +211,8 @@ static void fabla2_port_event(LV2UI_Handle handle,
 					ui->layers->clear();
 				}
 				ui->layers->addItem( n );
-				ui->pads[p]->loaded( true );
+				// not needed, split to "padHasSample" message.
+				//ui->pads[p]->loaded( true );
 				ui->mixStrip[p]->label( n.c_str() );
 			}
 		} else if( obj->body.otype == ui->uris.fabla2_PadHasSample ) {
@@ -267,7 +268,6 @@ static void fabla2_port_event(LV2UI_Handle handle,
 						ui->padVolume->value( vol );
 
 					ui->padFaders[pad]->value( vol );
-					ui->pads[pad]->loaded( load );
 
 					ui->auxDials[16*0+pad]->value( a1 );
 					ui->auxDials[16*1+pad]->value( a2 );
@@ -393,11 +393,6 @@ static void fabla2_port_event(LV2UI_Handle handle,
 			} else {
 				// sample-state event was written to the UI was not complete. If we have
 				// a pad, "unload" it in the UI. Blank state
-				if( pad >= 0 || pad < 16 )
-					ui->pads[pad]->loaded( false );
-				else {
-					printf("Fabla2 UI pad is invalid : FIXME : %s , %d", __FILE__ , __LINE__ );
-				}
 				ui->blankSampleState();
 			}
 			ui->redraw();

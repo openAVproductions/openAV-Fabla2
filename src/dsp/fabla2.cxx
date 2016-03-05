@@ -342,14 +342,10 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg, bool fromUI )
 
 					lv2_atom_forge_pop(&lv2->forge, &frame);
 
-					// FIXME: only when UI is visible?
-					// force push updates to UI
-					if(!fromUI) {
-						padRefreshLayers(bank, pad);
-						int l = p->lastPlayedLayer();
-						Sample* s = p->layer( l );
-						writeSampleState(bank, pad, l, p, s);
-					}
+					padRefreshLayers(bank, pad);
+					int l = p->lastPlayedLayer();
+					Sample* s = p->layer( l );
+					writeSampleState(bank, pad, l, p, s);
 
 					allocd = true;
 				}

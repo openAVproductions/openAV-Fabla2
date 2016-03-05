@@ -38,7 +38,6 @@ extern "C" {
 
 static void fabla2_ui_seqStepValueCB( Avtk::Widget* w, void* ud )
 {
-	printf("ud = %p", ud);
 	((Fabla2UI*)ud)->seqStepValueCB(w);
 }
 
@@ -606,7 +605,7 @@ void Fabla2UI::handleMaschine()
 			// Save the address, then return
 			if( strlen(&maschine_addr[0]) == 0)  {
 				maschine_addr = sock.remote_addr.asString();
-				printf("got maschine address - %s\n", &maschine_addr[0]);
+				printf("Maschine address - %s\n", &maschine_addr[0]);
 				PacketWriter pw;
 				Message repl;
 				repl.init("/maschine/midi_note_base").pushInt32(36);
@@ -666,6 +665,8 @@ void Fabla2UI::updateMaschine(int pad, int r, int g, int b, int a)
 		color += r << 16;
 		color += g << 8;
 		color += b;
+		if( a < 100 )
+			a = 0; // nuke offs to 0
 		repl.init("/maschine/pad").pushInt32(p).pushInt32(color).pushFloat(a/255.f);
 		pw.init().addMessage(repl);
 		sock.sendPacketTo(pw.packetData(), pw.packetSize(), sock.packetOrigin());
@@ -803,8 +804,6 @@ void Fabla2UI::showPadsView()
 static void fabla2_file_select_callback(const char *c, void *userdata)
 {
 	Fabla2UI* self = (Fabla2UI*)userdata;
-	printf("FROM CALLBACK %s\n", c);
-
 #define OBJ_BUF_SIZE 1024
 	uint8_t obj_buf[OBJ_BUF_SIZE];
 	lv2_atom_forge_set_buffer(&self->forge, obj_buf, OBJ_BUF_SIZE);
@@ -902,7 +901,7 @@ void Fabla2UI::showFileView()
 
 void Fabla2UI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity )
 {
-	//printf("pad event %d\n", pad);
+	//printf("pad event %d - note on %d, layer %d\n", pad, noteOn, layer);
 	if( pad < 0 || pad >= 16 ) {
 		return; // invalid pad number
 	}
@@ -915,13 +914,17 @@ void Fabla2UI::padEvent( int bank, int pad, int layer, bool noteOn, int velocity
 	layers->value(layer);
 
 	currentBank  = bank;
-	currentLayer = layer;
 	currentPad   = pad;
+	if(noteOn) // not off contains -1 in layer!
+		currentLayer = layer;
 
 	float fin = noteOn ? 255 : 15;
-	printf("sending pad %d : alpha %f tl maschine\n", pad, fin );
+	//printf("sending pad %d : alpha %f tl maschine\n", pad, fin );
 	updateMaschine(pad, 10, 31, 0xFF, fin);
-	//requestSampleState( currentBank, currentPad, currentLayer );
+
+	if(followPad) {
+		//requestSampleState( currentBank, currentPad, currentLayer );
+	}
 
 	redraw();
 }
@@ -1042,7 +1045,7 @@ void Fabla2UI::writeAtom( int eventURI, float value )
 	uint8_t obj_buf[UI_ATOM_BUF_SIZE];
 	lv2_atom_forge_set_buffer(&forge, obj_buf, UI_ATOM_BUF_SIZE);
 
-	//printf("Fabla2:UI writeAtom %i, %f\n", eventURI, value );
+	//printf("Fabla2:UI writeAtom %i, %f: pad %d, layer %d\n", eventURI, value, currentPad, currentLayer );
 	LV2_Atom_Forge_Frame frame;
 	LV2_Atom* msg = (LV2_Atom*)lv2_atom_forge_object( &forge, &frame, 0, eventURI);
 
@@ -1052,11 +1055,11 @@ void Fabla2UI::writeAtom( int eventURI, float value )
 	lv2_atom_forge_key(&forge, uris.fabla2_pad);
 	lv2_atom_forge_int(&forge, currentPad );
 
-	// don't write layer if its a pad play event
-	if( eventURI != uris.fabla2_PadPlay && eventURI != uris.fabla2_PadStop ) {
+	// don't write layer if its a pad play event, do for audition URIs
+	//if( eventURI != uris.fabla2_PadPlay && eventURI != uris.fabla2_PadStop ) {
 		lv2_atom_forge_key(&forge, uris.fabla2_layer);
 		lv2_atom_forge_int(&forge, currentLayer );
-	}
+	//}
 
 	lv2_atom_forge_key  (&forge, uris.fabla2_value);
 	lv2_atom_forge_float(&forge, value );
@@ -1181,6 +1184,7 @@ void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 	*/
 	else if( w == layers ) {
 		currentLayer = int( layers->value() );
+		//printf("%s %d : currentLayer = %d\n", __FILE__, __LINE__, currentLayer);
 		if( w->mouseButton() == 3 ) {
 			int mx = w->mouseX();
 			int my = w->mouseY();
@@ -1192,7 +1196,7 @@ void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 			deleteLayer->run("Delete Layer", s.str().c_str(), Avtk::Dialog::OK_CANCEL, mx, my );
 		} else {
 			int lay = int( layers->value() );
-			printf("click on layer %i : value() %f\n", lay, tmp );
+			//printf("click on layer %i : value() %f\n", lay, tmp );
 			if( true ) //;;tmp > 0.4999 )
 				writePadPlayStop( true, currentBank, currentPad, lay );
 			else
@@ -1201,7 +1205,7 @@ void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 	} else if( w == deleteLayer ) {
 		// user clicked OK on delete layer dialog
 		if( int(tmp) == 1 ) {
-			printf("UI writing sampleUnload\n");
+			//printf("UI writing sampleUnload\n");
 			writeAtom( uris.fabla2_SampleUnload, true );
 			requestSampleState( currentBank, currentPad, currentLayer );
 		}
@@ -1280,13 +1284,14 @@ void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 	} else if( w == masterVolume ) {
 		write_function( controller, Fabla2::MASTER_VOL, sizeof(float), 0, &tmp );
 	} else if( w == padsView ) {
+		/*
 		followPad = (int)tmp;
-
 		// reset current "followed" pad to normal color
 		if( !followPad ) {
 			pads[currentPad]->value( 0 );
 			pads[currentPad]->theme( theme( currentBank ) );
 		}
+		*/
 	} else if( w == adsrA ) {
 		writeAtom( uris.fabla2_SampleAdsrAttack, tmp );
 	} else if( w == adsrD ) {
@@ -1304,7 +1309,6 @@ void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 	} else if( w == send4 ) {
 		writeAtom( uris.fabla2_PadAuxBus4, tmp );
 	} else if( w == masterAuxFader1 ) {
-		printf("master aux fader 1 %f\n", tmp );
 		auxFaders[0]->value( tmp );
 		writeAuxBus( uris.fabla2_AuxBus, 0, tmp );
 	} else if( w == masterAuxFader2 ) {
@@ -1342,7 +1346,7 @@ void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 					masterAuxFader4->value( tmp );
 					writeAuxBus( uris.fabla2_AuxBus, 3, tmp );
 				}
-				printf("AuxBus urid %i\n", uris.fabla2_AuxBus );
+				//printf("AuxBus urid %i\n", uris.fabla2_AuxBus );
 			}
 		}
 
@@ -1375,9 +1379,13 @@ void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 				} else {
 					if( tmp ) {
 						currentPad = i;
-						requestSampleState( currentBank, currentPad, currentLayer );
+						//printf("CurrentPad %d, clicked pad %d\n", currentPad, i);
 						writeAtom( uris.fabla2_PadPlay, w->value() );
-						updateMaschine(i, 10, 31, 255, 255);
+						if(pads[currentPad]->loaded_)
+							updateMaschine(i, 10, 31, 255, 255);
+							if(followPad) {
+								requestSampleState( currentBank, currentPad, currentLayer );
+							}
 					} else {
 						writeAtom( uris.fabla2_PadStop, 0 );
 						updateMaschine(i, 10, 31, 255, 10);
