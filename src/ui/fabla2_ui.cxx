@@ -94,6 +94,7 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 
 	waste = new Avtk::Box( this, wx, wy, 70, 74,  "Views" );
 	waste->clickMode( Widget::CLICK_NONE );
+	waste->value(0);
 	wy += 20;
 
 	uiViewGroup = new Avtk::List( this, wx+2, wy, 70-4, 78, "UiViewGroup");
@@ -638,9 +639,9 @@ void Fabla2UI::handleMaschine()
 			if(!press)
 				break; // button release
 			if(       strcmp(&msg->address[0],"/maschine/button/f1") == 0) {
-				showLiveView();
-			} else if(strcmp(&msg->address[0],"/maschine/button/f2") == 0) {
 				showPadsView();
+			} else if(strcmp(&msg->address[0],"/maschine/button/f2") == 0) {
+				showLiveView();
 			} else if(strcmp(&msg->address[0],"/maschine/button/f3") == 0) {
 				showFileView();
 				showPadsView();
@@ -863,6 +864,7 @@ void Fabla2UI::showFileView()
 {
 	liveGroup->visible( false );
 	padsGroup->visible( false );
+	seqGroup ->visible( false );
 
 	// sofd temp replacing in-UI browser
 	sampleBrowseGroup->visible( false );
@@ -870,7 +872,11 @@ void Fabla2UI::showFileView()
 	waveformGroup->visible( true );
 	sampleControlGroup->visible( true );
 
-	ui->redraw();
+	// TODO/FIXME: We should return and allow the redraw to occur,
+	// and register a callback to open SOFD. This would allow the UI
+	// to have redrawed a dialog saying "External file browser open",
+	// and automatically close that dialog when done with SOFD.
+	redraw();
 
 	/*
 	loadNewDir( currentDir );
@@ -887,9 +893,9 @@ void Fabla2UI::showFileView()
 		LV2_Atom* msg = writeSetFile( &forge, &uris, currentBank, currentPad, chosen.c_str(), 0);
 		write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 		// return to pads view for triggering
-		showPadsView();
-		//uiViewGroup->value( 1 );
 	}
+	showPadsView();
+	uiViewGroup->value( 0 );
 	redraw();
 }
 
