@@ -565,6 +565,13 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	transport_bpm  = new Avtk::Dial(this, wx, wy-6, 34, 34, "BPM");
 	transport_play->clickMode( Widget::CLICK_TOGGLE );
 
+	if( 1 ) // hide WIP features in UI
+	{
+		transport_play->visible(0);
+		transport_bpm->visible(0);
+		seqGroup->visible(0);
+	}
+
 	// initial values
 	bankBtns[0]->value( true );
 	followPadBtn->value( followPad );
