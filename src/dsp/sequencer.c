@@ -110,7 +110,8 @@ void sequencer_reset( Sequencer* s )
 	s->cur_step = 0;
 	s->counter = 0;
 
-	for( int i = 0; i < MAX_STEPS; i++ ) {
+	int i;
+	for( i = 0; i < MAX_STEPS; i++ ) {
 		s->steps[i] = 0;
 	}
 }

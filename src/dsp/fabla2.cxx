@@ -415,6 +415,10 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg, bool fromUI )
 	case LV2_MIDI_MSG_PGM_CHANGE:
 		//printf("MIDI : Program Change received\n");
 		break;
+	
+	default:
+		// ALL UN-USED TYPES OF MIDI MESSAGES
+		break;
 	}
 
 }
