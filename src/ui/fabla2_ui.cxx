@@ -6,6 +6,7 @@
 
 #include "pad.hxx"
 #include "fader.hxx"
+#include "volume.hxx"
 #include "mixstrip.hxx"
 
 // include the data files for the header images
@@ -521,7 +522,7 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	masterAuxFader3 = new Avtk::Fader( this, wx+37, wy+3, 15, 90, "Master Aux 3" );
 	masterAuxFader4 = new Avtk::Fader( this, wx+55, wy+3, 15, 90, "Master Aux 4" );
 
-	masterDB = new Avtk::Fader( this, wx+24, wy+96,38, 160,  "MasterDB");
+	masterDB = new Avtk::Volume( this, wx+4, wy+96,38, 160,  "MasterDB");
 	masterDB->theme( theme(2) );
 
 	masterVolume = new Avtk::Fader( this, wx+4, wy+96,38, 160,  "Master Vol" );

@@ -21,6 +21,7 @@ class Pad;
 class Step;
 class Fader;
 class Widget;
+class Volume;
 class MixStrip;
 };
 
@@ -79,7 +80,7 @@ public:
 	Avtk::Dial* masterPitch; // not shown
 
 	// Right
-	Avtk::Fader*  masterDB;
+	Avtk::Volume*  masterDB;
 	Avtk::Fader*  masterVolume;
 	Avtk::Fader*  masterAuxFader1;
 	Avtk::Fader*  masterAuxFader2;

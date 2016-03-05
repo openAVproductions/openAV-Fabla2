@@ -10,6 +10,7 @@
 #include "ui/pad.hxx"
 #include "ui/fader.hxx"
 #include "ui/mixstrip.hxx"
+#include "ui/volume.hxx"
 
 #include "plotter.hxx"
 
