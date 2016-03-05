@@ -164,6 +164,20 @@ static void fabla2_port_event(LV2UI_Handle handle,
 			//Plotter::plot( "waveformArrived.dat", FABLA2_UI_WAVEFORM_PX, data );
 			ui->waveform->show( FABLA2_UI_WAVEFORM_PX, data );
 			ui->redraw();
+		} else if( obj->body.otype == ui->uris.fabla2_dbMeter ) {
+			const LV2_Atom* m  = 0;
+			const LV2_Atom* v  = 0;
+			const int n_props  = lv2_atom_object_get( obj,
+			                     ui->uris.fabla2_dbMeter, &m,
+			                     ui->uris.fabla2_value,   &v, NULL);
+			if( m && v )
+			{
+				const int32_t meter  = ((const LV2_Atom_Int*)m)->body;
+				const float   value  = ((const LV2_Atom_Float*)v)->body;
+				float lin = pow(10, value/20.f);
+				ui->masterDB->value(lin);
+			}
+
 		} else if( obj->body.otype == ui->uris.fabla2_PadRefreshLayers ) {
 			const LV2_Atom* bank = 0;
 			const LV2_Atom* pad  = 0;

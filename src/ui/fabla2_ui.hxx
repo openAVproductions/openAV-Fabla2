@@ -79,6 +79,7 @@ public:
 	Avtk::Dial* masterPitch; // not shown
 
 	// Right
+	Avtk::Fader*  masterDB;
 	Avtk::Fader*  masterVolume;
 	Avtk::Fader*  masterAuxFader1;
 	Avtk::Fader*  masterAuxFader2;

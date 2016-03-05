@@ -52,6 +52,8 @@
 #define FABLA2_UiLiveState          FABLA2_URI "#UiLiveState"
 #define FABLA2_UiPadsState          FABLA2_URI "#UiPadsState"
 
+#define FABLA2_DBMeter              FABLA2_URI "#DBMeter"
+
 #define FABLA2_AuxBus               FABLA2_URI "#AuxBus"
 #define FABLA2_auxBusNumber         FABLA2_URI "#auxBusNumber"
 
@@ -130,6 +132,8 @@ typedef struct {
 	LV2_URID fabla2_ReplyUiSampleState;
 	LV2_URID fabla2_UiLiveState;
 	LV2_URID fabla2_UiPadsState;
+
+	LV2_URID fabla2_dbMeter;
 
 	LV2_URID fabla2_SeqStepState;
 
@@ -211,6 +215,8 @@ static void mapUri( URIs* uris, LV2_URID_Map* map )
 	uris->fabla2_ReplyUiSampleState   = map->map(map->handle, FABLA2_replyUiSampleState);
 	uris->fabla2_UiLiveState          = map->map(map->handle, FABLA2_UiLiveState );
 	uris->fabla2_UiPadsState          = map->map(map->handle, FABLA2_UiPadsState );
+
+	uris->fabla2_dbMeter              = map->map(map->handle, FABLA2_DBMeter );
 
 	uris->fabla2_SeqStepState         = map->map(map->handle, FABLA2_SeqStepState);
 

@@ -53,6 +53,7 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
 	patternPlay( false ),
 	patternBank( 0 ),
 	patternChoice( 0 ),
+	dbMeter( rate ),
 	recordEnable( false ),
 	recordBank( 0 ),
 	recordPad( 0 )
@@ -200,6 +201,19 @@ void Fabla2DSP::process( int nf )
 
 	// Process audition voice
 	auditionVoice->process();
+
+	dbMeter.process(nf, &controlPorts[OUTPUT_L], &controlPorts[OUTPUT_R]);
+	// send UI message
+	LV2_Atom_Forge_Frame frame;
+	lv2_atom_forge_frame_time( &lv2->forge, 0 );
+	lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_dbMeter );
+	lv2_atom_forge_key(&lv2->forge, uris->fabla2_dbMeter);
+	lv2_atom_forge_int(&lv2->forge, 0 );
+
+	lv2_atom_forge_key(&lv2->forge, uris->fabla2_value);
+	lv2_atom_forge_float(&lv2->forge, dbMeter.getLeftDB() );
+
+	lv2_atom_forge_pop(&lv2->forge, &frame);
 }
 
 void Fabla2DSP::auditionStop()

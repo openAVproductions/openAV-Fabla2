@@ -26,6 +26,7 @@
 #include "../shared.hxx"
 
 #include "midi.hxx"
+#include "dsp_dbmeter.hxx"
 
 #include <map>
 #include <vector>
@@ -122,6 +123,8 @@ private:
 	/// used to audition samples, and deal with layer-playing from UI
 	Voice* auditionVoice;
 	Pad* auditionPad;
+
+	DBMeter dbMeter;
 
 	/// voices store all the voices available for use
 	std::vector<Voice*> voices;
