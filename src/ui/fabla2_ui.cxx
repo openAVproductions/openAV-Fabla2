@@ -724,7 +724,7 @@ void Fabla2UI::blankSampleState()
 
 	std::vector<float> tmp(FABLA2_UI_WAVEFORM_PX);
 	for(int i = 0; i < FABLA2_UI_WAVEFORM_PX; ++i)
-		tmp[i] = -1.0;
+		tmp[i] = 0.0;
 	waveform->show( tmp );
 
 }

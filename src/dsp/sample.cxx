@@ -75,20 +75,17 @@ const float* Sample::getWaveform()
 
 void Sample::recacheWaveform()
 {
-#ifdef FABLA2_COMPONENT_TEST
-	printf("recaching waveform... \n" );
-#endif
-
 	//printf("Recache waveform with %i frames\n", frames );
 	memset( waveformData, 0 , sizeof(float) * FABLA2_UI_WAVEFORM_PX );
 
+	/////// THINK THIS IS FIXED NOW - LEAVING FOR DOUBLE CHECK LATER //
 	// TODO FIXME: Refactor *ALL* of this waveform caching code, there's a
 	// memory corruption bug in here! Test with loading a sample, pushing
 	// it to the UI by clicking the Pad (with Follow on) and then loading
 	// another sample. The code will fail in lv2_work(), saying operator
 	// new() failed blah blah: in short - memory corruption from here!!
-	printf("Recache returning!\n" );
-	return;
+	//printf("Recache returning!\n" );
+	//return;
 
 	int sampsPerPix = frames / FABLA2_UI_WAVEFORM_PX;
 
@@ -97,59 +94,34 @@ void Sample::recacheWaveform()
 		return;
 	}
 
-
 	float highestPeak = 0.f;
 
-	// counts pixels in output waveform
-	int p = 0;
+	for( int f = 0; f < FABLA2_UI_WAVEFORM_PX; f++ ) {
 
-	/*
-	if( frames > 250000 )
-	{
-	  printf("too many samples to show waveform\n");
-	  return;
-	}
-	*/
-
-	for( int f = 0; f < frames; f++ ) {
-		float tmp = audioMono[f];
-
-		if ( channels == 2 ) {
-			tmp += audioStereoRight[f];
-			f++;
+		float tmp = 0;
+		for(int i = 0; i < sampsPerPix; i++) {
+			tmp += audioMono[(f*sampsPerPix) + i];
 		}
-
-		float t = fabsf(tmp);
-
-		if( t > fabsf( waveformData[p] ) )
-			waveformData[p] = t;
-
-		p = f / sampsPerPix;
-
-		if(waveformData[p] > highestPeak)
-			highestPeak = waveformData[p];
+		tmp /= sampsPerPix;
+		waveformData[f] = fabsf(tmp);
 	}
 
-	//printf("RECACHE: done, frames %i, sampsPerPx %i,  p %i\n", frames, sampsPerPix, p );
-
-	//Plotter::plot( "forLoop", FABLA2_UI_WAVEFORM_PX, &waveformData[0] );
-
-
+	//Plotter::plot( "fabla2_waveform.dat", FABLA2_UI_WAVEFORM_PX, &waveformData[0] );
+	/*
 	float normalizeFactor = 1;
 	normalizeFactor += 1-(1-highestPeak);
-
 	//printf("normalizing with highestPeak %f: nomalizeFactor %f\n", highestPeak, normalizeFactor );
-
 	// loop over each pixel and normalize it
 	for( int p = 0; p < FABLA2_UI_WAVEFORM_PX; p++ ) {
 		waveformData[p] = (waveformData[p] * normalizeFactor);
-		/*
+		/ *
 		if( waveformData[p] > 1.0 )
 		{
 		  printf("Recache error on px %i\n", p );
 		}
-		*/
+		* /
 	}
+	*/
 
 	//Plotter::plot( "recache", FABLA2_UI_WAVEFORM_PX, &waveformData[0] );
 	//printf("Recache waveform with %i frames : DONE!\n", frames );
@@ -278,7 +250,6 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
 	if( frames < 200 ) {
 		printf("Fabla2: Refusing to load sample with %ld frames - too short\n", frames );
 	}
-
 
 	printf("Loading sample with %ld frames\n", frames );
 

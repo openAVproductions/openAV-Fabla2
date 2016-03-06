@@ -435,7 +435,11 @@ void Fabla2DSP::writePadsState( int b, int p, Pad* pad )
 	lv2_atom_forge_int(&lv2->forge, p );
 
 	lv2_atom_forge_key(&lv2->forge, uris->fabla2_name);
-	lv2_atom_forge_string(&lv2->forge, pad->getName(), strlen( pad->getName() ) );
+	const char* padName = pad->getName();
+	if(!padName) {
+		padName = "Pad-Name-Error";
+	}
+	lv2_atom_forge_string(&lv2->forge, padName, strlen(padName));
 
 	lv2_atom_forge_key(&lv2->forge, uris->fabla2_PadVolume );
 	lv2_atom_forge_float(&lv2->forge, pad->volume );
@@ -660,6 +664,8 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 		return;
 	}
 
+	tx_waveform( b, p, l, s->getWaveform() );
+
 	if( URI == uris->fabla2_SampleUnload ) {
 		// remove a sample from the engine
 		printf("Fabla2-DSP *Deleteing* sample %s now!\n", s->getName() );
@@ -748,6 +754,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 	} else if(  URI == uris->fabla2_PadTriggerMode ) {
 		pad->triggerMode( (Pad::TRIGGER_MODE) v );
 	} else if(  URI == uris->fabla2_RequestUiSampleState ) {
+		printf("tx waveform now\n");
 		tx_waveform( b, p, l, s->getWaveform() );
 		padRefreshLayers( b, p );
 		writePadsState( b, p, pad );
