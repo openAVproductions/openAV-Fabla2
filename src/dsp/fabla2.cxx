@@ -346,6 +346,7 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg, bool fromUI )
 					int l = p->lastPlayedLayer();
 					Sample* s = p->layer( l );
 					writeSampleState(bank, pad, l, p, s);
+					tx_waveform(bank, pad, l, s->getWaveform());
 
 					allocd = true;
 				}
