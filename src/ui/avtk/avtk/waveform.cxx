@@ -35,6 +35,11 @@ Waveform::Waveform( Avtk::UI* ui, int x_, int y_, int w_, int h_, std::string la
 	newWaveform = true;
 }
 
+Waveform::~Waveform()
+{
+	cairo_surface_destroy(waveformSurf);
+}
+
 void Waveform::setStartPoint( float strt )
 {
 	startPoint = strt;

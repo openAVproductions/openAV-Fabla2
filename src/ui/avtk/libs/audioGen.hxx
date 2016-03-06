@@ -120,7 +120,9 @@ void audioDataSpectrum( int size, float* data )
 		}
 	}
 
-
+	pffft_aligned_free(in);
+	pffft_aligned_free(out);
+	pffft_aligned_free(work);
 }
 
 #endif

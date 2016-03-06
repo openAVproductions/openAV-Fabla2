@@ -57,6 +57,13 @@ Pattern::Pattern( Fabla2DSP* d, int r) :
 	}
 }
 
+Pattern::~Pattern()
+{
+	for(int i = 0; i < N_SEQS; i++) {
+		sequencer_free( seqs[i] );
+	}
+}
+
 void Pattern::rewind_to_start()
 {
 	for(int i = 0; i < N_SEQS; i++)

@@ -302,6 +302,7 @@ void Scroll::redrawChild( cairo_t* cr )
 
 Scroll::~Scroll()
 {
+	cairo_destroy( childCr );
 	delete vSlider;
 	delete hSlider;
 }

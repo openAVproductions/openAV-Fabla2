@@ -57,11 +57,12 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	currentLayer(0),
 	followPad( true )
 {
-	themes.push_back( new Avtk::Theme( this, ORANGE ) );
-	themes.push_back( new Avtk::Theme( this, GREEN ) );
-	themes.push_back( new Avtk::Theme( this, YELLOW ) );
-	themes.push_back( new Avtk::Theme( this, BLUE ) );
-	themes.push_back( new Avtk::Theme( this, RED ) );
+	themes.push_back( new Avtk::Theme( this, AVTK_ORANGE ) );
+	themes.push_back( new Avtk::Theme( this, AVTK_GREEN ) );
+	themes.push_back( new Avtk::Theme( this, AVTK_YELLOW ) );
+	themes.push_back( new Avtk::Theme( this, AVTK_BLUE ) );
+	themes.push_back( new Avtk::Theme( this, AVTK_RED ) );
+	themes.push_back( new Avtk::Theme( this, AVTK_WHITE ) );
 
 	Avtk::Image* headerImage = 0;
 	headerImage = new Avtk::Image( this, 0, 0, 200, 36, "Header Image - Fabla" );

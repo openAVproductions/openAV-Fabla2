@@ -43,8 +43,6 @@ UI::UI( int w__, int h__, PuglNativeWindow parent, const char* windowName ) :
 
 	puglSetHandle       (view, this);
 
-	//themes.push_back( new Theme( this ) );
-
 	motionUpdateWidget = 0;
 	handleOnlyWidget = 0;
 
@@ -55,7 +53,7 @@ UI::UI( int w__, int h__, PuglNativeWindow parent, const char* windowName ) :
 	dragDropTargetVerified       = false;
 	dragDropTargetVerifiedWidget = 0;
 
-	themes.push_back( new Theme( this, BLUE ) );
+	themes.push_back( new Theme( this, AVTK_BLUE ) );
 	theme_ = themes.back();
 }
 
