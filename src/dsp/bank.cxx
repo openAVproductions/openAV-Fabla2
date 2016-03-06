@@ -79,6 +79,7 @@ Bank::~Bank()
 	for(int i = 0; i < pads.size(); i++) {
 		delete pads.at(i);
 	}
+	delete pattern;
 }
 
 }; // Fabla2

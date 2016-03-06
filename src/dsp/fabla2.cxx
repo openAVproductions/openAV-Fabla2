@@ -794,6 +794,7 @@ Fabla2DSP::~Fabla2DSP()
 		delete voices.at(i);
 	}
 	delete library;
+	delete auditionPad;
 	delete auditionVoice;
 }
 
