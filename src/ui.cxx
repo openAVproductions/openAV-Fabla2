@@ -178,6 +178,27 @@ static void fabla2_port_event(LV2UI_Handle handle,
 				float lin = pow(10, value/20.f);
 				ui->masterDB->value(lin);
 			}
+		} else if( obj->body.otype == ui->uris.fabla2_AuxBus ) {
+			const LV2_Atom* a  = 0;
+			const LV2_Atom* v  = 0;
+			const int n_props  = lv2_atom_object_get( obj,
+			                     ui->uris.fabla2_auxBusNumber, &a,
+			                     ui->uris.fabla2_value,   &v, NULL);
+			if( a && v ) {
+				const int32_t i    = ((const LV2_Atom_Int*)a)->body;
+				const float   val  = ((const LV2_Atom_Float*)v)->body;
+				// live view aux faders (big)
+				ui->auxFaders[i]->value(val);
+				// master pane, smaller ones
+				switch(i) {
+				case 0: ui->masterAuxFader1->value(val); break;
+				case 1: ui->masterAuxFader2->value(val); break;
+				case 2: ui->masterAuxFader3->value(val); break;
+				case 3: ui->masterAuxFader4->value(val); break;
+				default: break;
+				}
+				ui->redraw();
+			}
 
 		} else if( obj->body.otype == ui->uris.fabla2_PadRefreshLayers ) {
 			const LV2_Atom* bank = 0;

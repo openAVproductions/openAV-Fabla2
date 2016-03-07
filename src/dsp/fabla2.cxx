@@ -158,6 +158,18 @@ void Fabla2DSP::process( int nf )
 		Pad* p = library->bank( bank )->pad( 0 );
 		writePadsState(bank, 0, p );
 		writeSampleState(bank, 0, 0, p, p->layer(0) );
+
+		for(int i = 0; i < 4;i++) {
+			LV2_Atom_Forge_Frame frame;
+			lv2_atom_forge_frame_time( &lv2->forge, 0 );
+			lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_AuxBus);
+			lv2_atom_forge_key(&lv2->forge, uris->fabla2_auxBusNumber);
+			lv2_atom_forge_int(&lv2->forge, i );
+			lv2_atom_forge_key(&lv2->forge, uris->fabla2_value);
+			lv2_atom_forge_float(&lv2->forge, auxBusVol[i]);
+			lv2_atom_forge_pop(&lv2->forge, &frame);
+		}
+
 		refresh_UI = 0;
 	}
 
@@ -768,7 +780,6 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 void Fabla2DSP::auxBus( int bus, float value )
 {
 	auxBusVol[bus] = value;
-	printf("auxBus() %i, %f\n", bus, auxBusVol[bus] );
 }
 
 void Fabla2DSP::startRecordToPad( int b, int p )
