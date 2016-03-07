@@ -169,7 +169,7 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	offGroup->valueMode( Avtk::Widget::VALUE_INT, 0, 8 );
 
 	triggerMode = new Avtk::Number( this, wx + 46, wy + 8, 20, 19, "Trigger Mode" );
-	triggerMode->valueMode( Avtk::Widget::VALUE_INT, 1, 1 );
+	triggerMode->valueMode( Avtk::Widget::VALUE_INT, 0, 1 );
 
 	switchType = new Avtk::Number( this, wx + 68, wy + 8, 20, 19, "Switch Type" );
 	switchType->valueMode( Avtk::Widget::VALUE_INT, 1, 2 );

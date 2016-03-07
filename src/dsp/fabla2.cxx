@@ -329,7 +329,7 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg, bool fromUI )
 				    mg == v->getPad()->offGroup() ) {
 					// note that this triggers ADSR off, so we can *NOT* re-purpose
 					// the voice right away to play the new note.
-					printf("note-on muteGroup %i : turning off %i\n", mg, v->getPad()->offGroup() );
+					//printf("note-on muteGroup %i : turning off %i\n", mg, v->getPad()->offGroup() );
 					v->kill();
 				}
 			} else {
@@ -682,7 +682,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 
 	if( URI == uris->fabla2_SampleUnload ) {
 		// remove a sample from the engine
-		printf("Fabla2-DSP *Deleteing* sample %s now!\n", s->getName() );
+		//printf("Fabla2-DSP *Deleteing* sample %s now!\n", s->getName() );
 
 		// tell all voices / pads / samplers that the sample is gone
 		for(int i = 0; i < voices.size(); ++i) {
@@ -700,7 +700,6 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 		panic();
 	} else if(       URI == uris->fabla2_PadVolume ) {
 		pad->volume = v;
-		printf("pad volume chaned %f\n", pad->volume);
 		writePadsState( b, p, pad );
 	} else if(       URI == uris->fabla2_PadAuxBus1 ) {
 		pad->sends[0] = v;
@@ -754,21 +753,24 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 		s->dirty = 1;
 		s->release = v;
 	} else if(  URI == uris->fabla2_PadMuteGroup ) {
-		printf("setting mute group to %f\n", v );
-		pad->muteGroup( int(v) );
+		int i = int(v);
+		printf("setting mute group to %d\n", i );
+		pad->muteGroup( i );
 	} else if(  URI == uris->fabla2_PadOffGroup ) {
-		printf("setting off group to %f\n", v );
-		pad->offGroup( int(v) );
+		int i = int(v);
+		printf("setting off group to %d\n", i );
+		pad->offGroup( i );
 	} else if(  URI == uris->fabla2_PadSwitchType ) {
 		int c = int(v);
-		//printf("pad switch type: %i\n", c );
+		printf("pad switch type: %i\n", c );
 		if ( c == 0 ) pad->switchSystem( Pad::SS_NONE ); // first sample every time
 		if ( c == 1 ) pad->switchSystem( Pad::SS_ROUND_ROBIN ); // iter over all samples
 		if ( c == 2 ) pad->switchSystem( Pad::SS_VELOCITY_LAYERS ); // velocity based choice
 	} else if(  URI == uris->fabla2_PadTriggerMode ) {
-		pad->triggerMode( (Pad::TRIGGER_MODE) v );
+		int i = int(v);
+		printf("pad switch type: %d\n", i );
+		pad->triggerMode( (Pad::TRIGGER_MODE) i );
 	} else if(  URI == uris->fabla2_RequestUiSampleState ) {
-		printf("tx waveform now\n");
 		tx_waveform( b, p, l, s->getWaveform() );
 		padRefreshLayers( b, p );
 		writePadsState( b, p, pad );
