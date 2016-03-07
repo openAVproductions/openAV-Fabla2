@@ -754,21 +754,21 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 		s->release = v;
 	} else if(  URI == uris->fabla2_PadMuteGroup ) {
 		int i = int(v);
-		printf("setting mute group to %d\n", i );
+		//printf("setting mute group to %d\n", i );
 		pad->muteGroup( i );
 	} else if(  URI == uris->fabla2_PadOffGroup ) {
 		int i = int(v);
-		printf("setting off group to %d\n", i );
+		//printf("setting off group to %d\n", i );
 		pad->offGroup( i );
 	} else if(  URI == uris->fabla2_PadSwitchType ) {
 		int c = int(v);
-		printf("pad switch type: %i\n", c );
+		//printf("pad switch type: %i\n", c );
 		if ( c == 0 ) pad->switchSystem( Pad::SS_NONE ); // first sample every time
 		if ( c == 1 ) pad->switchSystem( Pad::SS_ROUND_ROBIN ); // iter over all samples
 		if ( c == 2 ) pad->switchSystem( Pad::SS_VELOCITY_LAYERS ); // velocity based choice
 	} else if(  URI == uris->fabla2_PadTriggerMode ) {
 		int i = int(v);
-		printf("pad switch type: %d\n", i );
+		//printf("pad switch type: %d\n", i );
 		pad->triggerMode( (Pad::TRIGGER_MODE) i );
 	} else if(  URI == uris->fabla2_RequestUiSampleState ) {
 		tx_waveform( b, p, l, s->getWaveform() );
