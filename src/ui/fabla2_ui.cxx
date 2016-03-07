@@ -1386,8 +1386,11 @@ void Fabla2UI::widgetValueCB( Avtk::Widget* w)
 
 			// check pads
 			if( w == pads[i] ) {
-				if( w->mouseButton() == 3 ) {
-					// rename pad?
+				// right mouse, click press event
+				if( w->mouseButton() == 3 && tmp ) {
+					// load pad
+					currentPad = i;
+					showFileView();
 				} else {
 					if( tmp ) {
 						currentPad = i;
