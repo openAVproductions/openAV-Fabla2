@@ -174,7 +174,10 @@ Sample* Pad::getPlaySample( float velocity )
 
 		if( sampleSwitchSystem == SS_NONE ) {
 			//printf("playing pad SS_NONE, layer %i\n", sampleLayerCounter);
-			return samples.at( sampleLayerCounter );
+			if(sampleLayerCounter < samples.size())
+				return samples.at( sampleLayerCounter );
+			else
+				return 0;
 		} else if( sampleSwitchSystem == SS_ROUND_ROBIN ) {
 			// first update the sample-counter, wrap it if needed. Later we play the
 			// sample we just updated to, and its stored in sampleLayerCounter for UI
