@@ -61,7 +61,10 @@ public:
 	/// start playing a sample on this voice
 	void play( int time, int bank, int pad, Pad*, float velocity );
 
+	/* stop sample if not Trigger mode == ONESHOT */
 	void stop();
+	/* Stop sample always - used by choke groups */
+	void kill();
 	void stopIfSample( Sample* s );
 
 	/// used to audition samples from UI

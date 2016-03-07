@@ -330,7 +330,7 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg, bool fromUI )
 					// note that this triggers ADSR off, so we can *NOT* re-purpose
 					// the voice right away to play the new note.
 					printf("note-on muteGroup %i : turning off %i\n", mg, v->getPad()->offGroup() );
-					v->stop();
+					v->kill();
 				}
 			} else {
 				// only allocate voice if we haven't already done so

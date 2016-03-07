@@ -316,12 +316,15 @@ void Voice::stop()
 {
 	if( active_ ) {
 		if ( pad_->triggerMode() == Pad::TM_GATED ) {
-			//printf("Voice::stop() %i, GATED\n", ID );
 			adsr->gate( false );
-		} else {
-			//printf("Voice::stop() %i, ONE-SHOT, ignoring.\n", ID );
 		}
 	}
+}
+
+void Voice::kill()
+{
+	if( active_ )
+		adsr->gate( false );
 }
 
 void Voice::process()
