@@ -215,6 +215,7 @@ void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
 		}
 	}
 
+	/*
 	if( false ) { // extreme ADSR testing at note-on stage
 		adsr->reset();
 		adsr->gate(true);
@@ -236,10 +237,7 @@ void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
 		Plotter::plot( "audio_s.dat", 500, &outAudio[0] );
 		adsr->reset();
 	}
-
-
-
-
+	*/
 
 	/*
 	if( attackSamps > totalSamps - releaseSamps )
@@ -282,7 +280,7 @@ void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
 	adsr->reset();
 	adsr->gate( true );
 
-	//#ifdef FABLA2_COMPONENT_TEST
+	/*
 	if( false ) {
 		std::vector<float> tmp(44100 * 5);
 		int i = 0;
@@ -298,7 +296,7 @@ void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
 
 		Plotter::plot( "adsr.dat", 44100 * 5, &tmp[0] );
 	}
-	//#endif
+	*/
 }
 
 void Voice::stopIfSample( Sample* s )

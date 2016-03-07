@@ -364,11 +364,6 @@ static void fabla2_port_event(LV2UI_Handle handle,
 			                     ui->uris.fabla2_SampleAdsrRelease ,&aRelease,
 			                     0 );
 
-			int pad = -1;
-			if( aPad ) {
-				pad = ((const LV2_Atom_Int*)aPad)->body;
-			}
-
 			if( n_props == 24 ) {
 				float tmp = ((const LV2_Atom_Float*)aPadVolume)->body;
 				ui->padVolume       ->value( tmp );
