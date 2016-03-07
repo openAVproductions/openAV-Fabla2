@@ -629,18 +629,22 @@ void Fabla2UI::handleMaschine()
 			if(strcmp(&msg->address[0],"/maschine/button/rec") == 0) {
 				float tmp = press;
 				write_function(controller, Fabla2::RECORD_OVER_LAST_PLAYED_PAD, sizeof(float), 0, &tmp);
-			}
-			else if(strcmp(&msg->address[0],"/maschine/button/play") == 0) {
-				float now_play = 1;
-				if(transport_play->value() > 0.5) {
-					now_play = 0;
+			} else if(strcmp(&msg->address[0],"/maschine/button/play") == 0) {
+				int current = transport_play->value();
+				if(press) {
+					current = !current;
+					float tmp = current;
+
+					transport_play->value(current);
+					write_function(controller, Fabla2::TRANSPORT_PLAY, sizeof(float), 0, &tmp);
+				} else {
+					PacketWriter pw;
+					Message repl;
+					repl.init("/maschine/button/play").pushInt32(current);
+					pw.init().addMessage(repl);
+					sock.sendPacketTo(pw.packetData(), pw.packetSize(), sock.packetOrigin());
+					transport_play->value(current);
 				}
-				write_function(controller, Fabla2::TRANSPORT_PLAY, sizeof(float), 0, &now_play);
-				PacketWriter pw;
-				Message repl;
-				repl.init("/maschine/button/play").pushInt32(int(now_play));
-				pw.init().addMessage(repl);
-				sock.sendPacketTo(pw.packetData(), pw.packetSize(), sock.packetOrigin());
 			}
 
 			if(!press)
