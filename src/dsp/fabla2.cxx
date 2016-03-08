@@ -666,7 +666,7 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 	Sample* s = pad->layer( l );
 	if( !s ) {
 		// abuse the error handling in UI to blank the sample view of UI
-		printf("%s : sample not valid! Fix this.\n", __PRETTY_FUNCTION__);
+		//printf("%s : sample not valid! Fix this.\n", __PRETTY_FUNCTION__);
 		LV2_Atom_Forge_Frame frame;
 		lv2_atom_forge_frame_time( &lv2->forge, 0 );
 		lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_ReplyUiSampleState );

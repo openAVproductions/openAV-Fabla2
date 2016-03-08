@@ -67,7 +67,7 @@ bool loadConfigFile( std::string& defaultDir )
 	ifs.open ( configFile.str().c_str(), std::ifstream::in);
 
 	if( ifs.fail() ) {
-		printf("Fabla2UI %s : File doesn't exist, aborting.\n", configFile.str().c_str() );
+		printf("Fabla2UI warning %s : File doesn't exist. Continuing happily :)\n", configFile.str().c_str() );
 		return 0;
 	}
 
