@@ -56,7 +56,8 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
 	dbMeter( rate ),
 	recordEnable( false ),
 	recordBank( 0 ),
-	recordPad( 0 )
+	recordPad( 0 ),
+	uiDbUpdateCounter(rate/30)
 {
 	library = new Library( this, rate );
 
@@ -214,21 +215,26 @@ void Fabla2DSP::process( int nf )
 	// Process audition voice
 	auditionVoice->process();
 
-	float* buf[2];
-	buf[0] = controlPorts[OUTPUT_L];
-	buf[1] = controlPorts[OUTPUT_R];
-	dbMeter.process(nf, &buf[0], &buf[0] );
-	// send UI message
-	LV2_Atom_Forge_Frame frame;
-	lv2_atom_forge_frame_time( &lv2->forge, 0 );
-	lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_dbMeter );
-	lv2_atom_forge_key(&lv2->forge, uris->fabla2_dbMeter);
-	lv2_atom_forge_int(&lv2->forge, 0 );
 
-	lv2_atom_forge_key(&lv2->forge, uris->fabla2_value);
-	lv2_atom_forge_float(&lv2->forge, dbMeter.getLeftDB() );
+	uiDbUpdateCounter -= nframes;
+	if( uiDbUpdateCounter < 0 ) {
+		float* buf[2];
+		buf[0] = controlPorts[OUTPUT_L];
+		buf[1] = controlPorts[OUTPUT_R];
+		dbMeter.process(nf, &buf[0], &buf[0] );
+		// send UI message
+		LV2_Atom_Forge_Frame frame;
+		lv2_atom_forge_frame_time( &lv2->forge, 0 );
+		lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_dbMeter );
+		lv2_atom_forge_key(&lv2->forge, uris->fabla2_dbMeter);
+		lv2_atom_forge_int(&lv2->forge, 0 );
 
-	lv2_atom_forge_pop(&lv2->forge, &frame);
+		lv2_atom_forge_key(&lv2->forge, uris->fabla2_value);
+		lv2_atom_forge_float(&lv2->forge, dbMeter.getLeftDB() );
+
+		lv2_atom_forge_pop(&lv2->forge, &frame);
+		uiDbUpdateCounter = sr / 30;
+	}
 }
 
 void Fabla2DSP::auditionStop()

@@ -119,6 +119,7 @@ private:
 
 	/// when true, the UI should be updated of pad stats / refreshed
 	bool refresh_UI;
+	int uiDbUpdateCounter; 
 
 	/// used to audition samples, and deal with layer-playing from UI
 	Voice* auditionVoice;
