@@ -514,8 +514,8 @@ static void VDrawRectangle (Display *dpy, Drawable d, GC gc, int x, int y, unsig
 static void fib_expose (Display *dpy, Window realwin) {
 	int i;
 	XID win;
-	const unsigned long whiteColor = WhitePixel (dpy, DefaultScreen (dpy));
-	const unsigned long blackColor = BlackPixel (dpy, DefaultScreen (dpy));
+	const unsigned long whiteColor = _c_gray2.pixel;//WhitePixel (dpy, DefaultScreen (dpy));
+	const unsigned long blackColor = _c_gray0.pixel;//BlackPixel (dpy, DefaultScreen (dpy));
 	if (!_fib_mapped) return;
 
 	if (_fib_resized
@@ -573,7 +573,7 @@ static void fib_expose (Display *dpy, Window realwin) {
 		if (0 == _hov_p || (_hov_p > 0 && _hov_p < _pathparts - 1)) {
 			XSetForeground (dpy, _fib_gc, _c_gray4.pixel);
 		} else {
-			XSetForeground (dpy, _fib_gc, blackColor);
+			XSetForeground (dpy, _fib_gc, _c_gray6.pixel);
 		}
 		XDrawString (dpy, win, _fib_gc, ppx, PATHBTNTOP, "<", 1);
 		ppx += _pathbtn[0].xw + PSEP;
@@ -766,9 +766,10 @@ static void fib_expose (Display *dpy, Window realwin) {
 			XSetForeground (dpy, _fib_gc, whiteColor);
 		}
 		if (_hov_f == j && !(_dirlist[j].flags & 2)) {
-			XSetForeground (dpy, _fib_gc, _c_gray4.pixel);
+			XSetForeground (dpy, _fib_gc, _c_gray6.pixel);
 		}
 		if (_dirlist[j].flags & 4) {
+			XSetForeground (dpy, _fib_gc, _c_gray6.pixel);
 			XDrawString (dpy, win, _fib_gc, t_x, t_y, "D", 1);
 		}
 		XSetClipRectangles (dpy, _fib_gc, 0, 0, &clp, 1, Unsorted);
@@ -1906,13 +1907,35 @@ int x_fib_show (Display *dpy, Window parent, int x, int y) {
 
 	Colormap colormap = DefaultColormap (dpy, DefaultScreen (dpy));
 	_c_gray1.flags= DoRed | DoGreen | DoBlue;
-	_c_gray0.red = _c_gray0.green = _c_gray0.blue = 61710; // 95% hover prelight
-	_c_gray1.red = _c_gray1.green = _c_gray1.blue = 60416; // 93% window bg, scrollbar-fg
-	_c_gray2.red = _c_gray2.green = _c_gray2.blue = 54016; // 83% button & list bg
-	_c_gray3.red = _c_gray3.green = _c_gray3.blue = 48640; // 75% heading + scrollbar-bg
-	_c_gray4.red = _c_gray4.green = _c_gray4.blue = 26112; // 40% prelight text, sep lines
-	_c_gray5.red = _c_gray5.green = _c_gray5.blue = 12800; // 20% 3D border
-	_c_gray6.red = _c_gray6.green = _c_gray6.blue =  6400; // 10% checkbox cross, sort triangles
+
+	/* hover prelight */
+	_c_gray0.red = 0;
+	_c_gray0.green = 32639;
+	_c_gray0.blue = 65535;
+
+	/* window bg, scrollbar-fg */
+	_c_gray1.red   = 4369;
+	_c_gray1.green = 4369;
+	_c_gray1.blue  = 4369;
+
+	/* 83% button & list bg */
+	_c_gray2.red   = 32639/3;
+	_c_gray2.green = 32639/3;
+	_c_gray2.blue  = 32639/2.6;
+
+	/* 75% heading + scrollbar-bg */
+	_c_gray3.red   = 32639/2;
+	_c_gray3.green = 32639/2;
+	_c_gray3.blue  = 32639/1.6;
+
+	/* 40% prelight text, sep lines */
+	_c_gray4.red = _c_gray4.green = _c_gray4.blue = 26112;
+
+	/* 20% 3D border */
+	_c_gray5.red = _c_gray5.green = _c_gray5.blue = 12800;
+
+	/* 10% checkbox cross, sort triangles */
+	_c_gray6.red = _c_gray6.green = _c_gray6.blue = 65500;
 
 	if (!XAllocColor (dpy, colormap, &_c_gray0)) return -1;
 	if (!XAllocColor (dpy, colormap, &_c_gray1)) return -1;
