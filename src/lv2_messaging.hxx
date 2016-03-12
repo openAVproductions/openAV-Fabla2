@@ -44,17 +44,9 @@ static inline LV2_Atom* fabla2_writeSampleLoadUnload(
 	lv2_atom_forge_key(forge, uris->patch_value);
 	lv2_atom_forge_path(forge, "test.wav", strlen("test.wav") );
 
-	//if( load )
-	//else
-	//  lv2_atom_forge_urid(forge, uris->fabla2_SampleUnload);
-
-	/*
-	*/
-
 	lv2_atom_forge_pop(forge, &frame);
 	return set;
 }
-
 
 #endif // OPENAV_FABLA2_LV2_MESSAGING_HXX
 
