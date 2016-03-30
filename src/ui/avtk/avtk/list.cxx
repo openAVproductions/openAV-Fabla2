@@ -49,6 +49,7 @@ void List::clear()
 {
 	// free the widgets
 	Group::clear();
+	items.clear();
 	// invalidate last item
 	lastClickedItem = -1;
 }
