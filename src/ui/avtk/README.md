@@ -55,7 +55,15 @@ the default color.
 If the `setColor()` function returns null, then the default compiled in AVTK 
 theme will be used.
 
+License
+-------
+AVTK is licensed under the 3-clause BSD license. This allows commercial use
+of the library.
+
 Contact
 -------
+If your using AVTK, my curiosity would like an email - this is however in
+no way mandatory.
+
 Harry van Haaren    harryhaaren@gmail.com
 OpenAV Productions  openavproductions.com
