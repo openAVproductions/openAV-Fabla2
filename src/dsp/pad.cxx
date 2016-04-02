@@ -210,6 +210,8 @@ Sample* Pad::getPlaySample( float velocity )
 
 float Pad::getPlayVolume( float velocity ) {
 	if( sampleSwitchSystem == SS_VELOCITY_VOLUME ) {
+		// TODO: should this be an exponential value, or does the
+		// existing volume mean this one can be linear?
 		return velocity;
 	}
 	return 1.0f;
