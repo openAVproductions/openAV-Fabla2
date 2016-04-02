@@ -74,7 +74,8 @@ void Sampler::play( Pad* p, float velocity )
 #endif
 	pad = p;
 	sample = pad->getPlaySample( velocity );
-	padVol = pad->volume;
+	padVol = pad->volume * pad->getPlayVolume( velocity );
+	//printf("volume: %d", padVol);
 
 	if( !sample ) {
 		//printf("%s ERROR : pad->getPlaySample() returned 0!\n", __PRETTY_FUNCTION__ );

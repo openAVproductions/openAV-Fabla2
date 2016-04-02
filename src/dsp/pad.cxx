@@ -172,7 +172,7 @@ Sample* Pad::getPlaySample( float velocity )
 		//printf("playing pad %i, with switch mode %i\n", ID_, int(sampleSwitchSystem) );
 		//printf("playing pad %i with sampleLayerCounter %i\n", ID_, sampleLayerCounter );
 
-		if( sampleSwitchSystem == SS_NONE ) {
+		if( sampleSwitchSystem == SS_NONE || sampleSwitchSystem == SS_VELOCITY_VOLUME ) {
 			//printf("playing pad SS_NONE, layer %i\n", sampleLayerCounter);
 			if(sampleLayerCounter < samples.size())
 				return samples.at( sampleLayerCounter );
@@ -206,6 +206,13 @@ Sample* Pad::getPlaySample( float velocity )
 
 	// if no sample is loaded, or a velocity outside the mapped regions is played
 	return 0;
+}
+
+float Pad::getPlayVolume( float velocity ) {
+	if( sampleSwitchSystem == SS_VELOCITY_VOLUME ) {
+		return velocity;
+	}
+	return 1.0f;
 }
 
 void Pad::clearAllSamples()
