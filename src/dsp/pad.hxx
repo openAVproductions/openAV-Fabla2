@@ -125,12 +125,14 @@ public:
 	/// playback functions
 	int lastPlayedLayer();
 	Sample* getPlaySample( float velocity );
+	float getPlayVolume( float velocity );
 
 	/// Sets the switch system between samples
 	enum SAMPLE_SWITCH_SYSTEM {
 		SS_NONE = 0,        /// always plays selected sample
 		SS_ROUND_ROBIN,     /// iterates over all samples incrementally
 		SS_VELOCITY_LAYERS, /// takes velocity into account, and plays a sample
+		SS_VELOCITY_VOLUME, /// changes volume according to velocity
 	};
 	void switchSystem( SAMPLE_SWITCH_SYSTEM sss );
 	int switchSystem() { return sampleSwitchSystem; }
