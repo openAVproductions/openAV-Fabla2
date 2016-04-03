@@ -90,7 +90,7 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
 void Fabla2DSP::writeMidiNote(int b1, int note, int velo)
 {
 	uint8_t msg[3];
-	msg[0] = 0x90;
+	msg[0] = b1;
 	msg[1] = note;
 	msg[2] = velo;
 	lv2->writeMIDI(0, msg);
