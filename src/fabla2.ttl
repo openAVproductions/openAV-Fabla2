@@ -115,11 +115,10 @@
       a atom:AtomPort ,
         lv2:OutputPort ;
         atom:bufferType atom:Sequence ;
-        lv2:designation lv2:control ;
+        atom:supports midi:MidiEvent;
         lv2:index 1 ;
-        lv2:symbol "notify" ;
-        lv2:name "Notify" ;
-        # 500 * sizeof(float) + LV2-Atoms
+        lv2:symbol "midi_out" ;
+        lv2:name "MIDI Output" ;
         rsz:minimumSize 32832;
   ]
   
