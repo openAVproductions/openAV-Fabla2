@@ -137,12 +137,12 @@ void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
 	/*
 	// for testing sampling is working - seems fine
 	printf("Pad playing MIDI notes:");
+	*/
 	for(int i = 0; i < notes->size(); i++)
 	{
-		printf("\tnote %d, velo %d", notes->at(i).note, notes->at(i).velocity);
+		dsp->writeMidiNote(0x90, notes->at(i).note, notes->at(i).velocity);
+		//printf("\tnote %d, velo %d", notes->at(i).note, notes->at(i).velocity);
 	}
-	printf("\n");
-	*/
 
 	sampler->play( pad_, velocity );
 
@@ -310,6 +310,15 @@ void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
 	*/
 }
 
+static void voice_midi_off(Voice* v)
+{
+	std::vector<Pad::MidiNote>* notes = v->getPad()->getMidiNotes();
+	for(int i = 0; i < notes->size(); i++)
+	{
+		v->dsp->writeMidiNote(0x80, notes->at(i).note, notes->at(i).velocity);
+	}
+}
+
 void Voice::stopIfSample( Sample* s )
 {
 	assert( s );
@@ -318,6 +327,7 @@ void Voice::stopIfSample( Sample* s )
 	if( s == vs ) {
 		printf("Voice::stopIfSample() %s : KILLED VOICE.\n", s->getName() );
 		active_ = false;
+		voice_midi_off(this);
 	}
 }
 
@@ -326,14 +336,17 @@ void Voice::stop()
 	if( active_ ) {
 		if ( pad_->triggerMode() == Pad::TM_GATED ) {
 			adsr->gate( false );
+			voice_midi_off(this);
 		}
 	}
 }
 
 void Voice::kill()
 {
-	if( active_ )
+	if( active_ ) {
 		adsr->gate( false );
+		voice_midi_off(this);
+	}
 }
 
 void Voice::process()

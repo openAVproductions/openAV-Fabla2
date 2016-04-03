@@ -140,7 +140,7 @@ static void fabla2_port_event(LV2UI_Handle handle,
 			const int n_props  = lv2_atom_object_get( obj,
 			                     ui->uris.fabla2_audioData, &data_val, NULL);
 
-			if (data_val->type != ui->uris.atom_Vector) {
+			if ( !data_val || data_val->type != ui->uris.atom_Vector) {
 				// Object does not have the required properties with correct types
 				fprintf(stderr, "Fabla2 UI error: Corrupt audio message\n");
 				return;

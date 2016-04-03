@@ -22,6 +22,12 @@
 #define OPENAV_FABLA2_LV2_HXX
 
 #include "shared.hxx"
+#include <vector>
+
+typedef struct {
+	LV2_Atom_Event event;
+	uint8_t        msg[3];
+} MidiEvent;
 
 namespace Fabla2
 {
@@ -65,6 +71,9 @@ public:
 
 	URIs uris;
 
+	// MIDI writing
+	void writeMIDI(int frame, uint8_t msg[3]);
+
 	/// the actual DSP instance: public for LV2 Work Response, LV2 State Save
 	Fabla2::Fabla2DSP* dsp;
 
@@ -74,6 +83,8 @@ private:
 
 	/// A buffer for the AuxBus ports if the host doesn't provide them
 	float* auxBusBuffer;
+	
+	std::vector<MidiEvent> midiNotes;
 
 	/// convienience functions to extract bank/pad info from an Atom
 	/// @return 0 on success, non-zero on error

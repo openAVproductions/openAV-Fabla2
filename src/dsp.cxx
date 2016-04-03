@@ -31,12 +31,6 @@
 #include "dsp/ports.hxx"
 #include "dsp/fabla2.hxx"
 
-typedef struct {
-	LV2_Atom_Event event;
-	uint8_t        msg[3];
-} MidiEvent;
-
-
 LV2_Handle FablaLV2::instantiate( const LV2_Descriptor* descriptor,
                                   double samplerate,
                                   const char* bundle_path,
@@ -97,6 +91,7 @@ FablaLV2::FablaLV2(int rate)
 	sr = rate;
 	// it is assumed that buffersize is < samplerate
 	auxBusBuffer = new float[rate];
+	//midiNotes.(256);
 }
 
 FablaLV2::~FablaLV2()
@@ -159,6 +154,17 @@ int FablaLV2::atomBankPadLayer( const LV2_Atom_Object* obj, int& b, int& p,
 		return 0;
 	}
 	return -1;
+}
+
+void FablaLV2::writeMIDI(int frame, uint8_t msg[3])
+{
+	MidiEvent ev;
+	ev.event.time.frames = frame;
+	ev.event.body.type   = uris.midi_MidiEvent;
+	ev.event.body.size   = sizeof(uint8_t)*3;
+	memcpy( ev.msg, msg, sizeof(uint8_t)*3 );
+	midiNotes.push_back(ev);
+	printf("%s: wrote midi note %d\n", __PRETTY_FUNCTION__, msg[1]);
 }
 
 void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
@@ -312,19 +318,17 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
 	self->dsp->process( nframes );
 
 	// write output MIDI events now
-
-	int frameTime = 0;
-	uint8_t msgBuf[3];
-	memset( msgBuf, 0, sizeof(uint8_t) * 3 );
-	while( self->dsp->getMidi() ) {
+	for(int i = 0; i < self->midiNotes.size(); i++)
+	{
 		MidiEvent ev;
-		ev.event.time.frames = frameTime;
+		ev.event.time.frames = 0;//self->midiNotes.at(i).
 		ev.event.body.type   = self->uris.midi_MidiEvent;
 		ev.event.body.size   = sizeof(uint8_t)*3;
-		memcpy( ev.msg, msgBuf, sizeof(uint8_t)*3 );
-		printf("FablaLV2: write MIDI: %i, %i, %i\n", msgBuf[0], msgBuf[1], msgBuf[2] );
+		memcpy( ev.msg, self->midiNotes.at(i).msg, sizeof(uint8_t)*3 );
+		printf("FablaLV2: write MIDI: %i, %i, %i\n", ev.msg[0], ev.msg[1], ev.msg[2] );
 		lv2_atom_sequence_append_event( self->out_port, space, (LV2_Atom_Event*)&ev );
 	}
+	self->midiNotes.clear();
 
 	return;
 }

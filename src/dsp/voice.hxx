@@ -88,11 +88,13 @@ public:
 		return &voiceBuffer[0];
 	}
 
+
+	Fabla2DSP* dsp;
+
 private:
 	static int privateID;
 	int ID;
 
-	Fabla2DSP* dsp;
 	int sr;
 
 	int bankInt_;

@@ -38,7 +38,6 @@ class FablaLV2;
 namespace Fabla2
 {
 
-
 typedef struct {
 	int note;
 	int velocity;
@@ -112,7 +111,7 @@ public:
 
 	float auxBusVol[4];
 
-	void writeMidiNote(int note, int velo);
+	void writeMidiNote(int b1, int note, int velo);
 
 	std::vector<MidiNote>* getMidiNotes();
 

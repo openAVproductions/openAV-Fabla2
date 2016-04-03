@@ -83,18 +83,17 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
 		library->bank( bankID )->pad( tmpPad );
 	}
 
-	midiNotes.reserve(128);
-
 	// for debugging null pointers etc
 	//library->checkAll();
 }
 
-void Fabla2DSP::writeMidiNote(int note, int velo)
+void Fabla2DSP::writeMidiNote(int b1, int note, int velo)
 {
-	MidiNote m;
-	m.note = note;
-	m.velo = velo;
-	midiNotes.push_back( m );
+	uint8_t msg[3];
+	msg[0] = 0x90;
+	msg[1] = note;
+	msg[2] = velo;
+	lv2->writeMIDI(0, msg);
 }
 
 
@@ -330,6 +329,7 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg, bool fromUI )
 			       msg[1], msg[2], recordPad);
 			Pad* p = library->bank(recordBank)->pad(recordPad);
 			p->midiNoteAdd(msg[1], msg[2]);
+			return;
 		} else {
 			// update the recording pad
 			recordBank = bank;
