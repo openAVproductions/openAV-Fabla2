@@ -31,6 +31,12 @@
 #include "dsp/ports.hxx"
 #include "dsp/fabla2.hxx"
 
+typedef struct {
+	LV2_Atom_Event event;
+	uint8_t        msg[3];
+} MidiEvent;
+
+
 LV2_Handle FablaLV2::instantiate( const LV2_Descriptor* descriptor,
                                   double samplerate,
                                   const char* bundle_path,
@@ -275,9 +281,9 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
 				const LV2_Atom* step = 0;
 				const LV2_Atom* value = 0;
 				lv2_atom_object_get(obj,self->uris.fabla2_bank, &bank,
-						    self->uris.fabla2_pad     , &pad,
-						    self->uris.fabla2_step    , &step,
-						    self->uris.fabla2_value   , &value, 0);
+				                    self->uris.fabla2_pad     , &pad,
+				                    self->uris.fabla2_step    , &step,
+				                    self->uris.fabla2_value   , &value, 0);
 				if( bank && pad && step && value ) {
 					int b = ((const LV2_Atom_Int*)bank)->body;
 					int p = ((const LV2_Atom_Int*)pad )->body;
@@ -304,6 +310,21 @@ void FablaLV2::run(LV2_Handle instance, uint32_t nframes)
 	}
 
 	self->dsp->process( nframes );
+
+	// write output MIDI events now
+
+	int frameTime = 0;
+	uint8_t msgBuf[3];
+	memset( msgBuf, 0, sizeof(uint8_t) * 3 );
+	while( self->dsp->getMidi() ) {
+		MidiEvent ev;
+		ev.event.time.frames = frameTime;
+		ev.event.body.type   = self->uris.midi_MidiEvent;
+		ev.event.body.size   = sizeof(uint8_t)*3;
+		memcpy( ev.msg, msgBuf, sizeof(uint8_t)*3 );
+		printf("FablaLV2: write MIDI: %i, %i, %i\n", msgBuf[0], msgBuf[1], msgBuf[2] );
+		lv2_atom_sequence_append_event( self->out_port, space, (LV2_Atom_Event*)&ev );
+	}
 
 	return;
 }

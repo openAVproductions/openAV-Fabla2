@@ -83,9 +83,20 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
 		library->bank( bankID )->pad( tmpPad );
 	}
 
+	midiNotes.reserve(128);
+
 	// for debugging null pointers etc
 	//library->checkAll();
 }
+
+void Fabla2DSP::writeMidiNote(int note, int velo)
+{
+	MidiNote m;
+	m.note = note;
+	m.velo = velo;
+	midiNotes.push_back( m );
+}
+
 
 void Fabla2DSP::stepSeq(int bank, int pad, int step, int value)
 {
@@ -138,7 +149,7 @@ void Fabla2DSP::process( int nf )
 	if( refresh_UI ) {
 		int bank = 0;
 		for(int i = 0; i < 16; i++) {
-			// TODO FIXME: Bank here needs to be the loaded one 
+			// TODO FIXME: Bank here needs to be the loaded one
 			Pad* p = library->bank( bank )->pad( i );
 			if(p) {
 				LV2_Atom_Forge_Frame frame;
@@ -160,7 +171,7 @@ void Fabla2DSP::process( int nf )
 		writePadsState(bank, 0, p );
 		writeSampleState(bank, 0, 0, p, p->layer(0) );
 
-		for(int i = 0; i < 4;i++) {
+		for(int i = 0; i < 4; i++) {
 			LV2_Atom_Forge_Frame frame;
 			lv2_atom_forge_frame_time( &lv2->forge, 0 );
 			lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_AuxBus);
@@ -198,8 +209,7 @@ void Fabla2DSP::process( int nf )
 		p->process( nf );
 		// keep state of playback
 		patternPlay = true;
-	}
-	else {
+	} else {
 		patternPlay = false;
 	}
 
@@ -438,7 +448,7 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg, bool fromUI )
 	case LV2_MIDI_MSG_PGM_CHANGE:
 		//printf("MIDI : Program Change received\n");
 		break;
-	
+
 	default:
 		// ALL UN-USED TYPES OF MIDI MESSAGES
 		break;
@@ -585,7 +595,7 @@ void Fabla2DSP::padRefreshLayers( int bank, int pad)
 	Pad* p = b->pad( pad );
 	if( !p ) {
 		//printf("%s  no pad\n", __PRETTY_FUNCTION__);
-		return; 
+		return;
 	}
 
 	for(int i = 0; i < p->nLayers(); i++) {

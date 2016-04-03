@@ -25,6 +25,7 @@
 #include "../dsp.hxx"
 #include "../shared.hxx"
 
+#include "pad.hxx"
 #include "midi.hxx"
 #include "dsp_dbmeter.hxx"
 
@@ -37,7 +38,12 @@ class FablaLV2;
 namespace Fabla2
 {
 
-class Pad;
+
+typedef struct {
+	int note;
+	int velocity;
+} MidiNote ;
+
 class Voice;
 class Sample;
 class Library;
@@ -106,6 +112,10 @@ public:
 
 	float auxBusVol[4];
 
+	void writeMidiNote(int note, int velo);
+
+	std::vector<MidiNote>* getMidiNotes();
+
 private:
 	URIs* uris;
 
@@ -127,6 +137,9 @@ private:
 
 	DBMeter dbMeter;
 
+	/// Vector to store outgoing MIDI messages
+	std::vector<MidiNote> outMidiNotes;
+
 	/// voices store all the voices available for use
 	std::vector<Voice*> voices;
 
@@ -134,7 +147,7 @@ private:
 	Library* library;
 
 	/// map from MIDI number to pad instance
-	std::map< int, Pad* > midiToPad;
+	std::map<int, Pad*> midiToPad;
 
 	/// record buffer: when a record operation begins, it uses this buffer
 	void startRecordToPad(int bank, int pad);
