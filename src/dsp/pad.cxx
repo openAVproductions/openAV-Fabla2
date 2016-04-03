@@ -91,6 +91,19 @@ void Pad::setName( const char* n )
 	dsp->writePadsState( bank_, ID_, this );
 }
 
+void Pad::midiNoteAdd(int note, int velo)
+{
+	MidiNote m;
+	m.note = note;
+	m.velocity = velo;
+	midiNotes.push_back( m );
+}
+
+void Pad::midiNotesClear()
+{
+	midiNotes.clear();
+}
+
 void Pad::layersDistribute()
 {
 	int total = samples.size();

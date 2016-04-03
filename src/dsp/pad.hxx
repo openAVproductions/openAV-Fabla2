@@ -142,6 +142,17 @@ public:
 	int switchSystem() { return sampleSwitchSystem; }
 	void layersDistribute();
 
+	// MIDI sampling
+	void midiNoteAdd(int note, int velo);
+	void midiNotesClear();
+
+	typedef struct {
+		int note;
+		int velocity;
+	} MidiNote ;
+	std::vector<MidiNote>* getMidiNotes(){return &midiNotes;}
+
+
 	/// testing func
 	void checkAll();
 
@@ -158,6 +169,8 @@ private:
 	int offGroup_;
 	int triggerMode_;
 	bool loaded_;
+
+	std::vector<MidiNote> midiNotes;
 
 	char name[21];
 

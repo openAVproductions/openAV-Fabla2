@@ -315,9 +315,16 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg, bool fromUI )
 			return;
 		}
 
-		// update the recording pad
-		recordBank = bank;
-		recordPad  = pad;
+		if( recordEnable ) {
+			printf("recording note %d %d %d to pad %d\n", msg[0],
+			       msg[1], msg[2], recordPad);
+			Pad* p = library->bank(recordBank)->pad(recordPad);
+			p->midiNoteAdd(msg[1], msg[2]);
+		} else {
+			// update the recording pad
+			recordBank = bank;
+			recordPad  = pad;
+		}
 
 		// the pad that's going to be allocated to play
 		Pad* p = library->bank( bank )->pad( pad );
@@ -798,6 +805,9 @@ void Fabla2DSP::startRecordToPad( int b, int p )
 	recordPad   = p;
 	recordIndex = 0;
 	recordEnable = true;
+
+	Pad* pad = library->bank( recordBank )->pad( recordPad );
+	pad->midiNotesClear();
 	//printf("record starting, bank %i, pad %i\n", recordBank, recordPad );
 }
 

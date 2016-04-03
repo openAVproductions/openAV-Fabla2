@@ -133,6 +133,17 @@ void Voice::play( int time, int bankInt, int padInt, Pad* p, float velocity )
 	active_ = true;
 	activeCountdown = time;
 
+	std::vector<Pad::MidiNote>* notes = p->getMidiNotes();
+	/*
+	// for testing sampling is working - seems fine
+	printf("Pad playing MIDI notes:");
+	for(int i = 0; i < notes->size(); i++)
+	{
+		printf("\tnote %d, velo %d", notes->at(i).note, notes->at(i).velocity);
+	}
+	printf("\n");
+	*/
+
 	sampler->play( pad_, velocity );
 
 	Sample* s = sampler->getSample();
