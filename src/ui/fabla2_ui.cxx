@@ -17,6 +17,7 @@
 
 #include "../shared.hxx"
 #include "../lv2_messaging.hxx"
+#include "../dsp/pad.hxx"
 
 // hack to get access to PUGL types
 // perhaps include AVTK wrapper in future?
@@ -172,7 +173,7 @@ Fabla2UI::Fabla2UI( PuglNativeWindow parent ):
 	triggerMode->valueMode( Avtk::Widget::VALUE_INT, 0, 1 );
 
 	switchType = new Avtk::Number( this, wx + 68, wy + 8, 20, 19, "Switch Type" );
-	switchType->valueMode( Avtk::Widget::VALUE_INT, 0, 3 );
+	switchType->valueMode( Avtk::Widget::VALUE_INT, Fabla2::Pad::SS_MIN, Fabla2::Pad::SS_MAX );
 	wy += 40;
 
 
