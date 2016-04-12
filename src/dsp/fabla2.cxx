@@ -769,10 +769,11 @@ void Fabla2DSP::uiMessage(int b, int p, int l, int URI, float v)
 	} else if(  URI == uris->fabla2_PadSwitchType ) {
 		int c = int(v);
 		//printf("pad switch type: %i\n", c );
-		if ( c == 0 ) pad->switchSystem( Pad::SS_NONE ); // first sample every time
-		if ( c == 1 ) pad->switchSystem( Pad::SS_VELOCITY_VOLUME ); // velocity -> volume
-		if ( c == 2 ) pad->switchSystem( Pad::SS_ROUND_ROBIN ); // iter over all samples
-		if ( c == 3 ) pad->switchSystem( Pad::SS_VELOCITY_LAYERS ); // velocity based choice
+		if( c < Pad::SS_MIN || c > Pad::SS_MAX ) {
+			printf("bad pad switch type: %i\n", c);
+			c = int(Pad::SS_NONE);
+		}
+		pad->switchSystem(Pad::SAMPLE_SWITCH_SYSTEM(c));
 	} else if(  URI == uris->fabla2_PadTriggerMode ) {
 		int i = int(v);
 		//printf("pad switch type: %d\n", i );

@@ -130,9 +130,13 @@ public:
 	/// Sets the switch system between samples
 	enum SAMPLE_SWITCH_SYSTEM {
 		SS_NONE = 0,        /// always plays selected sample
+		SS_VELOCITY_VOLUME, /// changes volume according to velocity
 		SS_ROUND_ROBIN,     /// iterates over all samples incrementally
 		SS_VELOCITY_LAYERS, /// takes velocity into account, and plays a sample
-		SS_VELOCITY_VOLUME, /// changes volume according to velocity
+
+		// min & max values for validation & input
+		SS_MIN = SS_NONE,
+		SS_MAX = SS_VELOCITY_LAYERS,
 	};
 	void switchSystem( SAMPLE_SWITCH_SYSTEM sss );
 	int switchSystem() { return sampleSwitchSystem; }
