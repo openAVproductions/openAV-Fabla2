@@ -57,8 +57,8 @@ IF(BUILD_GUI)
 	link_directories   ( ${X11_LIBRARY_DIRS} )
 ENDIF(BUILD_GUI)
 
-SET(CMAKE_C_FLAGS "-fPIC" ${CFLAGS}  )
-SET(CMAKE_CXX_FLAGS "-Wall -Wno-sign-compare -g -trigraphs -Wno-unused-function -Wno-unused-variable -Wno-reorder -Wuninitialized -Wl,-z,nodelete  -Wl,--no-undefined -fPIC -shared ")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-sign-compare -g -trigraphs -Wno-unused-function -Wno-unused-variable -Wno-reorder -Wuninitialized -Wl,-z,nodelete -Wl,--no-undefined -fPIC -shared")
 
 # for profiling runtime
 #ADD_DEFINITIONS( "-DOPENAV_PROFILE" )
@@ -69,10 +69,9 @@ SET(CMAKE_CXX_FLAGS "-Wall -Wno-sign-compare -g -trigraphs -Wno-unused-function 
 ### Build Tests OR lv2
 ######################
 IF( FABLA2_TESTS )
-  
+
   ADD_DEFINITIONS( "-DFABLA2_COMPONENT_TEST" )
-  
-  SET(CMAKE_CXX_FLAGS "-g -trigraphs -Wl,-z,nodelete  -Wl,--no-undefined") # -fsanitize=address
+  # SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
   FILE(GLOB srcDspTests src/dsp/tests/*.cxx src/dsp/*.cxx )
   ADD_EXECUTABLE( fabla2test ${srcDspTests} )
   target_link_libraries( fabla2test ${SNDFILE_LIBRARIES})
@@ -81,8 +80,6 @@ IF( FABLA2_TESTS )
 
 ELSE()
 
-  SET(CMAKE_C_FLAGS "-fPIC" ${CFLAGS}  )
-  
   FILE(GLOB srcDSP src/dsp.cxx src/lv2_work.cxx src/lv2_state.cxx src/dsp/*.cxx src/dsp/*.c )
   FILE(GLOB srcUI  src/ui.cxx src/ui/sofd/libsofd.c src/ui/*.cxx src/ui/avtk/avtk/*.cxx src/ui/avtk/avtk/pugl/pugl_x11.c )
   
