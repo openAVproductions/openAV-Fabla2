@@ -398,13 +398,13 @@ fabla2_restore(LV2_Handle                  instance,
 								s->velHigh         = pjLayer.get("velHigh").get<double>();
 
 							if( pjLayer.get("attack").is<double>() )
-								s->attack          = (int)pjLayer.get("attack").get<double>();
+								s->attack          = pjLayer.get("attack").get<double>();
 							if( pjLayer.get("decay").is<double>() )
-								s->decay           = (int)pjLayer.get("decay").get<double>();
+								s->decay           = pjLayer.get("decay").get<double>();
 							if( pjLayer.get("sustain").is<double>() )
-								s->sustain         = (int)pjLayer.get("sustain").get<double>();
+								s->sustain         = pjLayer.get("sustain").get<double>();
 							if( pjLayer.get("release").is<double>() )
-								s->release         = (int)pjLayer.get("release").get<double>();
+								s->release         = pjLayer.get("release").get<double>();
 
 							// add the sample to the Pad
 							pad->add( s );
