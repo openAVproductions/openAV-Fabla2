@@ -233,6 +233,22 @@ Fabla2DSP::screen_redraw_func(struct ctlra_dev_t *dev,
 				caira_move_to(cr, x + i, y + high - py);
 				caira_line_to(cr, x + i, y + high + py);
 			}
+
+			/* start point line */
+			caira_set_source_rgb(cr, 1, 1, 1);
+			caira_rectangle(cr, x + (FABLA2_UI_WAVEFORM_PX * s->getStartPoint()),
+					y, 2, high * 2);
+			caira_fill(cr);
+
+			/* adsr */
+			float a = s->attack;
+			float d = s->decay;
+			float su= s->sustain;
+			float r = s->release;
+			draw_slider(cr, 30, 140, 22, 100, a);
+			draw_slider(cr, 56, 140, 22, 100, d);
+			draw_slider(cr, 82, 140, 22, 100, su);
+			draw_slider(cr,108, 140, 22, 100, r);
 		}
 		}
 	}
@@ -326,6 +342,7 @@ Fabla2DSP::event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 		struct ctlra_event_t *e = events[i];
 		printf("event %d\n", e->type);
 		Pad *p = library->bank(0)->pad(last_pressed_pad);
+		Sample *s = p->layer(p->lastPlayedLayer());
 		switch(e->type) {
 
 		case CTLRA_EVENT_BUTTON: {
@@ -340,9 +357,25 @@ Fabla2DSP::event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 			break;
 
 		case CTLRA_EVENT_ENCODER: {
-			if(e->encoder.id == 8) {
-				p->volume += e->encoder.delta_float * 1.25;
+			if(s) {
+			switch(e->encoder.id) {
+			case 1: s->attack  += e->encoder.delta_float * 1.25; break;
+			case 2: s->decay   += e->encoder.delta_float * 1.25; break;
+			case 3: s->sustain += e->encoder.delta_float * 1.25; break;
+			case 4: s->release += e->encoder.delta_float * 1.25; break;
+			case 5: s->startPoint += e->encoder.delta_float * 0.85; break;
 			}
+
+			if(s->attack < 0.f) s->attack = 0.f;
+			if(s->decay < 0.f) s->decay = 0.f;
+			if(s->sustain < 0.f) s->sustain = 0.f;
+			if(s->release < 0.f) s->release = 0.f;
+			if(s->startPoint < 0.f) s->startPoint = 0.f;
+
+			}
+
+			if(e->encoder.id == 8)
+			case 8: p->volume += e->encoder.delta_float * 1.25; break;
 			printf("encoder %d %f\n", e->encoder.id, e->encoder.delta_float);
 			}
 			break;
