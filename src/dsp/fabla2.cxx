@@ -81,7 +81,7 @@ void f2_play_pad(void *self, void *func_data)
 {
 	struct f2_play_pad_t *d = (struct f2_play_pad_t *)func_data;
 	Fabla2DSP *f2 = (Fabla2DSP *)self;
-	f2->playPad(d->bank, d->pad, d->velocity);
+	f2->playPadOnNextVoice(d->bank, d->pad, d->velocity, 0);
 	printf("%s\n", __func__);
 }
 
@@ -153,14 +153,6 @@ void *ctlra_thread_func(void *ud)
 	self->ctlra_thread_quit_done = 1;
 	return 0;
 }
-
-int Fabla2DSP::playPad(int bank, int pad, float velocity)
-{
-	Pad* p = library->bank( bank )->pad( pad );
-	voices.at(0)->play( 0, bank, pad, p, velocity);
-	return 1;
-}
-
 
 static void
 simple_feedback_func(struct ctlra_dev_t *dev, void *d)
@@ -542,6 +534,71 @@ void Fabla2DSP::refreshUI()
 	refresh_UI = true;
 }
 
+int Fabla2DSP::playPadOnNextVoice(int bank, int pad, float vel, int eventTime)
+{
+	// the pad that's going to be allocated to play
+	Pad* p = library->bank( bank )->pad( pad );
+
+	bool allocd = false;
+	for(int i = 0; i < voices.size(); i++) {
+		// current voice pointer
+		Voice* v = voices.at(i);
+
+		// check mute-group to stop the voice first
+		if( v->active() ) {
+			int mg = p->muteGroup();
+			// note-on mute-group is valid && == to current voice off-group
+			if( mg != 0 &&
+			    mg == v->getPad()->offGroup() ) {
+				// note that this triggers ADSR off, so we can *NOT* re-purpose
+				// the voice right away to play the new note.
+				//printf("note-on muteGroup %i : turning off %i\n", mg, v->getPad()->offGroup() );
+				v->kill();
+			}
+		} else {
+			// only allocate voice if we haven't already done so
+			if( !allocd ) {
+				// play pad
+				voices.at(i)->play( eventTime, bank, pad, p, vel);
+
+				// write note on MIDI events to UI
+				/*
+				LV2_Atom_Forge_Frame frame;
+				lv2_atom_forge_frame_time( &lv2->forge, eventTime );
+				lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_PadPlay );
+
+				lv2_atom_forge_key(&lv2->forge, uris->fabla2_bank);
+				lv2_atom_forge_int(&lv2->forge, bank );
+				lv2_atom_forge_key(&lv2->forge, uris->fabla2_pad);
+				lv2_atom_forge_int(&lv2->forge, pad );
+				lv2_atom_forge_key(&lv2->forge, uris->fabla2_layer);
+				lv2_atom_forge_int(&lv2->forge, p->lastPlayedLayer() );
+				lv2_atom_forge_key(&lv2->forge, uris->fabla2_velocity);
+				lv2_atom_forge_int(&lv2->forge, velocity * 127.f );
+
+				lv2_atom_forge_pop(&lv2->forge, &frame);
+				*/
+
+				padRefreshLayers(bank, pad);
+				int l = p->lastPlayedLayer();
+				Sample* s = p->layer( l );
+				if(s) {
+					writeSampleState(bank, pad, l, p, s);
+					tx_waveform(bank, pad, l, s->getWaveform());
+				}
+				allocd = true;
+			}
+		}
+	}
+
+	/// if all voices are full, we steal the first one
+	if( allocd == false ) {
+		voices.at( 0 )->play( eventTime, bank, pad, p, vel );
+	}
+
+	return 0;
+}
+
 void Fabla2DSP::midi( int eventTime, const uint8_t* msg, bool fromUI )
 {
 	//printf("MIDI: %i, %i, %i\n", (int)msg[0], (int)msg[1], (int)msg[2] );
@@ -575,64 +632,10 @@ void Fabla2DSP::midi( int eventTime, const uint8_t* msg, bool fromUI )
 			recordPad  = pad;
 		}
 
-		// the pad that's going to be allocated to play
-		Pad* p = library->bank( bank )->pad( pad );
+		playPadOnNextVoice(bank, pad, msg[2] / 127.f, eventTime);
 
-		bool allocd = false;
-		for(int i = 0; i < voices.size(); i++) {
-			// current voice pointer
-			Voice* v = voices.at(i);
-
-			// check mute-group to stop the voice first
-			if( v->active() ) {
-				int mg = p->muteGroup();
-				// note-on mute-group is valid && == to current voice off-group
-				if( mg != 0 &&
-				    mg == v->getPad()->offGroup() ) {
-					// note that this triggers ADSR off, so we can *NOT* re-purpose
-					// the voice right away to play the new note.
-					//printf("note-on muteGroup %i : turning off %i\n", mg, v->getPad()->offGroup() );
-					v->kill();
-				}
-			} else {
-				// only allocate voice if we haven't already done so
-				if( !allocd ) {
-					// play pad
-					voices.at(i)->play( eventTime, bank, pad, p, msg[2] / 127.f );
-
-					// write note on MIDI events to UI
-					LV2_Atom_Forge_Frame frame;
-					lv2_atom_forge_frame_time( &lv2->forge, eventTime );
-					lv2_atom_forge_object( &lv2->forge, &frame, 0, uris->fabla2_PadPlay );
-
-					lv2_atom_forge_key(&lv2->forge, uris->fabla2_bank);
-					lv2_atom_forge_int(&lv2->forge, bank );
-					lv2_atom_forge_key(&lv2->forge, uris->fabla2_pad);
-					lv2_atom_forge_int(&lv2->forge, pad );
-					lv2_atom_forge_key(&lv2->forge, uris->fabla2_layer);
-					lv2_atom_forge_int(&lv2->forge, p->lastPlayedLayer() );
-					lv2_atom_forge_key(&lv2->forge, uris->fabla2_velocity);
-					lv2_atom_forge_int(&lv2->forge, msg[2] );
-
-					lv2_atom_forge_pop(&lv2->forge, &frame);
-
-					padRefreshLayers(bank, pad);
-					int l = p->lastPlayedLayer();
-					Sample* s = p->layer( l );
-					if(s) {
-						writeSampleState(bank, pad, l, p, s);
-						tx_waveform(bank, pad, l, s->getWaveform());
-					}
-					allocd = true;
-				}
-			}
 		}
-		/// if all voices are full, we steal the first one
-		if( allocd == false ) {
-			voices.at( 0 )->play( eventTime, bank, pad, p, msg[2] );
-		}
-	}
-	break;
+		break;
 
 	case LV2_MIDI_MSG_NOTE_OFF: {
 		int bank = 0;

@@ -109,7 +109,7 @@ public:
 	void stepSeq(int bank, int pad, int step, int value);
 
 	/// play a sample
-	int playPad(int bank, int pad, float velocity);
+	int playPadOnNextVoice(int bank, int pad, float vel, int event_time);
 
 	/// lv2 convienience function to write a samples state to the UI
 	void writePadsState( int b, int p, Pad* pad );
