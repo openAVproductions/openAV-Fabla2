@@ -84,6 +84,27 @@ void f2_play_pad(void *self, void *func_data)
 	f2->playPadOnNextVoice(d->bank, d->pad, d->velocity, 0);
 }
 
+
+struct f2_pad_record_t {
+	int bank;
+	int pad;
+	int enable;
+};
+void f2_pad_record(void *self, void *func_data)
+{
+	struct f2_pad_record_t *d = (struct f2_pad_record_t *)func_data;
+	Fabla2DSP *f2 = (Fabla2DSP *)self;
+
+	if(d->enable) {
+		f2->startRecordToPad(d->bank, d->pad);
+		printf("pad %d, recording...\n", d->pad);
+	} else {
+		printf("pad STOP %d, recording.\n", d->pad);
+		f2->stopRecordToPad();
+	}
+}
+
+
 int
 Fabla2DSP::ctlra_ring_write(f2_msg_func func, void *data, uint32_t size)
 {
@@ -158,8 +179,11 @@ Fabla2DSP::feedback_func(struct ctlra_dev_t *dev)
 	/* showing sample */ {
 		Pad *p = b->pad(last_pressed_pad);
 		int led = (3-(last_pressed_pad / 4)) * 4 + (last_pressed_pad % 4);
-		ctlra_dev_light_set(dev, offset + led, 0xff0000ff);
+		int loaded = p->loaded() ? 1 : 0;
+		ctlra_dev_light_set(dev, offset + led, 0xff0000ff * loaded);
 	}
+
+	ctlra_dev_light_set(dev, 42, record_pressed ? -1 : 0);
 
 	/* for each pad in the grid, light up loaded state */
 	ctlra_dev_light_flush(dev, 1);
@@ -346,7 +370,16 @@ Fabla2DSP::event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 		switch(e->type) {
 
 		case CTLRA_EVENT_BUTTON: {
-			printf("button %d\n", e->button.id);
+			switch(e->button.id) {
+			case 42: /* record */
+				record_pressed = e->button.pressed;
+				printf("button %d, %d\n", e->button.id,
+				       record_pressed);
+				break;
+			default:
+				printf("button %d\n", e->button.id);
+				break;
+			}
 			}
 			break;
 
@@ -381,15 +414,24 @@ Fabla2DSP::event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 			break;
 
 		case CTLRA_EVENT_GRID: {
-			if(e->grid.pressed) {
+			if(record_pressed) {
+				struct f2_pad_record_t d = {
+					.bank = 0,
+					.pad = e->grid.pos,
+					.enable = (int)e->grid.pressed,
+				};
+				ctlra_ring_write(f2_pad_record, &d, sizeof(d));
+			} else {
+				if(e->grid.pressed) {
 				struct f2_play_pad_t d = {
 					.bank = 0,
 					.pad = e->grid.pos,
 					.velocity = 1.0f,
 				};
 				ctlra_ring_write(f2_play_pad, &d, sizeof(d));
-				last_pressed_pad = d.pad;
 				}
+			}
+			last_pressed_pad = e->grid.pos;
 			}
 		}
 	}
@@ -552,6 +594,7 @@ void Fabla2DSP::process( int nf )
 			m.func(this, buf);
 	}
 
+	/*
 	float recordOverLast = *controlPorts[RECORD_OVER_LAST_PLAYED_PAD];
 	if( recordEnable != (int)recordOverLast ) {
 		// update based on control port value
@@ -564,6 +607,7 @@ void Fabla2DSP::process( int nf )
 			stopRecordToPad();
 		}
 	}
+	*/
 
 	// clear the audio buffers
 	memset( controlPorts[OUTPUT_L],  0, sizeof(float) * nframes );

@@ -126,6 +126,10 @@ public:
 
 	std::vector<MidiNote>* getMidiNotes();
 
+	/// record buffer: when a record operation begins, it uses this buffer
+	void startRecordToPad(int bank, int pad);
+	void stopRecordToPad();
+
 	void ctlra_func();
 	volatile uint32_t ctlra_thread_running;
 	volatile uint32_t ctlra_thread_quit_now;
@@ -174,10 +178,6 @@ private:
 	/// map from MIDI number to pad instance
 	std::map<int, Pad*> midiToPad;
 
-	/// record buffer: when a record operation begins, it uses this buffer
-	void startRecordToPad(int bank, int pad);
-	void stopRecordToPad();
-
 	bool recordEnable;
 	int  recordBank;
 	int  recordPad;
@@ -200,6 +200,7 @@ private:
 	caira_surface_t *img;
 	caira_t *cr;
 	int last_pressed_pad;
+	int record_pressed;
 };
 
 }; // Fabla2
