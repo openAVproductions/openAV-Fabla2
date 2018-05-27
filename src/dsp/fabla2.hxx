@@ -129,6 +129,11 @@ public:
 	volatile uint32_t ctlra_thread_quit_now;
 	volatile uint32_t ctlra_thread_quit_done;
 
+	/* ctlra static function converters */
+	void event_func(struct ctlra_dev_t* dev, uint32_t num_events,
+			struct ctlra_event_t** events);
+
+
 private:
 	URIs* uris;
 
@@ -183,6 +188,8 @@ private:
 	ZixRing *f2_to_ctlra_data_ring;
 
 	int ctlra_ring_write(f2_msg_func func, void *data, uint32_t size);
+
+
 };
 
 }; // Fabla2

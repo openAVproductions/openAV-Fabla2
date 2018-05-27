@@ -72,6 +72,19 @@ void f2_print_uint64(void *self, void *func_data)
 	printf("\n");
 }
 
+struct f2_play_pad_t {
+	int bank;
+	int pad;
+	float velocity;
+};
+void f2_play_pad(void *self, void *func_data)
+{
+	struct f2_play_pad_t *d = (struct f2_play_pad_t *)func_data;
+	Fabla2DSP *f2 = (Fabla2DSP *)self;
+	f2->playPad(d->bank, d->pad, d->velocity);
+	printf("%s\n", __func__);
+}
+
 int
 Fabla2DSP::ctlra_ring_write(f2_msg_func func, void *data, uint32_t size)
 {
@@ -156,12 +169,10 @@ simple_feedback_func(struct ctlra_dev_t *dev, void *d)
 	ctlra_dev_light_flush(dev, 1);
 }
 
-static void
-simple_event_func(struct ctlra_dev_t* dev, uint32_t num_events,
-		  struct ctlra_event_t** events, void *userdata)
+void
+Fabla2DSP::event_func(struct ctlra_dev_t* dev, uint32_t num_events,
+		  struct ctlra_event_t** events)
 {
-	Fabla2DSP *self = (Fabla2DSP *)userdata;
-
 	for(uint32_t i = 0; i < num_events; i++) {
 		struct ctlra_event_t *e = events[i];
 		switch(e->type) {
@@ -170,9 +181,12 @@ simple_event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 			}
 		case CTLRA_EVENT_GRID: {
 			if(e->grid.pressed) {
-				printf("calling playpad  %d\n", e->grid.pos);
-				static int padID;
-				self->playPad(0, e->grid.pos, 1.0f);
+				struct f2_play_pad_t d = {
+					.bank = 0,
+					.pad = e->grid.pos,
+					.velocity = 1.0f,
+				};
+				ctlra_ring_write(f2_play_pad, &d, sizeof(d));
 				}
 			}
 			int led = (3-(e->grid.pos / 4)) * 4 + (e->grid.pos % 4);
@@ -181,6 +195,15 @@ simple_event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 		}
 	}
 }
+
+static void
+static_event_func(struct ctlra_dev_t* dev, uint32_t num_events,
+		  struct ctlra_event_t** events, void *userdata)
+{
+	Fabla2DSP *self = (Fabla2DSP *)userdata;
+	self->event_func(dev, num_events, events);
+}
+
 
 static int
 accept_dev_func(struct ctlra_t *ctlra,
@@ -192,7 +215,7 @@ accept_dev_func(struct ctlra_t *ctlra,
 
 	printf("Fabla2: accept dev %s %s\n", info->vendor, info->device);
 
-	ctlra_dev_set_event_func(dev, simple_event_func);
+	ctlra_dev_set_event_func(dev, static_event_func);
 	ctlra_dev_set_feedback_func(dev, simple_feedback_func);
 	ctlra_dev_set_callback_userdata(dev, userdata);
 
