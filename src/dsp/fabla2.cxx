@@ -82,7 +82,6 @@ void f2_play_pad(void *self, void *func_data)
 	struct f2_play_pad_t *d = (struct f2_play_pad_t *)func_data;
 	Fabla2DSP *f2 = (Fabla2DSP *)self;
 	f2->playPadOnNextVoice(d->bank, d->pad, d->velocity, 0);
-	printf("%s\n", __func__);
 }
 
 int
@@ -112,25 +111,6 @@ Fabla2DSP::ctlra_ring_write(f2_msg_func func, void *data, uint32_t size)
 void Fabla2DSP::ctlra_func()
 {
 	usleep(500 * 1000);
-
-	int r = ctlra_ring_write(f2_print_hello, 0, 0);
-
-	char *word = "text here 123456789";
-	r = ctlra_ring_write(f2_print_hello, word, strlen(word) + 1);
-
-	const uint32_t ds = 8;
-	uint64_t array[8] = {
-		0,1,2,3,
-		4,5,6,7
-	};
-	const uint32_t write_size = sizeof(uint64_t) * ds;
-	r = ctlra_ring_write(f2_print_uint64, array, write_size);
-
-	r = ctlra_ring_write(f2_print_hello, 0, 0);
-
-	for(int i = 0; i < 8; i++)
-		array[i] = i * 2;
-	r = ctlra_ring_write(f2_print_uint64, array, write_size);
 
 	while(1) {
 		if(ctlra_thread_running) {
@@ -316,10 +296,10 @@ void Fabla2DSP::process( int nf )
 	struct f2_msg m = {0};
 	uint32_t r = zix_ring_read(ctlra_to_f2_ring, &m, sizeof(m));
 	if(r == 0) {
+		/* empty ring == no events available */
 	} else if(r != sizeof(m)) {
-		printf("failed to read full message, %d\n", r);
+		/* TODO: error handle here? Programming issue detected */
 	} else {
-		printf("got message, %p %d\n", m.func, m.data_size);
 		/* we have a f2_msg now, with a function pointer and a
 		 * size of data to consume. Call the function with the
 		 * read head of the ringbuffer, allowing function to use
@@ -334,9 +314,6 @@ void Fabla2DSP::process( int nf )
 		uint32_t read_size = m.data_size > ds ? ds : m.data_size;
 		uint32_t data_r = zix_ring_read(ctlra_to_f2_data_ring,
 						buf, read_size);
-		printf("read %d bytes of data from ctlra->f2 data ring\n",
-		       data_r);
-
 		if(m.func)
 			m.func(this, buf);
 	}
