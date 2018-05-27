@@ -188,7 +188,8 @@ typedef struct {
 	LV2_URID fabla2_audioData;
 } URIs;
 
-static void mapUri( URIs* uris, LV2_URID_Map* map )
+static inline
+void mapUri( URIs* uris, LV2_URID_Map* map )
 {
 	uris->atom_Blank                  = map->map(map->handle, LV2_ATOM__Blank);
 	uris->atom_Path                   = map->map(map->handle, LV2_ATOM__Path);
