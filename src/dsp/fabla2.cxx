@@ -47,8 +47,6 @@
 namespace Fabla2
 {
 
-typedef void (*f2_msg_func)(void *self, void *func_data);
-
 /* 64 byte message structure to pass through ring */
 struct f2_msg {
 	/* function to call */
@@ -61,34 +59,51 @@ struct f2_msg {
 
 void f2_print_hello(void *self, void *func_data)
 {
-	printf("f2 print hello: %p, %p\n", self, func_data);
+	char *word = (char *)func_data;
+	printf("f2 print hello: %p, %s\n", self, word);
 }
 
 void f2_print_uint64(void *self, void *func_data)
 {
 	uint64_t *d = (uint64_t *)func_data;
-	printf("print uint64_t\n");
 	for(int i = 0; i < 8; i++) {
 		printf("\t%ld\n", d[i]);
 	}
 	printf("\n");
 }
 
-void Fabla2DSP::ctlra_func()
+int
+Fabla2DSP::ctlra_ring_write(f2_msg_func func, void *data, uint32_t size)
 {
-	usleep(500 * 1000);
-
-	printf("pushing message now\n");
+	/* message to enqueue into ring */
 	struct f2_msg m = {
-		.func = f2_print_hello,
-		.data_size = 0,
+		.func = func,
+		.data_size = size,
 	};
+
+	/* TODO: check write space available */
+
+	uint32_t data_w = zix_ring_write(ctlra_to_f2_data_ring, data, size);
+	if(data_w != size) {
+		printf("error didn't write data to ring: %d\n", data_w);
+	}
+
 	uint32_t w = zix_ring_write(ctlra_to_f2_ring, &m, sizeof(m));
 	if(w != sizeof(m)) {
 		printf("error didn't write full msg to ring: %d\n", w);
 	}
 
-	printf("pushing message 2 now\n");
+	return 0;
+}
+
+void Fabla2DSP::ctlra_func()
+{
+	usleep(500 * 1000);
+
+	int r = ctlra_ring_write(f2_print_hello, 0, 0);
+
+	char *word = "text here 123456789";
+	r = ctlra_ring_write(f2_print_hello, word, strlen(word) + 1);
 
 	const uint32_t ds = 8;
 	uint64_t array[8] = {
@@ -96,34 +111,13 @@ void Fabla2DSP::ctlra_func()
 		4,5,6,7
 	};
 	const uint32_t write_size = sizeof(uint64_t) * ds;
-	m.func = f2_print_uint64;
-	m.data_size = write_size;
-	uint32_t data_w = zix_ring_write(ctlra_to_f2_data_ring,
-					 array, write_size);
-	if(data_w != write_size) {
-		printf("error didn't write data to ring: %d\n", w);
-	}
-	w = zix_ring_write(ctlra_to_f2_ring, &m, sizeof(m));
-	if(w != sizeof(m)) {
-		printf("error didn't write full msg to ring: %d\n", w);
-	}
+	r = ctlra_ring_write(f2_print_uint64, array, write_size);
 
+	r = ctlra_ring_write(f2_print_hello, 0, 0);
 
-	/* MSG 3 */
 	for(int i = 0; i < 8; i++)
 		array[i] = i * 2;
-
-	data_w = zix_ring_write(ctlra_to_f2_data_ring,
-					 array, write_size);
-	if(data_w != write_size) {
-		printf("error didn't write data to ring: %d\n", w);
-	}
-	w = zix_ring_write(ctlra_to_f2_ring, &m, sizeof(m));
-	if(w != sizeof(m)) {
-		printf("error didn't write full msg to ring: %d\n", w);
-	}
-
-
+	r = ctlra_ring_write(f2_print_uint64, array, write_size);
 
 	while(1) {
 		if(ctlra_thread_running) {

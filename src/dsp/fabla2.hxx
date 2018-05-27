@@ -51,6 +51,8 @@ class Voice;
 class Sample;
 class Library;
 
+typedef void (*f2_msg_func)(void *self, void *func_data);
+
 /** Fabla2DSP
  * This class contains the main DSP functionality of Fabla2. It handles incoming
  * audio and MIDI streams, controls voice-allocation, interacts with the host
@@ -179,6 +181,8 @@ private:
 
 	ZixRing *f2_to_ctlra_ring;
 	ZixRing *f2_to_ctlra_data_ring;
+
+	int ctlra_ring_write(f2_msg_func func, void *data, uint32_t size);
 };
 
 }; // Fabla2
