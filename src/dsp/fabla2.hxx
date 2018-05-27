@@ -36,6 +36,8 @@
 #include "zix/thread.h"
 #include "zix/ring.h"
 
+#include <caira.h>
+
 // for accessing forge to write ports
 class FablaLV2;
 
@@ -194,7 +196,10 @@ private:
 
 	int ctlra_ring_write(f2_msg_func func, void *data, uint32_t size);
 
-
+	/* caira for screen drawing */
+	caira_surface_t *img;
+	caira_t *cr;
+	int last_pressed_pad;
 };
 
 }; // Fabla2

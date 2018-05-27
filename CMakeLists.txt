@@ -48,6 +48,10 @@ pkg_check_modules(CTLRA openav_ctlra REQUIRED)
 include_directories( ${CTLRA_INCLUDE_DIRS}  )
 link_directories   ( ${CTLRA_LIBRARY_DIRS}  )
 
+pkg_check_modules(CAIRA openav_caira REQUIRED)
+include_directories( ${CAIRA_INCLUDE_DIRS}  )
+link_directories   ( ${CAIRA_LIBRARY_DIRS}  )
+
 
 IF(BUILD_GUI)
 	ADD_DEFINITIONS( "-DPUGL_HAVE_CAIRO" )
@@ -101,6 +105,7 @@ ENDIF(BUILD_GUI)
   target_link_libraries( fabla2 ${SNDFILE_LIBRARIES}    )
   target_link_libraries( fabla2 ${SAMPLERATE_LIBRARIES} )
   target_link_libraries( fabla2 ${CTLRA_LIBRARIES} )
+  target_link_libraries( fabla2 ${CAIRA_LIBRARIES} )
   
 IF(BUILD_GUI)
   target_link_libraries( fabla2ui ${CAIRO_LIBRARIES}  )

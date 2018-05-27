@@ -142,13 +142,23 @@ Fabla2DSP::feedback_func(struct ctlra_dev_t *dev)
 	ctlra_dev_light_set(dev, 63 + 24 + led,
 			    0x020000ff * e->grid.pressed);
 	*/
-	Bank *b = library->bank(0);
+	int bank = 0;
+	Bank *b = library->bank(bank);
+
+	ctlra_dev_light_set(dev, 29 + bank, 0x030000ff);
+
+	const int offset = 63 + 24;
 	for(int i = 0; i < 16; i++) {
 		Pad *p = b->pad(i);
 		int loaded = p->loaded() ? 1 : 0;
-		int offset = 63 + 24;
 		int led = (3-(i / 4)) * 4 + (i % 4);
 		ctlra_dev_light_set(dev, offset + led, 0x020000ff * loaded);
+	}
+	
+	/* showing sample */ {
+		Pad *p = b->pad(last_pressed_pad);
+		int led = (3-(last_pressed_pad / 4)) * 4 + (last_pressed_pad % 4);
+		ctlra_dev_light_set(dev, offset + led, 0xff0000ff);
 	}
 
 	/* for each pad in the grid, light up loaded state */
@@ -162,6 +172,24 @@ static_feedback_func(struct ctlra_dev_t *dev, void *userdata)
 	self->feedback_func(dev);
 }
 
+/* TODO: remove dependency on this */
+#define SR_CHANNELS r, g, b, a
+typedef union {
+  unsigned int word;
+  struct { unsigned char SR_CHANNELS; } rgba;
+} sr_Pixel;
+
+static inline void draw_slider(caira_t *cr, int x, int y, int w, int h, float v)
+{
+	caira_set_source_rgb(cr, 0.2, 0.2, 0.2);
+	caira_rectangle(cr, x, y, w, h);
+	caira_fill(cr);
+
+	caira_set_source_rgb(cr, 0.0, 0x51 / 255., 1.);
+	caira_rectangle(cr, x, y + h - 20 - (v * (h - 20)), w, 20);
+	caira_fill(cr);
+}
+
 int32_t
 Fabla2DSP::screen_redraw_func(struct ctlra_dev_t *dev,
 				  uint32_t screen_idx,
@@ -169,19 +197,111 @@ Fabla2DSP::screen_redraw_func(struct ctlra_dev_t *dev,
 				  uint32_t bytes,
 				  struct ctlra_screen_zone_t *redraw_zone)
 {
+	caira_set_source_rgb(cr, 0, 0, 0);
+	caira_rectangle(cr, 0, 0, 480, 272);
+	caira_fill(cr);
+
+	Pad *p = library->bank(0)->pad(last_pressed_pad);
+	Sample *s = p->layer(p->lastPlayedLayer());
 
 	if(screen_idx == 0) {
-		for(int i = 0; i < bytes; i += 2) {
-			pixel_data[i  ] = 0b11111000;
-			pixel_data[i+1] = 0;
+		/* selectors */ {
+		const uint32_t x = 16;
+		const uint32_t y =  2;
+		const uint32_t w =  90;
+		const uint32_t h =  23;
+		const uint32_t xoff = w + ((480 - 4 * 90)/4);
+		caira_set_source_rgb(cr, 0.1, 0.1, 0.1);
+		for(int i = 0; i < 4; i++) {
+			caira_rectangle(cr, x + i * xoff , y, w, h);
+			caira_fill(cr);
 		}
-	} else {
-		for(int i = 0; i < bytes; i += 2) {
-			pixel_data[i  ] = 0;
-			pixel_data[i+1] = 0b11111000;
+		}
+
+		/* waveform */ {
+		const uint32_t x = 6;
+		const uint32_t y = 30;
+		const uint32_t high = 50;
+		caira_set_source_rgb(cr, 0.1, 0.1, 0.1);
+		caira_rectangle(cr, x, y, FABLA2_UI_WAVEFORM_PX, high * 2);
+		caira_fill(cr);
+		if(s) {
+			caira_set_source_rgb(cr, 0.0, 0.51, 1.);
+			const float *w = s->getWaveform();
+			for(int i = 0; w && i < FABLA2_UI_WAVEFORM_PX; i++) {
+				float py = (w[i] * high);
+				caira_move_to(cr, x + i, y + high - py);
+				caira_line_to(cr, x + i, y + high + py);
+			}
+		}
 		}
 	}
 
+	if(screen_idx == 1) {
+		float v = p->volume;
+		draw_slider(cr, 460, 70, 22, 190, v);
+
+		if(s) {
+			float p = s->pan;
+			draw_slider(cr, 430, 70, 22, 190, p);
+		}
+
+	}
+
+#if 0
+	float dry_wet = p->volume;
+	float time = 0.8;
+	float py = 20 + 222 - (dry_wet * 242);
+	float px = 20 + (time * 420);
+
+	caira_set_source_rgb(cr, 1, 0, 0);
+	caira_rectangle(cr, px, py, 20, 20);
+	caira_fill(cr);
+
+	caira_set_source_rgb(cr, 1, 1, 0);
+	caira_rectangle(cr, 40, 40, 10, 10);
+	caira_fill(cr);
+
+	caira_set_source_rgb(cr, 1, 1, 1);
+	/* low left, top, br */
+	caira_move_to(cr, 10, 252);
+	caira_line_to(cr, px, py);
+	caira_line_to(cr, 480, 272);
+#endif
+
+	int stride = caira_image_surface_get_stride(img);
+	unsigned char * data = caira_image_surface_get_data(img);
+
+	/*
+	for(int i = 0; i < bytes; i++)
+		pixel_data[i] = data[i];
+	*/
+
+	/* TODO: convert ARGB to RGB565 byte-swapped */
+#if 1
+	sr_Pixel *pixels = (sr_Pixel *)data;
+	uint16_t *scn = (uint16_t *)pixel_data;
+	for(int j = 0; j < 272; j++) {
+		for(int i = 0; i < 480; i++) {
+			sr_Pixel px = *pixels++;
+			/* convert to BGR565 in byte-swapped LE */
+			/* blue 5, green LSB 3 bits */
+			uint16_t red = px.rgba.r;
+			uint16_t green = px.rgba.g;
+			uint16_t blue = px.rgba.b;
+
+			/* mask and shift */
+			uint16_t b = ((blue  >> 3) & 0x1f);
+			uint16_t g = ((green >> 2) & 0x3f) << 5;
+			uint16_t r = ((red   >> 3) & 0x1f) << 11;
+
+			/* byte-swap and store */
+			uint16_t tmp = (b | g | r);
+			*scn = ((tmp & 0x00FF) << 8) | ((tmp & 0xFF00) >> 8);
+			scn++;
+		}
+	}
+#endif
 	return 1;
 }
 
@@ -200,12 +320,33 @@ void
 Fabla2DSP::event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 		  struct ctlra_event_t** events)
 {
+
+
 	for(uint32_t i = 0; i < num_events; i++) {
 		struct ctlra_event_t *e = events[i];
+		printf("event %d\n", e->type);
+		Pad *p = library->bank(0)->pad(last_pressed_pad);
 		switch(e->type) {
+
 		case CTLRA_EVENT_BUTTON: {
 			printf("button %d\n", e->button.id);
 			}
+			break;
+
+		case CTLRA_EVENT_SLIDER: {
+			printf("slider %d %f\n", e->slider.id,
+			       e->slider.value);
+			}
+			break;
+
+		case CTLRA_EVENT_ENCODER: {
+			if(e->encoder.id == 8) {
+				p->volume += e->encoder.delta_float * 1.25;
+			}
+			printf("encoder %d %f\n", e->encoder.id, e->encoder.delta_float);
+			}
+			break;
+
 		case CTLRA_EVENT_GRID: {
 			if(e->grid.pressed) {
 				struct f2_play_pad_t d = {
@@ -214,6 +355,7 @@ Fabla2DSP::event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 					.velocity = 1.0f,
 				};
 				ctlra_ring_write(f2_play_pad, &d, sizeof(d));
+				last_pressed_pad = d.pad;
 				}
 			}
 		}
@@ -316,6 +458,11 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
 	if(!f2_to_ctlra_data_ring) {
 		printf("ERROR creating zix f2->ctlra data ring\n");
 	}
+
+	/* initialize caira for screen drawing */
+	img = caira_image_surface_create(CAIRA_FORMAT_ARGB32, 480, 272);
+	cr = caira_create(img);
+
 
 	ctlra_thread_running = 1;
 
