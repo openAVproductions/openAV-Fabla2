@@ -162,6 +162,40 @@ static_feedback_func(struct ctlra_dev_t *dev, void *userdata)
 	self->feedback_func(dev);
 }
 
+int32_t
+Fabla2DSP::screen_redraw_func(struct ctlra_dev_t *dev,
+				  uint32_t screen_idx,
+				  uint8_t *pixel_data,
+				  uint32_t bytes,
+				  struct ctlra_screen_zone_t *redraw_zone)
+{
+
+	if(screen_idx == 0) {
+		for(int i = 0; i < bytes; i += 2) {
+			pixel_data[i  ] = 0b11111000;
+			pixel_data[i+1] = 0;
+		}
+	} else {
+		for(int i = 0; i < bytes; i += 2) {
+			pixel_data[i  ] = 0;
+			pixel_data[i+1] = 0b11111000;
+		}
+	}
+
+	return 1;
+}
+
+static int32_t
+static_screen_redraw_func(struct ctlra_dev_t *dev, uint32_t screen_idx,
+			  uint8_t *pixel_data, uint32_t bytes,
+			  struct ctlra_screen_zone_t *redraw_zone,
+			  void *userdata)
+{
+	Fabla2DSP *self = (Fabla2DSP *)userdata;
+	return self->screen_redraw_func(dev, screen_idx, pixel_data, bytes,
+				 redraw_zone);
+}
+
 void
 Fabla2DSP::event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 		  struct ctlra_event_t** events)
@@ -207,6 +241,8 @@ accept_dev_func(struct ctlra_t *ctlra,
 
 	ctlra_dev_set_event_func(dev, static_event_func);
 	ctlra_dev_set_feedback_func(dev, static_feedback_func);
+	ctlra_dev_set_screen_feedback_func(dev, static_screen_redraw_func);
+
 	ctlra_dev_set_callback_userdata(dev, userdata);
 
 	return 1;

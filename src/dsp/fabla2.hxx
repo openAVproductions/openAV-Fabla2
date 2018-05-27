@@ -133,6 +133,11 @@ public:
 	void event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 			struct ctlra_event_t** events);
 	void feedback_func(struct ctlra_dev_t *dev);
+	int32_t screen_redraw_func(struct ctlra_dev_t *dev,
+				   uint32_t screen_idx,
+				   uint8_t *pixel_data,
+				   uint32_t bytes,
+				   struct ctlra_screen_zone_t *redraw_zone);
 
 private:
 	URIs* uris;
