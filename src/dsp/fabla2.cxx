@@ -134,11 +134,32 @@ void *ctlra_thread_func(void *ud)
 	return 0;
 }
 
-static void
-simple_feedback_func(struct ctlra_dev_t *dev, void *d)
+void
+Fabla2DSP::feedback_func(struct ctlra_dev_t *dev)
 {
-	ctlra_dev_light_set(dev, 10, 0xffffffff);
+	/*
+	int led = (3-(e->grid.pos / 4)) * 4 + (e->grid.pos % 4);
+	ctlra_dev_light_set(dev, 63 + 24 + led,
+			    0x020000ff * e->grid.pressed);
+	*/
+	Bank *b = library->bank(0);
+	for(int i = 0; i < 16; i++) {
+		Pad *p = b->pad(i);
+		int loaded = p->loaded() ? 1 : 0;
+		int offset = 63 + 24;
+		int led = (3-(i / 4)) * 4 + (i % 4);
+		ctlra_dev_light_set(dev, offset + led, 0x020000ff * loaded);
+	}
+
+	/* for each pad in the grid, light up loaded state */
 	ctlra_dev_light_flush(dev, 1);
+}
+
+static void
+static_feedback_func(struct ctlra_dev_t *dev, void *userdata)
+{
+	Fabla2DSP *self = (Fabla2DSP *)userdata;
+	self->feedback_func(dev);
 }
 
 void
@@ -161,9 +182,6 @@ Fabla2DSP::event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 				ctlra_ring_write(f2_play_pad, &d, sizeof(d));
 				}
 			}
-			int led = (3-(e->grid.pos / 4)) * 4 + (e->grid.pos % 4);
-			ctlra_dev_light_set(dev, 63 + 24 + led,
-					    0x020000ff * e->grid.pressed);
 		}
 	}
 }
@@ -188,7 +206,7 @@ accept_dev_func(struct ctlra_t *ctlra,
 	printf("Fabla2: accept dev %s %s\n", info->vendor, info->device);
 
 	ctlra_dev_set_event_func(dev, static_event_func);
-	ctlra_dev_set_feedback_func(dev, simple_feedback_func);
+	ctlra_dev_set_feedback_func(dev, static_feedback_func);
 	ctlra_dev_set_callback_userdata(dev, userdata);
 
 	return 1;
@@ -1059,6 +1077,19 @@ void Fabla2DSP::stopRecordToPad()
 
 Fabla2DSP::~Fabla2DSP()
 {
+	/* first stop ctlra thread */
+	ctlra_thread_quit_now = 1;
+	while(!ctlra_thread_quit_done) {
+		usleep(1000);
+	}
+
+	void *ret;
+	ZixStatus stat = zix_thread_join(ctlra_thread, &ret);
+
+	ctlra_exit(ctlra);
+	usleep(1000);
+
+
 	for(int i = 0; i < voices.size(); i++) {
 		delete voices.at(i);
 	}

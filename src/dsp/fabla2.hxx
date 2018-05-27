@@ -132,7 +132,7 @@ public:
 	/* ctlra static function converters */
 	void event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 			struct ctlra_event_t** events);
-
+	void feedback_func(struct ctlra_dev_t *dev);
 
 private:
 	URIs* uris;
