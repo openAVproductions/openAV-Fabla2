@@ -173,8 +173,12 @@ private:
 	// Ctlra related stuffA
 	struct ctlra_t *ctlra;
 	ZixThread ctlra_thread;
+	/* pass msg through ring, pass data to match in _data */
 	ZixRing *ctlra_to_f2_ring;
+	ZixRing *ctlra_to_f2_data_ring;
+
 	ZixRing *f2_to_ctlra_ring;
+	ZixRing *f2_to_ctlra_data_ring;
 };
 
 }; // Fabla2

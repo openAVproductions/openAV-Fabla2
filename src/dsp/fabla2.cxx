@@ -51,15 +51,27 @@ typedef void (*f2_msg_func)(void *self, void *func_data);
 
 /* 64 byte message structure to pass through ring */
 struct f2_msg {
+	/* function to call */
 	f2_msg_func func;
-	void *self;
-	void *func_data;
-	uint64_t padding;
+	/* size of data to consume */
+	uint32_t data_size;
+	/* passing to 16B */
+	uint32_t padding;
 };
 
 void f2_print_hello(void *self, void *func_data)
 {
 	printf("f2 print hello: %p, %p\n", self, func_data);
+}
+
+void f2_print_uint64(void *self, void *func_data)
+{
+	uint64_t *d = (uint64_t *)func_data;
+	printf("print uint64_t\n");
+	for(int i = 0; i < 8; i++) {
+		printf("\t%ld\n", d[i]);
+	}
+	printf("\n");
 }
 
 void Fabla2DSP::ctlra_func()
@@ -69,13 +81,49 @@ void Fabla2DSP::ctlra_func()
 	printf("pushing message now\n");
 	struct f2_msg m = {
 		.func = f2_print_hello,
-		.self = this,
-		.func_data = 0,
+		.data_size = 0,
 	};
 	uint32_t w = zix_ring_write(ctlra_to_f2_ring, &m, sizeof(m));
 	if(w != sizeof(m)) {
 		printf("error didn't write full msg to ring: %d\n", w);
 	}
+
+	printf("pushing message 2 now\n");
+
+	const uint32_t ds = 8;
+	uint64_t array[8] = {
+		0,1,2,3,
+		4,5,6,7
+	};
+	const uint32_t write_size = sizeof(uint64_t) * ds;
+	m.func = f2_print_uint64;
+	m.data_size = write_size;
+	uint32_t data_w = zix_ring_write(ctlra_to_f2_data_ring,
+					 array, write_size);
+	if(data_w != write_size) {
+		printf("error didn't write data to ring: %d\n", w);
+	}
+	w = zix_ring_write(ctlra_to_f2_ring, &m, sizeof(m));
+	if(w != sizeof(m)) {
+		printf("error didn't write full msg to ring: %d\n", w);
+	}
+
+
+	/* MSG 3 */
+	for(int i = 0; i < 8; i++)
+		array[i] = i * 2;
+
+	data_w = zix_ring_write(ctlra_to_f2_data_ring,
+					 array, write_size);
+	if(data_w != write_size) {
+		printf("error didn't write data to ring: %d\n", w);
+	}
+	w = zix_ring_write(ctlra_to_f2_ring, &m, sizeof(m));
+	if(w != sizeof(m)) {
+		printf("error didn't write full msg to ring: %d\n", w);
+	}
+
+
 
 	while(1) {
 		if(ctlra_thread_running) {
@@ -84,6 +132,7 @@ void Fabla2DSP::ctlra_func()
 		} else {
 			sleep(1);
 		}
+
 		if(ctlra_thread_quit_now) {
 			break;
 		}
@@ -210,9 +259,19 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
 	if(!ctlra_to_f2_ring) {
 		printf("ERROR creating zix ctlra->f2 ring\n");
 	}
+	ctlra_to_f2_data_ring = zix_ring_new(4 * 4096);
+	if(!ctlra_to_f2_data_ring) {
+		printf("ERROR creating zix ctlra->f2 DATA ring\n");
+	}
+
+
 	f2_to_ctlra_ring = zix_ring_new(4096);
 	if(!f2_to_ctlra_ring) {
 		printf("ERROR creating zix f2->ctlra ring\n");
+	}
+	f2_to_ctlra_data_ring = zix_ring_new(4 * 4096);
+	if(!f2_to_ctlra_data_ring) {
+		printf("ERROR creating zix f2->ctlra data ring\n");
 	}
 
 	ctlra_thread_running = 1;
@@ -251,7 +310,26 @@ void Fabla2DSP::process( int nf )
 	} else if(r != sizeof(m)) {
 		printf("failed to read full message, %d\n", r);
 	} else {
-		printf("got message, %p %p\n", m.func, m.self);
+		printf("got message, %p %d\n", m.func, m.data_size);
+		/* we have a f2_msg now, with a function pointer and a
+		 * size of data to consume. Call the function with the
+		 * read head of the ringbuffer, allowing function to use
+		 * data from the ring, then consume data_size from the data
+		 * ring so the next message pulls the next block of info.
+		 */
+		/* TODO: suboptimal usage here, because we copy the data
+		 * out and into a linear array - but it probably already is
+		 * Use a bip-buffer mechanism to avoid the copy here */
+		const uint32_t ds = 256;
+		char buf[ds];
+		uint32_t read_size = m.data_size > ds ? ds : m.data_size;
+		uint32_t data_r = zix_ring_read(ctlra_to_f2_data_ring,
+						buf, read_size);
+		printf("read %d bytes of data from ctlra->f2 data ring\n",
+		       data_r);
+
+		if(m.func)
+			m.func(this, buf);
 	}
 
 	float recordOverLast = *controlPorts[RECORD_OVER_LAST_PLAYED_PAD];
