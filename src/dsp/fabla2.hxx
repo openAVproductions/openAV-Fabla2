@@ -106,6 +106,7 @@ public:
 	/// called when a sample is removed or added to a Pad, and the UI needs the
 	/// update the layer info
 	void padRefreshLayers( int bank, int pad );
+	int padDuplicateTo(int from_bank, int from_pad, int to_bank, int to_pad);
 
 	/// step sequencer control functions
 	void stepSeq(int bank, int pad, int step, int value);
@@ -201,6 +202,9 @@ private:
 	caira_t *cr;
 	int last_pressed_pad;
 	int record_pressed;
+
+	int duplicate_pressed;
+	int duplicate_from_pad;
 };
 
 }; // Fabla2

@@ -84,6 +84,39 @@ void f2_play_pad(void *self, void *func_data)
 	f2->playPadOnNextVoice(d->bank, d->pad, d->velocity, 0);
 }
 
+struct f2_pad_duplicate_t {
+	int from_bank;
+	int from_pad;
+	int to_bank;
+	int to_pad;
+};
+void f2_pad_duplicate(void *self, void *data)
+{
+	struct f2_pad_duplicate_t *d = (struct f2_pad_duplicate_t *)data;
+	Fabla2DSP *f2 = (Fabla2DSP *)self;
+	f2->padDuplicateTo(d->from_bank, d->from_pad, d->to_bank, d->to_pad);
+}
+
+int
+Fabla2DSP::padDuplicateTo(int from_bank, int from_pad, int to_bank, int to_pad)
+{
+	printf("pad dup to %d, %d, %d, %d\n", from_bank, from_pad, to_bank,
+	       to_pad);
+	Pad *fp = library->bank(from_bank)->pad(from_pad);
+	if(!fp) { printf("!fp\n"); return -1; }
+
+	Sample *s = fp->layer(fp->lastPlayedLayer());
+	if(!s) { printf("!sample\n"); return -1; }
+
+	Pad *tp = library->bank(to_bank)->pad(to_pad);
+	if(!tp) { printf("!tp\n"); return -1; }
+
+	tp->add(s);
+
+	return 0;
+}
+
+
 
 struct f2_pad_record_t {
 	int bank;
@@ -94,12 +127,9 @@ void f2_pad_record(void *self, void *func_data)
 {
 	struct f2_pad_record_t *d = (struct f2_pad_record_t *)func_data;
 	Fabla2DSP *f2 = (Fabla2DSP *)self;
-
 	if(d->enable) {
 		f2->startRecordToPad(d->bank, d->pad);
-		printf("pad %d, recording...\n", d->pad);
 	} else {
-		printf("pad STOP %d, recording.\n", d->pad);
 		f2->stopRecordToPad();
 	}
 }
@@ -174,16 +204,20 @@ Fabla2DSP::feedback_func(struct ctlra_dev_t *dev)
 		int loaded = p->loaded() ? 1 : 0;
 		int led = (3-(i / 4)) * 4 + (i % 4);
 		ctlra_dev_light_set(dev, offset + led, 0x020000ff * loaded);
+
 	}
 	
 	/* showing sample */ {
 		Pad *p = b->pad(last_pressed_pad);
 		int led = (3-(last_pressed_pad / 4)) * 4 + (last_pressed_pad % 4);
 		int loaded = p->loaded() ? 1 : 0;
-		ctlra_dev_light_set(dev, offset + led, 0xff0000ff * loaded);
+		uint32_t col = duplicate_from_pad ?  0xff0000ff : 0xff00ff00;
+		ctlra_dev_light_set(dev, offset + led, col * loaded);
 	}
 
+	ctlra_dev_light_set(dev,  5, 0x0400003f);
 	ctlra_dev_light_set(dev, 42, record_pressed ? -1 : 0);
+	ctlra_dev_light_set(dev, 54, duplicate_pressed ? -1 : 0x11111111);
 
 	/* for each pad in the grid, light up loaded state */
 	ctlra_dev_light_flush(dev, 1);
@@ -371,6 +405,12 @@ Fabla2DSP::event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 
 		case CTLRA_EVENT_BUTTON: {
 			switch(e->button.id) {
+			case 30: /* duplicate */
+				duplicate_pressed = e->button.pressed;
+				if(duplicate_pressed == 0) {
+					duplicate_from_pad = -1;
+				}
+				break;
 			case 42: /* record */
 				record_pressed = e->button.pressed;
 				printf("button %d, %d\n", e->button.id,
@@ -384,8 +424,10 @@ Fabla2DSP::event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 			break;
 
 		case CTLRA_EVENT_SLIDER: {
-			printf("slider %d %f\n", e->slider.id,
-			       e->slider.value);
+			if(s) {
+				s->pitch = e->slider.value;
+			}
+			//printf("slider %d %f\n", e->slider.id, e->slider.value);
 			}
 			break;
 
@@ -423,12 +465,28 @@ Fabla2DSP::event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 				ctlra_ring_write(f2_pad_record, &d, sizeof(d));
 			} else {
 				if(e->grid.pressed) {
-				struct f2_play_pad_t d = {
-					.bank = 0,
-					.pad = e->grid.pos,
-					.velocity = 1.0f,
-				};
-				ctlra_ring_write(f2_play_pad, &d, sizeof(d));
+					if(duplicate_from_pad > 0) {
+						/* duplicate from already set,
+						 * so do the dup action */
+						struct f2_pad_duplicate_t d = {
+							.from_bank = 0,
+							.from_pad = duplicate_from_pad, 
+							.to_bank = 0,
+							.to_pad = e->grid.pos,
+						};
+						ctlra_ring_write(f2_pad_duplicate, &d, sizeof(d));
+						duplicate_from_pad = -1;
+						duplicate_pressed = 0;
+					}
+					if(duplicate_pressed) {
+						duplicate_from_pad = e->grid.pos;
+					}
+					struct f2_play_pad_t d = {
+						.bank = 0,
+						.pad = e->grid.pos,
+						.velocity = 1.0f,
+					};
+					ctlra_ring_write(f2_play_pad, &d, sizeof(d));
 				}
 			}
 			last_pressed_pad = e->grid.pos;
@@ -476,7 +534,9 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
 	recordEnable( false ),
 	recordBank( 0 ),
 	recordPad( 0 ),
-	uiDbUpdateCounter(rate/30)
+	uiDbUpdateCounter(rate/30),
+	duplicate_pressed(0),
+	duplicate_from_pad(-1)
 {
 	library = new Library( this, rate );
 
