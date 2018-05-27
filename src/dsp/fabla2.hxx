@@ -34,6 +34,7 @@
 
 #include <ctlra/ctlra.h>
 #include "zix/thread.h"
+#include "zix/ring.h"
 
 // for accessing forge to write ports
 class FablaLV2;
@@ -172,6 +173,8 @@ private:
 	// Ctlra related stuffA
 	struct ctlra_t *ctlra;
 	ZixThread ctlra_thread;
+	ZixRing *ctlra_to_f2_ring;
+	ZixRing *f2_to_ctlra_ring;
 };
 
 }; // Fabla2

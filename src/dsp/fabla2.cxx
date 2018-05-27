@@ -47,10 +47,36 @@
 namespace Fabla2
 {
 
+typedef void (*f2_msg_func)(void *self, void *func_data);
+
+/* 64 byte message structure to pass through ring */
+struct f2_msg {
+	f2_msg_func func;
+	void *self;
+	void *func_data;
+	uint64_t padding;
+};
+
+void f2_print_hello(void *self, void *func_data)
+{
+	printf("f2 print hello: %p, %p\n", self, func_data);
+}
 
 void Fabla2DSP::ctlra_func()
 {
 	usleep(500 * 1000);
+
+	printf("pushing message now\n");
+	struct f2_msg m = {
+		.func = f2_print_hello,
+		.self = this,
+		.func_data = 0,
+	};
+	uint32_t w = zix_ring_write(ctlra_to_f2_ring, &m, sizeof(m));
+	if(w != sizeof(m)) {
+		printf("error didn't write full msg to ring: %d\n", w);
+	}
+
 	while(1) {
 		if(ctlra_thread_running) {
 			ctlra_idle_iter(ctlra);
@@ -127,8 +153,6 @@ accept_dev_func(struct ctlra_t *ctlra,
 	ctlra_dev_set_feedback_func(dev, simple_feedback_func);
 	ctlra_dev_set_callback_userdata(dev, userdata);
 
-	self->ctlra_thread_running = 1;
-
 	return 1;
 }
 
@@ -178,6 +202,20 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
 					     80000,
 					     ctlra_thread_func,
 					     this);
+	if(status != ZIX_STATUS_SUCCESS) {
+		printf("ERROR launching zix thread!!\n");
+	}
+
+	ctlra_to_f2_ring = zix_ring_new(4096);
+	if(!ctlra_to_f2_ring) {
+		printf("ERROR creating zix ctlra->f2 ring\n");
+	}
+	f2_to_ctlra_ring = zix_ring_new(4096);
+	if(!f2_to_ctlra_ring) {
+		printf("ERROR creating zix f2->ctlra ring\n");
+	}
+
+	ctlra_thread_running = 1;
 
 	// for debugging null pointers etc
 	//library->checkAll();
@@ -205,6 +243,16 @@ void Fabla2DSP::process( int nf )
 	PROFINY_SCOPE
 #endif
 	nframes = nf;
+
+	/* pull ctlra input */
+	struct f2_msg m = {0};
+	uint32_t r = zix_ring_read(ctlra_to_f2_ring, &m, sizeof(m));
+	if(r == 0) {
+	} else if(r != sizeof(m)) {
+		printf("failed to read full message, %d\n", r);
+	} else {
+		printf("got message, %p %p\n", m.func, m.self);
+	}
 
 	float recordOverLast = *controlPorts[RECORD_OVER_LAST_PLAYED_PAD];
 	if( recordEnable != (int)recordOverLast ) {

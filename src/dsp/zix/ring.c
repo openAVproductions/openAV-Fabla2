@@ -18,6 +18,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define HAVE_MLOCK
+
 #ifdef HAVE_MLOCK
 #    include <sys/mman.h>
 #    define ZIX_MLOCK(ptr, size) mlock((ptr), (size))
@@ -46,7 +48,7 @@
 #define ZIX_READ_BARRIER() ZIX_FULL_BARRIER()
 #define ZIX_WRITE_BARRIER() ZIX_FULL_BARRIER()
 
-#include "zix/ring.h"
+#include "ring.h"
 
 struct ZixRingImpl {
 	uint32_t write_head;  ///< Read index into buf
