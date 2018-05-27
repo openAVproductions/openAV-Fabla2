@@ -32,6 +32,9 @@
 #include <map>
 #include <vector>
 
+#include <ctlra/ctlra.h>
+#include "zix/thread.h"
+
 // for accessing forge to write ports
 class FablaLV2;
 
@@ -102,6 +105,9 @@ public:
 	/// step sequencer control functions
 	void stepSeq(int bank, int pad, int step, int value);
 
+	/// play a sample
+	int playPad(int bank, int pad, float velocity);
+
 	/// lv2 convienience function to write a samples state to the UI
 	void writePadsState( int b, int p, Pad* pad );
 	void writeSampleState( int b, int p, int l, Pad* pad, Sample* );
@@ -114,6 +120,11 @@ public:
 	void writeMidiNote(int b1, int note, int velo);
 
 	std::vector<MidiNote>* getMidiNotes();
+
+	void ctlra_func();
+	volatile uint32_t ctlra_thread_running;
+	volatile uint32_t ctlra_thread_quit_now;
+	volatile uint32_t ctlra_thread_quit_done;
 
 private:
 	URIs* uris;
@@ -158,7 +169,9 @@ private:
 	long recordIndex;
 	std::vector<float> recordBuffer;
 
-
+	// Ctlra related stuffA
+	struct ctlra_t *ctlra;
+	ZixThread ctlra_thread;
 };
 
 }; // Fabla2

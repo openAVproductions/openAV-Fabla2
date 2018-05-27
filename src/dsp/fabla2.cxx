@@ -30,6 +30,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "pad.hxx"
 #include "bank.hxx"
@@ -45,6 +46,91 @@
 
 namespace Fabla2
 {
+
+
+void Fabla2DSP::ctlra_func()
+{
+	usleep(500 * 1000);
+	while(1) {
+		if(ctlra_thread_running) {
+			ctlra_idle_iter(ctlra);
+			usleep(1 * 1000);
+		} else {
+			sleep(1);
+		}
+		if(ctlra_thread_quit_now) {
+			break;
+		}
+	}
+}
+
+void *ctlra_thread_func(void *ud)
+{
+	Fabla2DSP *self = (Fabla2DSP *)ud;
+	self->ctlra_func();
+	self->ctlra_thread_quit_done = 1;
+	return 0;
+}
+
+int Fabla2DSP::playPad(int bank, int pad, float velocity)
+{
+	Pad* p = library->bank( bank )->pad( pad );
+	voices.at(0)->play( 0, bank, pad, p, velocity);
+	return 1;
+}
+
+
+static void
+simple_feedback_func(struct ctlra_dev_t *dev, void *d)
+{
+	ctlra_dev_light_set(dev, 10, 0xffffffff);
+	ctlra_dev_light_flush(dev, 1);
+}
+
+static void
+simple_event_func(struct ctlra_dev_t* dev, uint32_t num_events,
+		  struct ctlra_event_t** events, void *userdata)
+{
+	Fabla2DSP *self = (Fabla2DSP *)userdata;
+
+	for(uint32_t i = 0; i < num_events; i++) {
+		struct ctlra_event_t *e = events[i];
+		switch(e->type) {
+		case CTLRA_EVENT_BUTTON: {
+			printf("button %d\n", e->button.id);
+			}
+		case CTLRA_EVENT_GRID: {
+			if(e->grid.pressed) {
+				printf("calling playpad  %d\n", e->grid.pos);
+				static int padID;
+				self->playPad(0, e->grid.pos, 1.0f);
+				}
+			}
+			int led = (3-(e->grid.pos / 4)) * 4 + (e->grid.pos % 4);
+			ctlra_dev_light_set(dev, 63 + 24 + led,
+					    0x020000ff * e->grid.pressed);
+		}
+	}
+}
+
+static int
+accept_dev_func(struct ctlra_t *ctlra,
+		const struct ctlra_dev_info_t *info,
+		struct ctlra_dev_t *dev,
+		void *userdata)
+{
+	Fabla2DSP *self = (Fabla2DSP *)userdata;
+
+	printf("Fabla2: accept dev %s %s\n", info->vendor, info->device);
+
+	ctlra_dev_set_event_func(dev, simple_event_func);
+	ctlra_dev_set_feedback_func(dev, simple_feedback_func);
+	ctlra_dev_set_callback_userdata(dev, userdata);
+
+	self->ctlra_thread_running = 1;
+
+	return 1;
+}
 
 Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
 	sr( rate ),
@@ -82,6 +168,16 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
 
 		library->bank( bankID )->pad( tmpPad );
 	}
+
+	/* initialize Ctlra library / thread */
+	ctlra = ctlra_create(NULL);
+	int num_devs = ctlra_probe(ctlra, accept_dev_func, this);
+	printf("connected devices %d\n", num_devs);
+
+	ZixStatus status = zix_thread_create(&ctlra_thread,
+					     80000,
+					     ctlra_thread_func,
+					     this);
 
 	// for debugging null pointers etc
 	//library->checkAll();

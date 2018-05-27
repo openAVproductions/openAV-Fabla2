@@ -12,7 +12,7 @@ set(FABLA2_VERSION "${FABLA2_VERSION_MAJOR}.${FABLA2_VERSION_MINOR}.${FABLA2_VER
 option(FABLA2_RELEASE_BUILD   "Build for releasing"         ON )
 option(FABLA2_DEBUG_PRINTS    "Build with debugging prints" ON )
 option(FABLA2_TESTS           "Build component tests"       OFF)
-option(BUILD_GUI              "Build GUI"                   ON )
+option(BUILD_GUI              "Build GUI"                   OFF)
 
 
 ################################################################################
@@ -43,6 +43,10 @@ link_directories   ( ${SNDFILE_LIBRARY_DIRS})
 pkg_check_modules(SAMPLERATE samplerate REQUIRED)
 include_directories( ${SAMPLERATE_INCLUDE_DIRS}  )
 link_directories   ( ${SAMPLERATE_LIBRARY_DIRS}  )
+
+pkg_check_modules(CTLRA openav_ctlra REQUIRED)
+include_directories( ${CTLRA_INCLUDE_DIRS}  )
+link_directories   ( ${CTLRA_LIBRARY_DIRS}  )
 
 
 IF(BUILD_GUI)
@@ -96,6 +100,7 @@ ENDIF(BUILD_GUI)
   
   target_link_libraries( fabla2 ${SNDFILE_LIBRARIES}    )
   target_link_libraries( fabla2 ${SAMPLERATE_LIBRARIES} )
+  target_link_libraries( fabla2 ${CTLRA_LIBRARIES} )
   
 IF(BUILD_GUI)
   target_link_libraries( fabla2ui ${CAIRO_LIBRARIES}  )
