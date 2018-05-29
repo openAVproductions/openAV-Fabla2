@@ -132,6 +132,7 @@ void Sample::recacheWaveform()
 
 void Sample::resample( int fromSr, std::vector<float>& buf )
 {
+#ifdef FABLA2_HAVE_SAMPLERATE
 	/// resample audio
 	//printf("Resampling from %i to %i\n", fromSr, sr);
 
@@ -166,6 +167,7 @@ void Sample::resample( int fromSr, std::vector<float>& buf )
 
 	/// exchange buffers, so buf contains the resampled audio
 	buf.swap( resampled );
+#endif /* FABLA2_HAVE_SAMPLERATE */
 }
 
 
