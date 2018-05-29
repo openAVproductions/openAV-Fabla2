@@ -32,8 +32,10 @@
 #include "pad.hxx"
 #include "plotter.hxx"
 
+#ifdef FABLA2_HAVE_SNDFILE
 #include <sndfile.h>
 #include <sndfile.hh>
+#endif
 
 #include <samplerate.h>
 
@@ -226,6 +228,11 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
 	gain ( 0.5 ),
 	pan  ( 0.5 )
 {
+	char* tmp = strdup( path.c_str() );
+	name = basename( tmp );
+	free( tmp );
+
+#ifdef FABLA2_HAVE_SNDFILE
 	SF_INFO info;
 	memset( &info, 0, sizeof( SF_INFO ) );
 	SNDFILE* const sndfile = sf_open( path.c_str(), SFM_READ, &info);
@@ -233,10 +240,6 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
 		printf("Failed to open sample '%s'\n", path.c_str() );
 		return;
 	}
-
-	char* tmp = strdup( path.c_str() );
-	name = basename( tmp );
-	free( tmp );
 
 	channels = info.channels;
 	frames   = info.frames;
@@ -295,6 +298,7 @@ Sample::Sample( Fabla2DSP* d, int rate, std::string n, std::string path  ) :
 		// since we've resampled, the size will have changed!
 		frames = audioMono.size();
 	}
+#endif /* FABLA2_HAVE SNDFILE */
 
 	init();
 
@@ -327,8 +331,8 @@ const float* Sample::getAudio( int chnl )
 
 bool Sample::write( const char* filename )
 {
+#ifdef FABLA2_HAVE_SNDFILE
 	printf("%s Start: %s : %s\n", __PRETTY_FUNCTION__, __TIME__, filename );
-
 	SndfileHandle outfile( filename, SFM_WRITE, SF_FORMAT_WAV | SF_FORMAT_FLOAT, channels, dsp->sr );
 	if( channels == 1 ) {
 		int written = outfile.write( &audioMono[0], frames );
@@ -345,6 +349,9 @@ bool Sample::write( const char* filename )
 	}
 
 	printf("%s Done: %s\n", __PRETTY_FUNCTION__, __TIME__ );
+#else
+	printf("%s SNDFILE not available, failed.\n", __PRETTY_FUNCTION__);
+#endif
 	return 0;
 }
 

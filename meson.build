@@ -14,7 +14,6 @@ subdir('src')
 dep_names = [
   'threads',
   'lv2',
-  'sndfile',
   'samplerate',
   'openav_ctlra',
   'openav_caira'
@@ -24,6 +23,9 @@ deps = []
 foreach dep : dep_names
   deps += dependency(dep)
 endforeach
+
+sndfile_dep = dependency('sndfile', required : false)
+conf_data.set10('FABLA2_HAVE_SNDFILE', sndfile_dep.found())
 
 #install_subdir('artyfx.lv2', install_dir : 'lib/lv2/') 
 
