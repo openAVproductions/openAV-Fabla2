@@ -209,10 +209,12 @@ Fabla2DSP::feedback_func(struct ctlra_dev_t *dev)
 	
 	/* showing sample */ {
 		Pad *p = b->pad(last_pressed_pad);
-		int led = (3-(last_pressed_pad / 4)) * 4 + (last_pressed_pad % 4);
-		int loaded = p->loaded() ? 1 : 0;
-		uint32_t col = duplicate_from_pad ?  0xff0000ff : 0xff00ff00;
-		ctlra_dev_light_set(dev, offset + led, col * loaded);
+		if(p) {
+			int led = (3-(last_pressed_pad / 4)) * 4 + (last_pressed_pad % 4);
+			int loaded = p->loaded() ? 1 : 0;
+			uint32_t col = duplicate_from_pad ?  0xff0000ff : 0xff00ff00;
+			ctlra_dev_light_set(dev, offset + led, col * loaded);
+		}
 	}
 
 	ctlra_dev_light_set(dev,  5, 0x0400003f);
@@ -260,7 +262,12 @@ Fabla2DSP::screen_redraw_func(struct ctlra_dev_t *dev,
 	caira_fill(cr);
 
 	Pad *p = library->bank(0)->pad(last_pressed_pad);
+	if(!p)
+		return 0;
+
 	Sample *s = p->layer(p->lastPlayedLayer());
+	if(!s)
+		return 0;
 
 	if(screen_idx == 0) {
 		/* selectors */ {
