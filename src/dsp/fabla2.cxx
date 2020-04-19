@@ -166,7 +166,7 @@ void Fabla2DSP::ctlra_func()
 	while(1) {
 		if(ctlra_thread_running) {
 			ctlra_idle_iter(ctlra);
-			usleep(10 * 1000);
+			usleep(10 * 100);
 		} else {
 			sleep(1);
 		}
