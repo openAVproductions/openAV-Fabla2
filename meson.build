@@ -23,11 +23,21 @@ foreach dep : dep_names
   deps += dependency(dep)
 endforeach
 
-sndfile_dep = dependency('sndfile', required : false)
+sndfile_dep = dependency('sndfile', required : true)
 conf_data.set10('FABLA2_HAVE_SNDFILE', sndfile_dep.found())
+if sndfile_dep.found()
+  add_project_arguments('-DFABLA2_HAVE_SNDFILE', language : 'c')
+  add_project_arguments('-DFABLA2_HAVE_SNDFILE', language : 'cpp')
+  deps += sndfile_dep
+endif
 
 samplerate_dep = dependency('samplerate', required : false)
 conf_data.set10('FABLA2_HAVE_SAMPLERATE', samplerate_dep.found())
+if samplerate_dep.found()
+  add_project_arguments('-DFABLA2_HAVE_SAMPLERATE', language : 'c')
+  add_project_arguments('-DFABLA2_HAVE_SAMPLERATE', language : 'cpp')
+  deps += samplerate_dep
+endif
 
 #install_subdir('artyfx.lv2', install_dir : 'lib/lv2/') 
 
