@@ -166,7 +166,8 @@ void Fabla2DSP::ctlra_func()
 	while(1) {
 		if(ctlra_thread_running) {
 			ctlra_idle_iter(ctlra);
-			usleep(1 * 1000);
+			usleep(10 * 1000);
+			printf("ctlra iter\n");
 		} else {
 			sleep(1);
 		}
@@ -175,6 +176,7 @@ void Fabla2DSP::ctlra_func()
 			break;
 		}
 	}
+	printf("\nctlra thread done\n\n");
 }
 
 void *ctlra_thread_func(void *ud)
@@ -407,12 +409,13 @@ void
 Fabla2DSP::event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 		  struct ctlra_event_t** events)
 {
-
-
 	for(uint32_t i = 0; i < num_events; i++) {
 		struct ctlra_event_t *e = events[i];
 		printf("event %d\n", e->type);
 		Pad *p = library->bank(0)->pad(last_pressed_pad);
+		if(!p) {
+			continue;
+		}
 		Sample *s = p->layer(p->lastPlayedLayer());
 		switch(e->type) {
 
@@ -462,9 +465,10 @@ Fabla2DSP::event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 
 			}
 
-			if(e->encoder.id == 8)
-			case 8: p->volume += e->encoder.delta_float * 1.25; break;
-			printf("encoder %d %f\n", e->encoder.id, e->encoder.delta_float);
+			if(e->encoder.id == 8) {
+				p->volume += e->encoder.delta_float * 1.25;
+				printf("encoder %d %f\n", e->encoder.id, e->encoder.delta_float);
+			}
 			}
 			break;
 
@@ -579,6 +583,10 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
 		library->bank( bankID )->pad( tmpPad );
 	}
 
+
+	ctlra_thread_running = 1;
+	ctlra_thread_quit_now = 0;
+
 	/* initialize Ctlra library / thread */
 	ctlra = ctlra_create(NULL);
 	int num_devs = ctlra_probe(ctlra, accept_dev_func, this);
@@ -617,9 +625,6 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
 	img = caira_image_surface_create(CAIRA_FORMAT_ARGB32, 480, 272);
 	cr = caira_create(img);
 #endif
-
-
-	ctlra_thread_running = 1;
 
 	// for debugging null pointers etc
 	//library->checkAll();
