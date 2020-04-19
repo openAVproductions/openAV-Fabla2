@@ -167,7 +167,6 @@ void Fabla2DSP::ctlra_func()
 		if(ctlra_thread_running) {
 			ctlra_idle_iter(ctlra);
 			usleep(10 * 1000);
-			printf("ctlra iter\n");
 		} else {
 			sleep(1);
 		}
@@ -409,14 +408,33 @@ void
 Fabla2DSP::event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 		  struct ctlra_event_t** events)
 {
+
+	for(uint32_t i = 0; i < num_events; i++) {
+		struct ctlra_event_t *e = events[i];
+
+		switch(e->type) {
+			case CTLRA_EVENT_GRID: {
+				if (e->grid.pressed) {
+				struct f2_play_pad_t d = {
+					.bank = 0,
+					.pad = e->grid.pos,
+					.velocity = 1.0f,
+				};
+				ctlra_ring_write(f2_play_pad, &d, sizeof(d));
+				}
+			}
+		}
+	}
+
+#if 0
 	for(uint32_t i = 0; i < num_events; i++) {
 		struct ctlra_event_t *e = events[i];
 		printf("event %d\n", e->type);
 		Pad *p = library->bank(0)->pad(last_pressed_pad);
-		if(!p) {
-			continue;
+		Sample *s = 0;
+		if(p) {
+			s = p->layer(p->lastPlayedLayer());
 		}
-		Sample *s = p->layer(p->lastPlayedLayer());
 		switch(e->type) {
 
 		case CTLRA_EVENT_BUTTON: {
@@ -465,7 +483,7 @@ Fabla2DSP::event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 
 			}
 
-			if(e->encoder.id == 8) {
+			if(e->encoder.id == 8 && p) {
 				p->volume += e->encoder.delta_float * 1.25;
 				printf("encoder %d %f\n", e->encoder.id, e->encoder.delta_float);
 			}
@@ -504,12 +522,14 @@ Fabla2DSP::event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 						.velocity = 1.0f,
 					};
 					ctlra_ring_write(f2_play_pad, &d, sizeof(d));
+					printf("writing grid press play ev\n");
 				}
 			}
 			last_pressed_pad = e->grid.pos;
 			}
 		}
 	}
+#endif
 }
 
 static void
