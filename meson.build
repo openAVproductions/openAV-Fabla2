@@ -15,7 +15,7 @@ dep_names = [
   'threads',
   'lv2',
   'openav_ctlra',
-  'openav_caira'
+  #'openav_caira'
 ]
 deps = []
 

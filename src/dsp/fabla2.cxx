@@ -239,6 +239,7 @@ typedef union {
   struct { unsigned char SR_CHANNELS; } rgba;
 } sr_Pixel;
 
+#if 0
 static inline void draw_slider(caira_t *cr, int x, int y, int w, int h, float v)
 {
 	caira_set_source_rgb(cr, 0.2, 0.2, 0.2);
@@ -249,6 +250,7 @@ static inline void draw_slider(caira_t *cr, int x, int y, int w, int h, float v)
 	caira_rectangle(cr, x, y + h - 20 - (v * (h - 20)), w, 20);
 	caira_fill(cr);
 }
+#endif
 
 int32_t
 Fabla2DSP::screen_redraw_func(struct ctlra_dev_t *dev,
@@ -257,6 +259,9 @@ Fabla2DSP::screen_redraw_func(struct ctlra_dev_t *dev,
 				  uint32_t bytes,
 				  struct ctlra_screen_zone_t *redraw_zone)
 {
+#warning TODO, implement redraw func here
+	return 0;
+#if 0
 	caira_set_source_rgb(cr, 0, 0, 0);
 	caira_rectangle(cr, 0, 0, 480, 272);
 	caira_fill(cr);
@@ -384,6 +389,7 @@ Fabla2DSP::screen_redraw_func(struct ctlra_dev_t *dev,
 	}
 #endif
 	return 1;
+#endif
 }
 
 static int32_t
@@ -602,8 +608,11 @@ Fabla2DSP::Fabla2DSP( int rate, URIs* u ) :
 	}
 
 	/* initialize caira for screen drawing */
+#warning TODO: initialize screens here
+#if 0
 	img = caira_image_surface_create(CAIRA_FORMAT_ARGB32, 480, 272);
 	cr = caira_create(img);
+#endif
 
 
 	ctlra_thread_running = 1;
