@@ -513,6 +513,9 @@ static_event_func(struct ctlra_dev_t* dev, uint32_t num_events,
 		  struct ctlra_event_t** events, void *userdata)
 {
 	Fabla2DSP *self = (Fabla2DSP *)userdata;
+	if (self->ctlra_is_quitting)
+		return;
+
 	self->event_func(dev, num_events, events);
 }
 
@@ -532,6 +535,7 @@ accept_dev_func(struct ctlra_t *ctlra,
 	ctlra_dev_set_screen_feedback_func(dev, static_screen_redraw_func);
 
 	ctlra_dev_set_callback_userdata(dev, userdata);
+	self->ctlra_is_quitting = 0;
 
 	return 1;
 }
@@ -1421,6 +1425,9 @@ Fabla2DSP::~Fabla2DSP()
 
 	void *ret;
 	ZixStatus stat = zix_thread_join(ctlra_thread, &ret);
+
+	/* flag to ignore read messages etc from now on */
+	ctlra_is_quitting = 1;
 
 	ctlra_exit(ctlra);
 	usleep(1000);

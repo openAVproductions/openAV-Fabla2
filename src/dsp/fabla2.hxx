@@ -133,6 +133,7 @@ public:
 	volatile uint32_t ctlra_thread_running;
 	volatile uint32_t ctlra_thread_quit_now;
 	volatile uint32_t ctlra_thread_quit_done;
+	volatile int ctlra_is_quitting; /* hacky way to avoid race on exit */
 
 	/* ctlra static function converters */
 	void event_func(struct ctlra_dev_t* dev, uint32_t num_events,
