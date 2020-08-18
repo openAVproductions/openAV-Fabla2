@@ -14,7 +14,7 @@
 
 #include "plotter.hxx"
 
-static LV2UI_Handle fabla2_instantiate(const struct _LV2UI_Descriptor * descriptor,
+static LV2UI_Handle fabla2_instantiate(const struct LV2UI_Descriptor * descriptor,
                                        const char * plugin_uri,
                                        const char * bundle_path,
                                        LV2UI_Write_Function write_function,
@@ -454,4 +454,3 @@ LV2_SYMBOL_EXPORT const LV2UI_Descriptor* lv2ui_descriptor(uint32_t index)
 		return NULL;
 	}
 }
-
