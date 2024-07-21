@@ -14,6 +14,7 @@ option(FABLA2_DEBUG_PRINTS    "Build with debugging prints" ON )
 option(FABLA2_TESTS           "Build component tests"       OFF)
 option(BUILD_GUI              "Build GUI"                   ON )
 
+include(GNUInstallDirs)
 
 ################################################################################
 ### Code compilation starts here
@@ -104,14 +105,14 @@ IF(BUILD_GUI)
 ENDIF(BUILD_GUI)
   
   # install CMake compiled files
-  install (TARGETS fabla2   DESTINATION lib/lv2/fabla2.lv2/)
+  install (TARGETS fabla2   DESTINATION ${CMAKE_INSTALL_LIBDIR}/lv2/fabla2.lv2/)
 IF(BUILD_GUI)
-  install (TARGETS fabla2ui DESTINATION lib/lv2/fabla2.lv2/)
+  install (TARGETS fabla2ui DESTINATION ${CMAKE_INSTALL_LIBDIR}/lv2/fabla2.lv2/)
 ENDIF(BUILD_GUI)
 
   # install LV2 .ttl files
   FILE(GLOB ttls "src/*.ttl")
-  install(FILES ${ttls}   DESTINATION lib/lv2/fabla2.lv2/)
+  install(FILES ${ttls}   DESTINATION ${CMAKE_INSTALL_LIBDIR}/lv2/fabla2.lv2/)
   
   # Need to be compiled in
   #configure_file( "src/ui/themes/default.avtk"  "default.avtk" COPYONLY)
